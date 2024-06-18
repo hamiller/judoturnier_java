@@ -1,0 +1,17 @@
+spring:
+    application.name: judoturnier
+
+    jpa:
+        database: POSTGRESQL
+        show-sql: true
+    datasource:
+        url: jdbc:postgresql://localhost:5532/judo
+        #url = jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+        username: username
+        password: password
+
+    flyway:
+        enabled: true
+        locations: classpath:db
+        baseline-on-migrate: true
+        validate-on-migrate: true

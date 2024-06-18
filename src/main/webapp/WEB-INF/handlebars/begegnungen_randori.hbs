@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="de">
+  {{> header}}
+<body>
+  {{> title }}
+  {{> nav }}
+  
+  <div>
+    <div class="bodyheader no-print">
+      <h2>Begegnungen</h2>
+      <div onclick="document.getElementById('infobox').classList.toggle('hidden');" ><span class="material-icons md-48" title="Info">info</span></div>
+      <div id="infobox" class="hidden">
+      {{#each gewichtsklassenGruppe}}
+        <div>{{altersKlasse}} {{gewichtsklasse.name}}: {{teilnehmer.length}} Teilnehmer</div>
+      {{/each}}
+      </div>
+
+      <div class="actions">
+        <button onclick="renewBegegnungen()"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen neu erstellen">create_new_folder</span> Alle Wettkampfgruppen neu erstellen</button>
+        <button onclick="deleteBegegnungen()"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen löschen">autorenew</span> Alle Wettkampfgruppen löschen</button>
+        <div class="sameline">
+        {{#each altersklassen}}
+          <div class="actions ">
+            <button type="button" onclick="renewBegegnung( '{{this}}' )" ><span class="material-icons md-48 centered" title="Einzelne Wettkampfgruppen neu zuordnen">autorenew</span> Wettkampfgruppen {{this}} neu zuordnen</button>
+            <br>
+            <a href="/turnier/begegnungen/randori_printview_matches/{{this}}" target="_blank" class="buttonlink"><span class="material-icons md-48 centered" title="Druckansicht Begegnungen">print</span> Druckansicht {{this}} Begegnungen</a>
+            <br>
+            <a href="/turnier/begegnungen/randori_printview_matches_inserting_data/{{this}}" target="_blank" class="buttonlink"><span class="material-icons md-48 centered" title="Druckansicht Begegnungen-Eintragen">print</span> Druckansicht {{this}} Begegnungen-Eintragen</a>
+          </div>
+        {{/each}}
+        </div>
+      </div>
+    </div>
+
+    {{#if preverror}}
+      <div class="errormsg">Der vorheriger Wettkämpfer konnte nicht angelegt werden: {{preverror}}</div>
+    {{/if}}
+    
+    <div class="generalcontent">
+      <div class="tab">
+        {{#each matten}}
+        <button class="tablinks" onclick="openMatte(event, '{{id}}')">Matte {{id}}</button>
+        {{/each}}
+      </div>
+      {{#each matten}}
+        <div class="matte tabcontent" id="{{id}}">
+          <div class="listeneintrag-titel">Matte {{id}}</div>
+          <div class="wettkampfgruppe">
+          {{#each (vorherigesElement runden)}}
+            {{#if previous}}
+              {{#if (gleichesElement (concat previous.gruppe.name previous.altersklasse) (concat this.gruppe.name altersklasse))}}
+              {{else}}
+              <div class="listeneintrag-header">
+                {{#if (gleichesElement altersklasse null)}}
+                  <div class="listeneintrag-titel pause">PAUSE</div>
+                {{else}}
+                  <div class="listeneintrag-titel">{{gruppe.name}} ({{altersklasse}})</div>
+                  <div class="listeneintrag-titel-info rechts">(Wettkampf Nr. {{matten_runde}} auf Matte {{../id}}, Runde Nr. {{gruppen_runde}} für Gruppe {{gruppe.name}})</div>
+                {{/if}}
+              </div>
+              {{/if}}
+            {{else}}
+              <div class="listeneintrag-header">
+              {{#if (gleichesElement altersklasse null)}}
+                <div class="listeneintrag-titel pause">PAUSE</div>
+              {{else}}
+                <div class="listeneintrag-titel">{{gruppe.name}} ({{altersklasse}})</div>
+                <div class="listeneintrag-titel-info rechts">(Wettkampf Nr. {{matten_runde}} auf Matte {{../id}}, Runde Nr. {{gruppen_runde}} für Gruppe {{gruppe.name}})</div>
+              {{/if}}  
+              </div>
+            {{/if}}
+            {{#each begegnungen}}
+              {{#if (gleichesElement wettkaempfer1.name null)}}
+                <div class="listeneintrag">(Ansonsten wäre nun Gruppe {{../gruppe.name}} an der Reihe)</div>
+              {{else}}
+              <a href="/turnier/begegnungen/randori/{{begegnung_id}}">
+              <div class="listeneintrag vs {{wertungVorhanden wertung}}">
+                <div class="wettkaempfer name {{wettkaempfer1.farbe}}">{{wettkaempfer1.name}}</div><div>({{wettkaempfer1.verein.name}})</div> 
+                <div class="center">vs</div> 
+                <div class="wettkaempfer name {{wettkaempfer2.farbe}}">{{wettkaempfer2.name}}</div><div>({{wettkaempfer2.verein.name}})</div>
+              </div>
+              </a>
+              {{/if}}
+            {{/each}}
+
+          {{/each}}
+          </div>
+        </div>
+      {{/each}}
+    </div>
+
+  {{> footer}}
+</body>
+<script type="text/javascript">
+
+  const renewBegegnungen = async () => {
+    var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+    if (sicher) {
+      console.log("Erstelle alle Begegnungen neu");
+      fetch('/turnier/begegnungen', { method: 'POST' })
+        .then((r) => window.location.href=r.url)
+    };
+  };
+
+  const renewBegegnung = async (altersklasse) => {
+    var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in der Altersklasse\n\t" + altersklasse + "\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+    if (sicher) {
+      console.log("Erstelle die Begegnungen neu", altersklasse);
+      fetch('/turnier/begegnung', { method: 'POST', body: altersklasse })
+        .then(() => window.location.href='/turnier/begegnungen/randori')
+    };
+  }
+
+  const deleteBegegnungen = async (altersklasse) => {
+    var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern aller Altersklassen\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+    if (sicher) {
+      fetch('/turnier/begegnung', { method: 'DELETE' })
+        .then(() => window.location.href='/turnier/begegnungen/randori')
+    };
+  };
+
+  const openMatte = (evt, id) => {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(id).style.display = "block";
+    evt.currentTarget.className += " active";
+  }; 
+</script>
+
+</html>
