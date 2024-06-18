@@ -28,4 +28,14 @@ public class EinstellungenService {
         WettkampfReihenfolge wettkampfReihenfolge = einstellungenList.stream().filter(e -> e.art().equalsIgnoreCase(WettkampfReihenfolge.TYP)).findFirst().map(t -> WettkampfReihenfolge.valueOf(t.wert())).orElseThrow();
         return new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge);
     }
+
+    public Einstellungen speichereTurnierEinstellungen(Einstellungen einstellungen) {
+        logger.info("EinstellungenService speichereTurnierEinstellungen()");
+        List<EinstellungJpa> jpaList = List.of(
+                new EinstellungJpa(einstellungen.turnierTyp().TYP, einstellungen.turnierTyp().name()),
+                new EinstellungJpa(einstellungen.mattenAnzahl().TYP, einstellungen.mattenAnzahl().anzahl().toString()),
+                new EinstellungJpa(einstellungen.wettkampfReihenfolge().TYP, einstellungen.wettkampfReihenfolge().name()));
+        einstellungRepository.saveAll(jpaList);
+        return ladeEinstellungen();
+    }
 }

@@ -1,0 +1,520 @@
+
+@import 'material-icons/iconfont/material-icons.css';
+
+:root {
+  --color-dark-grey: #666; 
+  --color-dark-grey2: #222; 
+  --color-grey3: #444;
+  --color-light-grey: #f4f5f7;
+  --color-light-grey2: #ededed;
+  --btn-color-text: white;
+  --box-shadow1: #091e424f;
+  --box-shadow2: #091e4240;
+  --error: #fa7030;
+  --info: #73ffa2;
+}
+
+* {
+  font-family: Roboto;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.printing {
+  font-size: 12px;
+}
+
+body {
+  background-color: white;
+  color: var(--color-dark-grey2);
+  height: 98%;
+  width: 90%;
+  margin-left: 25px;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
+h1 {
+  color: black;
+  margin-top: 20px;
+}
+h2 {
+  font-size: 0.8em
+}
+
+.titel {
+  font-weight: bold;
+}
+
+.pagetitle {
+  padding: 1em;
+  font-size: 2em;
+  background-color: var(--color-light-grey);
+  display: flex;
+  align-items: flex-end;
+  gap: 100px;
+}
+
+.pagetitle img {
+  height: 120px;
+}
+
+.pagefooter {
+  background-color: var(--color-light-grey);
+  margin-top: 20px;
+  padding: 5px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pagefooter div {
+  margin-left: 100px;
+}
+
+.pagefooter div a span {
+  font-size: 14px;
+  margin-right: 15px;
+}
+
+li {
+  list-style: none;
+}
+
+.leer {
+  background-color: var(--error) !important;
+}
+
+.navbar {
+  background-color: var(--color-light-grey);
+  width: 100%;
+}
+
+@media only screen and (min-width: 700px) {
+  .navbar ul {
+    display: flex !important;
+  }
+
+  button {
+    width: unset !important;
+  }
+  
+}
+
+@media only screen and (min-width: 1000px) {
+  .ergebnis {
+    display: flex !important;
+  }  
+  
+  .row label {
+    margin: 20px !important;
+  }
+}
+
+button {
+  vertical-align: middle;
+  font-size: 1em;
+  padding: 5px;
+  width: 100%;
+}
+
+.centered {
+  vertical-align: middle;
+}
+
+.centertext {
+  text-align: center;
+}
+
+.actions a span {
+  margin: 10px;
+  /* font-size: 36px; */
+}
+
+.sameline {
+  display: flex;
+}
+
+.navbar ul {
+  display: block;
+  justify-content: flex-end;
+  padding-left: 0;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.navbar ul li {
+  padding: 4px;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--color-dark-grey2);
+}
+
+.grid {
+  display: grid;
+}
+
+.bodyheader {
+  margin-top: 20px;
+}
+
+.buttonlink {
+  background-color: #e9e9ed;
+  padding: 10px 10px 10px 0px;
+  border-style: solid;
+  border-radius: 4px;
+  border-width: 1px;
+  border-color: #8f8f9d;
+}
+
+.buttonlink span {
+  font-size: 24px;
+}
+
+.generalcontent {
+  background-color: var(--color-light-grey);
+  margin: 2px;
+  padding: 8px;
+  border-radius: 5px;
+}
+
+.gewichtsklasse-meta {
+  font-size: 0.8em;
+}
+
+.listeneintrag {
+  background-color: white;
+  box-shadow: 0 0 1px 0 var(--box-shadow1),0 2px 4px -1px var(--box-shadow2);
+  margin: 2px;
+  padding: 8px;
+  border-radius: 2px;
+  display: flex;
+  font-size: 0.8em;
+  min-width: 200px;
+}
+
+.listeneintrag-header {
+  display: flex;
+  margin-top: 20px;
+  page-break-before: auto;
+}
+
+.justifycontent {
+  justify-content: space-between;
+}
+
+.gewichtsklasse-teilnehmer-meta {
+  font-size: 0.8em;
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+.gewichtsklasse-teilnehmer-meta span {
+  font-size: 0.8em;
+}
+
+.gewichtsklassen {
+  display: flex;
+  overflow: auto;
+}
+
+.gewichtsklassen .teilnehmerliste {
+  width: 150px;
+}
+
+.gewicht {
+  font-size: 1.2em !important;
+  font-weight: bold;
+}
+
+.wettkaempferliste-wettkaempfer > div {
+  width: 200px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.warnung  {
+  background-color: var(--error);
+}
+
+.listeneintrag-titel {
+  font-weight: bold;
+  font-size: 1.2em;
+  width: 300px !important;
+}
+
+.errormsg {
+  background-color: var(--error);
+  display: grid;
+  align-items: center;
+  text-align: center;
+  color: white;
+  height: 2em;
+  animation: hideDiv 0.5s forwards 5s;
+}
+
+.infomsg {
+  background-color: var(--info);
+  display: grid;
+  align-items: center;
+  text-align: center;
+  height: 2em;
+  animation: hideDiv 0.2s forwards 5s;
+}
+
+@keyframes hideDiv {
+  to {
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+
+.generalcontent form {
+  display: flex;
+  flex-direction: column;
+}
+
+.wettkaempfer {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.wettkaempfer > label {
+  width: 180px;
+  flex-shrink: 0;
+}
+
+.wettkaempfer.name {
+  font-weight: bold;
+  flex-wrap: wrap;
+}
+
+.wd100 {
+  width: 100px;
+}
+
+.wd300 {
+  width: 300px;
+}
+
+.wettkampfgruppe {
+  margin-bottom: 2em;
+  break-before: page;
+}
+
+.vs div{
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  flex-grow: 1;
+  flex-basis: 15%;
+}
+
+.vs div.center {
+  width: 40%;
+}
+
+.hidden {
+  display: none;
+}
+
+.ergebnis {
+  display: block;
+  justify-content: center; /* Horizontal zentrieren */
+  align-items: center; /* Vertikal zentrieren */
+  column-gap: 5%;
+}
+
+.ergebnis_eintrag {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 5px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Stil für die Labels in einem Eintrag */
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.row label {
+  margin: 2px;
+}
+
+.weiss {
+  background-color: ghostwhite;
+}
+
+.braun {
+  background-color: #723f21;
+  color: white;
+}
+
+.gelb {
+  background-color: gold;
+}
+
+.orange {
+  background-color: #fa7030;
+}
+
+.gruen {
+  background-color: forestgreen;
+  color: white;
+}
+
+.blau {
+  background-color: rgb(54, 111, 216);
+  color: white;
+}
+
+.vorhanden {
+  background-color: #73ffa2;
+}
+
+@media print {
+  /* Verstecke bestimmte Elemente oder Pseudoelemente im Druckmodus */
+  .no-print {
+    display: none;
+  }
+
+  /* Ändere das Styling für den Druckmodus */
+  body {
+    font-size: 12pt;
+  }
+}
+
+tr {
+  border: 1px solid black;
+}
+
+ /* Style the tab */
+ .tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+} 
+
+.groupsrow {
+  outline: black;
+  margin-bottom: 20px;
+  outline-style: auto;
+  break-inside: avoid;
+  break-after: avoid-page; /* Mögliche Werte: auto, always, avoid, left, right, page, column, avoid-page, etc. */
+  /* break-after: auto;  */
+}
+
+.emptyTableCell {
+  background-color: white;
+  border-style: dotted;
+  width: 50px;
+  height: 30px;
+}
+
+.seitenumbruch {
+  page-break-before: always;
+}
+
+.table {
+  display: table;
+  width: 100%; /* Passen Sie die Breite nach Bedarf an */
+  margin-bottom: 20px;
+  border-bottom: 1px solid #000;
+}
+
+.table .wettkaempfer_name {
+  font-weight: bold;
+}
+
+.breakbefore {
+  page-break-before: page; /* Mögliche Werte: auto, always, avoid, left, right, page, column, avoid-page, etc. */
+}
+
+.table-row {
+  display: table-row;
+}
+
+.table-cell {
+  display: table-cell;
+  padding: 8px; /* Abstand innerhalb der Zellen */
+  text-align: left; /* Textausrichtung */
+}
+
+.columnVerein{
+  width: 160px;
+}
+.columnVS{
+  width: 50px; 
+  text-align: center;
+}
+.columnName {
+  width: 180px !important;
+}
+.hochkannt {
+  transform: rotate(-90deg);
+  transform-origin: left bottom;
+  display: inline-block;
+  position: relative;
+  top: 430px;
+}
+
+.flex_warp {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 50px;
+  border-bottom: 1px solid #000;
+  page-break-inside: avoid;
+}
+
+.box {
+  width: 50%;
+}
+
+.gruppentitel_2 {
+  font-size: medium;
+}
+
+.title_with_icons {
+  margin-left: 10px;
+}
+
+.clickbar  {
+  cursor: pointer;
+}

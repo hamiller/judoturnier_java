@@ -18,17 +18,17 @@
         </div>
 
         <div class="listeneintrag">
-          <input type="radio" name="turniertyp" value="Randori" {{setChecked "Randori" turniertyp}}/><label>Randori-Turnier</label>
-          <input type="radio" name="turniertyp" value="Standard" {{setChecked "Standard" turniertyp}}/><label>Standard-Turnier</label>
+          <input type="radio" name="turniertyp" value="RANDORI" {{setChecked "RANDORI" turniertyp.name}}/><label>Randori-Turnier</label>
+          <input type="radio" name="turniertyp" value="STANDARD" {{setChecked "STANDARD" turniertyp.name}}/><label>Standard-Turnier</label>
         </div>
 
         <div class="listeneintrag">
-          <div class=""><label>Anzahl der Matten </label><input class="wd100" type="number" name="mattenanzahl" value="{{mattenanzahl}}"/></div>
+          <div class=""><label>Anzahl der Matten </label><input class="wd100" type="number" name="mattenanzahl" value="{{mattenanzahl.anzahl}}"/></div>
         </div>
 
         <div class="listeneintrag">
-          <input type="radio" name="wettkampfreihenfolge" value="Abwechselnd" {{setChecked "Abwechselnd" wettkampfreihenfolge}}/><label>Immer 2 Gruppen kämpfen abwechseln</label>
-          <input type="radio" name="wettkampfreihenfolge" value="Alle" {{setChecked "Alle" wettkampfreihenfolge}}/><label>Es kämpfen je Durchgang alle Gruppen</label>
+          <input type="radio" name="wettkampfreihenfolge" value="ABWECHSELND" {{setChecked "ABWECHSELND" wettkampfreihenfolge.name}}/><label>Immer 2 Gruppen kämpfen abwechseln</label>
+          <input type="radio" name="wettkampfreihenfolge" value="ALLE" {{setChecked "ALLE" wettkampfreihenfolge.name}}/><label>Es kämpfen je Durchgang alle Gruppen</label>
         </div>
 
       </form>
@@ -55,6 +55,7 @@
       </form>
     </div>
     {{/if}}
+  </div>
   {{> footer}}
 </body>
 <script type="text/javascript">
