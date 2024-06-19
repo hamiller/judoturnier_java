@@ -1,5 +1,5 @@
 CREATE TABLE verein (
                         id SERIAL,
-                        "name" VARCHAR(50),
+                        "name" VARCHAR(255),
                         PRIMARY KEY (id)
 );

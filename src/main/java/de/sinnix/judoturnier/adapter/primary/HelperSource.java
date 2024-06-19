@@ -1,6 +1,7 @@
 package de.sinnix.judoturnier.adapter.primary;
 
 import com.github.jknack.handlebars.Options;
+import de.sinnix.judoturnier.model.Wertung;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +16,7 @@ public class HelperSource {
     }
 
     public static String janein(Boolean value, Options options) {
-        if (value) {
+        if (value != null && value) {
             return "Ja";
         }
         return "Nein";
@@ -60,9 +61,11 @@ public class HelperSource {
         }
     }
 
-    public static String istLeer(Object[] params, Options options) {
+    public static String istLeer(Options options) {
         boolean istLeer = false;
-        for (Object param : params) {
+        logger.trace("options: {}", options.params);
+        for (Object param : options.params) {
+            logger.trace("param: {}", param);
             if (param == null || "".equals(param)) {
                 istLeer = true;
                 break;
@@ -71,24 +74,24 @@ public class HelperSource {
         return istLeer ? "leer" : "";
     }
 
-//        hbs.registerHelper("wertungVorhanden", (Helper<Wertung>) (wertung, options) -> {
-//            boolean hatWertung = wertung != null && (wertung.getKampfgeistWettkaempfer1() != null || wertung.getSieger() != null);
-//            return hatWertung ? "vorhanden" : "";
-//        });
-//        hbs.registerHelper("vorherigesElement", (Helper<Object[]>) (items, options) -> {
-//            for (int i = 0; i < items.length; i++) {
-//                if (i > 0) {
-//                    options.context.combine("previous", items[i - 1]);
-//                } else {
-//                    options.context.combine("previous", null);
-//                }
-//            }
-//            return items;
-//        });
-//        hbs.registerHelper("gleichesElement", (element1, options) -> {
-//            Object element2 = options.param(0);
-//            return element1.equals(element2);
-//        };
+    public static String wertungVorhanden(Wertung wertung, Options options) {
+        return (wertung != null && (wertung.kampfgeistWettkaempfer1() != null || wertung.sieger() != null)) ? "vorhanden": "";
+    }
+
+    public static Boolean gleichesElement(Object[] elements, Options options) {
+        return elements[0] == elements[1];
+    }
+
+    public static Object[] vorherigesElement(Object[] items, Options options) {
+        for (int i = 0; i < items.length; i++) {
+            if (i > 0) {
+                options.context.combine("previous", items[i - 1]);
+            } else {
+                options.context.combine("previous", null);
+            }
+        }
+        return items;
+    }
 
     public static String concat(Object[] args, Options options) {
         StringBuilder sb = new StringBuilder();

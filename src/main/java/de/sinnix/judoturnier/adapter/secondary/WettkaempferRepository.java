@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface VereinRepository extends JpaRepository<VereinJpa, Integer> {
+public interface WettkaempferRepository extends JpaRepository<WettkaempferJpa, Integer> {
 }

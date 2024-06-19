@@ -1,7 +1,7 @@
 package de.sinnix.judoturnier.model;
 
 public record Wettkaempfer(
-    Long id,
+    Integer id,
     String name,
     Geschlecht geschlecht,
     Altersklasse altersklasse,

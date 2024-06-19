@@ -17,7 +17,7 @@ public class WebConfiguration {
         viewResolver.setPrefix("/WEB-INF/handlebars/");
         viewResolver.setSuffix(".hbs");
         viewResolver.setCache(false);
-        viewResolver.registerHelpers(HelperSource.class);;
+        viewResolver.registerHelpers(HelperSource.class);
         return viewResolver;
     }
 

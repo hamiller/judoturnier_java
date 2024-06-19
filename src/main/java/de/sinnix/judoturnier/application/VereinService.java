@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class VereinService {
@@ -17,6 +18,10 @@ public class VereinService {
     private VereinRepository vereinRepository;
 
     public List<Verein> holeAlleVereine() {
-        return vereinRepository.findAll();
+        return vereinRepository.findAll().stream().map(jpa -> new Verein(jpa.getId(), jpa.getName())).collect(Collectors.toUnmodifiableList());
+    }
+
+    public Verein holeVerein(Integer vereinsId) {
+        return vereinRepository.findById(vereinsId).map(jpa -> new Verein(jpa.getId(), jpa.getName())).orElseThrow();
     }
 }

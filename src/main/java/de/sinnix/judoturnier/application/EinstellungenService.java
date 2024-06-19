@@ -23,9 +23,9 @@ public class EinstellungenService {
     public Einstellungen ladeEinstellungen() {
         logger.info("EinstellungenService ladeEinstellungen()");
         List<EinstellungJpa> einstellungenList = einstellungRepository.findAll();
-        TurnierTyp turnierTyp = einstellungenList.stream().filter(e -> e.art().equalsIgnoreCase(TurnierTyp.TYP)).findFirst().map(t -> TurnierTyp.valueOf(t.wert())).orElseThrow();
-        MattenAnzahl mattenAnzahl = einstellungenList.stream().filter(e -> e.art().equalsIgnoreCase(MattenAnzahl.TYP)).findFirst().map(t -> new MattenAnzahl(Integer.parseInt(t.wert()))).orElseThrow();
-        WettkampfReihenfolge wettkampfReihenfolge = einstellungenList.stream().filter(e -> e.art().equalsIgnoreCase(WettkampfReihenfolge.TYP)).findFirst().map(t -> WettkampfReihenfolge.valueOf(t.wert())).orElseThrow();
+        TurnierTyp turnierTyp = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(TurnierTyp.TYP)).findFirst().map(t -> TurnierTyp.valueOf(t.getWert())).orElseThrow();
+        MattenAnzahl mattenAnzahl = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(MattenAnzahl.TYP)).findFirst().map(t -> new MattenAnzahl(Integer.parseInt(t.getWert()))).orElseThrow();
+        WettkampfReihenfolge wettkampfReihenfolge = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(WettkampfReihenfolge.TYP)).findFirst().map(t -> WettkampfReihenfolge.valueOf(t.getWert())).orElseThrow();
         return new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge);
     }
 
@@ -37,5 +37,10 @@ public class EinstellungenService {
                 new EinstellungJpa(einstellungen.wettkampfReihenfolge().TYP, einstellungen.wettkampfReihenfolge().name()));
         einstellungRepository.saveAll(jpaList);
         return ladeEinstellungen();
+    }
+
+    public boolean isRandori() {
+        TurnierTyp turnierTyp = einstellungRepository.findById(TurnierTyp.TYP).map(typ -> TurnierTyp.valueOf(typ.getWert())).orElseThrow();
+        return turnierTyp == TurnierTyp.RANDORI;
     }
 }

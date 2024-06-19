@@ -38,20 +38,21 @@
       <div class="wettkaempfer alter">
       <label>Altersklasse</label>
       {{#each altersklasse as |name index|}}
-        <input type="radio" name="altersklasse" value="{{index}}" {{setChecked ../kaempfer.altersklasse name}}/>{{name}}
+        <input type="radio" name="altersklasse" value="{{name}}" {{setChecked ../kaempfer.altersklasse name}}/>{{name.bezeichnung}}
       {{/each}}
       </div>
 
       <div class="wettkaempfer geschlecht">
       <label>Geschlecht</label>
       {{#each geschlechter as |name index|}}
-        <input type="radio" name="geschlecht" value="{{index}}" {{setChecked ../kaempfer.geschlecht name}}/>{{name}}
+        <input type="radio" name="geschlecht" value="{{name}}" {{setChecked ../kaempfer.geschlecht name}}/>{{name.bezeichnung}}
       {{/each}}
       </div>
 
       <div class="wettkaempfer gewicht"><label>Gewicht</label><input class="wd100" type="number" step="0.1" name="gewicht" value="{{kaempfer.gewicht}}"/></div>
-      <div class="wettkaempfer checked"><label>geprüft</label><input class="wd100" type="checkbox" name="checked" value={{kaempfer.checked}} {{setChecked true kaempfer.checked}}/></div>
-      <div class="wettkaempfer printed"><label>gedruckt</label><input class="wd100" type="checkbox" name="printed" value={{kaempfer.checked}} {{setChecked true kaempfer.printed}}/></div>
+      <div class="wettkaempfer checked"><label>geprüft</label><input class="wd100" type="checkbox" name="checked" {{setChecked true  kaempfer.checked}}/></div>
+
+      <div class="wettkaempfer printed"><label>gedruckt</label><input class="wd100" type="checkbox" name="printed" {{setChecked true kaempfer.printed}}/></div>
 
 
       <button type="submit"><span class="material-icons md-48" title="Wettkämpfer eintragen">person_add</span></button>

@@ -1,5 +1,5 @@
 CREATE TABLE einstellungen (
-                               art VARCHAR(50),
-                               wert VARCHAR(250),
+                               art VARCHAR(255),
+                               wert VARCHAR(255),
                                PRIMARY KEY (art)
 );

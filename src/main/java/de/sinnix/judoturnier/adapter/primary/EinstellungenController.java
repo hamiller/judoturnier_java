@@ -2,8 +2,7 @@ package de.sinnix.judoturnier.adapter.primary;
 
 import de.sinnix.judoturnier.application.EinstellungenService;
 import de.sinnix.judoturnier.application.GewichtsklassenGruppenService;
-import de.sinnix.judoturnier.application.TurnierService;
-import de.sinnix.judoturnier.application.WiegenService;
+import de.sinnix.judoturnier.application.WettkaempferService;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.Kampfsystem;
 import de.sinnix.judoturnier.model.MattenAnzahl;
@@ -19,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.math.BigDecimal;
-
 @RestController
 public class EinstellungenController {
 
@@ -29,7 +26,7 @@ public class EinstellungenController {
     @Autowired
     private EinstellungenService einstellungenService;
     @Autowired
-    private WiegenService wiegenService;
+    private WettkaempferService wiegenService;
     @Autowired
     private GewichtsklassenGruppenService gewichtsklassenGruppenService;
 

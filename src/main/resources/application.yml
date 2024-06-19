@@ -2,8 +2,13 @@ spring:
     application.name: judoturnier
 
     jpa:
-        database: POSTGRESQL
-        show-sql: true
+        hibernate:
+            ddl-auto: update
+        show-sql: false
+        open-in-view: false
+        properties:
+            hibernate:
+                format_sql: true
     datasource:
         url: jdbc:postgresql://localhost:5532/judo
         #url = jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
