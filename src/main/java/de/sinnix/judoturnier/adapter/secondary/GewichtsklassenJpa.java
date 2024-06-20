@@ -1,7 +1,5 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
-import de.sinnix.judoturnier.model.Altersklasse;
-import de.sinnix.judoturnier.model.Geschlecht;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,12 +28,12 @@ public class GewichtsklassenJpa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Altersklasse altersKlasse;
-    private Geschlecht gruppenGeschlecht;
+    private String altersklasse;
+    private String gruppengeschlecht;
     @OneToMany
     @JoinColumn(name = "teilnehmer")
     private List<WettkaempferJpa> teilnehmer;
     private String name;
-    private Double minGewicht;
-    private Double maxGewicht;
+    private Double mingewicht;
+    private Double maxgewicht;
 }

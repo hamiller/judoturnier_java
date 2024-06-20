@@ -12,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -34,8 +36,8 @@ public class WettkaempferConverterTest {
         verein = new Verein(1, "Verein1");
         vereinJpa = new VereinJpa(1, "Verein1");
 
-        wettkaempfer = new Wettkaempfer(1, "Max", Geschlecht.m, Altersklasse.U18, verein, 70d, Farbe.BLAU, true, false);
-        wettkaempferJpa = new WettkaempferJpa(1, "Max", Geschlecht.m, Altersklasse.U18, vereinJpa, 70d, Farbe.BLAU, true, false);
+        wettkaempfer = new Wettkaempfer(1, "Max", Geschlecht.m, Altersklasse.U18, verein, 70d, Optional.of(Farbe.BLAU), true, false);
+        wettkaempferJpa = new WettkaempferJpa(1, "Max", "m", "U18", vereinJpa, 70d, "BLAU", true, false);
     }
 
     @Test
@@ -47,10 +49,10 @@ public class WettkaempferConverterTest {
         assertNotNull(result);
         assertEquals(wettkaempfer.id(), result.getId());
         assertEquals(wettkaempfer.name(), result.getName());
-        assertEquals(wettkaempfer.geschlecht(), result.getGeschlecht());
-        assertEquals(wettkaempfer.altersklasse(), result.getAltersklasse());
+        assertEquals(wettkaempfer.geschlecht().name(), result.getGeschlecht());
+        assertEquals(wettkaempfer.altersklasse().name(), result.getAltersklasse());
         assertEquals(wettkaempfer.gewicht(), result.getGewicht());
-        assertEquals(wettkaempfer.farbe(), result.getFarbe());
+        assertEquals(wettkaempfer.farbe().get().name(), result.getFarbe());
         assertEquals(wettkaempfer.checked(), result.getChecked());
         assertEquals(wettkaempfer.printed(), result.getPrinted());
         assertEquals(vereinJpa, result.getVerein());
@@ -65,10 +67,10 @@ public class WettkaempferConverterTest {
         assertNotNull(result);
         assertEquals(wettkaempferJpa.getId(), result.id());
         assertEquals(wettkaempferJpa.getName(), result.name());
-        assertEquals(wettkaempferJpa.getGeschlecht(), result.geschlecht());
-        assertEquals(wettkaempferJpa.getAltersklasse(), result.altersklasse());
+        assertEquals(wettkaempferJpa.getGeschlecht(), result.geschlecht().name());
+        assertEquals(wettkaempferJpa.getAltersklasse(), result.altersklasse().name());
         assertEquals(wettkaempferJpa.getGewicht(), result.gewicht());
-        assertEquals(wettkaempferJpa.getFarbe(), result.farbe());
+        assertEquals(wettkaempferJpa.getFarbe(), result.farbe().get().name());
         assertEquals(wettkaempferJpa.getChecked(), result.checked());
         assertEquals(wettkaempferJpa.getPrinted(), result.printed());
         assertEquals(verein, result.verein());

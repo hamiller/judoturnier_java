@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,18 +44,18 @@ public class GewichtsklassenRepositoryTest {
     public void testFindAll() {
         // Setup mocks
         var teilnehmerJpa = List.of(
-                new WettkaempferJpa(1, "Melanie", Geschlecht.w, Altersklasse.Frauen, new VereinJpa(1, "Verein1"), 55d, null, false, false),
-                new WettkaempferJpa(2, "Mira", Geschlecht.w, Altersklasse.Frauen, new VereinJpa(2, "Verein2"), 55d, null, false, false));
-        GewichtsklassenJpa jpa1 = new GewichtsklassenJpa(1, Altersklasse.Frauen, Geschlecht.w, teilnehmerJpa, "gruppe1", 60d, 50d);
-        GewichtsklassenJpa jpa2 = new GewichtsklassenJpa(2, Altersklasse.Frauen, Geschlecht.w, teilnehmerJpa, "gruppe2", 60d, 50d);
+                new WettkaempferJpa(1, "Melanie", "w", "Frauen", new VereinJpa(1, "Verein1"), 55d, null, false, false),
+                new WettkaempferJpa(2, "Mira", "w", "Frauen", new VereinJpa(2, "Verein2"), 55d, null, false, false));
+        GewichtsklassenJpa jpa1 = new GewichtsklassenJpa(1, "Frauen", "w", teilnehmerJpa, "gruppe1", 60d, 50d);
+        GewichtsklassenJpa jpa2 = new GewichtsklassenJpa(2, "Frauen", "w", teilnehmerJpa, "gruppe2", 60d, 50d);
         List<GewichtsklassenJpa> jpaList = Arrays.asList(jpa1, jpa2);
         when(gewichtsklassenJpaRepository.findAll()).thenReturn(jpaList);
 
         var teilnehmer = List.of(
                 new Wettkaempfer(1, "Melanie", Geschlecht.w, Altersklasse.Frauen, new Verein(1, "Verein1"), 55d, null, false, false),
                 new Wettkaempfer(2, "Mira", Geschlecht.w, Altersklasse.Frauen, new Verein(2, "Verein2"), 55d, null, false, false));
-        GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(1, Altersklasse.Frauen, Geschlecht.w, teilnehmer, "gruppe1", 60d, 50d);
-        GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(2, Altersklasse.Frauen, Geschlecht.w, teilnehmer, "gruppe2", 60d, 50d);
+        GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(1, Altersklasse.Frauen, Optional.of(Geschlecht.w), teilnehmer, "gruppe1", 60d, 50d);
+        GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(2, Altersklasse.Frauen, Optional.of(Geschlecht.w), teilnehmer, "gruppe2", 60d, 50d);
         when(gewichtsklassenConverter.convertToGewichtsklassen(jpa1)).thenReturn(gruppe1);
         when(gewichtsklassenConverter.convertToGewichtsklassen(jpa2)).thenReturn(gruppe2);
 
@@ -82,15 +83,15 @@ public class GewichtsklassenRepositoryTest {
         var teilnehmer = List.of(
                 new Wettkaempfer(1, "Melanie", Geschlecht.w, Altersklasse.Frauen, new Verein(1, "Verein1"), 55d, null, false, false),
                 new Wettkaempfer(2, "Mira", Geschlecht.w, Altersklasse.Frauen, new Verein(2, "Verein2"), 55d, null, false, false));
-        GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(1, Altersklasse.Frauen, Geschlecht.w, teilnehmer, "gruppe1", 60d, 50d);
-        GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(2, Altersklasse.Frauen, Geschlecht.w, teilnehmer, "gruppe2", 60d, 50d);
+        GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(1, Altersklasse.Frauen, Optional.of(Geschlecht.w), teilnehmer, "gruppe1", 60d, 50d);
+        GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(2, Altersklasse.Frauen, Optional.of(Geschlecht.w), teilnehmer, "gruppe2", 60d, 50d);
         List<GewichtsklassenGruppe> gruppenList = Arrays.asList(gruppe1, gruppe2);
 
         var teilnehmerJpa = List.of(
-                new WettkaempferJpa(1, "Melanie", Geschlecht.w, Altersklasse.Frauen, new VereinJpa(1, "Verein1"), 55d, null, false, false),
-                new WettkaempferJpa(2, "Mira", Geschlecht.w, Altersklasse.Frauen, new VereinJpa(2, "Verein2"), 55d, null, false, false));
-        GewichtsklassenJpa jpa1 = new GewichtsklassenJpa(1, Altersklasse.Frauen, Geschlecht.w, teilnehmerJpa, "gruppe1", 60d, 50d);
-        GewichtsklassenJpa jpa2 = new GewichtsklassenJpa(2, Altersklasse.Frauen, Geschlecht.w, teilnehmerJpa, "gruppe2", 60d, 50d);
+                new WettkaempferJpa(1, "Melanie", "w", "Frauen", new VereinJpa(1, "Verein1"), 55d, null, false, false),
+                new WettkaempferJpa(2, "Mira", "w", "Frauen", new VereinJpa(2, "Verein2"), 55d, null, false, false));
+        GewichtsklassenJpa jpa1 = new GewichtsklassenJpa(1, "Frauen", "w", teilnehmerJpa, "gruppe1", 60d, 50d);
+        GewichtsklassenJpa jpa2 = new GewichtsklassenJpa(2, "Frauen", "w", teilnehmerJpa, "gruppe2", 60d, 50d);
 
         when(gewichtsklassenConverter.convertFromGewichtsklassen(gruppe1)).thenReturn(jpa1);
         when(gewichtsklassenConverter.convertFromGewichtsklassen(gruppe2)).thenReturn(jpa2);

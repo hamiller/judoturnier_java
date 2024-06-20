@@ -45,8 +45,8 @@ public class WettkaempferServiceTest {
 
     @BeforeEach
     void setUp() {
-        wettkaempfer = new Wettkaempfer(1, "Max", Geschlecht.m, Altersklasse.U18, new Verein(1,"Verein1"), 70d, Farbe.BLAU, true, false);
-        wettkaempferJpa = new WettkaempferJpa(1, "Max", Geschlecht.m, Altersklasse.U18, new VereinJpa(1,"Verein1"), 70d, Farbe.BLAU, true, false);
+        wettkaempfer = new Wettkaempfer(1, "Max", Geschlecht.m, Altersklasse.U18, new Verein(1,"Verein1"), 70d, Optional.of(Farbe.BLAU), true, false);
+        wettkaempferJpa = new WettkaempferJpa(1, "Max", "m", "U18", new VereinJpa(1,"Verein1"), 70d, "BLAU", true, false);
     }
 
     @Test

@@ -1,5 +1,7 @@
 package de.sinnix.judoturnier.model;
 
+import java.util.Optional;
+
 public record Wettkaempfer(
     Integer id,
     String name,
@@ -7,6 +9,6 @@ public record Wettkaempfer(
     Altersklasse altersklasse,
     Verein verein,
     Double gewicht,
-    Farbe farbe,
+    Optional<Farbe> farbe,
     Boolean checked,
     Boolean printed) {}

@@ -52,8 +52,8 @@ public class GewichtsklassenController {
 
 
         ModelAndView mav = new ModelAndView("gewichtsklassen");
-        mav.addObject("gewichtsklassengruppenWeiblich", currentGwks.stream().filter(gruppe -> gruppe.gruppenGeschlecht() == Geschlecht.w));
-        mav.addObject("gewichtsklassengruppenMaennlich", currentGwks.stream().filter(gruppe -> gruppe.gruppenGeschlecht() == Geschlecht.m));
+        mav.addObject("gewichtsklassengruppenWeiblich", currentGwks.stream().filter(gruppe -> gruppe.gruppenGeschlecht().isPresent() && gruppe.gruppenGeschlecht().get() == Geschlecht.w));
+        mav.addObject("gewichtsklassengruppenMaennlich", currentGwks.stream().filter(gruppe -> gruppe.gruppenGeschlecht().isPresent() && gruppe.gruppenGeschlecht().get() == Geschlecht.m));
         mav.addObject("anzahlwk", wks.size());
         mav.addObject("anzahlwkInGroups", anzahlwkInGroups);
         mav.addObject("anzahlUnterschiedlich", anzahlwkInGroups != wks.size());

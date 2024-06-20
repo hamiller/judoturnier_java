@@ -1,5 +1,6 @@
 package de.sinnix.judoturnier.application;
 
+import de.sinnix.judoturnier.adapter.secondary.GewichtsklassenRepository;
 import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Farbe;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,7 +31,7 @@ import static org.mockito.Mockito.when;
 public class GewichtsklassenServiceTest {
 
     @Mock
-    private IGewichtsklassenRepository gewichtsklassenRepository;
+    private GewichtsklassenRepository gewichtsklassenRepository;
     @Mock
     private WettkaempferService wettkaempferService;
     @InjectMocks
@@ -38,8 +40,8 @@ public class GewichtsklassenServiceTest {
     @Test
     void testLade() {
         // Setup mocks
-        GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(1, Altersklasse.U18, Geschlecht.m, new ArrayList<>(), "Gruppe1", 50.0, 60.0);
-        GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(2, Altersklasse.U18, Geschlecht.m, new ArrayList<>(), "Gruppe2", 60.0, 70.0);
+        GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(1, Altersklasse.U18, Optional.of(Geschlecht.m), new ArrayList<>(), "Gruppe1", 50.0, 60.0);
+        GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(2, Altersklasse.U18, Optional.of(Geschlecht.m), new ArrayList<>(), "Gruppe2", 60.0, 70.0);
         List<GewichtsklassenGruppe> gruppenList = Arrays.asList(gruppe1, gruppe2);
 
         when(gewichtsklassenRepository.findAll()).thenReturn(gruppenList);
@@ -65,8 +67,8 @@ public class GewichtsklassenServiceTest {
     @Test
     void testSpeichere() {
         // Setup mocks
-        GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(1, Altersklasse.U18, Geschlecht.m, new ArrayList<>(), "Gruppe1", 50.0, 60.0);
-        GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(2, Altersklasse.U18, Geschlecht.m, new ArrayList<>(), "Gruppe2", 60.0, 70.0);
+        GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(1, Altersklasse.U18, Optional.of(Geschlecht.m), new ArrayList<>(), "Gruppe1", 50.0, 60.0);
+        GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(2, Altersklasse.U18, Optional.of(Geschlecht.m), new ArrayList<>(), "Gruppe2", 60.0, 70.0);
         List<GewichtsklassenGruppe> gruppenList = Arrays.asList(gruppe1, gruppe2);
 
         // Execute method under test
@@ -93,20 +95,20 @@ public class GewichtsklassenServiceTest {
         // gegeben
         List<Wettkaempfer> alleWettkaempferList = WettkaempferFixtures.wettkaempferList;
         List<Wettkaempfer> teilnehmerListe = Arrays.asList(
-                new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1"), 25.0, Farbe.ORANGE, true, false),
-                new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3"), 27.0, Farbe.GRUEN, true, true),
-                new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5"), 29.0, Farbe.ORANGE, true, false)
+                new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1"), 25.0, Optional.of(Farbe.ORANGE), true, false),
+                new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3"), 27.0, Optional.of(Farbe.GRUEN), true, true),
+                new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5"), 29.0, Optional.of(Farbe.ORANGE), true, false)
         );
-        GewichtsklassenGruppe gruppe = new GewichtsklassenGruppe(1, Altersklasse.U11, Geschlecht.m, teilnehmerListe, "Gruppe1", 25.0, 29.0);
-        GewichtsklassenGruppe gruppeFix = new GewichtsklassenGruppe(2, Altersklasse.U11, Geschlecht.m, teilnehmerListe, "Gruppe2", 25.0, 29.0);
+        GewichtsklassenGruppe gruppe = new GewichtsklassenGruppe(1, Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmerListe, "Gruppe1", 25.0, 29.0);
+        GewichtsklassenGruppe gruppeFix = new GewichtsklassenGruppe(2, Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmerListe, "Gruppe2", 25.0, 29.0);
 
         // neu
         List<Wettkaempfer> teilnehmerListeNeu = Arrays.asList(
-                new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1"), 25.0, Farbe.ORANGE, true, false),
-                new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3"), 27.0, Farbe.GRUEN, true, true),
-                new Wettkaempfer(7, "Teilnehmer G", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2"), 26.1, Farbe.GRUEN, true, true)
+                new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1"), 25.0, Optional.of(Farbe.ORANGE), true, false),
+                new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3"), 27.0, Optional.of(Farbe.GRUEN), true, true),
+                new Wettkaempfer(7, "Teilnehmer G", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2"), 26.1, Optional.of(Farbe.GRUEN), true, true)
         );
-        GewichtsklassenGruppe gruppeNeu = new GewichtsklassenGruppe(1, Altersklasse.U11, Geschlecht.m, teilnehmerListeNeu, "Gruppe1", 25.0, 27.0);
+        GewichtsklassenGruppe gruppeNeu = new GewichtsklassenGruppe(1, Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmerListeNeu, "Gruppe1", 25.0, 27.0);
 
 
         // Mocks einrichten

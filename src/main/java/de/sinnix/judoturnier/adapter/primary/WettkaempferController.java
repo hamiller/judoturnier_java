@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
@@ -62,8 +63,8 @@ public class WettkaempferController {
                 geschlecht,
                 altersklasse,
                 verein,
-                notEmpty(formData.getFirst("gewicht")) ? Double.parseDouble(formData.getFirst("gewicht")) : null,
-                notEmpty(formData.getFirst("farbe")) ? Farbe.valueOf(formData.getFirst("farbe")) : null,
+                notEmpty(formData.getFirst("gewicht")) ? Double.parseDouble(formData.getFirst("gewicht")) : 0d,
+                notEmpty(formData.getFirst("farbe")) ? Optional.of(Farbe.valueOf(formData.getFirst("farbe"))) : Optional.empty(),
                 notEmpty(formData.getFirst("checked")) ? true : false,
                 notEmpty(formData.getFirst("printed")) ? true : false);
 

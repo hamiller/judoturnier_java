@@ -1,5 +1,6 @@
 package de.sinnix.judoturnier.application;
 
+import de.sinnix.judoturnier.adapter.secondary.GewichtsklassenRepository;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Wettkaempfer;
@@ -20,7 +21,7 @@ public class GewichtsklassenService {
     private static final Logger logger = LogManager.getLogger(GewichtsklassenService.class);
 
     @Autowired
-    private IGewichtsklassenRepository gewichtsklassenRepository;
+    private GewichtsklassenRepository gewichtsklassenRepository;
 
     @Autowired
     private WettkaempferService wettkaempferService;

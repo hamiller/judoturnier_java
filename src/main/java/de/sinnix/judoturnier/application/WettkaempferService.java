@@ -54,11 +54,11 @@ public class WettkaempferService {
                 logger.info("Aktualisiere Wettkaempfer");
                 WettkaempferJpa wk = optionalWettkaempfer.get();
                 wk.setName(wettkaempfer.name());
-                wk.setGeschlecht(wettkaempfer.geschlecht());
-                wk.setAltersklasse(wettkaempfer.altersklasse());
+                wk.setGeschlecht(wettkaempfer.geschlecht().name());
+                wk.setAltersklasse(wettkaempfer.altersklasse().name());
                 wk.setVerein(vereinConverter.convertFromVerein(wettkaempfer.verein()));
                 wk.setGewicht(wettkaempfer.gewicht());
-                wk.setFarbe(wettkaempfer.farbe());
+                wk.setFarbe(wettkaempfer.farbe().map(f -> f.name()).orElse(null));
                 wk.setChecked(wettkaempfer.checked());
                 wk.setPrinted(wettkaempfer.printed());
                 wk = wettkaempferJpaRepository.save(wk);

@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
@@ -30,12 +32,10 @@ class GewichtsklassenConverterTest {
         when(wettkaempferConverter.convertToWettkaempferList(anyList())).thenReturn(teilnehmer);
         when(wettkaempferConverter.convertFromWettkaempferList(anyList())).thenReturn(teilnehmerJpa);
 
-        GewichtsklassenJpa jpa = new GewichtsklassenJpa(1, Altersklasse.U18, Geschlecht.m, teilnehmerJpa, "name", 12d, 123.0);
+        GewichtsklassenJpa jpa = new GewichtsklassenJpa(1, "U18", "m", teilnehmerJpa, "name", 12d, 123.0);
         var gewichtklassen = converter.convertToGewichtsklassen(jpa);
         var converted = converter.convertFromGewichtsklassen(gewichtklassen);
 
-        System.out.println(jpa);
-        System.out.println(converted);
         assertEquals(jpa, converted);
     }
 
@@ -46,7 +46,7 @@ class GewichtsklassenConverterTest {
         when(wettkaempferConverter.convertToWettkaempferList(anyList())).thenReturn(teilnehmer);
         when(wettkaempferConverter.convertFromWettkaempferList(anyList())).thenReturn(teilnehmerJpa);
 
-        GewichtsklassenGruppe gewichtklassen = new GewichtsklassenGruppe(1, Altersklasse.U18, Geschlecht.w, teilnehmer, "name", 12d, 133.0);
+        GewichtsklassenGruppe gewichtklassen = new GewichtsklassenGruppe(1, Altersklasse.U18, Optional.of(Geschlecht.w), teilnehmer, "name", 12d, 133.0);
         var jpa = converter.convertFromGewichtsklassen(gewichtklassen);
         var converted = converter.convertToGewichtsklassen(jpa);
 
