@@ -7,9 +7,9 @@ import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Verein;
 import de.sinnix.judoturnier.model.Wettkaempfer;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -34,11 +34,6 @@ public class GewichtsklassenServiceTest {
     private WettkaempferService wettkaempferService;
     @InjectMocks
     private GewichtsklassenService gewichtsklassenService;
-
-    @BeforeEach
-    public void setUp() {
-        // Initialize the mocks if necessary
-    }
 
     @Test
     void testLade() {
@@ -109,19 +104,28 @@ public class GewichtsklassenServiceTest {
         List<Wettkaempfer> teilnehmerListeNeu = Arrays.asList(
                 new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1"), 25.0, Farbe.ORANGE, true, false),
                 new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3"), 27.0, Farbe.GRUEN, true, true),
-                new Wettkaempfer(7, "Teilnehmer G", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2"), 29.0, Farbe.GRUEN, true, true)
+                new Wettkaempfer(7, "Teilnehmer G", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2"), 26.1, Farbe.GRUEN, true, true)
         );
-        GewichtsklassenGruppe gruppeNeu = new GewichtsklassenGruppe(1, Altersklasse.U11, Geschlecht.m, teilnehmerListeNeu, "Gruppe1", 25.0, 29.0);
+        GewichtsklassenGruppe gruppeNeu = new GewichtsklassenGruppe(1, Altersklasse.U11, Geschlecht.m, teilnehmerListeNeu, "Gruppe1", 25.0, 27.0);
 
+
+        // Mocks einrichten
+        when(gewichtsklassenRepository.findAll()).thenReturn(List.of(gruppe, gruppeFix));
+        when(wettkaempferService.alleKaempfer()).thenReturn(alleWettkaempferList);
 
         // test
         HashMap<Integer, List<Integer>> gruppenTeilnehmer = new HashMap<>();
         gruppenTeilnehmer.put(1, List.of(1, 3, 7));
-
         gewichtsklassenService.aktualisiere(gruppenTeilnehmer);
 
-        when(gewichtsklassenRepository.findAll()).thenReturn(List.of(gruppe, gruppeFix));
-        when(wettkaempferService.alleKaempfer()).thenReturn(alleWettkaempferList);
-        verify(gewichtsklassenRepository, times(1)).saveAll(List.of(gruppeNeu, gruppeFix));
+        // ArgumentCaptor verwenden
+        ArgumentCaptor<List<GewichtsklassenGruppe>> argumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(gewichtsklassenRepository, times(1)).saveAll(argumentCaptor.capture());
+
+        // Verifizieren
+        List<GewichtsklassenGruppe> capturedArgument = argumentCaptor.getValue();
+        assertEquals(2, capturedArgument.size());
+        assertEquals(capturedArgument.get(1), gruppeFix);
+        assertEquals(capturedArgument.get(0), gruppeNeu);
     }
 }
