@@ -7,7 +7,8 @@ public enum Farbe {
     GELB("gelb"),
     ORANGE("orange"),
     GRUEN("grün"),
-    BLAU("blau");
+    BLAU("blau"),
+    SCHWARZ("schwarz");
 
     private final String bezeichnung;
 

@@ -4,6 +4,8 @@ import de.sinnix.judoturnier.model.Wettkaempfer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class WettkaempferConverter {
 
@@ -37,5 +39,13 @@ public class WettkaempferConverter {
                 jpa.getPrinted()
         );
         return wettkaempfer;
+    }
+
+    public List<WettkaempferJpa> convertFromWettkaempferList(List<Wettkaempfer> teilnehmerList) {
+        return teilnehmerList.stream().map(teilnehmer -> this.convertFromWettkaempfer(teilnehmer)).toList();
+    }
+
+    public List<Wettkaempfer> convertToWettkaempferList(List<WettkaempferJpa> teilnehmerJpaList) {
+        return teilnehmerJpaList.stream().map(jpa -> this.convertToWettkaempfer(jpa)).toList();
     }
 }
