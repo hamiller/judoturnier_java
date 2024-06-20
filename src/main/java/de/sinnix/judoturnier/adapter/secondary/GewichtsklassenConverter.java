@@ -17,8 +17,8 @@ public class GewichtsklassenConverter {
     public GewichtsklassenGruppe convertToGewichtsklassen(GewichtsklassenJpa jpa) {
         return new GewichtsklassenGruppe(
                 jpa.getId(),
-                Altersklasse.valueOf(jpa.getAltersklasse()),
-                jpa.getGruppengeschlecht() != null ? Optional.of(Geschlecht.valueOf(jpa.getGruppengeschlecht())) : Optional.empty(),
+                getAltersklasse(jpa.getAltersklasse()),
+                getGeschlecht(jpa.getGruppengeschlecht()),
                 wettkaempferConverter.convertToWettkaempferList(jpa.getTeilnehmer()),
                 jpa.getName(),
                 jpa.getMingewicht(),
@@ -35,5 +35,13 @@ public class GewichtsklassenConverter {
         jpa.setGruppengeschlecht(gwk.gruppenGeschlecht().map(g -> g.name()).orElse(null));
         jpa.setTeilnehmer(wettkaempferConverter.convertFromWettkaempferList(gwk.teilnehmer()));
         return jpa;
+    }
+
+    private static Altersklasse getAltersklasse(String altersklasse) {
+        return (altersklasse != null && !altersklasse.isBlank()) ? Altersklasse.valueOf(altersklasse) : null;
+    }
+
+    private static Optional<Geschlecht> getGeschlecht(String geschlecht) {
+        return (geschlecht != null && !geschlecht.isBlank()) ? Optional.of(Geschlecht.valueOf(geschlecht)) : Optional.empty();
     }
 }

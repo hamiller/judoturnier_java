@@ -52,4 +52,18 @@ class GewichtsklassenConverterTest {
 
         assertEquals(gewichtklassen, converted);
     }
+
+    @Test
+    void convertMissingFields() {
+        var teilnehmer = WettkaempferFixtures.wettkaempferList;
+        var teilnehmerJpa = WettkaempferFixtures.wettkaempferJpaList;
+        when(wettkaempferConverter.convertToWettkaempferList(anyList())).thenReturn(teilnehmer);
+        when(wettkaempferConverter.convertFromWettkaempferList(anyList())).thenReturn(teilnehmerJpa);
+
+        GewichtsklassenGruppe gewichtklassen = new GewichtsklassenGruppe(1, Altersklasse.U18, Optional.empty(), teilnehmer, "name", 12d, 133.0);
+        var jpa = converter.convertFromGewichtsklassen(gewichtklassen);
+        var converted = converter.convertToGewichtsklassen(jpa);
+
+        assertEquals(gewichtklassen, converted);
+    }
 }

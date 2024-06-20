@@ -34,11 +34,11 @@ public class WettkaempferConverter {
         Wettkaempfer wettkaempfer = new Wettkaempfer(
                 jpa.getId(),
                 jpa.getName(),
-                jpa.getGeschlecht() != null ? Geschlecht.valueOf(jpa.getGeschlecht()) : null,
-                jpa.getAltersklasse() != null ? Altersklasse.valueOf(jpa.getAltersklasse()) : null,
+                getGeschlecht(jpa.getGeschlecht()),
+                getAltersklasse(jpa.getAltersklasse()),
                 vereinConverter.converToVerein(jpa.getVerein()),
                 jpa.getGewicht(),
-                jpa.getFarbe() != null ? Optional.of(Farbe.valueOf(jpa.getFarbe())) : Optional.empty(),
+                getFarbe(jpa.getFarbe()),
                 jpa.getChecked(),
                 jpa.getPrinted()
         );
@@ -52,4 +52,17 @@ public class WettkaempferConverter {
     public List<Wettkaempfer> convertToWettkaempferList(List<WettkaempferJpa> teilnehmerJpaList) {
         return teilnehmerJpaList.stream().map(jpa -> this.convertToWettkaempfer(jpa)).toList();
     }
+
+    private static Optional<Farbe> getFarbe(String farbe) {
+        return (farbe != null && !farbe.isBlank()) ? Optional.of(Farbe.valueOf(farbe)) : Optional.empty();
+    }
+
+    private static Altersklasse getAltersklasse(String altersklasse) {
+        return (altersklasse != null && !altersklasse.isBlank()) ? Altersklasse.valueOf(altersklasse) : null;
+    }
+
+    private static Geschlecht getGeschlecht(String geschlecht) {
+        return (geschlecht != null && !geschlecht.isBlank()) ? Geschlecht.valueOf(geschlecht) : null;
+    }
+
 }

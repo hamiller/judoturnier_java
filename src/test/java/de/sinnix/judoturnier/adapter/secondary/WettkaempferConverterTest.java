@@ -75,4 +75,29 @@ public class WettkaempferConverterTest {
         assertEquals(wettkaempferJpa.getPrinted(), result.printed());
         assertEquals(verein, result.verein());
     }
+
+    @Test
+    void convertMissingFields() {
+        Wettkaempfer wettkaempfer = new Wettkaempfer(null, "Name", Geschlecht.m, Altersklasse.U18, verein, 0d, Optional.empty(), false, false);
+
+        when(vereinConverter.converToVerein(any(VereinJpa.class))).thenReturn(verein);
+        when(vereinConverter.convertFromVerein(any(Verein.class))).thenReturn(vereinJpa);
+
+        var jpa = wettkaempferConverter.convertFromWettkaempfer(wettkaempfer);
+        var converted = wettkaempferConverter.convertToWettkaempfer(jpa);
+
+        assertEquals(wettkaempfer, converted);
+    }
+
+    @Test
+    void readJpaWithMissingFields() {
+        WettkaempferJpa wettkaempferJpa = new WettkaempferJpa(1, "Name", null, null, vereinJpa, 0d, "", false, false);
+        Wettkaempfer wettkaempfer = new Wettkaempfer(1, "Name", null, null, verein, 0d, Optional.empty(), false, false);
+
+        when(vereinConverter.converToVerein(any(VereinJpa.class))).thenReturn(verein);
+
+        var converted = wettkaempferConverter.convertToWettkaempfer(wettkaempferJpa);
+
+        assertEquals(converted, wettkaempfer);
+    }
 }
