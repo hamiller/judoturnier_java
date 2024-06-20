@@ -1,7 +1,7 @@
 package de.sinnix.judoturnier.adapter.primary;
 
 import de.sinnix.judoturnier.application.EinstellungenService;
-import de.sinnix.judoturnier.application.GewichtsklassenGruppenService;
+import de.sinnix.judoturnier.application.GewichtsklassenService;
 import de.sinnix.judoturnier.application.WettkaempferService;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Geschlecht;
@@ -34,7 +34,7 @@ public class GewichtsklassenController {
     @Autowired
     private WettkaempferService wettkaempferService;
     @Autowired
-    private GewichtsklassenGruppenService gewichtsklassenGruppenService;
+    private GewichtsklassenService gewichtsklassenService;
 
     @Autowired
     private EinstellungenService einstellungenService;
@@ -42,7 +42,7 @@ public class GewichtsklassenController {
     @GetMapping("/gewichtsklassen")
     public ModelAndView ladeGewichtsklassen() {
         var wks = wettkaempferService.alleKaempfer();
-        var currentGwks = gewichtsklassenGruppenService.lade();
+        var currentGwks = gewichtsklassenService.lade();
 
         var groupedByAge = this.groupByAge(currentGwks);
         var einstellungen = einstellungenService.ladeEinstellungen();
@@ -65,7 +65,7 @@ public class GewichtsklassenController {
     @GetMapping("/gewichtsklassen/randori_printview_groups/{altersklasse}")
     public ModelAndView ladeDruckAnsichtGruppenRandori(@PathVariable("altersklasse") String altersklasse) {
         logger.debug("lade Druckansicht Randori-Gruppen für " + altersklasse);
-        var currentGwks = gewichtsklassenGruppenService.lade();
+        var currentGwks = gewichtsklassenService.lade();
 
         ModelAndView mav = new ModelAndView("druckansicht_gruppen_randori");
         mav.addObject("gruppen", currentGwks.stream().filter(gwk -> gwk.altersKlasse().name() == altersklasse));
@@ -76,9 +76,9 @@ public class GewichtsklassenController {
     public ModelAndView erstelleGewichtsklassenNeu() {
         logger.debug("erstelle Gewichtsklassen");
         var wks = wettkaempferService.alleKaempfer();
-        var gwks = gewichtsklassenGruppenService.teileInGewichtsklassen(wks);
-        gewichtsklassenGruppenService.loescheAlles();
-        gewichtsklassenGruppenService.speichere(gwks);
+        var gwks = gewichtsklassenService.teileInGewichtsklassen(wks);
+        gewichtsklassenService.loescheAlles();
+        gewichtsklassenService.speichere(gwks);
         return new ModelAndView("redirect:/gewichtsklassen");
     }
 
@@ -88,10 +88,10 @@ public class GewichtsklassenController {
         var wk = (wettkaempferService.alleKaempfer()).stream()
                 .filter(kaempfer -> kaempfer.altersklasse() == altersklasse)
                 .collect(Collectors.toList());
-        var gwks = gewichtsklassenGruppenService.teileInGewichtsklassen(wk);
+        var gwks = gewichtsklassenService.teileInGewichtsklassen(wk);
 
-        gewichtsklassenGruppenService.loescheAltersklasse(altersklasse);
-        gewichtsklassenGruppenService.speichere(gwks);
+        gewichtsklassenService.loescheAltersklasse(altersklasse);
+        gewichtsklassenService.speichere(gwks);
 
         return new ModelAndView("redirect:/gewichtsklassen");
     }
@@ -112,7 +112,7 @@ public class GewichtsklassenController {
             gruppenTeilnehmer.get(gruppeNummer).add(teilnehmerNummer);
         }
 
-        gewichtsklassenGruppenService.aktualisiere(gruppenTeilnehmer);
+        gewichtsklassenService.aktualisiere(gruppenTeilnehmer);
 
         return new ModelAndView("redirect:/gewichtsklassen");
     }

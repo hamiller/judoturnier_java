@@ -1,19 +1,24 @@
 package de.sinnix.judoturnier.application;
 
+import de.sinnix.judoturnier.adapter.secondary.GewichtsklassenJpaRepository;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 
 @Service
-public class GewichtsklassenGruppenService {
+public class GewichtsklassenService {
 
-    private static final Logger logger = LogManager.getLogger(GewichtsklassenGruppenService.class);
+    private static final Logger logger = LogManager.getLogger(GewichtsklassenService.class);
+
+    @Autowired
+    private GewichtsklassenJpaRepository gewichtsklassenJpaRepository;
 
     public List<GewichtsklassenGruppe> lade() {
         logger.warn("lade not yet implemented");
@@ -39,5 +44,6 @@ public class GewichtsklassenGruppenService {
 
     public void aktualisiere(HashMap<Integer, List<Integer>> gruppenTeilnehmer) {
         logger.warn("aktualisiere not yet implemented");
+
     }
 }

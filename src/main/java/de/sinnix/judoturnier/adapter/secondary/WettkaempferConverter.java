@@ -1,6 +1,5 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
-import de.sinnix.judoturnier.model.Verein;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

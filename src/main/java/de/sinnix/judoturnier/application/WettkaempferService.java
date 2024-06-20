@@ -3,7 +3,7 @@ package de.sinnix.judoturnier.application;
 import de.sinnix.judoturnier.adapter.secondary.VereinConverter;
 import de.sinnix.judoturnier.adapter.secondary.WettkaempferConverter;
 import de.sinnix.judoturnier.adapter.secondary.WettkaempferJpa;
-import de.sinnix.judoturnier.adapter.secondary.WettkaempferRepository;
+import de.sinnix.judoturnier.adapter.secondary.WettkaempferJpaRepository;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +18,7 @@ public class WettkaempferService {
     private static final Logger logger = LogManager.getLogger(WettkaempferService.class);
 
     @Autowired
-    private WettkaempferRepository wettkaempferRepository;
+    private WettkaempferJpaRepository wettkaempferJpaRepository;
     @Autowired
     private WettkaempferConverter wettkaempferConverter;
     @Autowired
@@ -26,30 +26,30 @@ public class WettkaempferService {
 
     public List<Wettkaempfer> alleKaempfer() {
         logger.info("lade alleKaempfer");
-        return wettkaempferRepository.findAll().stream().map(jpa -> wettkaempferConverter.convertToWettkaempfer(jpa)).collect(Collectors.toUnmodifiableList());
+        return wettkaempferJpaRepository.findAll().stream().map(jpa -> wettkaempferConverter.convertToWettkaempfer(jpa)).collect(Collectors.toUnmodifiableList());
     }
 
     public void loescheKaempfer(Integer id) {
         logger.info("loesche Wettkaempfer");
-        var optionalWettkaempfer = wettkaempferRepository.findById(id);
+        var optionalWettkaempfer = wettkaempferJpaRepository.findById(id);
         if (optionalWettkaempfer.isEmpty()) {
             logger.warn("Wettkaempfer nicht gefunden");
             return;
         }
 
-        wettkaempferRepository.deleteById(id);
+        wettkaempferJpaRepository.deleteById(id);
         logger.info("Wettkaempfer gelöscht");
     }
 
     public Wettkaempfer ladeKaempfer(Integer id) {
         logger.info("lade Wettkaempfer");
-        return wettkaempferRepository.findById(id).map(jpa -> wettkaempferConverter.convertToWettkaempfer(jpa)).orElseGet(() -> null);
+        return wettkaempferJpaRepository.findById(id).map(jpa -> wettkaempferConverter.convertToWettkaempfer(jpa)).orElseGet(() -> null);
     }
 
     public Wettkaempfer speichereKaempfer(Wettkaempfer wettkaempfer) {
         logger.info("speichere Kaempfer {}", wettkaempfer);
         if (wettkaempfer.id() != null) {
-            var optionalWettkaempfer = wettkaempferRepository.findById(wettkaempfer.id());
+            var optionalWettkaempfer = wettkaempferJpaRepository.findById(wettkaempfer.id());
             if (optionalWettkaempfer.isPresent()) {
                 logger.info("Aktualisiere Wettkaempfer");
                 WettkaempferJpa wk = optionalWettkaempfer.get();
@@ -61,7 +61,7 @@ public class WettkaempferService {
                 wk.setFarbe(wettkaempfer.farbe());
                 wk.setChecked(wettkaempfer.checked());
                 wk.setPrinted(wettkaempfer.printed());
-                wk = wettkaempferRepository.save(wk);
+                wk = wettkaempferJpaRepository.save(wk);
                 logger.info("Aktualisiertes jpa: {}", wk);
                 return wettkaempferConverter.convertToWettkaempfer(wk);
             }
@@ -69,7 +69,7 @@ public class WettkaempferService {
 
         var wk = wettkaempferConverter.convertFromWettkaempfer(wettkaempfer);
         logger.debug("Speichere jpa: {}", wk);
-        wk = wettkaempferRepository.save(wk);
+        wk = wettkaempferJpaRepository.save(wk);
         logger.debug("Gespeichertes jpa: {}", wk);
         return wettkaempferConverter.convertToWettkaempfer(wk);
     }

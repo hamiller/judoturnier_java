@@ -1,7 +1,7 @@
 package de.sinnix.judoturnier.adapter.primary;
 
 import de.sinnix.judoturnier.application.EinstellungenService;
-import de.sinnix.judoturnier.application.GewichtsklassenGruppenService;
+import de.sinnix.judoturnier.application.GewichtsklassenService;
 import de.sinnix.judoturnier.application.TurnierService;
 import de.sinnix.judoturnier.application.WettkaempferService;
 import de.sinnix.judoturnier.model.Altersklasse;
@@ -36,7 +36,7 @@ public class TurnierController {
     @Autowired
     private EinstellungenService einstellungenService;
     @Autowired
-    private GewichtsklassenGruppenService gewichtsklassenGruppenService;
+    private GewichtsklassenService gewichtsklassenService;
     @Autowired
     private TurnierService turnierService;
 
@@ -63,7 +63,7 @@ public class TurnierController {
 
     @GetMapping("/turnier/begegnungen/randori")
     public ModelAndView ladeWettkampfreihenfolgeJeMatteRandori(@RequestParam(value = "error", required = false) String error) {
-        List<GewichtsklassenGruppe> gwks = gewichtsklassenGruppenService.lade();
+        List<GewichtsklassenGruppe> gwks = gewichtsklassenService.lade();
         List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge();
         Set<Altersklasse> altersklassen = gwks.stream()
                 .map(GewichtsklassenGruppe::altersKlasse)
@@ -79,7 +79,7 @@ public class TurnierController {
 
     @GetMapping("/turnier/begegnungen/normal")
     public ModelAndView ladeWettkampfreihenfolgeJeMatteNormal() {
-        List<GewichtsklassenGruppe> gwks = gewichtsklassenGruppenService.lade();
+        List<GewichtsklassenGruppe> gwks = gewichtsklassenService.lade();
         List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge();
 
         ModelAndView mav = new ModelAndView("begegnungen_normal");

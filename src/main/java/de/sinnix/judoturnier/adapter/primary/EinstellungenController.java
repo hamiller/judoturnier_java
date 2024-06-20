@@ -1,7 +1,7 @@
 package de.sinnix.judoturnier.adapter.primary;
 
 import de.sinnix.judoturnier.application.EinstellungenService;
-import de.sinnix.judoturnier.application.GewichtsklassenGruppenService;
+import de.sinnix.judoturnier.application.GewichtsklassenService;
 import de.sinnix.judoturnier.application.WettkaempferService;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.Kampfsystem;
@@ -28,7 +28,7 @@ public class EinstellungenController {
     @Autowired
     private WettkaempferService wiegenService;
     @Autowired
-    private GewichtsklassenGruppenService gewichtsklassenGruppenService;
+    private GewichtsklassenService gewichtsklassenService;
 
     @GetMapping("/turnier/einstellungen")
     public ModelAndView ladeEinstellungen() {
@@ -36,7 +36,7 @@ public class EinstellungenController {
 
         var einstellungen = einstellungenService.ladeEinstellungen();
         var wks = wiegenService.alleKaempfer();
-        var gwks = gewichtsklassenGruppenService.lade();
+        var gwks = gewichtsklassenService.lade();
 
         ModelAndView mav = new ModelAndView("einstellungen");
         mav.addObject("gewichtsklassengruppen", gwks);
@@ -55,7 +55,7 @@ public class EinstellungenController {
         // todo: Speichern!
         var einstellungen = einstellungenService.ladeEinstellungen();
         var wks = wiegenService.alleKaempfer();
-        var gwks = gewichtsklassenGruppenService.lade();
+        var gwks = gewichtsklassenService.lade();
 
         ModelAndView mav = new ModelAndView("einstellungen");
         mav.addObject("gewichtsklassengruppen", gwks);
@@ -79,7 +79,7 @@ public class EinstellungenController {
 
         einstellungen = einstellungenService.speichereTurnierEinstellungen(einstellungen);
         var wks = wiegenService.alleKaempfer();
-        var gwks = gewichtsklassenGruppenService.lade();
+        var gwks = gewichtsklassenService.lade();
 
         ModelAndView mav = new ModelAndView("einstellungen");
         mav.addObject("gewichtsklassengruppen", gwks);

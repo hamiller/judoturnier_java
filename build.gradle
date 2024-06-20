@@ -39,9 +39,15 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok:1.18.32'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.mockito:mockito-core'
+	testImplementation 'org.mockito:mockito-junit-jupiter'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+test {
+	jvmArgs( "-XX:+EnableDynamicAgentLoading", "-Xshare:off")
 }

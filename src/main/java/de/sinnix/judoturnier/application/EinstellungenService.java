@@ -1,7 +1,7 @@
 package de.sinnix.judoturnier.application;
 
 import de.sinnix.judoturnier.adapter.secondary.EinstellungJpa;
-import de.sinnix.judoturnier.adapter.secondary.EinstellungRepository;
+import de.sinnix.judoturnier.adapter.secondary.EinstellungJpaRepository;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.MattenAnzahl;
 import de.sinnix.judoturnier.model.TurnierTyp;
@@ -18,11 +18,11 @@ public class EinstellungenService {
     private static final Logger logger = LogManager.getLogger(EinstellungenService.class);
 
     @Autowired
-    private EinstellungRepository einstellungRepository;
+    private EinstellungJpaRepository einstellungJpaRepository;
 
     public Einstellungen ladeEinstellungen() {
         logger.info("EinstellungenService ladeEinstellungen()");
-        List<EinstellungJpa> einstellungenList = einstellungRepository.findAll();
+        List<EinstellungJpa> einstellungenList = einstellungJpaRepository.findAll();
         TurnierTyp turnierTyp = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(TurnierTyp.TYP)).findFirst().map(t -> TurnierTyp.valueOf(t.getWert())).orElseThrow();
         MattenAnzahl mattenAnzahl = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(MattenAnzahl.TYP)).findFirst().map(t -> new MattenAnzahl(Integer.parseInt(t.getWert()))).orElseThrow();
         WettkampfReihenfolge wettkampfReihenfolge = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(WettkampfReihenfolge.TYP)).findFirst().map(t -> WettkampfReihenfolge.valueOf(t.getWert())).orElseThrow();
@@ -35,12 +35,12 @@ public class EinstellungenService {
                 new EinstellungJpa(einstellungen.turnierTyp().TYP, einstellungen.turnierTyp().name()),
                 new EinstellungJpa(einstellungen.mattenAnzahl().TYP, einstellungen.mattenAnzahl().anzahl().toString()),
                 new EinstellungJpa(einstellungen.wettkampfReihenfolge().TYP, einstellungen.wettkampfReihenfolge().name()));
-        einstellungRepository.saveAll(jpaList);
+        einstellungJpaRepository.saveAll(jpaList);
         return ladeEinstellungen();
     }
 
     public boolean isRandori() {
-        TurnierTyp turnierTyp = einstellungRepository.findById(TurnierTyp.TYP).map(typ -> TurnierTyp.valueOf(typ.getWert())).orElseThrow();
+        TurnierTyp turnierTyp = einstellungJpaRepository.findById(TurnierTyp.TYP).map(typ -> TurnierTyp.valueOf(typ.getWert())).orElseThrow();
         return turnierTyp == TurnierTyp.RANDORI;
     }
 }
