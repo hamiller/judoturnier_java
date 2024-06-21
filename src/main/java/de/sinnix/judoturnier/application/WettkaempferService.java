@@ -1,9 +1,6 @@
 package de.sinnix.judoturnier.application;
 
-import de.sinnix.judoturnier.adapter.secondary.VereinConverter;
-import de.sinnix.judoturnier.adapter.secondary.WettkaempferConverter;
-import de.sinnix.judoturnier.adapter.secondary.WettkaempferJpa;
-import de.sinnix.judoturnier.adapter.secondary.WettkaempferJpaRepository;
+import de.sinnix.judoturnier.adapter.secondary.WettkaempferRepository;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,66 +8,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class WettkaempferService {
     private static final Logger logger = LogManager.getLogger(WettkaempferService.class);
 
     @Autowired
-    private WettkaempferJpaRepository wettkaempferJpaRepository;
-    @Autowired
-    private WettkaempferConverter wettkaempferConverter;
-    @Autowired
-    private VereinConverter vereinConverter;
+    private WettkaempferRepository wettkaempferRepository;
 
     public List<Wettkaempfer> alleKaempfer() {
         logger.info("lade alleKaempfer");
-        return wettkaempferJpaRepository.findAll().stream().map(jpa -> wettkaempferConverter.convertToWettkaempfer(jpa)).collect(Collectors.toUnmodifiableList());
+        return wettkaempferRepository.findAll();
     }
 
     public void loescheKaempfer(Integer id) {
         logger.info("loesche Wettkaempfer");
-        var optionalWettkaempfer = wettkaempferJpaRepository.findById(id);
-        if (optionalWettkaempfer.isEmpty()) {
-            logger.warn("Wettkaempfer nicht gefunden");
-            return;
-        }
-
-        wettkaempferJpaRepository.deleteById(id);
+        wettkaempferRepository.deleteById(id);
         logger.info("Wettkaempfer gelöscht");
     }
 
-    public Wettkaempfer ladeKaempfer(Integer id) {
+    public Optional<Wettkaempfer> ladeKaempfer(Integer id) {
         logger.info("lade Wettkaempfer");
-        return wettkaempferJpaRepository.findById(id).map(jpa -> wettkaempferConverter.convertToWettkaempfer(jpa)).orElseGet(() -> null);
+        return wettkaempferRepository.findById(id);
     }
 
     public Wettkaempfer speichereKaempfer(Wettkaempfer wettkaempfer) {
         logger.info("speichere Kaempfer {}", wettkaempfer);
-        if (wettkaempfer.id() != null) {
-            var optionalWettkaempfer = wettkaempferJpaRepository.findById(wettkaempfer.id());
-            if (optionalWettkaempfer.isPresent()) {
-                logger.info("Aktualisiere Wettkaempfer");
-                WettkaempferJpa wk = optionalWettkaempfer.get();
-                wk.setName(wettkaempfer.name());
-                wk.setGeschlecht(wettkaempfer.geschlecht().name());
-                wk.setAltersklasse(wettkaempfer.altersklasse().name());
-                wk.setVerein(vereinConverter.convertFromVerein(wettkaempfer.verein()));
-                wk.setGewicht(wettkaempfer.gewicht());
-                wk.setFarbe(wettkaempfer.farbe().map(f -> f.name()).orElse(null));
-                wk.setChecked(wettkaempfer.checked());
-                wk.setPrinted(wettkaempfer.printed());
-                wk = wettkaempferJpaRepository.save(wk);
-                logger.info("Aktualisiertes jpa: {}", wk);
-                return wettkaempferConverter.convertToWettkaempfer(wk);
-            }
-        }
-
-        var wk = wettkaempferConverter.convertFromWettkaempfer(wettkaempfer);
-        logger.debug("Speichere jpa: {}", wk);
-        wk = wettkaempferJpaRepository.save(wk);
-        logger.debug("Gespeichertes jpa: {}", wk);
-        return wettkaempferConverter.convertToWettkaempfer(wk);
+        return wettkaempferRepository.save(wettkaempfer);
     }
 }
