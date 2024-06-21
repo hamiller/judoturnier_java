@@ -1,6 +1,8 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
 import de.sinnix.judoturnier.model.Wettkaempfer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +12,9 @@ import java.util.stream.Collectors;
 
 @Repository
 public class WettkaempferRepository {
+
+    private static final Logger logger = LogManager.getLogger(WettkaempferRepository.class);
+
     @Autowired
     private WettkaempferJpaRepository wettkaempferJpaRepository;
     @Autowired
@@ -35,6 +40,7 @@ public class WettkaempferRepository {
     }
 
     public Wettkaempfer save(Wettkaempfer wettkaempfer) {
+        logger.debug("Speichere wettkaempfer in db: {}", wettkaempfer);
         if (wettkaempfer.id() != null) {
             var optionalWettkaempfer = wettkaempferJpaRepository.findById(wettkaempfer.id());
             if (optionalWettkaempfer.isPresent()) {

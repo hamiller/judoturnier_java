@@ -19,4 +19,7 @@ public enum Farbe {
     public String getBezeichnung() {
         return bezeichnung;
     }
+    public String cssKlasse() {
+        return this.name().toLowerCase();
+    }
 }

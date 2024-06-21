@@ -1,12 +1,13 @@
-CREATE TABLE wettkaempfer (
-                              id SERIAL,
-                              "name" VARCHAR(255),
-                              geschlecht VARCHAR(255),
-                              altersklasse VARCHAR(255),
-                              verein BIGINT,
-                              gewicht FLOAT,
-                              farbe VARCHAR(255),
-                              checked BOOLEAN,
-                              printed BOOLEAN,
-                              PRIMARY KEY (id)
+CREATE TABLE wettkaempfer
+(
+    id           SERIAL,
+    "name"       VARCHAR(255),
+    geschlecht   VARCHAR(255),
+    altersklasse VARCHAR(255),
+    verein       BIGINT,
+    gewicht      FLOAT,
+    farbe        VARCHAR(255),
+    checked      BOOLEAN,
+    printed      BOOLEAN,
+    PRIMARY KEY (id)
 );

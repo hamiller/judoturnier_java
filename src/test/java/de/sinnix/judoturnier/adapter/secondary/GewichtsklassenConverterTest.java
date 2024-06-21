@@ -4,6 +4,7 @@ import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
+import de.sinnix.judoturnier.model.RandoriGruppenName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +33,7 @@ class GewichtsklassenConverterTest {
         when(wettkaempferConverter.convertToWettkaempferList(anyList())).thenReturn(teilnehmer);
         when(wettkaempferConverter.convertFromWettkaempferList(anyList())).thenReturn(teilnehmerJpa);
 
-        GewichtsklassenJpa jpa = new GewichtsklassenJpa(1, "U18", "m", teilnehmerJpa, "name", 12d, 123.0);
+        GewichtsklassenJpa jpa = new GewichtsklassenJpa(1, "U18", "m", teilnehmerJpa, "Tiger", 12d, 123.0);
         var gewichtklassen = converter.convertToGewichtsklassen(jpa);
         var converted = converter.convertFromGewichtsklassen(gewichtklassen);
 
@@ -46,7 +47,7 @@ class GewichtsklassenConverterTest {
         when(wettkaempferConverter.convertToWettkaempferList(anyList())).thenReturn(teilnehmer);
         when(wettkaempferConverter.convertFromWettkaempferList(anyList())).thenReturn(teilnehmerJpa);
 
-        GewichtsklassenGruppe gewichtklassen = new GewichtsklassenGruppe(1, Altersklasse.U18, Optional.of(Geschlecht.w), teilnehmer, "name", 12d, 133.0);
+        GewichtsklassenGruppe gewichtklassen = new GewichtsklassenGruppe(1, Altersklasse.U18, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Adler), 12d, 133.0);
         var jpa = converter.convertFromGewichtsklassen(gewichtklassen);
         var converted = converter.convertToGewichtsklassen(jpa);
 
@@ -60,7 +61,7 @@ class GewichtsklassenConverterTest {
         when(wettkaempferConverter.convertToWettkaempferList(anyList())).thenReturn(teilnehmer);
         when(wettkaempferConverter.convertFromWettkaempferList(anyList())).thenReturn(teilnehmerJpa);
 
-        GewichtsklassenGruppe gewichtklassen = new GewichtsklassenGruppe(1, Altersklasse.U18, Optional.empty(), teilnehmer, "name", 12d, 133.0);
+        GewichtsklassenGruppe gewichtklassen = new GewichtsklassenGruppe(1, Altersklasse.U18, Optional.empty(), teilnehmer, Optional.of(RandoriGruppenName.Adler), 12d, 133.0);
         var jpa = converter.convertFromGewichtsklassen(gewichtklassen);
         var converted = converter.convertToGewichtsklassen(jpa);
 

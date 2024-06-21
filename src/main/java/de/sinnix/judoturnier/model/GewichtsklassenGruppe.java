@@ -8,7 +8,7 @@ public record GewichtsklassenGruppe(
         Altersklasse altersKlasse,
         Optional<Geschlecht> gruppenGeschlecht,
         List<Wettkaempfer> teilnehmer,
-        String name,
+		Optional<RandoriGruppenName> name,
         Double minGewicht,
         Double maxGewicht) {
 }

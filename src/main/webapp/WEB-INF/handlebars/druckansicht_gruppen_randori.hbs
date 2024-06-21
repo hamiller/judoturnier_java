@@ -20,7 +20,7 @@
   </style>
 </head>
 <body>
-  <script src="/js/paged.polyfill.min.js"></script>
+<!--  <script src="/js/paged.polyfill.min.js"></script>-->
 
   <div id="content">
     <div class="bodyheader no-print">
@@ -29,17 +29,17 @@
       
         <div class="wettkampfgruppe vertikal">
           <div>
-            <tul>
+            <ul>
           {{#each gruppen}}
             <li class="groupsrow">
               <div>{{altersKlasse}}</div>
-              <div>{{name}} </div>
+              <div>{{name.get}} </div>
               <div>
                 <table style="width: 100%;">
                 <tbody>
                 {{#each teilnehmer}}
                   <tr>
-                    <td class="wettkaempfer name " style="width: 220px;">{{name}}</td><td style="width: 200px;">{{verein.name}}</td><td style="width: 100px;" class="{{farbe}}">({{farbe}})</td> 
+                    <td class="wettkaempfer name " style="width: 220px;">{{name}}</td><td style="width: 200px;">{{verein.name}}</td><td style="width: 100px;" class="{{farbe.get.cssKlasse}}">({{farbe.get}})</td>
                   </tr>
                 {{/each}}
                 </tbody>
@@ -51,6 +51,7 @@
           </div>
         </div>
     </div>
+  </div>
 </body>
 
 </html>
