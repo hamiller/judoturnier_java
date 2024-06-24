@@ -23,17 +23,17 @@ import lombok.ToString;
 @Entity
 @Table(name = "wettkaempfer")
 public class WettkaempferJpa {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String name;
-    private String geschlecht;
-    private String altersklasse;
-    @ManyToOne
-    @JoinColumn(name = "verein")
-    private VereinJpa verein;
-    private Double gewicht;
-    private String farbe;
-    private Boolean checked;
-    private Boolean printed;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer   id;
+	private String    name;
+	private String    geschlecht;
+	private String    altersklasse;
+	@ManyToOne
+	@JoinColumn(name = "verein")
+	private VereinJpa verein;
+	private Double    gewicht;
+	private String    farbe;
+	private Boolean   checked;
+	private Boolean   printed;
 }

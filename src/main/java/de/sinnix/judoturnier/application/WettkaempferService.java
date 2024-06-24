@@ -12,29 +12,29 @@ import java.util.Optional;
 
 @Service
 public class WettkaempferService {
-    private static final Logger logger = LogManager.getLogger(WettkaempferService.class);
+	private static final Logger logger = LogManager.getLogger(WettkaempferService.class);
 
-    @Autowired
-    private WettkaempferRepository wettkaempferRepository;
+	@Autowired
+	private WettkaempferRepository wettkaempferRepository;
 
-    public List<Wettkaempfer> alleKaempfer() {
-        logger.info("lade alleKaempfer");
-        return wettkaempferRepository.findAll();
-    }
+	public List<Wettkaempfer> alleKaempfer() {
+		logger.info("lade alleKaempfer");
+		return wettkaempferRepository.findAll();
+	}
 
-    public void loescheKaempfer(Integer id) {
-        logger.info("loesche Wettkaempfer");
-        wettkaempferRepository.deleteById(id);
-        logger.info("Wettkaempfer gelöscht");
-    }
+	public void loescheKaempfer(Integer id) {
+		logger.info("loesche Wettkaempfer");
+		wettkaempferRepository.deleteById(id);
+		logger.info("Wettkaempfer gelöscht");
+	}
 
-    public Optional<Wettkaempfer> ladeKaempfer(Integer id) {
-        logger.info("lade Wettkaempfer");
-        return wettkaempferRepository.findById(id);
-    }
+	public Optional<Wettkaempfer> ladeKaempfer(Integer id) {
+		logger.info("lade Wettkaempfer");
+		return wettkaempferRepository.findById(id);
+	}
 
-    public Wettkaempfer speichereKaempfer(Wettkaempfer wettkaempfer) {
-        logger.info("speichere Kaempfer {}", wettkaempfer);
-        return wettkaempferRepository.save(wettkaempfer);
-    }
+	public Wettkaempfer speichereKaempfer(Wettkaempfer wettkaempfer) {
+		logger.info("speichere Kaempfer {}", wettkaempfer);
+		return wettkaempferRepository.save(wettkaempfer);
+	}
 }

@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GewichtsklassenJpaRepository extends JpaRepository<GewichtsklassenJpa, Integer> {
-    @Transactional
-    void deleteAllByAltersklasse(String altersklasse);
+	@Transactional
+	void deleteAllByAltersklasse(String altersklasse);
 }

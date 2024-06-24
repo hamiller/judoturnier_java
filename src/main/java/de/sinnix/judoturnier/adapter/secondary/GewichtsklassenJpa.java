@@ -27,19 +27,19 @@ import java.util.List;
 @Entity
 @Table(name = "gewichtsklassengruppen")
 public class GewichtsklassenJpa {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String altersklasse;
-    private String gruppengeschlecht;
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "gewichtsklassengruppen_wettkaempfer",
-        joinColumns = @JoinColumn(name = "gewichtsklassengruppe_id"),
-        inverseJoinColumns = @JoinColumn(name = "wettkaempfer_id")
-    )
-    private List<WettkaempferJpa> teilnehmer;
-    private String name;
-    private Double mingewicht;
-    private Double maxgewicht;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer               id;
+	private String                altersklasse;
+	private String                gruppengeschlecht;
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+		name = "gewichtsklassengruppen_wettkaempfer",
+		joinColumns = @JoinColumn(name = "gewichtsklassengruppe_id"),
+		inverseJoinColumns = @JoinColumn(name = "wettkaempfer_id")
+	)
+	private List<WettkaempferJpa> teilnehmer;
+	private String                name;
+	private Double                mingewicht;
+	private Double                maxgewicht;
 }

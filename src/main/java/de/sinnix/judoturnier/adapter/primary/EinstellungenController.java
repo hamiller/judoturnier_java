@@ -23,77 +23,77 @@ import org.springframework.web.servlet.ModelAndView;
 @RestController
 public class EinstellungenController {
 
-    private static final Logger logger = LogManager.getLogger(EinstellungenController.class);
+	private static final Logger logger = LogManager.getLogger(EinstellungenController.class);
 
-    @Autowired
-    private EinstellungenService einstellungenService;
-    @Autowired
-    private WettkaempferService wiegenService;
-    @Autowired
-    private GewichtsklassenService gewichtsklassenService;
+	@Autowired
+	private EinstellungenService   einstellungenService;
+	@Autowired
+	private WettkaempferService    wiegenService;
+	@Autowired
+	private GewichtsklassenService gewichtsklassenService;
 
-    @GetMapping("/turnier/einstellungen")
-    public ModelAndView ladeEinstellungen() {
-        logger.debug("Lade Einstellungen");
+	@GetMapping("/turnier/einstellungen")
+	public ModelAndView ladeEinstellungen() {
+		logger.debug("Lade Einstellungen");
 
-        var einstellungen = einstellungenService.ladeEinstellungen();
-        var wks = wiegenService.alleKaempfer();
-        var gwks = gewichtsklassenService.lade();
+		var einstellungen = einstellungenService.ladeEinstellungen();
+		var wks = wiegenService.alleKaempfer();
+		var gwks = gewichtsklassenService.lade();
 
-        ModelAndView mav = new ModelAndView("einstellungen");
-        mav.addObject("gewichtsklassengruppen", gwks);
-        mav.addObject("anzahlwk", wks.size());
-        mav.addObject("kampfsysteme", Kampfsystem.values());
-        mav.addObject("turniertyp", einstellungen.turnierTyp());
-        mav.addObject("mattenanzahl", einstellungen.mattenAnzahl());
-        mav.addObject("wettkampfreihenfolge", einstellungen.wettkampfReihenfolge());
-        return mav;
-    }
+		ModelAndView mav = new ModelAndView("einstellungen");
+		mav.addObject("gewichtsklassengruppen", gwks);
+		mav.addObject("anzahlwk", wks.size());
+		mav.addObject("kampfsysteme", Kampfsystem.values());
+		mav.addObject("turniertyp", einstellungen.turnierTyp());
+		mav.addObject("mattenanzahl", einstellungen.mattenAnzahl());
+		mav.addObject("wettkampfreihenfolge", einstellungen.wettkampfReihenfolge());
+		return mav;
+	}
 
-    @PostMapping("/turnier/einstellungen-wettkampf")
-    public ModelAndView speichereKampfsystemEinstellungen(@RequestBody MultiValueMap<String, String> formData) {
-        logger.debug("speichere WettkampfGruppen-Einstellungen {}", formData);
+	@PostMapping("/turnier/einstellungen-wettkampf")
+	public ModelAndView speichereKampfsystemEinstellungen(@RequestBody MultiValueMap<String, String> formData) {
+		logger.debug("speichere WettkampfGruppen-Einstellungen {}", formData);
 
-        // todo: Speichern!
-        var einstellungen = einstellungenService.ladeEinstellungen();
-        var wks = wiegenService.alleKaempfer();
-        var gwks = gewichtsklassenService.lade();
+		// todo: Speichern!
+		var einstellungen = einstellungenService.ladeEinstellungen();
+		var wks = wiegenService.alleKaempfer();
+		var gwks = gewichtsklassenService.lade();
 
-        ModelAndView mav = new ModelAndView("einstellungen");
-        mav.addObject("gewichtsklassengruppen", gwks);
-        mav.addObject("anzahlwk", wks.size());
-        mav.addObject("kampfsysteme", Kampfsystem.values());
-        mav.addObject("turniertyp", einstellungen.turnierTyp());
-        mav.addObject("mattenanzahl", einstellungen.mattenAnzahl());
-        mav.addObject("wettkampfreihenfolge", einstellungen.wettkampfReihenfolge());
-        return mav;
-    }
+		ModelAndView mav = new ModelAndView("einstellungen");
+		mav.addObject("gewichtsklassengruppen", gwks);
+		mav.addObject("anzahlwk", wks.size());
+		mav.addObject("kampfsysteme", Kampfsystem.values());
+		mav.addObject("turniertyp", einstellungen.turnierTyp());
+		mav.addObject("mattenanzahl", einstellungen.mattenAnzahl());
+		mav.addObject("wettkampfreihenfolge", einstellungen.wettkampfReihenfolge());
+		return mav;
+	}
 
-    @PostMapping("/turnier/einstellungen")
-    public ModelAndView speichereTurnierEinstellungen(@RequestBody MultiValueMap<String, String> formData) {
-        logger.debug("speichere Turnier-Einstellungen {}", formData);
+	@PostMapping("/turnier/einstellungen")
+	public ModelAndView speichereTurnierEinstellungen(@RequestBody MultiValueMap<String, String> formData) {
+		logger.debug("speichere Turnier-Einstellungen {}", formData);
 
-        var turnierTyp = TurnierTyp.valueOf(formData.getFirst(TurnierTyp.TYP));
-        var mattenAnzahl = new MattenAnzahl(Integer.parseInt(formData.getFirst(MattenAnzahl.TYP)));
-        var wettkampfReihenfolge = WettkampfReihenfolge.valueOf(formData.getFirst(WettkampfReihenfolge.TYP));
-        var randoriGruppengroesse = new RandoriGruppengroesse(Integer.parseInt(formData.getFirst(RandoriGruppengroesse.TYP)));
-        var variablerGewichtsteil = new VariablerGewichtsteil(Double.parseDouble(formData.getFirst(VariablerGewichtsteil.TYP)));
+		var turnierTyp = TurnierTyp.valueOf(formData.getFirst(TurnierTyp.TYP));
+		var mattenAnzahl = new MattenAnzahl(Integer.parseInt(formData.getFirst(MattenAnzahl.TYP)));
+		var wettkampfReihenfolge = WettkampfReihenfolge.valueOf(formData.getFirst(WettkampfReihenfolge.TYP));
+		var randoriGruppengroesse = new RandoriGruppengroesse(Integer.parseInt(formData.getFirst(RandoriGruppengroesse.TYP)));
+		var variablerGewichtsteil = new VariablerGewichtsteil(Double.parseDouble(formData.getFirst(VariablerGewichtsteil.TYP)));
 
-        var einstellungen = new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge, randoriGruppengroesse, variablerGewichtsteil);
+		var einstellungen = new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge, randoriGruppengroesse, variablerGewichtsteil);
 
-        einstellungen = einstellungenService.speichereTurnierEinstellungen(einstellungen);
-        var wks = wiegenService.alleKaempfer();
-        var gwks = gewichtsklassenService.lade();
+		einstellungen = einstellungenService.speichereTurnierEinstellungen(einstellungen);
+		var wks = wiegenService.alleKaempfer();
+		var gwks = gewichtsklassenService.lade();
 
-        ModelAndView mav = new ModelAndView("einstellungen");
-        mav.addObject("gewichtsklassengruppen", gwks);
-        mav.addObject("anzahlwk", wks.size());
-        mav.addObject("kampfsysteme", Kampfsystem.values());
-        mav.addObject("turniertyp", einstellungen.turnierTyp());
-        mav.addObject("mattenanzahl", einstellungen.mattenAnzahl());
-        mav.addObject("wettkampfreihenfolge", einstellungen.wettkampfReihenfolge());
-        mav.addObject("randorigruppengroesse", einstellungen.wettkampfReihenfolge());
-        mav.addObject("variablergewichtsteil", einstellungen.wettkampfReihenfolge());
-        return mav;
-    }
+		ModelAndView mav = new ModelAndView("einstellungen");
+		mav.addObject("gewichtsklassengruppen", gwks);
+		mav.addObject("anzahlwk", wks.size());
+		mav.addObject("kampfsysteme", Kampfsystem.values());
+		mav.addObject("turniertyp", einstellungen.turnierTyp());
+		mav.addObject("mattenanzahl", einstellungen.mattenAnzahl());
+		mav.addObject("wettkampfreihenfolge", einstellungen.wettkampfReihenfolge());
+		mav.addObject("randorigruppengroesse", einstellungen.wettkampfReihenfolge());
+		mav.addObject("variablergewichtsteil", einstellungen.wettkampfReihenfolge());
+		return mav;
+	}
 }

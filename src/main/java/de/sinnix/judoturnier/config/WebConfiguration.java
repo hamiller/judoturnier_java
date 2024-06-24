@@ -11,14 +11,14 @@ import org.springframework.web.servlet.ViewResolver;
 @Configuration
 public class WebConfiguration {
 
-    @Bean
-    public ViewResolver handlebarsViewResolver() {
-        HandlebarsViewResolver viewResolver = new HandlebarsViewResolver();
-        viewResolver.setPrefix("/WEB-INF/handlebars/");
-        viewResolver.setSuffix(".hbs");
-        viewResolver.setCache(false);
-        viewResolver.registerHelpers(HelperSource.class);
-        return viewResolver;
-    }
+	@Bean
+	public ViewResolver handlebarsViewResolver() {
+		HandlebarsViewResolver viewResolver = new HandlebarsViewResolver();
+		viewResolver.setPrefix("/WEB-INF/handlebars/");
+		viewResolver.setSuffix(".hbs");
+		viewResolver.setCache(false);
+		viewResolver.registerHelpers(HelperSource.class);
+		return viewResolver;
+	}
 
 }

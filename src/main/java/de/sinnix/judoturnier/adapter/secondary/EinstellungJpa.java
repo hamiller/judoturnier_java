@@ -19,7 +19,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "einstellungen")
 public class EinstellungJpa {
-    @Id
-    private String art;
-    private String wert;
+	@Id
+	private String art;
+	private String wert;
 }

@@ -12,16 +12,16 @@ import java.util.stream.Collectors;
 
 @Service
 public class VereinService {
-    private static final Logger logger = LogManager.getLogger(VereinService.class);
+	private static final Logger logger = LogManager.getLogger(VereinService.class);
 
-    @Autowired
-    private VereinJpaRepository vereinJpaRepository;
+	@Autowired
+	private VereinJpaRepository vereinJpaRepository;
 
-    public List<Verein> holeAlleVereine() {
-        return vereinJpaRepository.findAll().stream().map(jpa -> new Verein(jpa.getId(), jpa.getName())).collect(Collectors.toUnmodifiableList());
-    }
+	public List<Verein> holeAlleVereine() {
+		return vereinJpaRepository.findAll().stream().map(jpa -> new Verein(jpa.getId(), jpa.getName())).collect(Collectors.toUnmodifiableList());
+	}
 
-    public Verein holeVerein(Integer vereinsId) {
-        return vereinJpaRepository.findById(vereinsId).map(jpa -> new Verein(jpa.getId(), jpa.getName())).orElseThrow();
-    }
+	public Verein holeVerein(Integer vereinsId) {
+		return vereinJpaRepository.findById(vereinsId).map(jpa -> new Verein(jpa.getId(), jpa.getName())).orElseThrow();
+	}
 }

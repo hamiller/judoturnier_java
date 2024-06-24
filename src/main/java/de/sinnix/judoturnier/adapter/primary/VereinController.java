@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class VereinController {
 
-    private static final Logger logger = LogManager.getLogger(VereinController.class);
+	private static final Logger logger = LogManager.getLogger(VereinController.class);
 
-    @Autowired
-    private VereinService vereinService;
+	@Autowired
+	private VereinService vereinService;
 
-    @GetMapping("/vereine")
-    public Verein[] vereine() {
-        logger.info("Lade Vereine...");
-        return vereinService.holeAlleVereine().toArray(Verein[]::new);
-    }
+	@GetMapping("/vereine")
+	public Verein[] vereine() {
+		logger.info("Lade Vereine...");
+		return vereinService.holeAlleVereine().toArray(Verein[]::new);
+	}
 }

@@ -21,9 +21,9 @@ import lombok.ToString;
 @Entity
 @Table(name = "verein")
 public class VereinJpa {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String name;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
+	private String  name;
 
 }

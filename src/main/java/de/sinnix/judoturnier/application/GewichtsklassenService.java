@@ -62,7 +62,7 @@ public class GewichtsklassenService {
 		if (einstellungen.turnierTyp() == TurnierTyp.RANDORI) {
 			logger.info("Randori-Turnier");
 			logger.debug("Bei einem Randori-Turnier wird nicht nach geschlecht unterschieden, es wird daher keine Einteilung vorgenommen");
-		    var randoriGruppenGroesse = einstellungen.randoriGruppengroesse().anzahl();
+			var randoriGruppenGroesse = einstellungen.randoriGruppengroesse().anzahl();
 			var wettkaempferNachAlter = gruppiereNachAlterklasse(wettkaempferListe);
 
 			// erstelle random Namen für die Gruppen
