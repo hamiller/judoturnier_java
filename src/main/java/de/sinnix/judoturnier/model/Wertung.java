@@ -1,15 +1,19 @@
 package de.sinnix.judoturnier.model;
 
+import java.time.Duration;
+
 public record Wertung(
 	Integer id,
+	Wettkaempfer wettkaempfer1,
+	Wettkaempfer wettkaempfer2,
 
 	// turnier
 	Wettkaempfer sieger,
-	Integer zeit,
-	Integer punkteWettkaempfer_weiss,
-	Integer strafenWettkaempfer_weiss,
-	Integer punkteWettkaempfer_blau,
-	Integer strafenWettkaempfer_blau,
+	Duration zeit,
+	Integer punkteWettkaempferWeiss,
+	Integer strafenWettkaempferWeiss,
+	Integer punkteWettkaempferRot,
+	Integer strafenWettkaempferRot,
 
 	// randori
 	Integer kampfgeistWettkaempfer1,

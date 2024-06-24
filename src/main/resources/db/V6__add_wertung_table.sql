@@ -1,4 +1,4 @@
-CREATE TABLE begegnung
+CREATE TABLE wertung
 (
     id                      SERIAL,
     wettkaempfer1           INTEGER,

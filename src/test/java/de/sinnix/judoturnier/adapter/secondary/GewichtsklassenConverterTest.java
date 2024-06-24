@@ -21,10 +21,10 @@ import static org.mockito.Mockito.when;
 class GewichtsklassenConverterTest {
 
     @Mock
-    WettkaempferConverter wettkaempferConverter;
+    private WettkaempferConverter wettkaempferConverter;
 
     @InjectMocks
-    GewichtsklassenConverter converter = new GewichtsklassenConverter();
+    private GewichtsklassenConverter converter = new GewichtsklassenConverter();
 
     @Test
     void convertToGewichtsklassen() {

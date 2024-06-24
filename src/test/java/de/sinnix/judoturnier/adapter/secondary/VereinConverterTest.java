@@ -1,19 +1,16 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
 import de.sinnix.judoturnier.model.Verein;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class VereinConverterTest {
 
+    @InjectMocks
     private VereinConverter vereinConverter;
-
-    @BeforeEach
-    void setUp() {
-        vereinConverter = new VereinConverter();
-    }
 
     @Test
     void testConvertToVerein() {
