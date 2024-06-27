@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.Duration;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,18 +24,12 @@ import java.time.Duration;
 @Table(name = "wertung")
 public class WertungJpa {
 	@Id
-	Integer id;
-
-	@OneToOne
-	WettkaempferJpa wettkaempfer1;
-	@OneToOne
-	WettkaempferJpa wettkaempfer2;
+	UUID uuid;
+	Long zeit;
 
 	// turnier
 	@OneToOne
 	WettkaempferJpa sieger;
-
-	Long zeit;
 	@Column(name = "punktewettkaempfer1")
 	Integer punkteWettkaempfer1;
 	@Column(name = "strafenwettkaempfer1")

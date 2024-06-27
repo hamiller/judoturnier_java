@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 @Component
 public class WertungConverter {
@@ -13,9 +14,10 @@ public class WertungConverter {
 	private WettkaempferConverter wettkaempferConverter;
 
 	public Wertung convertToWertung(WertungJpa jpa) {
-		return new Wertung(jpa.getId(),
-			wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer1()),
-			wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer2()),
+		if (jpa == null) {
+			return null;
+		}
+		return new Wertung(jpa.getUuid().toString(),
 			wettkaempferConverter.convertToWettkaempfer(jpa.getSieger()),
 			toDuration(jpa.getZeit()),
 			jpa.getPunkteWettkaempfer1(),
@@ -33,11 +35,13 @@ public class WertungConverter {
 	}
 
 	public WertungJpa convertFromWertung(Wertung wertung) {
+		if (wertung == null) {
+			return null;
+		}
 		WertungJpa jpa = new WertungJpa();
-		if (wertung.id() != null) jpa.setId(wertung.id());
+		jpa.setUuid(toUUID(wertung.uuid()));
+
 		if (wertung.sieger() != null) jpa.setSieger(wettkaempferConverter.convertFromWettkaempfer(wertung.sieger()));
-		jpa.setWettkaempfer1(wettkaempferConverter.convertFromWettkaempfer(wertung.wettkaempfer1()));
-		jpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(wertung.wettkaempfer2()));
 
 		// Turnier
 		jpa.setZeit(fromDuration(wertung.zeit()));
@@ -56,6 +60,14 @@ public class WertungConverter {
 		jpa.setKampfstilWettkaempfer2(wertung.kampfstilWettkaempfer2());
 		jpa.setFairnessWettkaempfer2(wertung.fairnessWettkaempfer2());
 		return jpa;
+	}
+
+	private UUID toUUID(String uuid) {
+		if (uuid != null && !uuid.isBlank()) {
+			return UUID.fromString(uuid);
+		}
+
+		return UUID.randomUUID();
 	}
 
 	private Duration toDuration(Long duration) {

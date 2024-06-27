@@ -1,5 +1,6 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -22,10 +23,17 @@ import lombok.ToString;
 @Table(name = "begegnungen")
 public class BegegnungJpa {
 	@Id
-	Integer id;
+	Integer         id;
+	Integer         matteId;
 	Integer         mattenRunde;
 	Integer         gruppenRunde;
 	@OneToOne
+	@JoinColumn(name = "wettkaempfer1")
+	WettkaempferJpa wettkaempfer1;
+	@OneToOne
+	@JoinColumn(name = "wettkaempfer2")
+	WettkaempferJpa wettkaempfer2;
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "wertung")
-	WertungJpa wertung;
+	WertungJpa      wertung;
 }

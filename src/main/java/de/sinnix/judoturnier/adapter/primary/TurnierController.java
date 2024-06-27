@@ -174,8 +174,8 @@ public class TurnierController {
 	}
 
 	@PostMapping("/turnier/begegnungen/randori/{id}")
-	public ModelAndView speichereBegegnungRandori(@PathVariable int id, @RequestBody Wertung wertung) {
-		if (id == wertung.id()) {
+	public ModelAndView speichereBegegnungRandori(@PathVariable String id, @RequestBody Wertung wertung) {
+		if (id == wertung.uuid()) {
 			turnierService.speichereWertung(wertung);
 		}
 		return new ModelAndView("redirect:/turnier/begegnungen/randori");

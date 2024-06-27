@@ -3,9 +3,7 @@ package de.sinnix.judoturnier.model;
 import java.time.Duration;
 
 public record Wertung(
-	Integer id,
-	Wettkaempfer wettkaempfer1,
-	Wettkaempfer wettkaempfer2,
+	String uuid,
 
 	// turnier
 	Wettkaempfer sieger,

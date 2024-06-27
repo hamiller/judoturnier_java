@@ -1,8 +1,6 @@
 CREATE TABLE wertung
 (
-    id                      SERIAL,
-    wettkaempfer1           INTEGER,
-    wettkaempfer2           INTEGER,
+    uuid                    UUID,
     altersklasse            VARCHAR(255),
     strafenWettkaempfer1    INTEGER,
     punkteWettkaempfer1     INTEGER,
@@ -18,5 +16,5 @@ CREATE TABLE wertung
     technikWettkaempfer2    INTEGER,
     kampfstilWettkaempfer2  INTEGER,
     fairnessWettkaempfer2   INTEGER,
-    PRIMARY KEY (id)
+    PRIMARY KEY (uuid)
 );

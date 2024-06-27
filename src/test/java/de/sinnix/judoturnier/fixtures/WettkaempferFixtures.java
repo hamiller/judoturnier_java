@@ -14,6 +14,12 @@ import java.util.Optional;
 
 public class WettkaempferFixtures {
 
+    public static WettkaempferJpa wettkaempferJpa1 = new WettkaempferJpa(1, "Melanie", "w", "U11", new VereinJpa(1, "Verein1"), 55d, null, false, false);
+    public static WettkaempferJpa wettkaempferJpa2 = new WettkaempferJpa(2, "Lea", "w", "U11", new VereinJpa(1, "Verein1"), 55d, null, false, false);
+
+    public static Wettkaempfer wettkaempfer1 = new Wettkaempfer(1, "Melanie", Geschlecht.w, Altersklasse.U11, new Verein(1, "Verein1"), 25.0, Optional.of(Farbe.ORANGE), true, false);
+    public static Wettkaempfer wettkaempfer2 = new Wettkaempfer(2, "Lea A", Geschlecht.w, Altersklasse.U11, new Verein(1, "Verein1"), 25.0, Optional.of(Farbe.ORANGE), true, false);
+
     public static List<WettkaempferJpa> wettkaempferJpaList = Arrays.asList(
             new WettkaempferJpa(1, "Teilnehmer A", "m", "U11", new VereinJpa(1, "Verein1"), 25.0, "ORANGE", true, false),
             new WettkaempferJpa(2, "Teilnehmer B", "w", "U11", new VereinJpa(2, "Verein2"), 26.0, "BLAU", false, true),

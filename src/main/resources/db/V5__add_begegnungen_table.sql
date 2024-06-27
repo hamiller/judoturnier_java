@@ -5,6 +5,8 @@ CREATE TABLE begegnungen
     matten_runde    INTEGER,
     gruppen_runde   INTEGER,
     wettkampfgruppe INTEGER,
-    wertung         INTEGER,
+    wettkaempfer1   INTEGER,
+    wettkaempfer2   INTEGER,
+    wertung         UUID,
     PRIMARY KEY (id)
 );
