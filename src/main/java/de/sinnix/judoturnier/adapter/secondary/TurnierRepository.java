@@ -16,9 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static org.hibernate.loader.internal.AliasConstantsHelper.get;
 
 @Repository
 public class TurnierRepository {
@@ -56,8 +53,8 @@ public class TurnierRepository {
 
 		Map<Integer, Matte> matteMap = new HashMap<>();
 		for (Begegnung b : begegnungenList) {
-			Integer matteId = b.matteId();
-			Runde r = new Runde(null, b.mattenRunde(), b.gruppenRunde(), null, matteId, b.wettkaempfer1().altersklasse(), null, List.of(b));
+			Integer matteId = b.getMatteId();
+			Runde r = new Runde(null, b.getMattenRunde(), b.getGruppenRunde(), null, matteId, b.getWettkaempfer1().altersklasse(), null, List.of(b));
 			if (!matteMap.containsKey(matteId)) {
 				List<Runde> rundeList = new ArrayList<>();
 				List<GruppenRunde> gruppenRundeList = new ArrayList<>();
@@ -84,8 +81,8 @@ public class TurnierRepository {
 				begegnungJpa.setMatteId(matte.id());
 				begegnungJpa.setGruppenRunde(runde.gruppenRunde());
 				begegnungJpa.setMattenRunde(runde.mattenRunde());
-				begegnungJpa.setWettkaempfer1(wettkaempferConverter.convertFromWettkaempfer(begegnung.wettkaempfer1()));
-				begegnungJpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.wettkaempfer2()));
+				begegnungJpa.setWettkaempfer1(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1()));
+				begegnungJpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2()));
 
 				begegnungJpaList.add(begegnungJpa);
 			}
@@ -97,8 +94,9 @@ public class TurnierRepository {
 	public void loescheAlleMatten() {
 		begegnungJpaRepository.deleteAll();
 	}
-//
-//	public void loescheWettkaempfeMitAltersklasse(Altersklasse altersklasse) {
+
+	public void loescheWettkaempfeMitAltersklasse(Altersklasse altersklasse) {
+		logger.warn("loescheWettkaempfeMitAltersklasse - not yet implemented!");
 //		begegnungJpaRepository.findAll().stream().filter(begegnungJpa -> begegnungJpa.)
-//	}
+	}
 }

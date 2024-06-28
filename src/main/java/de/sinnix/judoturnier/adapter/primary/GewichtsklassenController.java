@@ -42,7 +42,7 @@ public class GewichtsklassenController {
 	@GetMapping("/gewichtsklassen")
 	public ModelAndView ladeGewichtsklassen() {
 		var wks = wettkaempferService.alleKaempfer();
-		var currentGwks = gewichtsklassenService.lade();
+		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
 
 		var groupedByAge = this.groupByAge(currentGwks);
 		var einstellungen = einstellungenService.ladeEinstellungen();
@@ -65,7 +65,7 @@ public class GewichtsklassenController {
 	@GetMapping("/gewichtsklassen/randori_printview_groups/{altersklasse}")
 	public ModelAndView ladeDruckAnsichtGruppenRandori(@PathVariable("altersklasse") String altersklasse) {
 		logger.info("lade Druckansicht Randori-Gruppen für " + altersklasse);
-		var currentGwks = gewichtsklassenService.lade();
+		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
 
 		ModelAndView mav = new ModelAndView("druckansicht_gruppen_randori");
 		mav.addObject("gruppen", currentGwks.stream().filter(gwk -> gwk.altersKlasse().name().equalsIgnoreCase(altersklasse)).toList());

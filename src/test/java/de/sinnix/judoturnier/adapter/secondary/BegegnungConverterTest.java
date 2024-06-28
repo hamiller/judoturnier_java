@@ -40,9 +40,9 @@ class BegegnungConverterTest {
 		Begegnung result = begegnungConverter.convertToBegegnung(begegnungJpa);
 
 		assertTrue(result != null);
-		assertEquals(result.begegnungId(), begegnungJpa.getId());
-		assertEquals(result.matteId(), begegnungJpa.getMatteId());
-		assertEquals(result.mattenRunde(), begegnungJpa.getMattenRunde());
-		assertEquals(result.gruppenRunde(), begegnungJpa.getGruppenRunde());
+		assertEquals(result.getBegegnungId(), begegnungJpa.getId());
+		assertEquals(result.getMatteId(), begegnungJpa.getMatteId());
+		assertEquals(result.getMattenRunde(), begegnungJpa.getMattenRunde());
+		assertEquals(result.getGruppenRunde(), begegnungJpa.getGruppenRunde());
 	}
 }

@@ -38,7 +38,7 @@ public class GewichtsklassenService {
 	private WettkaempferRepository    wettkaempferRepository;
 
 
-	public List<GewichtsklassenGruppe> lade() {
+	public List<GewichtsklassenGruppe> ladeGewichtsklassenGruppen() {
 		logger.info("lade alle GewichtsklassenGruppen");
 		return gewichtsklassenRepository.findAll().stream()
 			.sorted((a, b) -> {
@@ -48,6 +48,13 @@ public class GewichtsklassenService {
 					return Double.compare(a.maxGewicht(), b.maxGewicht()); // wenn Alter gleich, dann aufsteigend nach Gewicht sortieren
 				}
 			})
+			.collect(Collectors.toList());
+	}
+
+	public List<GewichtsklassenGruppe> ladeGewichtsklassenGruppe(Altersklasse altersklasse) {
+		return ladeGewichtsklassenGruppen().stream()
+			.filter(g -> g.altersKlasse().equals(altersklasse))
+			.sorted(Comparator.comparingDouble(GewichtsklassenGruppe::maxGewicht))
 			.collect(Collectors.toList());
 	}
 

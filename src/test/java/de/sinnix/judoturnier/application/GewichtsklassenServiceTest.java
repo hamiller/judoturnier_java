@@ -51,7 +51,7 @@ public class GewichtsklassenServiceTest {
 	private GewichtsklassenService    gewichtsklassenService;
 
 	@Test
-	void testLade() {
+	void testLadeGewichtsklassenGruppen() {
 		// Setup mocks
 		GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(1, Altersklasse.U18, Optional.of(Geschlecht.m), new ArrayList<>(), Optional.of(RandoriGruppenName.Adler), 50.0, 60.0);
 		GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(2, Altersklasse.U18, Optional.of(Geschlecht.m), new ArrayList<>(), Optional.of(RandoriGruppenName.Bär), 60.0, 70.0);
@@ -60,7 +60,7 @@ public class GewichtsklassenServiceTest {
 		when(gewichtsklassenRepository.findAll()).thenReturn(gruppenList);
 
 		// Execute method under test
-		List<GewichtsklassenGruppe> result = gewichtsklassenService.lade();
+		List<GewichtsklassenGruppe> result = gewichtsklassenService.ladeGewichtsklassenGruppen();
 
 		// Verify results
 		assertEquals(2, result.size());

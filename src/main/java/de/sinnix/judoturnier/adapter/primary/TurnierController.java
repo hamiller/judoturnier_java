@@ -24,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -63,7 +64,7 @@ public class TurnierController {
 
 	@GetMapping("/turnier/begegnungen/randori")
 	public ModelAndView ladeWettkampfreihenfolgeJeMatteRandori(@RequestParam(value = "error", required = false) String error) {
-		List<GewichtsklassenGruppe> gwks = gewichtsklassenService.lade();
+		List<GewichtsklassenGruppe> gwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
 		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge();
 		Set<Altersklasse> altersklassen = gwks.stream()
 			.map(GewichtsklassenGruppe::altersKlasse)
@@ -79,7 +80,7 @@ public class TurnierController {
 
 	@GetMapping("/turnier/begegnungen/normal")
 	public ModelAndView ladeWettkampfreihenfolgeJeMatteNormal() {
-		List<GewichtsklassenGruppe> gwks = gewichtsklassenService.lade();
+		List<GewichtsklassenGruppe> gwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
 		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge();
 
 		ModelAndView mav = new ModelAndView("begegnungen_normal");
@@ -109,7 +110,7 @@ public class TurnierController {
 		String error = "";
 		try {
 			turnierService.loescheWettkampfreihenfolgeAltersklasse(ak);
-			turnierService.erstelleWettkampfreihenfolgeAltersklasse(ak);
+			turnierService.erstelleWettkampfreihenfolgeAltersklasse(Optional.of(ak));
 		} catch (Exception e) {
 			error = e.toString();
 		}
@@ -164,8 +165,8 @@ public class TurnierController {
 	}
 
 	@GetMapping("/turnier/begegnungen/randori/{id}")
-	public ModelAndView begegnungRandori(@PathVariable int id) {
-		Wertung begegnung = turnierService.ladeWertungFuerWettkampf(id);
+	public ModelAndView begegnungRandori(@PathVariable String id) {
+		Optional<Wertung> begegnung = turnierService.ladeWertungFuerWettkampf(id);
 
 		ModelAndView mav = new ModelAndView("wettkampf_randori");
 		mav.addObject("begegnung", begegnung);

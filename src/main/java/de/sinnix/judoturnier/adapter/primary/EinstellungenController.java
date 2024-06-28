@@ -38,7 +38,7 @@ public class EinstellungenController {
 
 		var einstellungen = einstellungenService.ladeEinstellungen();
 		var wks = wiegenService.alleKaempfer();
-		var gwks = gewichtsklassenService.lade();
+		var gwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
 
 		ModelAndView mav = new ModelAndView("einstellungen");
 		mav.addObject("gewichtsklassengruppen", gwks);
@@ -57,7 +57,7 @@ public class EinstellungenController {
 		// todo: Speichern!
 		var einstellungen = einstellungenService.ladeEinstellungen();
 		var wks = wiegenService.alleKaempfer();
-		var gwks = gewichtsklassenService.lade();
+		var gwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
 
 		ModelAndView mav = new ModelAndView("einstellungen");
 		mav.addObject("gewichtsklassengruppen", gwks);
@@ -83,7 +83,7 @@ public class EinstellungenController {
 
 		einstellungen = einstellungenService.speichereTurnierEinstellungen(einstellungen);
 		var wks = wiegenService.alleKaempfer();
-		var gwks = gewichtsklassenService.lade();
+		var gwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
 
 		ModelAndView mav = new ModelAndView("einstellungen");
 		mav.addObject("gewichtsklassengruppen", gwks);

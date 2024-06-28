@@ -123,8 +123,8 @@ class TurnierRepositoryTest {
 		Runde runde = new Runde(1, 1, 1, 1, 1, Altersklasse.U12, null, Arrays.asList(begegnung));
 		Matte matte = new Matte(1, Arrays.asList(runde), new ArrayList<>());
 
-		when(wettkaempferConverter.convertFromWettkaempfer(begegnung.wettkaempfer1())).thenReturn(new WettkaempferJpa());
-		when(wettkaempferConverter.convertFromWettkaempfer(begegnung.wettkaempfer2())).thenReturn(new WettkaempferJpa());
+		when(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1())).thenReturn(new WettkaempferJpa());
+		when(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2())).thenReturn(new WettkaempferJpa());
 
 		turnierRepository.speichereMatte(matte);
 
