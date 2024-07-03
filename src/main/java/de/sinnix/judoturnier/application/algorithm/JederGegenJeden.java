@@ -28,13 +28,13 @@ public class JederGegenJeden implements Algorithmus {
 		for (int i = 0; i < wettkaempferGruppen.size(); i++) {
 			List<Wettkaempfer> wettkaempferGruppe = wettkaempferGruppen.get(i);
 
-			List<List<Begegnung>> begegnungen = berechneBegegnungen(wettkaempferGruppe);
+ 			List<List<Begegnung>> begegnungen = berechneBegegnungen(wettkaempferGruppe);
 
 			String id = ((gruppenid + 1) * 10) + Integer.toString(i); // ids erstellen und konkatenieren
 			WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(
 				gewichtsklassenGruppe.id() != null ? gewichtsklassenGruppe.id() : Integer.parseInt(id),
 				gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
-				"(" + gewichtsklassenGruppe.minGewicht() + "" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
+				"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
 				begegnungen
 			);
 			result.add(wettkampfGruppe);
@@ -52,8 +52,16 @@ public class JederGegenJeden implements Algorithmus {
 	private List<List<Begegnung>> berechneBegegnungenMitUngeraderAnzahl(List<Wettkaempfer> teilnehmer) {
 		int teilnehmerZahl = teilnehmer.size();
 		int anzahlRunden = teilnehmerZahl;
-		int anzahlBegegnungenJeRunden = (int) Math.floor(teilnehmerZahl / 2.0);
 		List<List<Begegnung>> runden = new ArrayList<>(anzahlRunden);
+		int anzahlBegegnungenJeRunden = (int) Math.floor(teilnehmerZahl / 2.0);
+
+		if (teilnehmerZahl == 1) {
+			logger.warn("Einzelner Teilnehmer in einer Gruppe, KEINE Kampfbegegnungen! Erstelle einzelne Dummy-Begegnung...");
+			var dummyBegegnung = new Begegnung();
+			dummyBegegnung.setWettkaempfer1(teilnehmer.get(0));
+			runden.add(List.of(dummyBegegnung));
+			return runden;
+		}
 
 		for (int i = 0, k = 0; i < anzahlRunden; i++) {
 			List<Begegnung> runde = new ArrayList<>(anzahlBegegnungenJeRunden);

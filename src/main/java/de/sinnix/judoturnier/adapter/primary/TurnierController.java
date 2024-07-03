@@ -70,6 +70,7 @@ public class TurnierController {
 			.map(GewichtsklassenGruppe::altersKlasse)
 			.collect(Collectors.toSet());
 
+		logger.info("wettkampfreihenfolgeJeMatte {} ", wettkampfreihenfolgeJeMatte);
 		ModelAndView mav = new ModelAndView("begegnungen_randori");
 		mav.addObject("gewichtsklassenGruppe", gwks);
 		mav.addObject("matten", wettkampfreihenfolgeJeMatte);
@@ -96,6 +97,7 @@ public class TurnierController {
 			turnierService.loescheWettkampfreihenfolge();
 			turnierService.erstelleWettkampfreihenfolge();
 		} catch (Exception e) {
+			logger.error("Ein unerwarteter Fehler ist aufgetreten", e);
 			error = e.toString();
 		}
 		if (einstellungenService.isRandori()) {

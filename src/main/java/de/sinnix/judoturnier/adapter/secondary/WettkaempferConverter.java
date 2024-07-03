@@ -4,6 +4,8 @@ import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Farbe;
 import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.Wettkaempfer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,10 +15,16 @@ import java.util.Optional;
 @Component
 public class WettkaempferConverter {
 
+	private static final Logger          logger = LogManager.getLogger(WettkaempferConverter.class);
+
 	@Autowired
-	private VereinConverter vereinConverter;
+	private              VereinConverter vereinConverter;
 
 	public WettkaempferJpa convertFromWettkaempfer(Wettkaempfer wettkaempfer) {
+		if (wettkaempfer == null) {
+			logger.warn("Kein Wettkaempfer zum convertieren erhalten!");
+			return null;
+		}
 		WettkaempferJpa jpa = new WettkaempferJpa();
 		if (wettkaempfer.id() != null) jpa.setId(wettkaempfer.id());
 		jpa.setName(wettkaempfer.name());
@@ -31,6 +39,10 @@ public class WettkaempferConverter {
 	}
 
 	public Wettkaempfer convertToWettkaempfer(WettkaempferJpa jpa) {
+		if (jpa == null) {
+			logger.warn("Kein WettkaempferJpa zum convertieren erhalten!");
+			return null;
+		}
 		Wettkaempfer wettkaempfer = new Wettkaempfer(
 			jpa.getId(),
 			jpa.getName(),

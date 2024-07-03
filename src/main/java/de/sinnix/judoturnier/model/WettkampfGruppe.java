@@ -6,5 +6,6 @@ public record WettkampfGruppe(
 	Integer id,
 	String name,
 	String typ,
+	// TODO refactor: das hier ist eigentlich eine Liste von Runden
 	List<List<Begegnung>> alleGruppenBegegnungen) {
 }

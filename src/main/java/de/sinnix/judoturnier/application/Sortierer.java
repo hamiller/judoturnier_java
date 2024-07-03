@@ -2,9 +2,7 @@ package de.sinnix.judoturnier.application;
 
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
-import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.Runde;
-import de.sinnix.judoturnier.model.Verein;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -111,7 +109,8 @@ public class Sortierer {
 			int gruppe1Runde = 0;
 			int gruppe2Runde = 0;
 			// Abwechselnd die Begegnungen der gruppe1 und gruppe2 nehmen und der Matte hinzufügen
-			for (int r = 0; r < Math.max(gruppe1.alleGruppenBegegnungen().size(), gruppe2.alleGruppenBegegnungen().size()); r++) {
+			int maxAnzahlBegegnungen = Math.max(gruppe1.alleGruppenBegegnungen().size(), gruppe2.alleGruppenBegegnungen().size());
+			for (int r = 0; r < maxAnzahlBegegnungen; r++) {
 				if (gruppe1.alleGruppenBegegnungen().size() > r) {
 					gruppe1Runde++;
 					int mattenRunde = resultRundenNummer + 1;
@@ -119,11 +118,12 @@ public class Sortierer {
 					runden.add(runde1);
 					resultRundenNummer++;
 				} else {
-					// Gruppe 1 hat keine Teilnehmer mehr, wir fügen daher einen Dummy (zB Pause) ein
+					// Gruppe 1 hat keine Teilnehmer mehr, wir fügen daher einen Dummy (Pause) ein
 					logger.info("Gruppe 1 (von 2) ist leer, füge Dummy ein");
 					gruppe1Runde++;
 					int mattenRunde = resultRundenNummer + 1;
 					runden.add(dummyRunde(resultRundenNummer, mattenRunde, gruppe1Runde, altersKlasse1, gruppe1));
+					resultRundenNummer++;
 				}
 
 				if (gruppe2.alleGruppenBegegnungen().size() > r) {
@@ -133,11 +133,16 @@ public class Sortierer {
 					runden.add(runde2);
 					resultRundenNummer++;
 				} else {
-					// Gruppe 2 hat keine Teilnehmer mehr, wir fügen daher einen Dummy (zB Pause) ein
+					// Gruppe 2 hat keine Teilnehmer mehr, wir fügen daher einen Dummy (Pause) ein - es sei denn, dass dies die letzte Runde wäre, dann ist eine Pause am Ende unnötig
+					if (r == maxAnzahlBegegnungen -1) {
+						logger.info("Gruppe 2 (von 2) ist leer, aber wir sind fertig und stoppen hier");
+						break;
+					}
 					logger.info("Gruppe 2 (von 2) ist leer, füge Dummy ein");
 					gruppe2Runde++;
 					int rundenName = resultRundenNummer + 1;
 					runden.add(dummyRunde(resultRundenNummer, rundenName, gruppe2Runde, altersKlasse2, gruppe2));
+					resultRundenNummer++;
 				}
 			}
 		}
@@ -146,7 +151,6 @@ public class Sortierer {
 
 	private Runde dummyRunde(int resultRundenNummer, int mattenRunde, int gruppenRunde, Altersklasse altersKlasse, WettkampfGruppe gruppe) {
 		logger.info("erstelle Pause");
-		Wettkaempfer dummy = new Wettkaempfer(-1, "Pause", Geschlecht.m, altersKlasse, new Verein(null, ""), 0d, null, false, false);
 		Begegnung pausenBegegnung = new Begegnung();
 		return new Runde(resultRundenNummer, mattenRunde, gruppenRunde, null, null, altersKlasse, gruppe, List.of(pausenBegegnung));
 	}

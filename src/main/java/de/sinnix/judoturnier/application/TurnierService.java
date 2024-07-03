@@ -66,6 +66,8 @@ public class TurnierService {
 			Algorithmus algorithmus = new JederGegenJeden();
 			List<WettkampfGruppe> wettkampfGruppen = erstelleWettkampfgruppen(gwks, algorithmus, einstellungen.mattenAnzahl().anzahl());
 			List<Matte> matten = erstelleGruppenReihenfolgeRandori(wettkampfGruppen, einstellungen.mattenAnzahl().anzahl(), einstellungen.wettkampfReihenfolge());
+
+			turnierRepository.speichereMatten(matten);
 		}
 		else {
 			logger.error("Turniermodus noch nicht implementiert!");
@@ -91,11 +93,12 @@ public class TurnierService {
       		var wkg = algorithmus.erstelleWettkampfGruppen(i, gruppe, anzahlMatten);
 			wettkampfGruppen.addAll(wkg);
 		}
+		logger.debug("Anzahl erstellter Wettkampfgruppen: {}", wettkampfGruppen.size());
 		return wettkampfGruppen;
 	}
 
 	private List<Matte> erstelleGruppenReihenfolgeRandori(List<WettkampfGruppe> wettkampfGruppen, Integer anzahlMatten, WettkampfReihenfolge reihenfolge) {
-		logger.debug("erstelle Reihenfolge der Wettkämpfe aus den Wettkmapfgruppen: " + reihenfolge);
+		logger.debug("erstelle Reihenfolge der Wettkämpfe aus den Wettkampfgruppen: {} ", wettkampfGruppen.size(), reihenfolge);
     	List<Matte> matten = new ArrayList<>();
 
 		// Ausplitten der Begegnungen auf die Matten
@@ -122,6 +125,7 @@ public class TurnierService {
 					break;
 			}
 		}
+		logger.trace("Matten {}", matten);
 
 		int erwartet = wettkampfGruppenJeMatten.stream()
 			.mapToInt(wgm -> wgm.stream()
@@ -141,28 +145,40 @@ public class TurnierService {
 		return matten;
 	}
 
-	private List<List<WettkampfGruppe>> splitArray(List<WettkampfGruppe> arr, Integer numberOfParts) {
-    	List<List<WettkampfGruppe>> parts = new ArrayList<>();
-    	Integer partLength = (int) Math.ceil((double) arr.size() / numberOfParts);
+	private List<List<WettkampfGruppe>> splitArray(List<WettkampfGruppe> list, Integer parts) {
+		int size = list.size();
+		int partSize = (size + parts - 1) / parts; // Calculate part size
 
-		for (int i = 0; i < numberOfParts; i++) {
-		 	Integer startIndex = i * partLength;
-			Integer endIndex = startIndex + partLength;
-			parts.add(arr.subList(startIndex, endIndex));
+		List<List<WettkampfGruppe>> result = new ArrayList<>();
+
+		for (int i = 0; i < parts; i++) {
+			int start = i * partSize;
+			int end = Math.min(start + partSize, size);
+
+			if (start < end) {
+				result.add(new ArrayList<>(list.subList(start, end)));
+			} else {
+				result.add(new ArrayList<>()); // Empty list if no elements left
+			}
 		}
 
-		return parts;
+		return result;
 	}
 
-	private void checkGruppenSindValide(List<GewichtsklassenGruppe> gruppen) {
-		for (var gruppe : gruppen) {
-			if (gruppe.altersKlasse() == null) throw new Error("GewichtsklassenGruppe " + gruppe.id() + " hat keine Altersklasse.");
-			if (gruppe.gruppenGeschlecht() == null) throw new Error("GewichtsklassenGruppe " + gruppe.id() + " hat kein Geschlecht.");
-			for (var teilnehmer : gruppe.teilnehmer()) {
-				if (teilnehmer.altersklasse() == null) throw new Error("Teilnehmer " + teilnehmer.id() + " hat keine Altersklasse.");
-				if (teilnehmer.geschlecht() == null) throw new Error("Teilnehmer " + teilnehmer.id() + " hat kein Geschlecht.");
-				if (teilnehmer.gewicht() == null) throw new Error("Teilnehmer " + teilnehmer.id() + " hat kein Gewicht.");
+	private void checkGruppenSindValide(List<GewichtsklassenGruppe> gruppen) throws Error {
+		try {
+			for (var gruppe : gruppen) {
+				if (gruppe.altersKlasse() == null) throw new Error("GewichtsklassenGruppe " + gruppe.id() + " hat keine Altersklasse.");
+				if (gruppe.gruppenGeschlecht() == null) throw new Error("GewichtsklassenGruppe " + gruppe.id() + " hat kein Geschlecht.");
+				for (var teilnehmer : gruppe.teilnehmer()) {
+					if (teilnehmer.altersklasse() == null) throw new Error("Teilnehmer " + teilnehmer.id() + " hat keine Altersklasse.");
+					if (teilnehmer.geschlecht() == null) throw new Error("Teilnehmer " + teilnehmer.id() + " hat kein Geschlecht.");
+					if (teilnehmer.gewicht() == null) throw new Error("Teilnehmer " + teilnehmer.id() + " hat kein Gewicht.");
+				}
 			}
+		}catch (Error e) {
+			logger.error(e);
+			throw e;
 		}
 	}
 }

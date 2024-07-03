@@ -19,7 +19,7 @@ public class GewichtsklassenGruppeFixture {
                     new Wettkaempfer(4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4"), 24.2, Optional.of(Farbe.GELB), true, true),
                     new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5"), 24.4, Optional.of(Farbe.SCHWARZ), true, true),
                     new Wettkaempfer(6, "Teilnehmer F", Geschlecht.w, Altersklasse.U11, new Verein(2, "Verein2"), 24.3, Optional.of(Farbe.WEISS), true, true)
-            ), Optional.of(RandoriGruppenName.Antilope), 24.8, 23.8),
+            ), Optional.of(RandoriGruppenName.Antilope), 23.8, 24.5),
             new GewichtsklassenGruppe(2, Altersklasse.U11, Optional.of(Geschlecht.m), Arrays.asList(
                     new Wettkaempfer(7, "Teilnehmer G", Geschlecht.w, Altersklasse.U11, new Verein(3, "Verein3"), 25.0, Optional.of(Farbe.BLAU), true, true),
                     new Wettkaempfer(8, "Teilnehmer H", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4"), 25.2, Optional.of(Farbe.ORANGE), true, true),
@@ -46,7 +46,7 @@ public class GewichtsklassenGruppeFixture {
                     new Wettkaempfer(23, "Teilnehmer W", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1"), 28.0, Optional.of(Farbe.BLAU), true, true),
                     new Wettkaempfer(24, "Teilnehmer X", Geschlecht.w, Altersklasse.U11, new Verein(4, "Verein4"), 28.2, Optional.of(Farbe.ORANGE), true, true),
                     new Wettkaempfer(25, "Teilnehmer Y", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5"), 28.1, Optional.of(Farbe.GRUEN), true, true)
-            ), Optional.of(RandoriGruppenName.Tiger), 28.8, 27.8)
+            ), Optional.of(RandoriGruppenName.Tiger), 28.0, 28.2)
     );
 
     public static List<GewichtsklassenJpa> gewichtsklassenGruppenJpa = Arrays.asList(

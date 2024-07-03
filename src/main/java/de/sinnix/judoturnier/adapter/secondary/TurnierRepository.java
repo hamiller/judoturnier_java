@@ -88,6 +88,7 @@ public class TurnierRepository {
 			}
 		}
 
+		logger.info("Speichere Begegnungen {}", begegnungJpaList);
 		begegnungJpaRepository.saveAll(begegnungJpaList);
 	}
 
