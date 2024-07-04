@@ -93,7 +93,7 @@ public class TurnierRepository {
 				begegnungJpa.setMattenRunde(runde.mattenRunde());
 				begegnungJpa.setWettkaempfer1(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1()));
 				begegnungJpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2()));
-				begegnungJpa.setGruppe(wettkampfGruppeConverter.convertFromWettkampfGruppe(begegnung.getWettkampfGruppe()));
+				begegnungJpa.setGruppe(wettkampfGruppeConverter.convertFromWettkampfGruppe(runde.gruppe()));
 
 				begegnungJpaList.add(begegnungJpa);
 			}

@@ -28,6 +28,9 @@ public class GewichtsklassenService {
 
 	private static final Logger logger = LogManager.getLogger(GewichtsklassenService.class);
 
+	private static final Double DEFAULT_MIN_GEWICHT = 0.0;
+	private static final Double DEFAULT_MAX_GEWICHT = 200.0;
+
 	@Autowired
 	private GewichtsklassenRepository gewichtsklassenRepository;
 	@Autowired
@@ -116,7 +119,7 @@ public class GewichtsklassenService {
 	}
 
 	public void aktualisiere(Map<Integer, List<Integer>> gruppenTeilnehmer) {
-		logger.info("aktualisiere GewichtsklassenGruppe {}", gruppenTeilnehmer);
+		logger.info("aktualisiere GewichtsklassenGruppen {}", gruppenTeilnehmer);
 		var gewichtsklassenGruppen = gewichtsklassenRepository.findAll();
 		var wettkaempfer = wettkaempferService.alleKaempfer();
 
@@ -126,13 +129,23 @@ public class GewichtsklassenService {
 
 			// benötigt für die leere Gruppe
 			if (teilnehmerIds == null || teilnehmerIds.isEmpty()) {
-				updatedGewichtsklassenGruppen.add(gewichtsklassenGruppe);
+				GewichtsklassenGruppe updatedGewichtsklassenGruppe = new GewichtsklassenGruppe(
+					gewichtsklassenGruppe.id(),
+					gewichtsklassenGruppe.altersKlasse(),
+					gewichtsklassenGruppe.gruppenGeschlecht(),
+					List.of(),
+					gewichtsklassenGruppe.name(),
+					DEFAULT_MIN_GEWICHT,
+					DEFAULT_MAX_GEWICHT
+				);
+
+				updatedGewichtsklassenGruppen.add(updatedGewichtsklassenGruppe);
 				continue;
 			}
 
 			var wettkaempferListe = getWettkeampferListe(teilnehmerIds, wettkaempfer);
-			var updatedMinGewicht = wettkaempferListe.stream().map(Wettkaempfer::gewicht).min(Double::compareTo).orElse(0d);
-			var updatedMaxGewicht = wettkaempferListe.stream().map(Wettkaempfer::gewicht).max(Double::compareTo).orElse(200d);
+			var updatedMinGewicht = wettkaempferListe.stream().map(Wettkaempfer::gewicht).min(Double::compareTo).orElse(DEFAULT_MIN_GEWICHT);
+			var updatedMaxGewicht = wettkaempferListe.stream().map(Wettkaempfer::gewicht).max(Double::compareTo).orElse(DEFAULT_MAX_GEWICHT);
 			GewichtsklassenGruppe updatedGewichtsklassenGruppe = new GewichtsklassenGruppe(
 				gewichtsklassenGruppe.id(),
 				gewichtsklassenGruppe.altersKlasse(),
@@ -152,9 +165,9 @@ public class GewichtsklassenService {
 		if (teilnehmerIds == null || teilnehmerIds.isEmpty()) return new ArrayList<>();
 
 		List<Wettkaempfer> newWettkaempferList = new ArrayList<>();
-		for (var id : teilnehmerIds) {
-			for (var w : wettkaempferList) {
-				if (id == w.id()) newWettkaempferList.add(w);
+		for (Integer id : teilnehmerIds) {
+			for (Wettkaempfer w : wettkaempferList) {
+				if (id.equals(w.id())) newWettkaempferList.add(w);
 			}
 		}
 		return newWettkaempferList;
@@ -206,7 +219,7 @@ public class GewichtsklassenService {
 		}
 
 		RandoriGruppenName randoriGruppe = gruppenNamen.get(anzahlRandoriGruppen);
-		gewichtsklassenGruppen.add(new GewichtsklassenGruppe(null, wettkaempferGruppen.get(0).get(0).altersklasse(), Optional.empty(), new ArrayList<>(), Optional.of(randoriGruppe), 0d, 100d));
+		gewichtsklassenGruppen.add(new GewichtsklassenGruppe(null, wettkaempferGruppen.get(0).get(0).altersklasse(), Optional.empty(), new ArrayList<>(), Optional.of(randoriGruppe), DEFAULT_MIN_GEWICHT, DEFAULT_MAX_GEWICHT));
 
 		return gewichtsklassenGruppen;
 	}

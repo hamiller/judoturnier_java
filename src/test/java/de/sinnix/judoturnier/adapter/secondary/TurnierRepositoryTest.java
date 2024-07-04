@@ -104,7 +104,7 @@ class TurnierRepositoryTest {
 		List<Begegnung> begegnungList = new ArrayList<>();
 		begegnungList.add(new Begegnung(1, 2, 3, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, null, wkg));
 		List<Runde> rundenList = new ArrayList<>();
-		rundenList.add(new Runde(1, 3, 4, 4, 5, Altersklasse.U11, null, begegnungList));
+		rundenList.add(new Runde(1, 3, 4, 4, 5, Altersklasse.U11, wkg, begegnungList));
 		Matte matte = new Matte(2, rundenList, new ArrayList<>());
 		List<Matte> mattenList = Arrays.asList(matte);
 
@@ -124,17 +124,20 @@ class TurnierRepositoryTest {
 	@Test
 	public void testSpeichereMatte() {
 		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of());
-		Begegnung begegnung = new Begegnung(1, 5, 2, 3, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, null, wkg);
-		Runde runde = new Runde(1, 1, 1, 1, 1, Altersklasse.U12, null, Arrays.asList(begegnung));
-		Matte matte = new Matte(1, Arrays.asList(runde), new ArrayList<>());
+		Begegnung begegnung = new Begegnung(1, 5, 3, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, null, wkg);
+		Runde runde = new Runde(1, 3, 4, 1, 5, Altersklasse.U12, wkg, Arrays.asList(begegnung));
+		Matte matte = new Matte(5, Arrays.asList(runde), new ArrayList<>());
 
-		when(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1())).thenReturn(new WettkaempferJpa());
-		when(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2())).thenReturn(new WettkaempferJpa());
-		when(wettkampfGruppeConverter.convertFromWettkampfGruppe(wkg)).thenReturn(new WettkampfGruppeJpa(1, "name", "typ"));
+		WettkampfGruppeJpa wkgJpa = new WettkampfGruppeJpa(1, "name", "typ");
+		BegegnungJpa begegnungJpa = new BegegnungJpa(null, 5, 3, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, null, wkgJpa);
+
+		when(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1())).thenReturn(WettkaempferFixtures.wettkaempferJpa1);
+		when(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2())).thenReturn(WettkaempferFixtures.wettkaempferJpa2);
+		when(wettkampfGruppeConverter.convertFromWettkampfGruppe(wkg)).thenReturn(wkgJpa);
 
 		turnierRepository.speichereMatte(matte);
 
-		verify(begegnungJpaRepository, times(1)).saveAll(anyList());
+		verify(begegnungJpaRepository, times(1)).saveAll(List.of(begegnungJpa));
 	}
 
 	@Test

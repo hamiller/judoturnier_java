@@ -9,7 +9,7 @@ public record Wettkaempfer(
 	Altersklasse altersklasse,
 	Verein verein,
 	Double gewicht,
-	Optional<Farbe> farbe,
+	Optional<Farbe> farbe,  // TODO die Farbe sollte nicht am Wettkaempfer hinterlegt sein -> dann kann er bei jeder Begegnung eine neue Farbe erhalten
 	Boolean checked,
 	Boolean printed) {
 }

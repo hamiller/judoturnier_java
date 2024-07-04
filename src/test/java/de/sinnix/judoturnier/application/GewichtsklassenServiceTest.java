@@ -107,30 +107,36 @@ public class GewichtsklassenServiceTest {
 	void testAktualisiere() {
 		// gegeben
 		List<Wettkaempfer> alleWettkaempferList = WettkaempferFixtures.wettkaempferList;
-		List<Wettkaempfer> teilnehmerListe = Arrays.asList(
+		List<Wettkaempfer> teilnehmerListeGruppe1 = Arrays.asList(
 			new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1"), 25.0, Optional.of(Farbe.ORANGE), true, false),
 			new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3"), 27.0, Optional.of(Farbe.GRUEN), true, true),
 			new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5"), 29.0, Optional.of(Farbe.ORANGE), true, false)
 		);
-		GewichtsklassenGruppe gruppe = new GewichtsklassenGruppe(1, Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmerListe, Optional.of(RandoriGruppenName.Adler), 25.0, 29.0);
-		GewichtsklassenGruppe gruppeFix = new GewichtsklassenGruppe(2, Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmerListe, Optional.of(RandoriGruppenName.Bär), 25.0, 29.0);
+		List<Wettkaempfer> teilnehmerListeGruppe2 = List.of();
+		GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(1, Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmerListeGruppe1, Optional.of(RandoriGruppenName.Adler), 25.0, 29.0);
+		GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(2, Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmerListeGruppe2, Optional.of(RandoriGruppenName.Bär), 0.0, 200.0);
 
-		// neu
-		List<Wettkaempfer> teilnehmerListeNeu = Arrays.asList(
+		// neu: Wir verschieben 1 Kämpfer von einer Gruppe in die andere Gruppe. 2 Kämpfer verbleibt in der bisherigen Gruppe und wir fügen einen weiteren Kämpfer hinzu
+		List<Wettkaempfer> teilnehmerListeGruppe1Neu = Arrays.asList(
 			new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1"), 25.0, Optional.of(Farbe.ORANGE), true, false),
 			new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3"), 27.0, Optional.of(Farbe.GRUEN), true, true),
 			new Wettkaempfer(7, "Teilnehmer G", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2"), 26.1, Optional.of(Farbe.GRUEN), true, true)
 		);
-		GewichtsklassenGruppe gruppeNeu = new GewichtsklassenGruppe(1, Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmerListeNeu, Optional.of(RandoriGruppenName.Adler), 25.0, 27.0);
+		List<Wettkaempfer> teilnehmerListeGruppe2Neu = Arrays.asList(
+			new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5"), 29.0, Optional.of(Farbe.ORANGE), true, false)
+		);
+		GewichtsklassenGruppe gruppe1Neu = new GewichtsklassenGruppe(1, Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmerListeGruppe1Neu, Optional.of(RandoriGruppenName.Adler), 25.0, 27.0);
+		GewichtsklassenGruppe gruppe2Neu = new GewichtsklassenGruppe(2, Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmerListeGruppe2Neu, Optional.of(RandoriGruppenName.Bär), 29.0, 29.0);
 
 
 		// Mocks einrichten
-		when(gewichtsklassenRepository.findAll()).thenReturn(List.of(gruppe, gruppeFix));
+		when(gewichtsklassenRepository.findAll()).thenReturn(List.of(gruppe1, gruppe2));
 		when(wettkaempferService.alleKaempfer()).thenReturn(alleWettkaempferList);
 
 		// test
 		HashMap<Integer, List<Integer>> gruppenTeilnehmer = new HashMap<>();
 		gruppenTeilnehmer.put(1, List.of(1, 3, 7));
+		gruppenTeilnehmer.put(2, List.of(5));
 		gewichtsklassenService.aktualisiere(gruppenTeilnehmer);
 
 		// ArgumentCaptor verwenden
@@ -140,8 +146,8 @@ public class GewichtsklassenServiceTest {
 		// Verifizieren
 		List<GewichtsklassenGruppe> capturedArgument = argumentCaptor.getValue();
 		assertEquals(2, capturedArgument.size());
-		assertEquals(capturedArgument.get(1), gruppeFix);
-		assertEquals(capturedArgument.get(0), gruppeNeu);
+		assertEquals(capturedArgument.get(0), gruppe1Neu);
+		assertEquals(capturedArgument.get(1), gruppe2Neu);
 	}
 
 	@Test

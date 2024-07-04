@@ -18,8 +18,10 @@ import java.util.List;
 @Component
 public class Sortierer {
 
-	private static final int    PAUSEN = 2;
 	private static final Logger logger = LogManager.getLogger(Sortierer.class);
+
+	private static final int PAUSEN             = 2;
+	private static final int DEFAULT_MAX_RUNDEN = 100;
 
 	/**
 	 * Es werd die erste Runde aller Gruppen gekämpft, danach die zweite Runde aller Gruppen usw.
@@ -27,7 +29,7 @@ public class Sortierer {
 	public List<Runde> erstelleReihenfolgeMitAllenGruppenJeDurchgang(List<WettkampfGruppe> gruppen) {
 		logger.info("erstelleReihenfolgeMitAllenGruppenJeDurchgang...");
 		List<Runde> runden = new ArrayList<>();
-		int maxRundenNummer = 100; // todo
+		int maxRundenNummer = DEFAULT_MAX_RUNDEN; // TODO: mach das konfigurierbar?
 		for (int rundenNummer = 0; rundenNummer < maxRundenNummer; rundenNummer++) {
 			for (int gruppenNr = 0; gruppenNr < gruppen.size(); gruppenNr++) {
 				WettkampfGruppe gruppe = gruppen.get(gruppenNr);
@@ -134,7 +136,7 @@ public class Sortierer {
 					resultRundenNummer++;
 				} else {
 					// Gruppe 2 hat keine Teilnehmer mehr, wir fügen daher einen Dummy (Pause) ein - es sei denn, dass dies die letzte Runde wäre, dann ist eine Pause am Ende unnötig
-					if (r == maxAnzahlBegegnungen -1) {
+					if (r == maxAnzahlBegegnungen - 1) {
 						logger.info("Gruppe 2 (von 2) ist leer, aber wir sind fertig und stoppen hier");
 						break;
 					}
