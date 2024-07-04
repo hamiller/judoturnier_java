@@ -1,11 +1,15 @@
 package de.sinnix.judoturnier.adapter.primary;
 
 import com.github.jknack.handlebars.Options;
+import de.sinnix.judoturnier.model.Matte;
+import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Wertung;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -13,6 +17,7 @@ public class HelperSource {
 	private static final Logger logger = LogManager.getLogger(HelperSource.class);
 
 	public static boolean istGleich(Object o1, Object o2) {
+		logger.warn("istGleich {} == {}", o1, o2);
 		return o1 == null ? o2 == null : o1.equals(o2);
 	}
 
@@ -79,27 +84,32 @@ public class HelperSource {
 		return (wertung != null && (wertung.kampfgeistWettkaempfer1() != null || wertung.sieger() != null)) ? "vorhanden" : "";
 	}
 
-	public static List vorherigesElement(List items, Options options) {
-		for (int i = 0; i < items.size(); i++) {
-			if (i > 0) {
-				options.context.combine("previous", items.get(i - 1));
-			} else {
-				options.context.combine("previous", null);
-			}
+	public static List<ImmutablePair<Runde, Runde>> vorherigeRunde(List<Runde> runden, Options options) {
+		List<ImmutablePair<Runde, Runde>> result = new ArrayList<>();
+		for (int i = 0; i < runden.size(); i++) {
+			Runde vorherigeRunde = i > 0 ? runden.get(i - 1) : null;
+			Runde runde = runden.get(i);
+			result.add(new ImmutablePair(vorherigeRunde, runde));
 		}
-		return items;
+		return result;
 	}
 
-	public static String concat(Object[] args, Options options) {
-		if (args == null) {
-			logger.warn("args: {}, options: {}", args, options.params);
+	public static String combineString(Object arg1, Object arg2, Options options) {
+		if (arg1 == null && arg2 == null) {
+			logger.trace("combineString args: {} {}, options: {}", arg1, arg2, options.params);
 			return "";
 		}
-		logger.warn("args: {}, options: {}", args, options.params);
-		StringBuilder sb = new StringBuilder();
-		for (Object arg : args) {
-			sb.append(arg);
+		if (arg1 == null) {
+			return arg2.toString();
 		}
+		if (arg2 == null) {
+			return arg1.toString();
+		}
+
+		logger.trace("combineString args: {} {}, options: {}", arg1, arg2, options.params);
+		StringBuilder sb = new StringBuilder();
+		sb.append(arg1);
+		sb.append(arg2);
 		return sb.toString();
 	}
 

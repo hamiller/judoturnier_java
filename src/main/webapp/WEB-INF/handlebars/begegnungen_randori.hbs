@@ -46,30 +46,30 @@
         <div class="matte tabcontent" id="{{id}}">
           <div class="listeneintrag-titel">Matte {{id}}</div>
           <div class="wettkampfgruppe">
-              {{#each (vorherigesElement runden)}}
-                  {{#if previous}}
-                      {{#if (istGleich (concat previous.gruppe.name previous.altersklasse) (concat this.gruppe.name altersklasse))}}
+              {{#each (vorherigeRunde runden)}}
+                  {{#if left}}
+                      {{#if (istGleich (combineString left.gruppe.name left.altersklasse) (combineString right.gruppe.name right.altersklasse))}}
                       {{else}}
                           <div class="listeneintrag-header">
-                              {{#if (istGleich altersklasse null)}}
+                              {{#if (istGleich right.altersklasse null)}}
                                   <div class="listeneintrag-titel pause">PAUSE</div>
                               {{else}}
-                                  <div class="listeneintrag-titel">{{gruppe.name}} ({{altersklasse}})</div>
-                                  <div class="listeneintrag-titel-info rechts">(Wettkampf Nr. {{matten_runde}} auf Matte {{../id}}, Runde Nr. {{gruppen_runde}} für Gruppe {{gruppe.name}})</div>
+                                  <div class="listeneintrag-titel">{{right.gruppe.name}} ({{right.altersklasse}})</div>
+                                  <div class="listeneintrag-titel-info rechts">(Wettkampf Nr. {{right.matten_runde}} auf Matte {{../id}}, Runde Nr. {{right.gruppen_runde}} für Gruppe {{right.gruppe.name}})</div>
                               {{/if}}
                           </div>
                       {{/if}}
                   {{else}}
                       <div class="listeneintrag-header">
-                          {{#if (istGleich altersklasse null)}}
+                          {{#if (istGleich right.altersklasse null)}}
                               <div class="listeneintrag-titel pause">PAUSE</div>
                           {{else}}
-                              <div class="listeneintrag-titel">{{gruppe.name}} ({{altersklasse}})</div>
-                              <div class="listeneintrag-titel-info rechts">(Wettkampf Nr. {{matten_runde}} auf Matte {{../id}}, Runde Nr. {{gruppen_runde}} für Gruppe {{gruppe.name}})</div>
+                              <div class="listeneintrag-titel">{{right.gruppe.name}} ({{right.altersklasse}})</div>
+                              <div class="listeneintrag-titel-info rechts">(Wettkampf Nr. {{right.matten_runde}} auf Matte {{../id}}, Runde Nr. {{right.gruppen_runde}} für Gruppe {{right.gruppe.name}})</div>
                           {{/if}}
                       </div>
                   {{/if}}
-                  {{#each begegnungen}}
+                  {{#each right.begegnungen}}
                       {{#if (istGleich wettkaempfer1.name null)}}
                           <div class="listeneintrag">(Ansonsten wäre nun Gruppe {{../gruppe.name}} an der Reihe)</div>
                       {{else}}
