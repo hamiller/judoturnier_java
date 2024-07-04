@@ -4,6 +4,8 @@ import de.sinnix.judoturnier.model.Begegnung;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class BegegnungConverter {
 
@@ -14,7 +16,7 @@ public class BegegnungConverter {
 	@Autowired
 	private WettkampfGruppeConverter wettkampfGruppeConverter;
 
-	public Begegnung convertToBegegnung(BegegnungJpa jpa) {
+	public Begegnung convertToBegegnung(BegegnungJpa jpa, List<WettkampfGruppeJpa> wettkampfGruppeJpaList) {
 		return new Begegnung(jpa.getId(),
 			jpa.getMatteId(),
 			jpa.getMattenRunde(),
@@ -22,7 +24,7 @@ public class BegegnungConverter {
 			wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer1()),
 			wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer2()),
 			wertungConverter.convertToWertung(jpa.getWertung()),
-			wettkampfGruppeConverter.convertToWettkampfGruppe(jpa.getGruppe())
+			wettkampfGruppeConverter.convertToWettkampfGruppe(jpa.getWettkampfGruppeId(), wettkampfGruppeJpaList)
 			);
 	}
 }

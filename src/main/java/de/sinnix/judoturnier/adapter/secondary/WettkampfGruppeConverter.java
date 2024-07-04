@@ -8,7 +8,8 @@ import java.util.List;
 @Component
 public class WettkampfGruppeConverter {
 
-	public WettkampfGruppe convertToWettkampfGruppe(WettkampfGruppeJpa jpa) {
+	public WettkampfGruppe convertToWettkampfGruppe(Integer id, List<WettkampfGruppeJpa> jpaList) {
+		WettkampfGruppeJpa jpa = jpaList.stream().filter(wkg -> wkg.getId().equals(id)).findFirst().orElseThrow();
 		return new WettkampfGruppe(jpa.getId(), jpa.getName(), jpa.getTyp(), List.of());
 	}
 

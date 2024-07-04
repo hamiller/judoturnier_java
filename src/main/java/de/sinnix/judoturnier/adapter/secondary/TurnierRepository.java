@@ -6,6 +6,8 @@ import de.sinnix.judoturnier.model.GruppenRunde;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Wertung;
+import de.sinnix.judoturnier.model.WettkampfGruppe;
+import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ public class TurnierRepository {
 	@Autowired
 	private BegegnungJpaRepository begegnungJpaRepository;
 	@Autowired
+	private WettkampfGruppeJpaRepository wettkampfGruppeJpaRepository;
+	@Autowired
 	private WertungConverter wertungConverter;
 	@Autowired
 	private WettkaempferConverter wettkaempferConverter;
@@ -36,7 +40,10 @@ public class TurnierRepository {
 	private WettkampfGruppeConverter wettkampfGruppeConverter;
 
 	public Begegnung ladeBegegnung(Integer begegnungId) {
-		return begegnungJpaRepository.findById(begegnungId).map(jpa -> begegnungConverter.convertToBegegnung(jpa)).orElseThrow();
+		BegegnungJpa begegnungJpa = begegnungJpaRepository.findById(begegnungId).orElseThrow();
+		List<WettkampfGruppeJpa> wettkampfGruppeJpaList = wettkampfGruppeJpaRepository.findAll();
+
+		return begegnungConverter.convertToBegegnung(begegnungJpa, wettkampfGruppeJpaList);
 	}
 
 	public Optional<Wertung> ladeWertung(String wertungId) {
@@ -49,8 +56,11 @@ public class TurnierRepository {
 	}
 
 	public Map<Integer, Matte> ladeMatten() {
-		var begegnungenList = begegnungJpaRepository.findAll().stream()
-			.map(jpa -> begegnungConverter.convertToBegegnung(jpa))
+		List<BegegnungJpa> begegnungenJpaList = begegnungJpaRepository.findAll();
+		List<WettkampfGruppeJpa> wettkampfGruppeJpaList = wettkampfGruppeJpaRepository.findAll();
+
+		var begegnungenList = begegnungenJpaList.stream()
+			.map(jpa -> begegnungConverter.convertToBegegnung(jpa, wettkampfGruppeJpaList))
 			.toList();
 
 		Map<Integer, Matte> matteMap = new HashMap<>();
@@ -83,9 +93,20 @@ public class TurnierRepository {
 		}
 	}
 
+	@Transactional
 	public void speichereMatte(Matte matte) {
 		List<BegegnungJpa> begegnungJpaList = new ArrayList<>();
 		for (Runde runde : matte.runden()) {
+			Integer wettkampfGruppeId;
+			Optional<WettkampfGruppeJpa> optionalWettkampfGruppeJpa = wettkampfGruppeJpaRepository.findById(runde.gruppe().id());
+
+			if (optionalWettkampfGruppeJpa.isPresent()) {
+				wettkampfGruppeId = optionalWettkampfGruppeJpa.get().getId();
+			} else {
+				wettkampfGruppeId = wettkampfGruppeJpaRepository.save(wettkampfGruppeConverter.convertFromWettkampfGruppe(runde.gruppe()))
+					.getId();
+			}
+
 			for (Begegnung begegnung : runde.begegnungen()) {
 				BegegnungJpa begegnungJpa = new BegegnungJpa();
 				begegnungJpa.setMatteId(matte.id());
@@ -93,7 +114,7 @@ public class TurnierRepository {
 				begegnungJpa.setMattenRunde(runde.mattenRunde());
 				begegnungJpa.setWettkaempfer1(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1()));
 				begegnungJpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2()));
-				begegnungJpa.setGruppe(wettkampfGruppeConverter.convertFromWettkampfGruppe(runde.gruppe()));
+				begegnungJpa.setWettkampfGruppeId(wettkampfGruppeId);
 
 				begegnungJpaList.add(begegnungJpa);
 			}

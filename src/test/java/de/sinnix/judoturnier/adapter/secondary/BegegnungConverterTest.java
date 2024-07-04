@@ -39,13 +39,13 @@ class BegegnungConverterTest {
 		begegnungJpa.setGruppenRunde(22);
 		begegnungJpa.setWettkaempfer1(new WettkaempferJpa());
 		begegnungJpa.setWettkaempfer2(new WettkaempferJpa());
-		begegnungJpa.setGruppe(wettkampfGruppeJpa);
+		begegnungJpa.setWettkampfGruppeId(wettkampfGruppeJpa.getId());
 
 		when(wettkaempferConverter.convertToWettkaempfer(any(WettkaempferJpa.class))).thenReturn(WettkaempferFixtures.wettkaempfer1);
 		when(wertungConverter.convertToWertung(any())).thenReturn(null);
-		when(wettkampfGruppeConverter.convertToWettkampfGruppe(any())).thenReturn(new WettkampfGruppe(1, "name", "typ", List.of()));
+		when(wettkampfGruppeConverter.convertToWettkampfGruppe(any(), any())).thenReturn(new WettkampfGruppe(1, "name", "typ", List.of()));
 
-		Begegnung result = begegnungConverter.convertToBegegnung(begegnungJpa);
+		Begegnung result = begegnungConverter.convertToBegegnung(begegnungJpa, List.of(wettkampfGruppeJpa));
 
 		assertTrue(result != null);
 		assertEquals(result.getBegegnungId(), begegnungJpa.getId());

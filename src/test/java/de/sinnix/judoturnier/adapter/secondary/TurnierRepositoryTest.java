@@ -35,19 +35,21 @@ import static org.mockito.Mockito.when;
 class TurnierRepositoryTest {
 
 	@Mock
-	private WertungJpaRepository     wertungJpaRepository;
+	private WertungJpaRepository         wertungJpaRepository;
 	@Mock
-	private WertungConverter         wertungConverter;
+	private WertungConverter             wertungConverter;
 	@Mock
-	private BegegnungJpaRepository   begegnungJpaRepository;
+	private BegegnungJpaRepository       begegnungJpaRepository;
 	@Mock
-	private BegegnungConverter       begegnungConverter;
+	private BegegnungConverter           begegnungConverter;
 	@Mock
-	private WettkaempferConverter    wettkaempferConverter;
+	private WettkaempferConverter        wettkaempferConverter;
 	@Mock
-	private WettkampfGruppeConverter wettkampfGruppeConverter;
+	private WettkampfGruppeConverter     wettkampfGruppeConverter;
+	@Mock
+	private WettkampfGruppeJpaRepository wettkampfGruppeJpaRepository;
 	@InjectMocks
-	private TurnierRepository        turnierRepository;
+	private TurnierRepository            turnierRepository;
 
 	@BeforeEach
 	public void setUp() {
@@ -110,11 +112,11 @@ class TurnierRepositoryTest {
 
 		WettkampfGruppeJpa wkgJpa = new WettkampfGruppeJpa(1, "name", "typ");
 		List<BegegnungJpa> begegnungJpaList = new ArrayList<>();
-		begegnungJpaList.add(new BegegnungJpa(null, 2, 3, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, null, wkgJpa));
+		begegnungJpaList.add(new BegegnungJpa(null, 2, 3, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, null, wkgJpa.getId()));
 
 		when(wettkaempferConverter.convertFromWettkaempfer(WettkaempferFixtures.wettkaempfer1)).thenReturn(WettkaempferFixtures.wettkaempferJpa1);
 		when(wettkaempferConverter.convertFromWettkaempfer(WettkaempferFixtures.wettkaempfer2)).thenReturn(WettkaempferFixtures.wettkaempferJpa2);
-		when(wettkampfGruppeConverter.convertFromWettkampfGruppe(wkg)).thenReturn(wkgJpa);
+		when(wettkampfGruppeJpaRepository.findById(any())).thenReturn(Optional.of(wkgJpa));
 
 		turnierRepository.speichereMatten(mattenList);
 
@@ -129,11 +131,11 @@ class TurnierRepositoryTest {
 		Matte matte = new Matte(5, Arrays.asList(runde), new ArrayList<>());
 
 		WettkampfGruppeJpa wkgJpa = new WettkampfGruppeJpa(1, "name", "typ");
-		BegegnungJpa begegnungJpa = new BegegnungJpa(null, 5, 3, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, null, wkgJpa);
+		BegegnungJpa begegnungJpa = new BegegnungJpa(null, 5, 3, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, null, wkgJpa.getId());
 
 		when(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1())).thenReturn(WettkaempferFixtures.wettkaempferJpa1);
 		when(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2())).thenReturn(WettkaempferFixtures.wettkaempferJpa2);
-		when(wettkampfGruppeConverter.convertFromWettkampfGruppe(wkg)).thenReturn(wkgJpa);
+		when(wettkampfGruppeJpaRepository.findById(any())).thenReturn(Optional.of(wkgJpa));
 
 		turnierRepository.speichereMatte(matte);
 
@@ -147,7 +149,7 @@ class TurnierRepositoryTest {
 		Begegnung begegnung = new Begegnung(2, 1, 3, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, wertung, wkg);
 
 		when(begegnungJpaRepository.findAll()).thenReturn(List.of(new BegegnungJpa()));
-		when(begegnungConverter.convertToBegegnung(any(BegegnungJpa.class))).thenReturn(begegnung);
+		when(begegnungConverter.convertToBegegnung(any(BegegnungJpa.class), anyList())).thenReturn(begegnung);
 
 		Map<Integer, Matte> matten = turnierRepository.ladeMatten();
 
@@ -159,7 +161,7 @@ class TurnierRepositoryTest {
 		assertEquals(1, matte.runden().size());
 		var runde = matte.runden().get(0);
 		assertEquals(matte.id(), runde.matteId());
-//		assertEquals(1, runde.rundeTotal());
+		//		assertEquals(1, runde.rundeTotal());
 		assertEquals(3, runde.mattenRunde());
 		assertEquals(4, runde.gruppenRunde());
 		assertEquals(2, runde.id());
