@@ -10,7 +10,8 @@ public enum Altersklasse {
 	U18("U18", 6),
 	U21("U21", 7),
 	Maenner("Männer", 8),
-	Frauen("Frauen", 9);
+	Frauen("Frauen", 9),
+	PAUSE("Pause", 10);
 
 	private final String bezeichnung;
 	private final int    reihenfolge;

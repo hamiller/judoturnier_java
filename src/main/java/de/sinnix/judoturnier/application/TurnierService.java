@@ -127,13 +127,13 @@ public class TurnierService {
 		}
 		logger.trace("Matten {}", matten);
 
-		int erwartet = wettkampfGruppenJeMatten.stream()
-			.mapToInt(wgm -> wgm.stream()
-				.mapToInt(gr -> gr.alleGruppenBegegnungen().stream()
-					.mapToInt(br -> br.size())
-					.sum())
-				.sum())
-			.sum();
+//		int erwartet = wettkampfGruppenJeMatten.stream()
+//			.mapToInt(wgm -> wgm.stream()
+//				.mapToInt(gr -> gr.alleGruppenBegegnungen().stream()
+//					.mapToInt(br -> br.size())
+//					.sum())
+//				.sum())
+//			.sum();
 
 		// Berechnung der "summe"
 		int summe = matten.stream()
@@ -141,7 +141,7 @@ public class TurnierService {
 				.mapToInt(r -> r.begegnungen().size())
 				.sum())
 			.sum();
-		logger.debug("erwartet {}, summe {}, mattenanzahl {}", erwartet, summe, anzahlMatten);
+		logger.debug("erwartet {}, summe {}, mattenanzahl {}", "nicht implementier", summe, anzahlMatten);
 		return matten;
 	}
 

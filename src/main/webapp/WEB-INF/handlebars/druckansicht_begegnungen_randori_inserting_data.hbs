@@ -33,12 +33,12 @@
           {{#each gruppenRunden}}
             <div class="flex_warp">
               {{#each runden as |runden rundenindex|}}
-                {{#if (gleichesElement begegnungen.[0].wettkaempfer1.name null)}}
+                {{#if (istGleich begegnungen.[0].wettkaempfer1.name null)}}
                   <div class="gruppentitel_2 box">
                       Pause
                     </div>
                 {{else}}
-                  {{#if (gleichesElement @rundenindex 0)}}
+                  {{#if (istGleich @rundenindex 0)}}
                     <div class="gruppentitel_2 box">
                       Gruppe {{runden.gruppe.name}}<br>
                       Gruppen-Runde {{runden.gruppen_runde}}<br>

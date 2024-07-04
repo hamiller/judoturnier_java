@@ -33,14 +33,14 @@
               {{#each runden as |runden rundenindex|}}
                 {{#each begegnungen}}
                   <div class="table-row">
-                    {{#if (gleichesElement wettkaempfer1.name null)}}
+                    {{#if (istGleich wettkaempfer1.name null)}}
                       <div class="gruppentitel_2">
                         Pause<br>
                         (Ansonsten wäre nun Gruppe {{runden.gruppe.name}} an der Reihe)
                       </div>
                     {{else}}
                       <div class="table-cell column1">
-                        {{#if (gleichesElement @rundenindex 0)}}
+                        {{#if (istGleich @rundenindex 0)}}
                           <div class="gruppentitel_2">
                             Gruppe {{runden.gruppe.name}}, Runde {{runden.gruppen_runde}} (Wettkampf Nr. {{runden.matten_runde}} insgesamt)
                           </div>

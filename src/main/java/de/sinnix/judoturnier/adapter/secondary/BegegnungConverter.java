@@ -11,6 +11,8 @@ public class BegegnungConverter {
 	private WettkaempferConverter wettkaempferConverter;
 	@Autowired
 	private WertungConverter wertungConverter;
+	@Autowired
+	private WettkampfGruppeConverter wettkampfGruppeConverter;
 
 	public Begegnung convertToBegegnung(BegegnungJpa jpa) {
 		return new Begegnung(jpa.getId(),
@@ -19,7 +21,8 @@ public class BegegnungConverter {
 			jpa.getGruppenRunde(),
 			wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer1()),
 			wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer2()),
-			wertungConverter.convertToWertung(jpa.getWertung())
+			wertungConverter.convertToWertung(jpa.getWertung()),
+			wettkampfGruppeConverter.convertToWettkampfGruppe(jpa.getGruppe())
 			);
 	}
 }

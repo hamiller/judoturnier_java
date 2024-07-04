@@ -1,6 +1,5 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
@@ -30,13 +29,9 @@ public class WertungJpa {
 	// turnier
 	@OneToOne
 	WettkaempferJpa sieger;
-	@Column(name = "punktewettkaempfer1")
 	Integer punkteWettkaempfer1;
-	@Column(name = "strafenwettkaempfer1")
 	Integer strafenWettkaempfer1;
-	@Column(name = "punktewettkaempfer2")
 	Integer punkteWettkaempfer2;
-	@Column(name = "strafenwettkaempfer2")
 	Integer strafenWettkaempfer2;
 
 	// randori

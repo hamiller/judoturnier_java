@@ -70,7 +70,7 @@ public class TurnierController {
 			.map(GewichtsklassenGruppe::altersKlasse)
 			.collect(Collectors.toSet());
 
-		logger.info("wettkampfreihenfolgeJeMatte {} ", wettkampfreihenfolgeJeMatte);
+		logger.trace("wettkampfreihenfolgeJeMatte {} ", wettkampfreihenfolgeJeMatte);
 		ModelAndView mav = new ModelAndView("begegnungen_randori");
 		mav.addObject("gewichtsklassenGruppe", gwks);
 		mav.addObject("matten", wettkampfreihenfolgeJeMatte);

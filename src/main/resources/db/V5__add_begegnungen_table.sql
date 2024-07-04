@@ -7,6 +7,7 @@ CREATE TABLE begegnungen
     wettkampfgruppe INTEGER,
     wettkaempfer1   INTEGER,
     wettkaempfer2   INTEGER,
+    gruppe          INTEGER,
     wertung         UUID,
     PRIMARY KEY (id)
 );

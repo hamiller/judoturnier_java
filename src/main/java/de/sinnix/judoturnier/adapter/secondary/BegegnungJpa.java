@@ -1,5 +1,6 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import de.sinnix.judoturnier.model.WettkampfGruppe;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,17 +27,20 @@ import lombok.ToString;
 public class BegegnungJpa {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Integer         id;
-	Integer         matteId;
-	Integer         mattenRunde;
-	Integer         gruppenRunde;
+	Integer id;
+	Integer matteId;
+	Integer mattenRunde;
+	Integer gruppenRunde;
 	@OneToOne
 	@JoinColumn(name = "wettkaempfer1")
-	WettkaempferJpa wettkaempfer1;
+	WettkaempferJpa    wettkaempfer1;
 	@OneToOne
 	@JoinColumn(name = "wettkaempfer2")
-	WettkaempferJpa wettkaempfer2;
+	WettkaempferJpa    wettkaempfer2;
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "wertung")
-	WertungJpa      wertung;
+	WertungJpa         wertung;
+	@OneToOne
+	@JoinColumn(name = "gruppe")
+	WettkampfGruppeJpa gruppe;
 }

@@ -21,4 +21,5 @@ public class Begegnung {
 	private Wettkaempfer wettkaempfer1;
 	private Wettkaempfer wettkaempfer2;
 	private Wertung wertung;
+	private WettkampfGruppe wettkampfGruppe;
 }

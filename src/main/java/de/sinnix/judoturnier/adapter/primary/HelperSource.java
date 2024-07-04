@@ -6,12 +6,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
 
 public class HelperSource {
 	private static final Logger logger = LogManager.getLogger(HelperSource.class);
 
-	private static boolean istGleich(Object o1, Object o2) {
+	public static boolean istGleich(Object o1, Object o2) {
 		return o1 == null ? o2 == null : o1.equals(o2);
 	}
 
@@ -78,14 +79,10 @@ public class HelperSource {
 		return (wertung != null && (wertung.kampfgeistWettkaempfer1() != null || wertung.sieger() != null)) ? "vorhanden" : "";
 	}
 
-	public static Boolean gleichesElement(Object[] elements, Options options) {
-		return elements[0] == elements[1];
-	}
-
-	public static Object[] vorherigesElement(Object[] items, Options options) {
-		for (int i = 0; i < items.length; i++) {
+	public static List vorherigesElement(List items, Options options) {
+		for (int i = 0; i < items.size(); i++) {
 			if (i > 0) {
-				options.context.combine("previous", items[i - 1]);
+				options.context.combine("previous", items.get(i - 1));
 			} else {
 				options.context.combine("previous", null);
 			}
@@ -94,6 +91,11 @@ public class HelperSource {
 	}
 
 	public static String concat(Object[] args, Options options) {
+		if (args == null) {
+			logger.warn("args: {}, options: {}", args, options.params);
+			return "";
+		}
+		logger.warn("args: {}, options: {}", args, options.params);
 		StringBuilder sb = new StringBuilder();
 		for (Object arg : args) {
 			sb.append(arg);

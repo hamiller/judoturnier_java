@@ -4,7 +4,7 @@ CREATE TABLE wettkaempfer
     "name"       VARCHAR(255),
     geschlecht   VARCHAR(255),
     altersklasse VARCHAR(255),
-    verein       BIGINT,
+    verein       INTEGER,
     gewicht      FLOAT,
     farbe        VARCHAR(255),
     checked      BOOLEAN,

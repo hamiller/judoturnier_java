@@ -32,6 +32,8 @@ public class TurnierRepository {
 	private WettkaempferConverter wettkaempferConverter;
 	@Autowired
 	private BegegnungConverter begegnungConverter;
+	@Autowired
+	private WettkampfGruppeConverter wettkampfGruppeConverter;
 
 	public Begegnung ladeBegegnung(Integer begegnungId) {
 		return begegnungJpaRepository.findById(begegnungId).map(jpa -> begegnungConverter.convertToBegegnung(jpa)).orElseThrow();
@@ -54,7 +56,15 @@ public class TurnierRepository {
 		Map<Integer, Matte> matteMap = new HashMap<>();
 		for (Begegnung b : begegnungenList) {
 			Integer matteId = b.getMatteId();
-			Runde r = new Runde(null, b.getMattenRunde(), b.getGruppenRunde(), null, matteId, b.getWettkaempfer1().altersklasse(), null, List.of(b));
+			Runde r = new Runde(
+				b.getBegegnungId(),
+				b.getMattenRunde(),
+				b.getGruppenRunde(),
+				null,
+				matteId,
+				b.getWettkaempfer1() == null ? Altersklasse.PAUSE : b.getWettkaempfer1().altersklasse(), // wir haben eine PAUSE
+				b.getWettkampfGruppe(),
+				List.of(b));
 			if (!matteMap.containsKey(matteId)) {
 				List<Runde> rundeList = new ArrayList<>();
 				List<GruppenRunde> gruppenRundeList = new ArrayList<>();
@@ -83,6 +93,7 @@ public class TurnierRepository {
 				begegnungJpa.setMattenRunde(runde.mattenRunde());
 				begegnungJpa.setWettkaempfer1(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1()));
 				begegnungJpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2()));
+				begegnungJpa.setGruppe(wettkampfGruppeConverter.convertFromWettkampfGruppe(begegnung.getWettkampfGruppe()));
 
 				begegnungJpaList.add(begegnungJpa);
 			}
