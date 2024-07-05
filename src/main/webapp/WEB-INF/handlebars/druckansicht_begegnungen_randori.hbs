@@ -30,7 +30,7 @@
 
           {{#each gruppenRunden}}
             <div class="table">
-              {{#each runden as |runden rundenindex|}}
+              {{#each runde as |runden rundenindex|}}
                 {{#each begegnungen}}
                   <div class="table-row">
                     {{#if (istGleich wettkaempfer1.name null)}}
@@ -42,14 +42,14 @@
                       <div class="table-cell column1">
                         {{#if (istGleich @rundenindex 0)}}
                           <div class="gruppentitel_2">
-                            Gruppe {{runden.gruppe.name}}, Runde {{runden.gruppen_runde}} (Wettkampf Nr. {{runden.matten_runde}} insgesamt)
+                            Gruppe {{runden.gruppe.name}}, Runde {{runden.gruppenRunde}} (Wettkampf Nr. {{runden.mattenRunde}} insgesamt)
                           </div>
                         {{/if}}
                       </div>
                     
-                      <div class="table-cell columnName wettkaempfer_name {{wettkaempfer1.farbe}}">{{wettkaempfer1.name}}</div><div class="table-cell columnVerein">({{wettkaempfer1.verein.name}})</div>
+                      <div class="table-cell columnName wettkaempfer_name {{wettkaempfer1.farbe.get}}">{{wettkaempfer1.name}}</div><div class="table-cell columnVerein">({{wettkaempfer1.verein.name}})</div>
                       <div class="table-cell columnVS">vs</div> 
-                      <div class="table-cell columnName wettkaempfer_name {{wettkaempfer2.farbe}}">{{wettkaempfer2.name}}</div><div class="table-cell columnVerein">({{wettkaempfer2.verein.name}})</div>
+                      <div class="table-cell columnName wettkaempfer_name {{wettkaempfer2.farbe.get}}">{{wettkaempfer2.name}}</div><div class="table-cell columnVerein">({{wettkaempfer2.verein.name}})</div>
                     {{/if}}
                   </div>
                 {{/each}}

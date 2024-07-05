@@ -55,7 +55,7 @@
                                   <div class="listeneintrag-titel pause">PAUSE</div>
                               {{else}}
                                   <div class="listeneintrag-titel">{{right.gruppe.name}} ({{right.altersklasse}})</div>
-                                  <div class="listeneintrag-titel-info rechts">(Wettkampf Nr. {{right.matten_runde}} auf Matte {{../id}}, Runde Nr. {{right.gruppen_runde}} für Gruppe {{right.gruppe.name}})</div>
+                                  <div class="listeneintrag-titel-info rechts">(Wettkampf Nr. {{right.mattenRunde}} auf Matte {{../id}}, Runde Nr. {{right.gruppenRunde}} für Gruppe {{right.gruppe.name}})</div>
                               {{/if}}
                           </div>
                       {{/if}}
@@ -65,7 +65,7 @@
                               <div class="listeneintrag-titel pause">PAUSE</div>
                           {{else}}
                               <div class="listeneintrag-titel">{{right.gruppe.name}} ({{right.altersklasse}})</div>
-                              <div class="listeneintrag-titel-info rechts">(Wettkampf Nr. {{right.matten_runde}} auf Matte {{../id}}, Runde Nr. {{right.gruppen_runde}} für Gruppe {{right.gruppe.name}})</div>
+                              <div class="listeneintrag-titel-info rechts">(Wettkampf Nr. {{right.mattenRunde}} auf Matte {{../id}}, Runde Nr. {{right.gruppenRunde}} für Gruppe {{right.gruppe.name}})</div>
                           {{/if}}
                       </div>
                   {{/if}}
@@ -75,9 +75,9 @@
                       {{else}}
                           <a href="/turnier/begegnungen/randori/{{begegnung_id}}">
                               <div class="listeneintrag vs {{wertungVorhanden wertung}}">
-                                  <div class="wettkaempfer name {{wettkaempfer1.farbe}}">{{wettkaempfer1.name}}</div><div>({{wettkaempfer1.verein.name}})</div>
+                                  <div class="wettkaempfer name {{wettkaempfer1.farbe.get}}">{{wettkaempfer1.name}}</div><div>({{wettkaempfer1.verein.name}})</div>
                                   <div class="center">vs</div>
-                                  <div class="wettkaempfer name {{wettkaempfer2.farbe}}">{{wettkaempfer2.name}}</div><div>({{wettkaempfer2.verein.name}})</div>
+                                  <div class="wettkaempfer name {{wettkaempfer2.farbe.get}}">{{wettkaempfer2.name}}</div><div>({{wettkaempfer2.verein.name}})</div>
                               </div>
                           </a>
                       {{/if}}

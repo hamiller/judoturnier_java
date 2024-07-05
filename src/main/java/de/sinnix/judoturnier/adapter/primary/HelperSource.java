@@ -1,7 +1,6 @@
 package de.sinnix.judoturnier.adapter.primary;
 
 import com.github.jknack.handlebars.Options;
-import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Wertung;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -17,7 +16,7 @@ public class HelperSource {
 	private static final Logger logger = LogManager.getLogger(HelperSource.class);
 
 	public static boolean istGleich(Object o1, Object o2) {
-		logger.warn("istGleich {} == {}", o1, o2);
+		logger.trace("istGleich {} == {}", o1, o2);
 		return o1 == null ? o2 == null : o1.equals(o2);
 	}
 
