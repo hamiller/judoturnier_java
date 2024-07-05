@@ -47,6 +47,8 @@ public class EinstellungenController {
 		mav.addObject("turniertyp", einstellungen.turnierTyp());
 		mav.addObject("mattenanzahl", einstellungen.mattenAnzahl());
 		mav.addObject("wettkampfreihenfolge", einstellungen.wettkampfReihenfolge());
+		mav.addObject("randorigruppengroesse", einstellungen.randoriGruppengroesse());
+		mav.addObject("variablergewichtsteil", einstellungen.variablerGewichtsteil());
 		return mav;
 	}
 
@@ -92,8 +94,8 @@ public class EinstellungenController {
 		mav.addObject("turniertyp", einstellungen.turnierTyp());
 		mav.addObject("mattenanzahl", einstellungen.mattenAnzahl());
 		mav.addObject("wettkampfreihenfolge", einstellungen.wettkampfReihenfolge());
-		mav.addObject("randorigruppengroesse", einstellungen.wettkampfReihenfolge());
-		mav.addObject("variablergewichtsteil", einstellungen.wettkampfReihenfolge());
+		mav.addObject("randorigruppengroesse", einstellungen.randoriGruppengroesse());
+		mav.addObject("variablergewichtsteil", einstellungen.variablerGewichtsteil());
 		return mav;
 	}
 }

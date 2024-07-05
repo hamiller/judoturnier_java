@@ -39,7 +39,7 @@ class WertungConverterTest {
 	@Test
 	void convertToWertungTurnier() {
 		WertungJpa jpa = new WertungJpa();
-		jpa.setUuid(UUID.randomUUID());
+		jpa.setUuid(UUID.randomUUID().toString());
 		jpa.setSieger(wk1Jpa);
 		jpa.setZeit(180_000_000_000l); // 3 Minuten
 		jpa.setPunkteWettkaempfer1(1);
@@ -51,7 +51,7 @@ class WertungConverterTest {
 
 		Wertung wertung =  wertungConverter.convertToWertung(jpa);
 
-		assertEquals(wertung.uuid(), jpa.getUuid().toString());
+		assertEquals(wertung.uuid().toString(), jpa.getUuid());
 		assertEquals(wertung.sieger(), wk1);
 		assertEquals(wertung.zeit(), Duration.of(3l, ChronoUnit.MINUTES));
 		assertEquals(wertung.punkteWettkaempferWeiss(), jpa.getPunkteWettkaempfer1());
@@ -89,7 +89,7 @@ class WertungConverterTest {
 	@Test
 	void convertToWertungRandori() {
 		WertungJpa jpa = new WertungJpa();
-		jpa.setUuid(UUID.randomUUID());
+		jpa.setUuid(UUID.randomUUID().toString());
 		jpa.setZeit(180_000_000_000l); // 3 Minuten
 		jpa.setKampfgeistWettkaempfer1(1);
 		jpa.setTechnikWettkaempfer1(2);
@@ -102,7 +102,7 @@ class WertungConverterTest {
 
 		Wertung wertung =  wertungConverter.convertToWertung(jpa);
 
-		assertEquals(wertung.uuid(), jpa.getUuid().toString());
+		assertEquals(wertung.uuid().toString(), jpa.getUuid());
 		assertEquals(wertung.zeit(), Duration.of(3l, ChronoUnit.MINUTES));
 		assertEquals(wertung.kampfgeistWettkaempfer1(), jpa.getKampfgeistWettkaempfer1());
 		assertEquals(wertung.technikWettkaempfer1(), jpa.getTechnikWettkaempfer1());

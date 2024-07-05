@@ -1,9 +1,10 @@
 package de.sinnix.judoturnier.model;
 
 import java.time.Duration;
+import java.util.UUID;
 
 public record Wertung(
-	String uuid,
+	UUID uuid,
 
 	// turnier
 	Wettkaempfer sieger,

@@ -27,6 +27,14 @@
         </div>
 
         <div class="listeneintrag">
+          <div class=""><label>Größe der Randori-Gruppen </label><input class="wd100" type="number" name="randorigruppengroesse" value="{{randorigruppengroesse.anzahl}}"/></div>
+        </div>
+
+        <div class="listeneintrag">
+          <div class=""><label>Variabler Gewichtsanteil </label><input class="wd100" type="number" step="0.1" min=0 name="variablergewichtsteil" value="{{variablergewichtsteil.variablerTeil}}"/></div>
+        </div>
+
+        <div class="listeneintrag">
           <input type="radio" name="wettkampfreihenfolge" value="ABWECHSELND" {{setChecked "ABWECHSELND" wettkampfreihenfolge.name}}/><label>Immer 2 Gruppen kämpfen abwechseln</label>
           <input type="radio" name="wettkampfreihenfolge" value="ALLE" {{setChecked "ALLE" wettkampfreihenfolge.name}}/><label>Es kämpfen je Durchgang alle Gruppen</label>
         </div>

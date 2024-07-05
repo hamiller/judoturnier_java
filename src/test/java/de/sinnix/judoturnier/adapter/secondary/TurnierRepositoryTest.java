@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -60,7 +61,7 @@ class TurnierRepositoryTest {
 		String wettkampfId = "1231231";
 		WertungJpa wertungJpa = new WertungJpa();
 		Wertung wertung = new Wertung(
-			"uuid",
+			UUID.randomUUID(),
 			WettkaempferFixtures.wettkaempfer1,
 			Duration.of(3l, ChronoUnit.MINUTES),
 			1,
@@ -145,7 +146,7 @@ class TurnierRepositoryTest {
 	@Test
 	public void testLadeMatten() {
 		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of());
-		Wertung wertung = new Wertung("uuid", null, Duration.of(3, ChronoUnit.MINUTES), null, null, null, null, 1, 2, 3, 4, 5, 6, 7, 8);
+		Wertung wertung = new Wertung(UUID.randomUUID(), null, Duration.of(3, ChronoUnit.MINUTES), null, null, null, null, 1, 2, 3, 4, 5, 6, 7, 8);
 		Begegnung begegnung = new Begegnung(2, 1, 3, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, wertung, wkg);
 
 		when(begegnungJpaRepository.findAll()).thenReturn(List.of(new BegegnungJpa()));

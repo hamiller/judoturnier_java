@@ -17,7 +17,7 @@ public class WertungConverter {
 		if (jpa == null) {
 			return null;
 		}
-		return new Wertung(jpa.getUuid().toString(),
+		return new Wertung(UUID.fromString(jpa.getUuid()),
 			wettkaempferConverter.convertToWettkaempfer(jpa.getSieger()),
 			toDuration(jpa.getZeit()),
 			jpa.getPunkteWettkaempfer1(),
@@ -39,7 +39,7 @@ public class WertungConverter {
 			return null;
 		}
 		WertungJpa jpa = new WertungJpa();
-		jpa.setUuid(toUUID(wertung.uuid()));
+		jpa.setUuid(fromUUIDString(wertung.uuid()));
 
 		if (wertung.sieger() != null) jpa.setSieger(wettkaempferConverter.convertFromWettkaempfer(wertung.sieger()));
 
@@ -62,12 +62,12 @@ public class WertungConverter {
 		return jpa;
 	}
 
-	private UUID toUUID(String uuid) {
-		if (uuid != null && !uuid.isBlank()) {
-			return UUID.fromString(uuid);
+	private String fromUUIDString(UUID uuid) {
+		if (uuid != null) {
+			return uuid.toString();
 		}
 
-		return UUID.randomUUID();
+		return UUID.randomUUID().toString();
 	}
 
 	private Duration toDuration(Long duration) {

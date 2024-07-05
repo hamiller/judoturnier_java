@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.UUID;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -23,7 +21,7 @@ import java.util.UUID;
 @Table(name = "wertung")
 public class WertungJpa {
 	@Id
-	UUID uuid;
+	String uuid;
 	Long zeit;
 
 	// turnier

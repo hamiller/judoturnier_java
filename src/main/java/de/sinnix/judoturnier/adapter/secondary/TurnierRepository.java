@@ -6,7 +6,6 @@ import de.sinnix.judoturnier.model.GruppenRunde;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Wertung;
-import de.sinnix.judoturnier.model.WettkampfGruppe;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

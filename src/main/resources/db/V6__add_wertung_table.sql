@@ -1,6 +1,6 @@
 CREATE TABLE wertung
 (
-    uuid                     UUID,
+    uuid                     VARCHAR(255),
     altersklasse             VARCHAR(255),
     strafen_wettkaempfer1    INTEGER,
     punkte_wettkaempfer1     INTEGER,

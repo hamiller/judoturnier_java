@@ -45,7 +45,10 @@ public class EinstellungenService {
 		List<EinstellungJpa> jpaList = List.of(
 			new EinstellungJpa(einstellungen.turnierTyp().TYP, einstellungen.turnierTyp().name()),
 			new EinstellungJpa(einstellungen.mattenAnzahl().TYP, einstellungen.mattenAnzahl().anzahl().toString()),
-			new EinstellungJpa(einstellungen.wettkampfReihenfolge().TYP, einstellungen.wettkampfReihenfolge().name()));
+			new EinstellungJpa(einstellungen.wettkampfReihenfolge().TYP, einstellungen.wettkampfReihenfolge().name()),
+			new EinstellungJpa(einstellungen.randoriGruppengroesse().TYP, einstellungen.randoriGruppengroesse().anzahl().toString()),
+			new EinstellungJpa(einstellungen.variablerGewichtsteil().TYP, einstellungen.variablerGewichtsteil().variablerTeil().toString())
+			);
 		einstellungJpaRepository.saveAll(jpaList);
 		return ladeEinstellungen();
 	}
