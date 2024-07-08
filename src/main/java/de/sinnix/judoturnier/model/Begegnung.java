@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Optional;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -14,12 +16,12 @@ import lombok.ToString;
 @Getter
 @Setter
 public class Begegnung {
-	private Integer begegnungId;
-	private Integer matteId;
-	private Integer mattenRunde;
-	private Integer gruppenRunde;
-	private Wettkaempfer wettkaempfer1;
-	private Wettkaempfer wettkaempfer2;
-	private Wertung wertung;
-	private WettkampfGruppe wettkampfGruppe;
+	private Integer           begegnungId;
+	private Integer           matteId;
+	private Integer           mattenRunde;
+	private Integer           gruppenRunde;
+	private Wettkaempfer      wettkaempfer1;
+	private Wettkaempfer      wettkaempfer2;
+	private Optional<Wertung> wertung;
+	private WettkampfGruppe   wettkampfGruppe;
 }

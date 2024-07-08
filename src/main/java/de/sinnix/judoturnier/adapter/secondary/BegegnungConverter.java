@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class BegegnungConverter {
@@ -23,8 +24,23 @@ public class BegegnungConverter {
 			jpa.getGruppenRunde(),
 			wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer1()),
 			wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer2()),
-			wertungConverter.convertToWertung(jpa.getWertung()),
+			Optional.ofNullable(wertungConverter.convertToWertung(jpa.getWertung())),
 			wettkampfGruppeConverter.convertToWettkampfGruppe(jpa.getWettkampfGruppeId(), wettkampfGruppeJpaList)
 			);
+	}
+
+	public BegegnungJpa convertFromBegegnung(Begegnung begegnung) {
+		BegegnungJpa jpa = new BegegnungJpa();
+		jpa.setId(begegnung.getBegegnungId());
+		jpa.setMatteId(begegnung.getMatteId());
+		jpa.setMattenRunde(begegnung.getMattenRunde());
+		jpa.setGruppenRunde(begegnung.getGruppenRunde());
+		jpa.setWettkaempfer1(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1()));
+		jpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2()));
+		if (begegnung.getWertung().isPresent()) {
+			jpa.setWertung(wertungConverter.convertFromWertung(begegnung.getWertung().get()));
+		}
+		jpa.setWettkampfGruppeId(begegnung.getWettkampfGruppe().id());
+		return jpa;
 	}
 }

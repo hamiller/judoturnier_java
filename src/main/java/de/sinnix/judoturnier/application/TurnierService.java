@@ -4,6 +4,7 @@ import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
 import de.sinnix.judoturnier.application.algorithm.Algorithmus;
 import de.sinnix.judoturnier.application.algorithm.JederGegenJeden;
 import de.sinnix.judoturnier.model.Altersklasse;
+import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Matte;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class TurnierService {
@@ -74,14 +76,27 @@ public class TurnierService {
 		}
 	}
 
-	public Optional<Wertung> ladeWertungFuerWettkampf(String wertungId) {
-		logger.info("lade Wertung für Wettkampf {}", wertungId);
-		return turnierRepository.ladeWertung(wertungId);
+	public Begegnung ladeBegegnung(Integer begegnungId) {
+		logger.info("lade Begegnung {}", begegnungId);
+		return turnierRepository.ladeBegegnung(begegnungId);
 	}
 
-	public void speichereWertung(Wertung wertung) {
-		logger.info("speichere Wertung {}", wertung);
-		turnierRepository.speichereWertung(wertung);
+	public void speichereRandoriWertung(String begegnungId, int kampfgeist1, int technik1, int stil1, int fairness1, int kampfgeist2, int technik2, int stil2, int fairness2) {
+		logger.info("speichereRandoriWertung: {}", begegnungId);
+		Begegnung begegnung = ladeBegegnung(Integer.parseInt(begegnungId));
+
+		UUID wertungId = UUID.randomUUID();
+		if (begegnung.getWertung().isPresent()) {
+			wertungId = begegnung.getWertung().get().uuid();
+		}
+
+		Wertung wertungNeu = new Wertung(wertungId, null, null,null, null, null, null,
+			kampfgeist1, technik1, stil1, fairness1,
+			kampfgeist2, technik2, stil2, fairness2
+		);
+		begegnung.setWertung(Optional.of(wertungNeu));
+		turnierRepository.speichereWertung(wertungNeu);
+		turnierRepository.speichereBegegnung(begegnung);
 	}
 
 	private List<WettkampfGruppe> erstelleWettkampfgruppen(List<GewichtsklassenGruppe> gewichtsklassenGruppen, Algorithmus algorithmus, Integer anzahlMatten) {

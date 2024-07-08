@@ -7,10 +7,12 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 public class HelperSource {
 	private static final Logger logger = LogManager.getLogger(HelperSource.class);
@@ -79,8 +81,8 @@ public class HelperSource {
 		return istLeer ? "leer" : "";
 	}
 
-	public static String wertungVorhanden(Wertung wertung, Options options) {
-		return (wertung != null && (wertung.kampfgeistWettkaempfer1() != null || wertung.sieger() != null)) ? "vorhanden" : "";
+	public static String wertungVorhanden(Optional<Wertung> wertung, Options options) {
+		return (wertung != null && wertung.isPresent() && (wertung.get().kampfgeistWettkaempfer1() != null || wertung.get().sieger() != null)) ? "vorhanden" : "";
 	}
 
 	public static List<ImmutablePair<Runde, Runde>> vorherigeRunde(List<Runde> runden, Options options) {
@@ -112,4 +114,12 @@ public class HelperSource {
 		return sb.toString();
 	}
 
+	public static Object optional(Optional<?> optional, Options options) throws IOException {
+		logger.debug("Checking for optional... {}", optional);
+		if (optional.isPresent()) {
+			return options.fn(optional.get());
+		} else {
+			return options.inverse();
+		}
+	}
 }

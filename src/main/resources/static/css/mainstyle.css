@@ -376,6 +376,11 @@ button {
   color: white;
 }
 
+.SCHWARZ {
+  background-color: black;
+  color: white;
+}
+
 .vorhanden {
   background-color: #73ffa2;
 }

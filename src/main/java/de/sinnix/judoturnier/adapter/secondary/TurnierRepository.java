@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class TurnierRepository {
@@ -43,10 +44,6 @@ public class TurnierRepository {
 		List<WettkampfGruppeJpa> wettkampfGruppeJpaList = wettkampfGruppeJpaRepository.findAll();
 
 		return begegnungConverter.convertToBegegnung(begegnungJpa, wettkampfGruppeJpaList);
-	}
-
-	public Optional<Wertung> ladeWertung(String wertungId) {
-		return wertungJpaRepository.findById(wertungId).map(jpa -> wertungConverter.convertToWertung(jpa));
 	}
 
 	public void speichereWertung(Wertung wertung) {
@@ -130,5 +127,9 @@ public class TurnierRepository {
 	public void loescheWettkaempfeMitAltersklasse(Altersklasse altersklasse) {
 		logger.warn("loescheWettkaempfeMitAltersklasse - not yet implemented!");
 //		begegnungJpaRepository.findAll().stream().filter(begegnungJpa -> begegnungJpa.)
+	}
+
+	public void speichereBegegnung(Begegnung begegnung) {
+		begegnungJpaRepository.save(begegnungConverter.convertFromBegegnung(begegnung));
 	}
 }

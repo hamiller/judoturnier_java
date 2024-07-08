@@ -57,9 +57,8 @@ class TurnierRepositoryTest {
 	}
 
 	@Test
-	void ladeWertung() {
-		String wettkampfId = "1231231";
-		WertungJpa wertungJpa = new WertungJpa();
+	void testLadeBegegnung() {
+		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(1, "Gruppe1", "typ1", List.of());
 		Wertung wertung = new Wertung(
 			UUID.randomUUID(),
 			WettkaempferFixtures.wettkaempfer1,
@@ -69,20 +68,21 @@ class TurnierRepositoryTest {
 			0,
 			1,
 			null, null, null, null, null, null, null, null);
+		Begegnung begegnung = new Begegnung(1, 2, 123, 22, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, Optional.of(wertung), wettkampfGruppe);
 
+		when(begegnungJpaRepository.findById(any())).thenReturn(Optional.of(new BegegnungJpa()));
+		when(wettkampfGruppeJpaRepository.findAll()).thenReturn(List.of());
+		when(begegnungConverter.convertToBegegnung(any(), anyList())).thenReturn(begegnung);
 
-		when(wertungJpaRepository.findById(wettkampfId)).thenReturn(Optional.of(wertungJpa));
-		when(wertungConverter.convertToWertung(any(WertungJpa.class))).thenReturn(wertung);
-
-		var result = turnierRepository.ladeWertung(wettkampfId);
+		Begegnung result = turnierRepository.ladeBegegnung(1);
 
 		assertTrue(result != null);
-		assertTrue(result.isPresent());
-		assertTrue(result.get().uuid() != null);
+		assertTrue(result.getWertung().isPresent());
+		assertTrue(result.getWertung().get().uuid() != null);
 	}
 
 	@Test
-	void speichereWertung() {
+	void testSpeichereWertung() {
 		WertungJpa wertungJpa = new WertungJpa();
 		Wertung wertung = new Wertung(
 			null,
@@ -147,7 +147,7 @@ class TurnierRepositoryTest {
 	public void testLadeMatten() {
 		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of());
 		Wertung wertung = new Wertung(UUID.randomUUID(), null, Duration.of(3, ChronoUnit.MINUTES), null, null, null, null, 1, 2, 3, 4, 5, 6, 7, 8);
-		Begegnung begegnung = new Begegnung(2, 1, 3, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, wertung, wkg);
+		Begegnung begegnung = new Begegnung(2, 1, 3, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, Optional.of(wertung), wkg);
 
 		when(begegnungJpaRepository.findAll()).thenReturn(List.of(new BegegnungJpa()));
 		when(begegnungConverter.convertToBegegnung(any(BegegnungJpa.class), anyList())).thenReturn(begegnung);

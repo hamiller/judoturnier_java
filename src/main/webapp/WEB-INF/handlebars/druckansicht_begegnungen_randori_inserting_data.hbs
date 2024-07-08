@@ -32,7 +32,7 @@
           
           {{#each gruppenRunden}}
             <div class="flex_warp">
-              {{#each runden as |runden rundenindex|}}
+              {{#each runde as |runden rundenindex|}}
                 {{#if (istGleich begegnungen.[0].wettkaempfer1.name null)}}
                   <div class="gruppentitel_2 box">
                       Pause
@@ -41,8 +41,8 @@
                   {{#if (istGleich @rundenindex 0)}}
                     <div class="gruppentitel_2 box">
                       Gruppe {{runden.gruppe.name}}<br>
-                      Gruppen-Runde {{runden.gruppen_runde}}<br>
-                      Wettkampf-Nr. {{runden.matten_runde}}
+                      Gruppen-Runde {{runden.gruppenRunde}}<br>
+                      Wettkampf-Nr. {{runden.mattenRunde}}
                     </div>
                   {{/if}}
                 
@@ -57,9 +57,9 @@
                               <td class="wettkaempfer name printlayout_name">{{wettkaempfer2.name}}</td>
                             </tr>
                             <tr>
-                              <td><div class="{{wettkaempfer1.farbe}}">{{wettkaempfer1.farbe}}</div></td>
+                              <td><div class="{{wettkaempfer1.farbe.get}}">{{wettkaempfer1.farbe.get}}</div></td>
                               <td></td>
-                              <td class="{{wettkaempfer2.farbe}}">{{wettkaempfer2.farbe}}</td>
+                              <td class="{{wettkaempfer2.farbe.get}}">{{wettkaempfer2.farbe.get}}</td>
                             </tr>
                             <tr>
                               <td>({{wettkaempfer1.verein.name}})</td> 

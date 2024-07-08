@@ -5,6 +5,7 @@ import de.sinnix.judoturnier.application.GewichtsklassenService;
 import de.sinnix.judoturnier.application.TurnierService;
 import de.sinnix.judoturnier.application.WettkaempferService;
 import de.sinnix.judoturnier.model.Altersklasse;
+import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.GruppenRunde;
 import de.sinnix.judoturnier.model.Matte;
@@ -12,6 +13,7 @@ import de.sinnix.judoturnier.model.Wertung;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -168,7 +170,7 @@ public class TurnierController {
 
 	@GetMapping("/turnier/begegnungen/randori/{id}")
 	public ModelAndView begegnungRandori(@PathVariable String id) {
-		Optional<Wertung> begegnung = turnierService.ladeWertungFuerWettkampf(id);
+		Begegnung begegnung = turnierService.ladeBegegnung(Integer.parseInt(id));
 
 		ModelAndView mav = new ModelAndView("wettkampf_randori");
 		mav.addObject("begegnung", begegnung);
@@ -176,11 +178,20 @@ public class TurnierController {
 		return mav;
 	}
 
-	@PostMapping("/turnier/begegnungen/randori/{id}")
-	public ModelAndView speichereBegegnungRandori(@PathVariable String id, @RequestBody Wertung wertung) {
-		if (id.equals(wertung.uuid())) {
-			turnierService.speichereWertung(wertung);
-		}
+	@PostMapping("/turnier/begegnungen/randori/{begegnungId}")
+	public ModelAndView speichereBegegnungRandori(@PathVariable String begegnungId, @RequestBody MultiValueMap<String, String> formData) {
+		logger.info("Speichere Wertung für Begegnung {}: {}", begegnungId, formData);
+
+		var kampfgeist1 = Integer.parseInt(formData.get("kampfgeist1").getFirst());
+		var technik1 = Integer.parseInt(formData.get("technik1").getFirst());
+		var stil1 = Integer.parseInt(formData.get("stil1").getFirst());
+		var fairness1 = Integer.parseInt(formData.get("fairness1").getFirst());
+		var kampfgeist2 = Integer.parseInt(formData.get("kampfgeist2").getFirst());
+		var technik2 = Integer.parseInt(formData.get("technik2").getFirst());
+		var stil2 = Integer.parseInt(formData.get("stil2").getFirst());
+		var fairness2 = Integer.parseInt(formData.get("fairness2").getFirst());
+
+		turnierService.speichereRandoriWertung(begegnungId, kampfgeist1, technik1, stil1, fairness1, kampfgeist2, technik2, stil2, fairness2);
 		return new ModelAndView("redirect:/turnier/begegnungen/randori");
 	}
 
