@@ -1,21 +1,36 @@
+version: '3.8'
+
 networks:
   net:
     driver: bridge
 
 services:
-  postgres:
+  db:
     image: postgres:latest
     container_name: postgres-judo-java
-    ports:
-      - "5532:5432"
-    expose:
-      - 5432
     environment:
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - 5532:5432
     networks:
       - net
     restart: unless-stopped
+
+  turnier-service:
+    container_name: turnier-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: turnier-service:latest
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    networks:
+      - net

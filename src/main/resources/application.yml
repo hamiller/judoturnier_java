@@ -10,10 +10,9 @@ spring:
             hibernate:
                 format_sql: true
     datasource:
-        url: jdbc:postgresql://localhost:5532/judo
-        #url = jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-        username: username
-        password: password
+    url: jdbc:postgresql://db:5432/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
 
     flyway:
         enabled: true
