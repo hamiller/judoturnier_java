@@ -86,7 +86,7 @@ public class TurnierController {
 		return mav;
 	}
 	@GetMapping("/test2")
-	@PreAuthorize("hasRole('ROLE_ZUSCHAUER')")
+	@PreAuthorize("hasRole('ROLE_ZUSCHAUER2')")
 	public ModelAndView testLoggedIn2() {
 		logger.debug("Test 2 eingeloggt");
 		var s = SecurityContextHolder.getContext().getAuthentication();
