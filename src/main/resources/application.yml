@@ -22,15 +22,15 @@ spring:
     baseline-on-migrate: true
     validate-on-migrate: true
 
-#    spring:
-#        security:
-#            oauth2:
-#                client:
-#                    registration:
-#                        external:
-#                            provider: judoturnier
-#                            client-name: judoturnier-client
-#                            client-id: judoturnier-client
-#                            client-secret: vujgzNksqoAaYh1X9qwL5TxVxmaYzUtT
-#                            scope: openid,offline_access,profile
-#                            authorization-grant-type: authorization_code
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: judoturnier-client
+            client-secret: ${KEYCLOAK_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            scope: openid
+        provider:
+          keycloak:
+            issuer-uri: http://keycloak:8080/realms/judoturnier

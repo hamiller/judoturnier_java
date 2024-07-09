@@ -13,6 +13,9 @@ import de.sinnix.judoturnier.model.Wertung;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.MultiValueMap;
@@ -47,16 +50,49 @@ public class TurnierController {
 
 	@GetMapping("/")
 	public ModelAndView turnierUebersicht() {
-		logger.debug("Turnierübersicht angefragt");
-		OAuth2User user = ((OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-		logger.info("Eingeloggter User {}", user);
-		
+		logger.debug("Turnierübersicht angefragt, kein Login");
+
+		ModelAndView mav = new ModelAndView("startseite");
+		return mav;
+	}
+
+	@GetMapping("/turnier")
+	public ModelAndView turnierUebersichtLoggedIn() {
+		logger.debug("Turnierübersicht angefragt, eingeloggt");
+		var s = SecurityContextHolder.getContext().getAuthentication();
+		logger.info("Eingeloggter User {}", s);
+
 		var wks = wettkaempferService.alleKaempfer();
 		var einstellungen = einstellungenService.ladeEinstellungen();
 
 		ModelAndView mav = new ModelAndView("turnieruebersicht");
 		mav.addObject("anzahlwk", wks.size());
 		mav.addObject("turniertyp", einstellungen.turnierTyp());
+		return mav;
+	}
+
+	@GetMapping("/test")
+	@PreAuthorize("hasRole('ROLE_ZUSCHAUER')")
+	public ModelAndView testLoggedIn() {
+		logger.debug("Test eingeloggt");
+		var s = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Set<String> roles = authentication.getAuthorities().stream()
+			.map(r -> r.getAuthority()).collect(Collectors.toSet());
+
+		logger.info("Eingeloggter User {}: {}", s, roles);
+
+		ModelAndView mav = new ModelAndView("startseite");
+		return mav;
+	}
+	@GetMapping("/test2")
+	@PreAuthorize("hasRole('ROLE_ZUSCHAUER')")
+	public ModelAndView testLoggedIn2() {
+		logger.debug("Test 2 eingeloggt");
+		var s = SecurityContextHolder.getContext().getAuthentication();
+		logger.info("Eingeloggter User {}", s);
+
+		ModelAndView mav = new ModelAndView("startseite");
 		return mav;
 	}
 

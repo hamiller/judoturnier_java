@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5532/judo
+    username: username
+    password: password
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-secret: Fx9h16gqwWEhUAQsEoP6GadSBjMRMi3p
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:7080/realms/judoturnier
