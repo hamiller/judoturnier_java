@@ -5,6 +5,7 @@ import de.sinnix.judoturnier.adapter.primary.HelperSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ViewResolver;
 
 @ComponentScan
@@ -21,4 +22,8 @@ public class WebConfiguration {
 		return viewResolver;
 	}
 
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
 }

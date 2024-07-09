@@ -1,21 +1,36 @@
-spring:
-    application.name: judoturnier
+server.port: 8080
 
-    jpa:
-        hibernate:
-            ddl-auto: validate
-        show-sql: false
-        open-in-view: false
-        properties:
-            hibernate:
-                format_sql: true
-    datasource:
+spring:
+  application.name: judoturnier
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
     url: jdbc:postgresql://db:5432/${POSTGRES_DB}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
 
-    flyway:
-        enabled: true
-        locations: classpath:db
-        baseline-on-migrate: true
-        validate-on-migrate: true
+  flyway:
+    enabled: true
+    locations: classpath:db
+    baseline-on-migrate: true
+    validate-on-migrate: true
+
+#    spring:
+#        security:
+#            oauth2:
+#                client:
+#                    registration:
+#                        external:
+#                            provider: judoturnier
+#                            client-name: judoturnier-client
+#                            client-id: judoturnier-client
+#                            client-secret: vujgzNksqoAaYh1X9qwL5TxVxmaYzUtT
+#                            scope: openid,offline_access,profile
+#                            authorization-grant-type: authorization_code

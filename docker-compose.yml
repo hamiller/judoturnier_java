@@ -60,7 +60,7 @@ services:
       KC_HEALTH_ENABLED: true
       KC_LOG_LEVEL: info
     ports:
-      - 7080:7080
+      - 7080:8080
       - 7443:7443
     depends_on:
       - db

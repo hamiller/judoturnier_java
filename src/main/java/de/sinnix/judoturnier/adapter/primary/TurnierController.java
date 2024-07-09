@@ -13,6 +13,8 @@ import de.sinnix.judoturnier.model.Wertung;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,6 +48,9 @@ public class TurnierController {
 	@GetMapping("/")
 	public ModelAndView turnierUebersicht() {
 		logger.debug("Turnierübersicht angefragt");
+		OAuth2User user = ((OAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+		logger.info("Eingeloggter User {}", user);
+		
 		var wks = wettkaempferService.alleKaempfer();
 		var einstellungen = einstellungenService.ladeEinstellungen();
 
