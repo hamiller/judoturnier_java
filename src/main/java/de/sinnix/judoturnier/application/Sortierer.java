@@ -154,6 +154,7 @@ public class Sortierer {
 	private Runde dummyRunde(int resultRundenNummer, int mattenRunde, int gruppenRunde, Altersklasse altersKlasse, WettkampfGruppe gruppe) {
 		logger.info("erstelle Pause");
 		Begegnung pausenBegegnung = new Begegnung();
+		pausenBegegnung.setTurnierUUID(gruppe.turnierUUID());
 		return new Runde(resultRundenNummer, mattenRunde, gruppenRunde, null, null, altersKlasse, gruppe, List.of(pausenBegegnung));
 	}
 

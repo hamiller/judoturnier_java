@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface Algorithmus {
 
-	List<WettkampfGruppe> erstelleWettkampfGruppen(Integer gruppenid, GewichtsklassenGruppe gewichtsklassenGruppe, Integer mattenAnzahl, UUID turnierUUID);
+	List<WettkampfGruppe> erstelleWettkampfGruppen(Integer gruppenid, GewichtsklassenGruppe gewichtsklassenGruppe, Integer mattenAnzahl);
 }

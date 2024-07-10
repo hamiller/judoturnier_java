@@ -17,7 +17,7 @@ public class JederGegenJeden implements Algorithmus {
 	private static final int    MAX_TEILNEHMER_JE_GRUPPE = 6;
 
 	@Override
-	public List<WettkampfGruppe> erstelleWettkampfGruppen(Integer gruppenid, GewichtsklassenGruppe gewichtsklassenGruppe, Integer mattenAnzahl, UUID turnierUUID) {
+	public List<WettkampfGruppe> erstelleWettkampfGruppen(Integer gruppenid, GewichtsklassenGruppe gewichtsklassenGruppe, Integer mattenAnzahl) {
 		logger.info("JederGegenJeden Algorithmus genutzt");
 
 		List<WettkampfGruppe> result = new ArrayList<>();
@@ -37,7 +37,7 @@ public class JederGegenJeden implements Algorithmus {
 				gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
 				"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
 				begegnungen,
-				turnierUUID
+				gewichtsklassenGruppe.turnierUUID()
 			);
 			result.add(wettkampfGruppe);
 		}
@@ -61,6 +61,7 @@ public class JederGegenJeden implements Algorithmus {
 			logger.warn("Einzelner Teilnehmer in einer Gruppe, KEINE Kampfbegegnungen! Erstelle einzelne Dummy-Begegnung...");
 			var dummyBegegnung = new Begegnung();
 			dummyBegegnung.setWettkaempfer1(teilnehmer.get(0));
+			dummyBegegnung.setTurnierUUID(teilnehmer.get(0).turnierUUID());
 			runden.add(List.of(dummyBegegnung));
 			return runden;
 		}
@@ -71,6 +72,7 @@ public class JederGegenJeden implements Algorithmus {
 				if (j >= 0) {
 					var newBegegnung = new Begegnung();
 					newBegegnung.setWettkaempfer1(teilnehmer.get(k));
+					newBegegnung.setTurnierUUID(teilnehmer.get(k).turnierUUID());
 					runde.add(newBegegnung);
 				}
 				k++;
@@ -106,6 +108,7 @@ public class JederGegenJeden implements Algorithmus {
 			for (int j = 0; j < anzahlBegegnungenJeRunden; j++) {
 				var newBegegnung = new Begegnung();
 				newBegegnung.setWettkaempfer1(teilnehmer.get(k));
+				newBegegnung.setTurnierUUID(teilnehmer.get(k).turnierUUID());
 				runde.add(newBegegnung);
 				k++;
 				if (k == anzahlRunden) {

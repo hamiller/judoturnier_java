@@ -36,7 +36,10 @@ public class GewichtsklassenJpa {
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 		name = "gewichtsklassengruppen_wettkaempfer",
-		joinColumns = @JoinColumn(name = "gewichtsklassengruppe_id"),
+		joinColumns = {
+			@JoinColumn(name = "gewichtsklassengruppe_id", referencedColumnName = "id"),
+			@JoinColumn(name = "turnier_uuid", referencedColumnName = "turnier_uuid")
+		},
 		inverseJoinColumns = @JoinColumn(name = "wettkaempfer_id")
 	)
 	private List<WettkaempferJpa> teilnehmer;

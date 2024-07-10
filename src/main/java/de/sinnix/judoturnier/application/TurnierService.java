@@ -99,7 +99,7 @@ public class TurnierService {
 			checkGruppenSindValide(gwks);
 
 			Algorithmus algorithmus = new JederGegenJeden();
-			List<WettkampfGruppe> wettkampfGruppen = erstelleWettkampfgruppen(gwks, algorithmus, einstellungen.mattenAnzahl().anzahl(), turnierUUID);
+			List<WettkampfGruppe> wettkampfGruppen = erstelleWettkampfgruppen(gwks, algorithmus, einstellungen.mattenAnzahl().anzahl());
 			List<Matte> matten = erstelleGruppenReihenfolgeRandori(wettkampfGruppen, einstellungen.mattenAnzahl().anzahl(), einstellungen.wettkampfReihenfolge());
 
 			turnierRepository.speichereMatten(matten);
@@ -131,13 +131,13 @@ public class TurnierService {
 		turnierRepository.speichereBegegnung(begegnung);
 	}
 
-	private List<WettkampfGruppe> erstelleWettkampfgruppen(List<GewichtsklassenGruppe> gewichtsklassenGruppen, Algorithmus algorithmus, Integer anzahlMatten, UUID turnierUUID) {
+	private List<WettkampfGruppe> erstelleWettkampfgruppen(List<GewichtsklassenGruppe> gewichtsklassenGruppen, Algorithmus algorithmus, Integer anzahlMatten) {
 		logger.debug("erstelle Wettkampfgruppen aus den Gewichtsklassengruppen");
 		// erstelle alle Begegnungen in jeder Gruppe
 		List<WettkampfGruppe> wettkampfGruppen = new ArrayList<>();
 		for (int i = 0; i < gewichtsklassenGruppen.size(); i++) {
 			var gruppe = gewichtsklassenGruppen.get(i);
-			var wkg = algorithmus.erstelleWettkampfGruppen(i, gruppe, anzahlMatten, turnierUUID);
+			var wkg = algorithmus.erstelleWettkampfGruppen(i, gruppe, anzahlMatten);
 			wettkampfGruppen.addAll(wkg);
 		}
 		logger.debug("Anzahl erstellter Wettkampfgruppen: {}", wettkampfGruppen.size());
