@@ -1,5 +1,8 @@
 package de.sinnix.judoturnier.application;
 
+import de.sinnix.judoturnier.adapter.secondary.TurnierConverter;
+import de.sinnix.judoturnier.adapter.secondary.TurnierJpa;
+import de.sinnix.judoturnier.adapter.secondary.TurnierJpaRepository;
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
 import de.sinnix.judoturnier.application.algorithm.Algorithmus;
 import de.sinnix.judoturnier.application.algorithm.JederGegenJeden;
@@ -9,6 +12,7 @@ import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Runde;
+import de.sinnix.judoturnier.model.Turnier;
 import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.Wertung;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
@@ -18,23 +22,36 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class TurnierService {
-	private static final Logger logger = LogManager.getLogger(TurnierService.class);
+	private static final Logger           logger     = LogManager.getLogger(TurnierService.class);
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Autowired
-	private TurnierRepository turnierRepository;
+	private TurnierRepository      turnierRepository;
 	@Autowired
-	private EinstellungenService einstellungenService;
+	private EinstellungenService   einstellungenService;
 	@Autowired
 	private GewichtsklassenService gewichtsklassenService;
 	@Autowired
-	private Sortierer sortierer;
+	private Sortierer            sortierer;
+	@Autowired
+	private TurnierJpaRepository turnierJpaRepository;
+	@Autowired
+	private TurnierConverter     turnierConverter;
+
+	public List<Turnier> ladeTurniere() {
+		logger.info("ladeTurniere");
+		return turnierRepository.ladeAlleTurniere();
+	}
 
 	public List<Matte> ladeWettkampfreihenfolge() {
 		logger.info("ladeWettkampfreihenfolge");
@@ -44,6 +61,22 @@ public class TurnierService {
 	public void loescheWettkampfreihenfolge() {
 		logger.info("loescheWettkampfreihenfolge");
 		turnierRepository.loescheAlleMatten();
+	}
+
+	public Turnier erstelleTurnier(String name, String ort, String datum) {
+		logger.info("erstelle neues Turnier");
+		try {
+			// Parsen des Strings in ein java.util.Date
+			Date parsedDate = dateFormat.parse(datum);
+			System.out.println("Parsed Date: " + parsedDate);
+			Turnier neuesTurnier = new Turnier(UUID.randomUUID(), name, ort, parsedDate);
+
+			TurnierJpa jpa = turnierJpaRepository.save(turnierConverter.convertFromTurnier(neuesTurnier));
+			return turnierConverter.convertToTurnier(jpa);
+		} catch (ParseException e) {
+			logger.warn("Datum konnte nicht geparsed werden: {}", datum, e);
+			throw new IllegalArgumentException("Datum");
+		}
 	}
 
 	public void erstelleWettkampfreihenfolge() {
@@ -70,8 +103,7 @@ public class TurnierService {
 			List<Matte> matten = erstelleGruppenReihenfolgeRandori(wettkampfGruppen, einstellungen.mattenAnzahl().anzahl(), einstellungen.wettkampfReihenfolge());
 
 			turnierRepository.speichereMatten(matten);
-		}
-		else {
+		} else {
 			logger.error("Turniermodus noch nicht implementiert!");
 		}
 	}
@@ -90,7 +122,7 @@ public class TurnierService {
 			wertungId = begegnung.getWertung().get().uuid();
 		}
 
-		Wertung wertungNeu = new Wertung(wertungId, null, null,null, null, null, null,
+		Wertung wertungNeu = new Wertung(wertungId, null, null, null, null, null, null,
 			kampfgeist1, technik1, stil1, fairness1,
 			kampfgeist2, technik2, stil2, fairness2
 		);
@@ -102,10 +134,10 @@ public class TurnierService {
 	private List<WettkampfGruppe> erstelleWettkampfgruppen(List<GewichtsklassenGruppe> gewichtsklassenGruppen, Algorithmus algorithmus, Integer anzahlMatten) {
 		logger.debug("erstelle Wettkampfgruppen aus den Gewichtsklassengruppen");
 		// erstelle alle Begegnungen in jeder Gruppe
-    	List<WettkampfGruppe> wettkampfGruppen = new ArrayList<>();
+		List<WettkampfGruppe> wettkampfGruppen = new ArrayList<>();
 		for (int i = 0; i < gewichtsklassenGruppen.size(); i++) {
-      		var gruppe = gewichtsklassenGruppen.get(i);
-      		var wkg = algorithmus.erstelleWettkampfGruppen(i, gruppe, anzahlMatten);
+			var gruppe = gewichtsklassenGruppen.get(i);
+			var wkg = algorithmus.erstelleWettkampfGruppen(i, gruppe, anzahlMatten);
 			wettkampfGruppen.addAll(wkg);
 		}
 		logger.debug("Anzahl erstellter Wettkampfgruppen: {}", wettkampfGruppen.size());
@@ -114,21 +146,21 @@ public class TurnierService {
 
 	private List<Matte> erstelleGruppenReihenfolgeRandori(List<WettkampfGruppe> wettkampfGruppen, Integer anzahlMatten, WettkampfReihenfolge reihenfolge) {
 		logger.debug("erstelle Reihenfolge der Wettkämpfe aus den Wettkampfgruppen: {} ", wettkampfGruppen.size(), reihenfolge);
-    	List<Matte> matten = new ArrayList<>();
+		List<Matte> matten = new ArrayList<>();
 
 		// Ausplitten der Begegnungen auf die Matten
 		List<List<WettkampfGruppe>> wettkampfGruppenJeMatten = this.splitArray(wettkampfGruppen, anzahlMatten);
 
 
 		for (int m = 0; m < anzahlMatten; m++) {
-      		var gruppen = wettkampfGruppenJeMatten.get(m);
+			var gruppen = wettkampfGruppenJeMatten.get(m);
 
 			// TODO
 			// sortiere die Gruppen, sodass die Gruppen mit wenigen Kämpfen ganz hinten sind, aber die Altersklassen zusammen bleiben
 			// gruppen.sort((gs1, gs2) => if (gs2.alleGruppenBegegnungen[0][0].wettkaempfer1.altersklasse ) gs2.alleGruppenBegegnungen.length - gs1.alleGruppenBegegnungen.length);
 			// this.logWettkampfGruppen(gruppen)
 			List<Runde> runden = new ArrayList<>();
-			Integer matteId = m+1;
+			Integer matteId = m + 1;
 			switch (reihenfolge) {
 				case WettkampfReihenfolge.ABWECHSELND:
 					runden = sortierer.erstelleReihenfolgeMitAbwechselndenGruppen(gruppen);
@@ -142,13 +174,13 @@ public class TurnierService {
 		}
 		logger.trace("Matten {}", matten);
 
-//		int erwartet = wettkampfGruppenJeMatten.stream()
-//			.mapToInt(wgm -> wgm.stream()
-//				.mapToInt(gr -> gr.alleGruppenBegegnungen().stream()
-//					.mapToInt(br -> br.size())
-//					.sum())
-//				.sum())
-//			.sum();
+		//		int erwartet = wettkampfGruppenJeMatten.stream()
+		//			.mapToInt(wgm -> wgm.stream()
+		//				.mapToInt(gr -> gr.alleGruppenBegegnungen().stream()
+		//					.mapToInt(br -> br.size())
+		//					.sum())
+		//				.sum())
+		//			.sum();
 
 		// Berechnung der "summe"
 		int summe = matten.stream()
@@ -191,7 +223,7 @@ public class TurnierService {
 					if (teilnehmer.gewicht() == null) throw new Error("Teilnehmer " + teilnehmer.id() + " hat kein Gewicht.");
 				}
 			}
-		}catch (Error e) {
+		} catch (Error e) {
 			logger.error(e);
 			throw e;
 		}

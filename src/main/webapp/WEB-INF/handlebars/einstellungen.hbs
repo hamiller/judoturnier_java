@@ -12,7 +12,7 @@
     <div class="generalcontent">
 
       <h2>Einstellung der Systems</h2>
-      <form id="turniereinstellungenformular" action="/turnier/einstellungen" method="POST">
+      <form id="turniereinstellungenformular" action="/turnier/{{turnierid}}/einstellungen" method="POST">
         <div class="actions">
           <button type="submit">Turnier-Einstellung speichern<span class="material-icons md-48" title="Turniereinstellungen speichern">save</span></button>
         </div>
@@ -45,7 +45,7 @@
     {{#if standardturnier}}
     <div class="generalcontent">
       <h2>Einstellung der Wettkampfgruppen</h2>
-      <form id="kampfklassenformular" action="/turnier/einstellungen-wettkampf" method="POST">
+      <form id="kampfklassenformular" action="/turnier/{{turnierid}}/einstellungen-wettkampf" method="POST">
       <div class="actions">
         <button type="submit">Wettkampfgruppen-Einstellung speichern<span class="material-icons md-48" title="Wettkampfgruppen speichern">save</span></button>
       </div>

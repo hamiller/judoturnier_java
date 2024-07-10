@@ -5,6 +5,7 @@ import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.GruppenRunde;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Runde;
+import de.sinnix.judoturnier.model.Turnier;
 import de.sinnix.judoturnier.model.Wertung;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
@@ -38,6 +39,10 @@ public class TurnierRepository {
 	private BegegnungConverter begegnungConverter;
 	@Autowired
 	private WettkampfGruppeConverter wettkampfGruppeConverter;
+	@Autowired
+	private TurnierJpaRepository turnierJpaRepository;
+	@Autowired
+	private TurnierConverter     turnierConverter;
 
 	public Begegnung ladeBegegnung(Integer begegnungId) {
 		BegegnungJpa begegnungJpa = begegnungJpaRepository.findById(begegnungId).orElseThrow();
@@ -131,5 +136,9 @@ public class TurnierRepository {
 
 	public void speichereBegegnung(Begegnung begegnung) {
 		begegnungJpaRepository.save(begegnungConverter.convertFromBegegnung(begegnung));
+	}
+
+	public List<Turnier> ladeAlleTurniere() {
+		return turnierJpaRepository.findAll().stream().map(jpa -> turnierConverter.convertToTurnier(jpa)).toList();
 	}
 }

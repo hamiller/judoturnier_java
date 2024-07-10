@@ -39,8 +39,8 @@ public class GewichtsklassenController {
 	@Autowired
 	private EinstellungenService   einstellungenService;
 
-	@GetMapping("/gewichtsklassen")
-	public ModelAndView ladeGewichtsklassen() {
+	@GetMapping("/turnier/{turnierid}/gewichtsklassen")
+	public ModelAndView ladeGewichtsklassen(@PathVariable String turnierid) {
 		var wks = wettkaempferService.alleKaempfer();
 		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
 
@@ -52,6 +52,7 @@ public class GewichtsklassenController {
 
 
 		ModelAndView mav = new ModelAndView("gewichtsklassen");
+		mav.addObject("turnierid", turnierid);
 		mav.addObject("gewichtsklassengruppenWeiblich", currentGwks.stream().filter(gruppe -> gruppe.gruppenGeschlecht().isPresent() && gruppe.gruppenGeschlecht().get() == Geschlecht.w));
 		mav.addObject("gewichtsklassengruppenMaennlich", currentGwks.stream().filter(gruppe -> gruppe.gruppenGeschlecht().isPresent() && gruppe.gruppenGeschlecht().get() == Geschlecht.m));
 		mav.addObject("anzahlwk", wks.size());
@@ -62,28 +63,29 @@ public class GewichtsklassenController {
 		return mav;
 	}
 
-	@GetMapping("/gewichtsklassen/randori_printview_groups/{altersklasse}")
-	public ModelAndView ladeDruckAnsichtGruppenRandori(@PathVariable("altersklasse") String altersklasse) {
+	@GetMapping("/turnier/{turnierid}/gewichtsklassen/randori_printview_groups/{altersklasse}")
+	public ModelAndView ladeDruckAnsichtGruppenRandori(@PathVariable String turnierid, @PathVariable("altersklasse") String altersklasse) {
 		logger.info("lade Druckansicht Randori-Gruppen für " + altersklasse);
 		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
 
 		ModelAndView mav = new ModelAndView("druckansicht_gruppen_randori");
+		mav.addObject("turnierid", turnierid);
 		mav.addObject("gruppen", currentGwks.stream().filter(gwk -> gwk.altersKlasse().name().equalsIgnoreCase(altersklasse)).toList());
 		return mav;
 	}
 
-	@PostMapping("/gewichtsklassen-renew")
-	public ModelAndView erstelleGewichtsklassenNeu() {
+	@PostMapping("/turnier/{turnierid}/gewichtsklassen-renew")
+	public ModelAndView erstelleGewichtsklassenNeu(@PathVariable String turnierid) {
 		logger.info("erstelle Gewichtsklassen");
 		var wks = wettkaempferService.alleKaempfer();
 		var gwks = gewichtsklassenService.teileInGewichtsklassen(wks);
 		gewichtsklassenService.loescheAlles();
 		gewichtsklassenService.speichere(gwks);
-		return new ModelAndView("redirect:/gewichtsklassen");
+		return new ModelAndView("redirect:/turnier/" + turnierid + "/gewichtsklassen");
 	}
 
-	@PostMapping("/gewichtsklasse-renew")
-	public ModelAndView erstelleGewichtsklasseNeu(@RequestBody String altersklasseString) {
+	@PostMapping("/turnier/{turnierid}/gewichtsklasse-renew")
+	public ModelAndView erstelleGewichtsklasseNeu(@PathVariable String turnierid, @RequestBody String altersklasseString) {
 		logger.info("erneuere Gewichtsklasse für Altersklasse {}", altersklasseString);
 		if (altersklasseString == null || altersklasseString.isBlank()) {
 			throw new IllegalArgumentException();
@@ -98,11 +100,11 @@ public class GewichtsklassenController {
 		gewichtsklassenService.loescheAltersklasse(altersklasse);
 		gewichtsklassenService.speichere(gwks);
 
-		return new ModelAndView("redirect:/gewichtsklassen");
+		return new ModelAndView("redirect:/turnier/" + turnierid + "/gewichtsklassen");
 	}
 
-	@PostMapping("/gewichtsklassen")
-	public ModelAndView speichereGewichtsklassen(@RequestBody MultiValueMap<String, String> formData) {
+	@PostMapping("/turnier/{turnierid}/gewichtsklassen")
+	public ModelAndView speichereGewichtsklassen(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
 		logger.debug("speichere Gewichtsklassen {}", formData);
 
 		var gruppenTeilnehmer = new HashMap<Integer, List<Integer>>();
@@ -124,7 +126,7 @@ public class GewichtsklassenController {
 
 		gewichtsklassenService.aktualisiere(gruppenTeilnehmer);
 
-		return new ModelAndView("redirect:/gewichtsklassen");
+		return new ModelAndView("redirect:/turnier/" + turnierid + "/gewichtsklassen");
 	}
 
 	private List<GewichtsklassenGruppen> groupByAge(List<GewichtsklassenGruppe> gwk) {

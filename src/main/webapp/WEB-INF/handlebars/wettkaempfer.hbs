@@ -21,7 +21,7 @@
   {{/if}}
 
   <div class="generalcontent">
-    <form action="/wettkaempfer" method="POST">
+    <form action="/turnier/{{turnierid}}/wettkaempfer" method="POST">
       <input type="hidden" name="id" value="{{kaempfer.id}}"/>
       
       <div class="wettkaempfer name"><label>Name, Vorname</label><input class="wd300" autofocus type="string" name="name" value="{{kaempfer.name}}"/></div>

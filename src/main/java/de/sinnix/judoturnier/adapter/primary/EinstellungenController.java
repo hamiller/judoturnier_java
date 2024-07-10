@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,8 +33,8 @@ public class EinstellungenController {
 	@Autowired
 	private GewichtsklassenService gewichtsklassenService;
 
-	@GetMapping("/turnier/einstellungen")
-	public ModelAndView ladeEinstellungen() {
+	@GetMapping("/turnier/{turnierid}/einstellungen")
+	public ModelAndView ladeEinstellungen(@PathVariable String turnierid) {
 		logger.debug("Lade Einstellungen");
 
 		var einstellungen = einstellungenService.ladeEinstellungen();
@@ -41,6 +42,7 @@ public class EinstellungenController {
 		var gwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
 
 		ModelAndView mav = new ModelAndView("einstellungen");
+		mav.addObject("turnierid", turnierid);
 		mav.addObject("gewichtsklassengruppen", gwks);
 		mav.addObject("anzahlwk", wks.size());
 		mav.addObject("kampfsysteme", Kampfsystem.values());
@@ -52,27 +54,8 @@ public class EinstellungenController {
 		return mav;
 	}
 
-	@PostMapping("/turnier/einstellungen-wettkampf")
-	public ModelAndView speichereKampfsystemEinstellungen(@RequestBody MultiValueMap<String, String> formData) {
-		logger.debug("speichere WettkampfGruppen-Einstellungen {}", formData);
-
-		// todo: Speichern!
-		var einstellungen = einstellungenService.ladeEinstellungen();
-		var wks = wiegenService.alleKaempfer();
-		var gwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
-
-		ModelAndView mav = new ModelAndView("einstellungen");
-		mav.addObject("gewichtsklassengruppen", gwks);
-		mav.addObject("anzahlwk", wks.size());
-		mav.addObject("kampfsysteme", Kampfsystem.values());
-		mav.addObject("turniertyp", einstellungen.turnierTyp());
-		mav.addObject("mattenanzahl", einstellungen.mattenAnzahl());
-		mav.addObject("wettkampfreihenfolge", einstellungen.wettkampfReihenfolge());
-		return mav;
-	}
-
-	@PostMapping("/turnier/einstellungen")
-	public ModelAndView speichereTurnierEinstellungen(@RequestBody MultiValueMap<String, String> formData) {
+	@PostMapping("/turnier/{turnierid}/einstellungen")
+	public ModelAndView speichereTurnierEinstellungen(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
 		logger.debug("speichere Turnier-Einstellungen {}", formData);
 
 		var turnierTyp = TurnierTyp.valueOf(formData.getFirst(TurnierTyp.TYP));
@@ -88,6 +71,7 @@ public class EinstellungenController {
 		var gwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
 
 		ModelAndView mav = new ModelAndView("einstellungen");
+		mav.addObject("turnierid", turnierid);
 		mav.addObject("gewichtsklassengruppen", gwks);
 		mav.addObject("anzahlwk", wks.size());
 		mav.addObject("kampfsysteme", Kampfsystem.values());

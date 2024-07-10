@@ -13,7 +13,7 @@
       <div>Anzahl der Kämpfer: {{anzahlwk}}</div>
       
       <div class="actions">
-        <button onclick="window.location.href='/wettkaempfer-neu';" ><span class="material-icons md-48 centered" title="Weitere Wettkämpfer eintragen">person_add</span> Weitere Wettkämpfer eintragen</button>
+        <button onclick="window.location.href='/turnier/{{turnierid}}/wettkaempfer-neu';" ><span class="material-icons md-48 centered" title="Weitere Wettkämpfer eintragen">person_add</span> Weitere Wettkämpfer eintragen</button>
       </div>
     </div>
     
@@ -38,7 +38,7 @@
         <div>{{janein checked}}</div>
         <div>{{janein printed}}</div>
         <div>
-          <a href="/wettkaempfer/{{ id }}"><span class="material-icons">edit</span></a>
+          <a href="/turnier/{{turnierid}}/wettkaempfer/{{ id }}"><span class="material-icons">edit</span></a>
           <a href="#" onclick="deleteWK({{ id }})"><span class="material-icons">person_remove</span></a>
         </div>
       </li>
@@ -52,7 +52,7 @@
   const deleteWK = async (id) => {
     var sicher = confirm("ACHTUNG\n\nHiermit wird der Wettkämpfer gelöscht!\n\nSind sie sicher?");
     if (sicher) {
-      fetch("/wettkaempfer/"+ id, {method: "DELETE"})
+      fetch("/turnier/{{turnierid}}/wettkaempfer/"+ id, {method: "DELETE"})
         .then(() => window.location.reload())
         .catch(error => console.error("Error deleting user:", error));
     };

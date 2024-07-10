@@ -23,9 +23,9 @@
           <div class="actions ">
             <button type="button" onclick="renewBegegnung( '{{this}}' )" ><span class="material-icons md-48 centered" title="Einzelne Wettkampfgruppen neu zuordnen">autorenew</span> Wettkampfgruppen {{this}} neu zuordnen</button>
             <br>
-            <a href="/turnier/begegnungen/randori_printview_matches/{{this}}" target="_blank" class="buttonlink"><span class="material-icons md-48 centered" title="Druckansicht Begegnungen">print</span> Druckansicht {{this}} Begegnungen</a>
+            <a href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches/{{this}}" target="_blank" class="buttonlink"><span class="material-icons md-48 centered" title="Druckansicht Begegnungen">print</span> Druckansicht {{this}} Begegnungen</a>
             <br>
-            <a href="/turnier/begegnungen/randori_printview_matches_inserting_data/{{this}}" target="_blank" class="buttonlink"><span class="material-icons md-48 centered" title="Druckansicht Begegnungen-Eintragen">print</span> Druckansicht {{this}} Begegnungen-Eintragen</a>
+            <a href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches_inserting_data/{{this}}" target="_blank" class="buttonlink"><span class="material-icons md-48 centered" title="Druckansicht Begegnungen-Eintragen">print</span> Druckansicht {{this}} Begegnungen-Eintragen</a>
           </div>
         {{/each}}
         </div>
@@ -73,7 +73,7 @@
                       {{#if (istGleich wettkaempfer1.name null)}}
                           <div class="listeneintrag">(Ansonsten wäre nun Gruppe {{../gruppe.name}} an der Reihe)</div>
                       {{else}}
-                          <a href="/turnier/begegnungen/randori/{{begegnungId}}">
+                          <a href="/turnier/{{turnierid}}/begegnungen/randori/{{begegnungId}}">
                               <div class="listeneintrag vs {{wertungVorhanden wertung}}">
                                   <div class="wettkaempfer name {{wettkaempfer1.farbe.get}}">{{wettkaempfer1.name}}</div><div>({{wettkaempfer1.verein.name}})</div>
                                   <div class="center">vs</div>
@@ -96,7 +96,7 @@
     var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
     if (sicher) {
       console.log("Erstelle alle Begegnungen neu");
-      fetch('/turnier/begegnungen', { method: 'POST' })
+      fetch('/turnier/{{turnierid}}/begegnungen', { method: 'POST' })
         .then((r) => window.location.href=r.url)
     };
   };
@@ -105,7 +105,7 @@
     var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in der Altersklasse\n\t" + altersklasse + "\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
     if (sicher) {
       console.log("Erstelle die Begegnungen neu", altersklasse);
-      fetch('/turnier/begegnung', { method: 'POST', body: altersklasse })
+      fetch('/turnier/{{turnierid}}/begegnung', { method: 'POST', body: altersklasse })
         .then(() => window.location.href='/turnier/begegnungen/randori')
     };
   }
@@ -113,7 +113,7 @@
   const deleteBegegnungen = async (altersklasse) => {
     var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern aller Altersklassen\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
     if (sicher) {
-      fetch('/turnier/begegnung', { method: 'DELETE' })
+      fetch('/turnier/{{turnierid}}/begegnung', { method: 'DELETE' })
         .then(() => window.location.href='/turnier/begegnungen/randori')
     };
   };

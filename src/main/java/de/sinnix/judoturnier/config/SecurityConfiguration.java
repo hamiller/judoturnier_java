@@ -13,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
+import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Component;
 
@@ -35,11 +36,12 @@ public class SecurityConfiguration {
 	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests(request -> request
-				.requestMatchers("/turnier/**").hasAnyAuthority("ROLE_ZUSCHAUER", "ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
-				.requestMatchers("/wettkaempfer/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
-				.requestMatchers("/vereine/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
-				.requestMatchers("/gewichtsklassen/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_KAMPFRICHTER")
-				.requestMatchers("/").permitAll()
+				.requestMatchers("/**").permitAll()
+//				.requestMatchers("/turnier*").hasAuthority("ROLE_ADMIN")
+//				.requestMatchers("/turnier/**").hasAnyAuthority("ROLE_ZUSCHAUER", "ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
+//				.requestMatchers("/turnier/*/wettkaempfer/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
+//				.requestMatchers("/turnier/*/vereine/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
+//				.requestMatchers("/turnier/*/gewichtsklassen/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_KAMPFRICHTER")
 				.anyRequest().authenticated());
 
 		http
@@ -61,6 +63,9 @@ public class SecurityConfiguration {
 				if (OidcUserAuthority.class.isInstance(authority)) {
 					final var oidcUserAuthority = (OidcUserAuthority) authority;
 					mappedAuthorities.addAll(convert(oidcUserAuthority.getIdToken().getClaims()));
+				}
+				else if (OAuth2UserAuthority.class.isInstance(authority)) {
+					logger.warn("Received OAuth2UserAuthority user authorities for authority: {}", authority);
 				}
 			});
 

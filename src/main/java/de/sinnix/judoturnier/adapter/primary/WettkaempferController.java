@@ -38,21 +38,22 @@ public class WettkaempferController {
 	@Autowired
 	private VereinService       vereinService;
 
-	@GetMapping("/wettkaempfer")
-	public ModelAndView ladeWettkaempferListe() {
+	@GetMapping("/turnier/{turnierid}/wettkaempfer")
+	public ModelAndView ladeWettkaempferListe(@PathVariable String turnierid) {
 		logger.debug("Alle Wettkaempfer angefragt");
 		var wks = wiegenService.alleKaempfer().stream()
 			.sorted(Comparator.comparing(Wettkaempfer::name))
 			.collect(Collectors.toList());
 
 		ModelAndView mav = new ModelAndView("wettkaempferliste");
+		mav.addObject("turnierid", turnierid);
 		mav.addObject("kaempferListe", wks);
 		mav.addObject("anzahlwk", wks.size());
 		return mav;
 	}
 
-	@PostMapping("/wettkaempfer")
-	public ModelAndView speichereWettkaempfer(@RequestBody MultiValueMap<String, String> formData) {
+	@PostMapping("/turnier/{turnierid}/wettkaempfer")
+	public ModelAndView speichereWettkaempfer(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("empfange Wettkaempfer {}", formData);
 
 		Geschlecht geschlecht = Geschlecht.valueOf(formData.getFirst("geschlecht"));
@@ -72,28 +73,28 @@ public class WettkaempferController {
 
 		if (wettkaempfer.name().isBlank()) {
 			logger.info("Kämpfer hat keinen Namen!");
-			return new ModelAndView("redirect:/wettkaempfer-neu?error='Name fehlt'", formData);
+			return new ModelAndView("redirect:/turnier/" + turnierid + "/wettkaempfer-neu?error='Name fehlt'", formData);
 		}
 
 		try {
 			var kaempfer = wiegenService.speichereKaempfer(wettkaempfer);
 			logger.info("Kämpfer erfolgreich angelegt {}", kaempfer.id());
-			return new ModelAndView("redirect:/wettkaempfer-neu?success=" + id, formData);
+			return new ModelAndView("redirect:/turnier/" + turnierid + "/wettkaempfer-neu?success=" + id, formData);
 		} catch (Exception err) {
 			logger.error("Konnte den Kämpfer nicht anlegen!", err);
-			return new ModelAndView("redirect:/wettkaempfer-neu", formData);
+			return new ModelAndView("redirect:/turnier/" + turnierid + "/wettkaempfer-neu", formData);
 		}
 	}
 
-	@DeleteMapping("/wettkaempfer/{id}")
-	public ModelAndView loescheWettkaempfer(@PathVariable Integer id) {
+	@DeleteMapping("/turnier/{turnierid}/wettkaempfer/{id}")
+	public ModelAndView loescheWettkaempfer(@PathVariable String turnierid, @PathVariable Integer id) {
 		logger.debug("lösche Wettkaempfer {}", id);
 		wiegenService.loescheKaempfer(id);
-		return new ModelAndView("redirect:/wettkaempfer");
+		return new ModelAndView("redirect:/turnier/" + turnierid + "/wettkaempfer");
 	}
 
-	@GetMapping("/wettkaempfer/{id}")
-	public ModelAndView ladeWettkaempfer(@PathVariable Integer id) {
+	@GetMapping("/turnier/{turnierid}/wettkaempfer/{id}")
+	public ModelAndView ladeWettkaempfer(@PathVariable String turnierid, @PathVariable Integer id) {
 		logger.debug("Wettkaempfer-Seite angefragt " + id);
 
 		var wk = wiegenService.ladeKaempfer(id);
@@ -107,6 +108,7 @@ public class WettkaempferController {
 			.collect(Collectors.toList());
 
 		ModelAndView mav = new ModelAndView("wettkaempfer");
+		mav.addObject("turnierid", turnierid);
 		mav.addObject("kaempfer", wk.get());
 		mav.addObject("vereine", vs);
 		mav.addObject("geschlechter", Geschlecht.values());
@@ -114,12 +116,13 @@ public class WettkaempferController {
 		return mav;
 	}
 
-	@GetMapping("/wettkaempfer-neu")
-	public ModelAndView leererWettkaempfer(@RequestParam(name = "success", required = false) String id, @RequestParam(name = "error", required = false) String error) {
+	@GetMapping("/turnier/{turnierid}/wettkaempfer-neu")
+	public ModelAndView leererWettkaempfer(@PathVariable String turnierid, @RequestParam(name = "success", required = false) String id, @RequestParam(name = "error", required = false) String error) {
 		logger.debug("Wettkaempfer-Seite");
 		var vs = vereinService.holeAlleVereine();
 
 		ModelAndView mav = new ModelAndView("wettkaempfer");
+		mav.addObject("turnierid", turnierid);
 		mav.addObject("kaempfer", null);
 		mav.addObject("vereine", vs);
 		mav.addObject("geschlechter", Geschlecht.values());
