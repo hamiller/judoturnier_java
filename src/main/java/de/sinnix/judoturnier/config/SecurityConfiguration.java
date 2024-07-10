@@ -13,14 +13,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
-import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtClaimNames;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Component;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -40,7 +35,10 @@ public class SecurityConfiguration {
 	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests(request -> request
-				.requestMatchers("/turnier/**").permitAll()//hasRole("zuschauer")
+				.requestMatchers("/turnier/**").hasAnyAuthority("ROLE_ZUSCHAUER", "ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
+				.requestMatchers("/wettkaempfer/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
+				.requestMatchers("/vereine/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
+				.requestMatchers("/gewichtsklassen/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_KAMPFRICHTER")
 				.requestMatchers("/").permitAll()
 				.anyRequest().authenticated());
 

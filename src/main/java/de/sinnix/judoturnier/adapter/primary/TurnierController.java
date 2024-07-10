@@ -9,15 +9,12 @@ import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.GruppenRunde;
 import de.sinnix.judoturnier.model.Matte;
-import de.sinnix.judoturnier.model.Wertung;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -81,16 +78,6 @@ public class TurnierController {
 			.map(r -> r.getAuthority()).collect(Collectors.toSet());
 
 		logger.info("Eingeloggter User {}: {}", s, roles);
-
-		ModelAndView mav = new ModelAndView("startseite");
-		return mav;
-	}
-	@GetMapping("/test2")
-	@PreAuthorize("hasRole('ROLE_ZUSCHAUER2')")
-	public ModelAndView testLoggedIn2() {
-		logger.debug("Test 2 eingeloggt");
-		var s = SecurityContextHolder.getContext().getAuthentication();
-		logger.info("Eingeloggter User {}", s);
 
 		ModelAndView mav = new ModelAndView("startseite");
 		return mav;
