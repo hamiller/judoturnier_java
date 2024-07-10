@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,9 +42,9 @@ public class GewichtsklassenService {
 	private WettkaempferRepository    wettkaempferRepository;
 
 
-	public List<GewichtsklassenGruppe> ladeGewichtsklassenGruppen() {
+	public List<GewichtsklassenGruppe> ladeGewichtsklassenGruppen(UUID turnierUUID) {
 		logger.info("lade alle GewichtsklassenGruppen");
-		return gewichtsklassenRepository.findAll().stream()
+		return gewichtsklassenRepository.findAll(turnierUUID).stream()
 			.sorted((a, b) -> {
 				if (a.altersKlasse().getReihenfolge() != b.altersKlasse().getReihenfolge()) {
 					return Integer.compare(a.altersKlasse().getReihenfolge(), b.altersKlasse().getReihenfolge()); // nach Alter sortieren
@@ -54,17 +55,17 @@ public class GewichtsklassenService {
 			.collect(Collectors.toList());
 	}
 
-	public List<GewichtsklassenGruppe> ladeGewichtsklassenGruppe(Altersklasse altersklasse) {
-		return ladeGewichtsklassenGruppen().stream()
+	public List<GewichtsklassenGruppe> ladeGewichtsklassenGruppe(Altersklasse altersklasse, UUID turnierUUID) {
+		return ladeGewichtsklassenGruppen(turnierUUID).stream()
 			.filter(g -> g.altersKlasse().equals(altersklasse))
 			.sorted(Comparator.comparingDouble(GewichtsklassenGruppe::maxGewicht))
 			.collect(Collectors.toList());
 	}
 
-	public List<GewichtsklassenGruppe> teileInGewichtsklassen(List<Wettkaempfer> wettkaempferListe) {
+	public List<GewichtsklassenGruppe> teileInGewichtsklassen(List<Wettkaempfer> wettkaempferListe, UUID turnierUUID) {
 		logger.info("Erstelle Gewichtsklassen...");
 
-		var einstellungen = einstellungenService.ladeEinstellungen();
+		var einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
 
 		// erstelle die GewichtsklassenGruppen
 		List<GewichtsklassenGruppe> result = new ArrayList<>();
@@ -82,7 +83,7 @@ public class GewichtsklassenService {
 				int numGroups = (wks.size() + randoriGruppenGroesse - 1) / randoriGruppenGroesse;
 				List<RandoriGruppenName> aktuelleGruppenNamen = gruppenNamen.subList(0, numGroups + 1); // we need one more name for an empty group
 				gruppenNamen = gruppenNamen.subList(numGroups, gruppenNamen.size());
-				result.addAll(erstelleGewichtsklassenGruppenRandori(wks, aktuelleGruppenNamen, randoriGruppenGroesse));
+				result.addAll(erstelleGewichtsklassenGruppenRandori(wks, aktuelleGruppenNamen, randoriGruppenGroesse, turnierUUID));
 			}
 		} else {
 			logger.info("Normales-Turnier");
@@ -96,7 +97,7 @@ public class GewichtsklassenService {
 			}
 
 			result = gruppenNachGeschlechtUndAlter.stream()
-				.flatMap(gs -> gs.stream().flatMap(g -> erstelleGewichtsklassenGruppen(g, variablerGewichtsTeil).stream()))
+				.flatMap(gs -> gs.stream().flatMap(g -> erstelleGewichtsklassenGruppen(g, variablerGewichtsTeil, turnierUUID).stream()))
 				.collect(Collectors.toList());
 		}
 
@@ -113,15 +114,15 @@ public class GewichtsklassenService {
 		gewichtsklassenRepository.saveAll(gwks);
 	}
 
-	public void loescheAltersklasse(Altersklasse altersklasse) {
+	public void loescheAltersklasse(UUID turnierUUID, Altersklasse altersklasse) {
 		logger.info("loesche Altersklasse {}", altersklasse);
-		gewichtsklassenRepository.deleteAllByAltersklasse(altersklasse);
+		gewichtsklassenRepository.deleteAllByAltersklasse(turnierUUID, altersklasse);
 	}
 
-	public void aktualisiere(Map<Integer, List<Integer>> gruppenTeilnehmer) {
+	public void aktualisiere(Map<Integer, List<Integer>> gruppenTeilnehmer, UUID turnierUUID) {
 		logger.info("aktualisiere GewichtsklassenGruppen {}", gruppenTeilnehmer);
-		var gewichtsklassenGruppen = gewichtsklassenRepository.findAll();
-		var wettkaempfer = wettkaempferService.alleKaempfer();
+		var gewichtsklassenGruppen = gewichtsklassenRepository.findAll(turnierUUID);
+		var wettkaempfer = wettkaempferService.alleKaempfer(turnierUUID);
 
 		List<GewichtsklassenGruppe> updatedGewichtsklassenGruppen = new ArrayList<>();
 		for (var gewichtsklassenGruppe : gewichtsklassenGruppen) {
@@ -136,7 +137,8 @@ public class GewichtsklassenService {
 					List.of(),
 					gewichtsklassenGruppe.name(),
 					DEFAULT_MIN_GEWICHT,
-					DEFAULT_MAX_GEWICHT
+					DEFAULT_MAX_GEWICHT,
+					turnierUUID
 				);
 
 				updatedGewichtsklassenGruppen.add(updatedGewichtsklassenGruppe);
@@ -153,7 +155,8 @@ public class GewichtsklassenService {
 				wettkaempferListe,
 				gewichtsklassenGruppe.name(),
 				updatedMinGewicht,
-				updatedMaxGewicht
+				updatedMaxGewicht,
+				turnierUUID
 			);
 			updatedGewichtsklassenGruppen.add(updatedGewichtsklassenGruppe);
 		}
@@ -187,7 +190,7 @@ public class GewichtsklassenService {
 			.values().stream().collect(Collectors.toList());
 	}
 
-	private List<GewichtsklassenGruppe> erstelleGewichtsklassenGruppen(List<Wettkaempfer> kaempferListe, Double variablerGewichtsTeil) {
+	private List<GewichtsklassenGruppe> erstelleGewichtsklassenGruppen(List<Wettkaempfer> kaempferListe, Double variablerGewichtsTeil, UUID turnierUUID) {
 		return kaempferListe.stream()
 			.collect(Collectors.groupingBy(wettkaempfer -> gewichtsKlasse(wettkaempfer, variablerGewichtsTeil)))
 			.entrySet().stream()
@@ -198,16 +201,16 @@ public class GewichtsklassenService {
 				double maxGewicht = gruppe.stream().mapToDouble(Wettkaempfer::gewicht).max().orElse(200);
 				Geschlecht geschlecht = gruppe.get(0).geschlecht();
 				Altersklasse altersKlasse = gruppe.get(0).altersklasse();
-				return new GewichtsklassenGruppe(null, altersKlasse, Optional.ofNullable(geschlecht), gruppe, Optional.empty(), minGewicht, maxGewicht);
+				return new GewichtsklassenGruppe(null, altersKlasse, Optional.ofNullable(geschlecht), gruppe, Optional.empty(), minGewicht, maxGewicht, turnierUUID);
 			}).collect(Collectors.toList());
 	}
 
-	private List<GewichtsklassenGruppe> erstelleGewichtsklassenGruppenRandori(List<Wettkaempfer> kaempferListe, List<RandoriGruppenName> gruppenNamen, Integer gruppengroesse) {
+	private List<GewichtsklassenGruppe> erstelleGewichtsklassenGruppenRandori(List<Wettkaempfer> kaempferListe, List<RandoriGruppenName> gruppenNamen, Integer gruppengroesse, UUID turnierUUID) {
 		List<GewichtsklassenGruppe> gewichtsklassenGruppen = new ArrayList<>();
 		int anzahlRandoriGruppen = (kaempferListe.size() + gruppengroesse - 1) / gruppengroesse;
 		logger.info("erstelle " + anzahlRandoriGruppen + " Gruppen...");
 
-		List<List<Wettkaempfer>> wettkaempferGruppen = randoriKlassen(kaempferListe, gruppengroesse);
+		List<List<Wettkaempfer>> wettkaempferGruppen = randoriKlassen(kaempferListe, gruppengroesse, turnierUUID);
 
 		for (int current = 0; current < anzahlRandoriGruppen; current++) {
 			List<Wettkaempfer> gruppe = wettkaempferGruppen.get(current);
@@ -215,11 +218,11 @@ public class GewichtsklassenService {
 			RandoriGruppenName randoriGruppe = gruppenNamen.get(current);
 			double maxGewicht = gruppe.stream().mapToDouble(Wettkaempfer::gewicht).max().orElse(0);
 			double minGewicht = gruppe.stream().mapToDouble(Wettkaempfer::gewicht).min().orElse(0);
-			gewichtsklassenGruppen.add(new GewichtsklassenGruppe(null, altersKlasse, Optional.empty(), gruppe, Optional.of(randoriGruppe), minGewicht, maxGewicht));
+			gewichtsklassenGruppen.add(new GewichtsklassenGruppe(null, altersKlasse, Optional.empty(), gruppe, Optional.of(randoriGruppe), minGewicht, maxGewicht, turnierUUID));
 		}
 
 		RandoriGruppenName randoriGruppe = gruppenNamen.get(anzahlRandoriGruppen);
-		gewichtsklassenGruppen.add(new GewichtsklassenGruppe(null, wettkaempferGruppen.get(0).get(0).altersklasse(), Optional.empty(), new ArrayList<>(), Optional.of(randoriGruppe), DEFAULT_MIN_GEWICHT, DEFAULT_MAX_GEWICHT));
+		gewichtsklassenGruppen.add(new GewichtsklassenGruppe(null, wettkaempferGruppen.get(0).get(0).altersklasse(), Optional.empty(), new ArrayList<>(), Optional.of(randoriGruppe), DEFAULT_MIN_GEWICHT, DEFAULT_MAX_GEWICHT, turnierUUID));
 
 		return gewichtsklassenGruppen;
 	}
@@ -235,7 +238,7 @@ public class GewichtsklassenService {
 			.orElseThrow(() -> new IllegalArgumentException("Unbekannte Gewichtsklasse: " + wettkaempfer.gewicht()));
 	}
 
-	private List<List<Wettkaempfer>> randoriKlassen(List<Wettkaempfer> wettkaempfer, int gruppenGroesse) {
+	private List<List<Wettkaempfer>> randoriKlassen(List<Wettkaempfer> wettkaempfer, int gruppenGroesse, UUID turnierUUID) {
 		wettkaempfer.sort(Comparator.comparingDouble(Wettkaempfer::gewicht));
 
 		List<List<Wettkaempfer>> gruppen = new ArrayList<>();
@@ -243,7 +246,7 @@ public class GewichtsklassenService {
 
 		for (Wettkaempfer kaempfer : wettkaempfer) {
 			Farbe farbe = getFarbe(aktuelleGruppe.size());
-			Wettkaempfer farbigerKaempfer = new Wettkaempfer(kaempfer.id(), kaempfer.name(), kaempfer.geschlecht(), kaempfer.altersklasse(), kaempfer.verein(), kaempfer.gewicht(), Optional.of(farbe), kaempfer.checked(), kaempfer.printed());
+			Wettkaempfer farbigerKaempfer = new Wettkaempfer(kaempfer.id(), kaempfer.name(), kaempfer.geschlecht(), kaempfer.altersklasse(), kaempfer.verein(), kaempfer.gewicht(), Optional.of(farbe), kaempfer.checked(), kaempfer.printed(), turnierUUID);
 			if (aktuelleGruppe.size() < gruppenGroesse) {
 				aktuelleGruppe.add(farbigerKaempfer);
 			} else {

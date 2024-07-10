@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class BegegnungConverter {
@@ -25,7 +26,8 @@ public class BegegnungConverter {
 			wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer1()),
 			wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer2()),
 			Optional.ofNullable(wertungConverter.convertToWertung(jpa.getWertung())),
-			wettkampfGruppeConverter.convertToWettkampfGruppe(jpa.getWettkampfGruppeId(), wettkampfGruppeJpaList)
+			wettkampfGruppeConverter.convertToWettkampfGruppe(jpa.getWettkampfGruppeId(), wettkampfGruppeJpaList),
+			UUID.fromString(jpa.getTurnierUUID())
 			);
 	}
 
@@ -41,6 +43,7 @@ public class BegegnungConverter {
 			jpa.setWertung(wertungConverter.convertFromWertung(begegnung.getWertung().get()));
 		}
 		jpa.setWettkampfGruppeId(begegnung.getWettkampfGruppe().id());
+		jpa.setTurnierUUID(begegnung.getTurnierUUID().toString());
 		return jpa;
 	}
 }

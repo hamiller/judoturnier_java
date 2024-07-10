@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -89,8 +90,8 @@ public class TurnierController {
 		var s = SecurityContextHolder.getContext().getAuthentication();
 		logger.info("Eingeloggter User {} {}", s.getName(), s.getAuthorities());
 
-		var wks = wettkaempferService.alleKaempfer();
-		var einstellungen = einstellungenService.ladeEinstellungen();
+		var wks = wettkaempferService.alleKaempfer(UUID.fromString(turnierid));
+		var einstellungen = einstellungenService.ladeEinstellungen(UUID.fromString(turnierid));
 
 		ModelAndView mav = new ModelAndView("turnieruebersicht");
 		mav.addObject("anzahlwk", wks.size());
@@ -109,8 +110,9 @@ public class TurnierController {
 
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori")
 	public ModelAndView ladeWettkampfreihenfolgeJeMatteRandori(@PathVariable String turnierid, @RequestParam(value = "error", required = false) String error) {
-		List<GewichtsklassenGruppe> gwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
-		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge();
+		var turnierUUID = UUID.fromString(turnierid);
+		List<GewichtsklassenGruppe> gwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
+		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID);
 		Set<Altersklasse> altersklassen = gwks.stream()
 			.map(GewichtsklassenGruppe::altersKlasse)
 			.collect(Collectors.toSet());
@@ -127,8 +129,9 @@ public class TurnierController {
 
 	@GetMapping("/turnier/{turnierid}/begegnungen/normal")
 	public ModelAndView ladeWettkampfreihenfolgeJeMatteNormal(@PathVariable String turnierid) {
-		List<GewichtsklassenGruppe> gwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
-		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge();
+		var turnierUUID = UUID.fromString(turnierid);
+		List<GewichtsklassenGruppe> gwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
+		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID);
 
 		ModelAndView mav = new ModelAndView("begegnungen_normal");
 		mav.addObject("turnierid", turnierid);
@@ -141,8 +144,8 @@ public class TurnierController {
 	public ModelAndView erstelleWettkampfreihenfolgeJeMatte(@PathVariable String turnierid) {
 		String error = "";
 		try {
-			turnierService.loescheWettkampfreihenfolge();
-			turnierService.erstelleWettkampfreihenfolge();
+			turnierService.loescheWettkampfreihenfolge(UUID.fromString(turnierid));
+			turnierService.erstelleWettkampfreihenfolge(UUID.fromString(turnierid));
 		} catch (Exception e) {
 			logger.error("Ein unerwarteter Fehler ist aufgetreten", e);
 			error = e.toString();
@@ -158,8 +161,8 @@ public class TurnierController {
 	public ModelAndView erneuerWettkampfreihenfolgeFuerAltersklasse(@PathVariable String turnierid, @RequestBody Altersklasse ak) {
 		String error = "";
 		try {
-			turnierService.loescheWettkampfreihenfolgeAltersklasse(ak);
-			turnierService.erstelleWettkampfreihenfolgeAltersklasse(Optional.of(ak));
+			turnierService.loescheWettkampfreihenfolgeAltersklasse(ak, UUID.fromString(turnierid));
+			turnierService.erstelleWettkampfreihenfolgeAltersklasse(Optional.of(ak), UUID.fromString(turnierid));
 		} catch (Exception e) {
 			error = e.toString();
 		}
@@ -174,7 +177,7 @@ public class TurnierController {
 	public ModelAndView entferneWettkampfreihenfolgeFuerAltersklasse(@PathVariable String turnierid) {
 		String error = "";
 		try {
-			turnierService.loescheWettkampfreihenfolge();
+			turnierService.loescheWettkampfreihenfolge(UUID.fromString(turnierid));
 		} catch (Exception e) {
 			error = e.toString();
 		}
@@ -187,7 +190,8 @@ public class TurnierController {
 
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori_printview_matches/{altersklasse}")
 	public ModelAndView ladeDruckAnsichtBegegnungenRandori(@PathVariable String turnierid, @PathVariable String altersklasse) {
-		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge().stream()
+		var turnierUUID = UUID.fromString(turnierid);
+		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID).stream()
 			.sorted(Comparator.comparingInt(Matte::id))
 			.toList();
 		List<Matte> wettkampfreihenfolgeJeMatteGefiltert = wettkampfreihenfolgeJeMatte.stream()
@@ -203,7 +207,8 @@ public class TurnierController {
 
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori_printview_matches_inserting_data/{altersklasse}")
 	public ModelAndView ladeDruckAnsichtBegegnungenRandoriDateneintrag(@PathVariable String turnierid, @PathVariable String altersklasse) {
-		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge();
+		var turnierUUID = UUID.fromString(turnierid);
+		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID);
 		List<Matte> wettkampfreihenfolgeJeMatteGefiltert = wettkampfreihenfolgeJeMatte.stream()
 			.filter(matte -> matte.runden().stream().anyMatch(r -> r.altersklasse().name().equals(altersklasse)))
 			.collect(Collectors.toList());

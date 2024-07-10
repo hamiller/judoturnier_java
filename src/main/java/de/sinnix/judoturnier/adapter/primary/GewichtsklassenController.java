@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -41,11 +42,12 @@ public class GewichtsklassenController {
 
 	@GetMapping("/turnier/{turnierid}/gewichtsklassen")
 	public ModelAndView ladeGewichtsklassen(@PathVariable String turnierid) {
-		var wks = wettkaempferService.alleKaempfer();
-		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
+		var turnierUUID = UUID.fromString(turnierid);
+		var wks = wettkaempferService.alleKaempfer(turnierUUID);
+		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 
 		var groupedByAge = this.groupByAge(currentGwks);
-		var einstellungen = einstellungenService.ladeEinstellungen();
+		var einstellungen = einstellungenService.ladeEinstellungen(UUID.fromString(turnierid));
 		var anzahlwkInGroups = currentGwks.stream()
 			.mapToInt(group -> group.teilnehmer().size())
 			.sum();
@@ -66,7 +68,8 @@ public class GewichtsklassenController {
 	@GetMapping("/turnier/{turnierid}/gewichtsklassen/randori_printview_groups/{altersklasse}")
 	public ModelAndView ladeDruckAnsichtGruppenRandori(@PathVariable String turnierid, @PathVariable("altersklasse") String altersklasse) {
 		logger.info("lade Druckansicht Randori-Gruppen für " + altersklasse);
-		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
+		var turnierUUID = UUID.fromString(turnierid);
+		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 
 		ModelAndView mav = new ModelAndView("druckansicht_gruppen_randori");
 		mav.addObject("turnierid", turnierid);
@@ -77,8 +80,8 @@ public class GewichtsklassenController {
 	@PostMapping("/turnier/{turnierid}/gewichtsklassen-renew")
 	public ModelAndView erstelleGewichtsklassenNeu(@PathVariable String turnierid) {
 		logger.info("erstelle Gewichtsklassen");
-		var wks = wettkaempferService.alleKaempfer();
-		var gwks = gewichtsklassenService.teileInGewichtsklassen(wks);
+		var wks = wettkaempferService.alleKaempfer(UUID.fromString(turnierid));
+		var gwks = gewichtsklassenService.teileInGewichtsklassen(wks, UUID.fromString(turnierid));
 		gewichtsklassenService.loescheAlles();
 		gewichtsklassenService.speichere(gwks);
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/gewichtsklassen");
@@ -91,13 +94,14 @@ public class GewichtsklassenController {
 			throw new IllegalArgumentException();
 		}
 
+		var turnierUUID = UUID.fromString(turnierid);
 		var altersklasse = Altersklasse.valueOf(altersklasseString);
-		var wk = (wettkaempferService.alleKaempfer()).stream()
+		var wk = (wettkaempferService.alleKaempfer(UUID.fromString(turnierid))).stream()
 			.filter(kaempfer -> kaempfer.altersklasse() == altersklasse)
 			.collect(Collectors.toList());
-		var gwks = gewichtsklassenService.teileInGewichtsklassen(wk);
+		var gwks = gewichtsklassenService.teileInGewichtsklassen(wk, UUID.fromString(turnierid));
 
-		gewichtsklassenService.loescheAltersklasse(altersklasse);
+		gewichtsklassenService.loescheAltersklasse(turnierUUID, altersklasse);
 		gewichtsklassenService.speichere(gwks);
 
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/gewichtsklassen");
@@ -124,7 +128,7 @@ public class GewichtsklassenController {
 			gruppenTeilnehmer.get(gruppeNummer).add(teilnehmerNummer);
 		}
 
-		gewichtsklassenService.aktualisiere(gruppenTeilnehmer);
+		gewichtsklassenService.aktualisiere(gruppenTeilnehmer, UUID.fromString(turnierid));
 
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/gewichtsklassen");
 	}

@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,17 +35,19 @@ public class WettkaempferServiceTest {
     private WettkaempferService wettkaempferService;
 
     private Wettkaempfer wettkaempfer;
+    private UUID         turnierUUID;
 
     @BeforeEach
     void setUp() {
-        wettkaempfer = new Wettkaempfer(1, "Max", Geschlecht.m, Altersklasse.U18, new Verein(1,"Verein1"), 70d, Optional.of(Farbe.BLAU), true, false);
+        turnierUUID = UUID.randomUUID();
+        wettkaempfer = new Wettkaempfer(1, "Max", Geschlecht.m, Altersklasse.U18, new Verein(1,"Verein1", turnierUUID), 70d, Optional.of(Farbe.BLAU), true, false, turnierUUID);
     }
 
     @Test
     void testAlleKaempfer() {
-        when(wettkaempferRepository.findAll()).thenReturn(List.of(wettkaempfer));
+        when(wettkaempferRepository.findAll(turnierUUID)).thenReturn(List.of(wettkaempfer));
 
-        List<Wettkaempfer> wettkaempferList = wettkaempferService.alleKaempfer();
+        List<Wettkaempfer> wettkaempferList = wettkaempferService.alleKaempfer(turnierUUID);
 
         assertEquals(1, wettkaempferList.size());
         assertEquals(wettkaempfer, wettkaempferList.get(0));

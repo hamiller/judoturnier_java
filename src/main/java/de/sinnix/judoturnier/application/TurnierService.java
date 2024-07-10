@@ -53,14 +53,14 @@ public class TurnierService {
 		return turnierRepository.ladeAlleTurniere();
 	}
 
-	public List<Matte> ladeWettkampfreihenfolge() {
+	public List<Matte> ladeWettkampfreihenfolge(UUID turnierUUID) {
 		logger.info("ladeWettkampfreihenfolge");
-		return turnierRepository.ladeMatten().values().stream().toList();
+		return turnierRepository.ladeMatten(turnierUUID).values().stream().toList();
 	}
 
-	public void loescheWettkampfreihenfolge() {
+	public void loescheWettkampfreihenfolge(UUID turnierUUID) {
 		logger.info("loescheWettkampfreihenfolge");
-		turnierRepository.loescheAlleMatten();
+		turnierRepository.loescheAlleMatten(turnierUUID);
 	}
 
 	public Turnier erstelleTurnier(String name, String ort, String datum) {
@@ -79,27 +79,27 @@ public class TurnierService {
 		}
 	}
 
-	public void erstelleWettkampfreihenfolge() {
+	public void erstelleWettkampfreihenfolge(UUID turnierUUID) {
 		logger.info("erstelle Wettkampfreihenfolge für alle Altersklassen");
-		erstelleWettkampfreihenfolgeAltersklasse(Optional.empty());
+		erstelleWettkampfreihenfolgeAltersklasse(Optional.empty(), turnierUUID);
 	}
 
-	public void loescheWettkampfreihenfolgeAltersklasse(Altersklasse altersklasse) {
+	public void loescheWettkampfreihenfolgeAltersklasse(Altersklasse altersklasse, UUID turnierUUID) {
 		logger.info("lösche WettkampfreihenfolgeAltersklasse für {}", altersklasse);
-		turnierRepository.loescheWettkaempfeMitAltersklasse(altersklasse);
+		turnierRepository.loescheWettkaempfeMitAltersklasse(altersklasse, turnierUUID);
 	}
 
-	public void erstelleWettkampfreihenfolgeAltersklasse(Optional<Altersklasse> altersklasse) {
+	public void erstelleWettkampfreihenfolgeAltersklasse(Optional<Altersklasse> altersklasse, UUID turnierUUID) {
 		logger.info("erstelle Wettkampfreihenfolge für Altersklasse {}", altersklasse);
 
-		Einstellungen einstellungen = einstellungenService.ladeEinstellungen();
-		List<GewichtsklassenGruppe> gwks = altersklasse.isPresent() ? gewichtsklassenService.ladeGewichtsklassenGruppe(altersklasse.get()) : gewichtsklassenService.ladeGewichtsklassenGruppen();
+		Einstellungen einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
+		List<GewichtsklassenGruppe> gwks = altersklasse.isPresent() ? gewichtsklassenService.ladeGewichtsklassenGruppe(altersklasse.get(), turnierUUID) : gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 		if (einstellungen.turnierTyp() == TurnierTyp.RANDORI) {
 			// check gruppe auf vorhandene Daten
 			checkGruppenSindValide(gwks);
 
 			Algorithmus algorithmus = new JederGegenJeden();
-			List<WettkampfGruppe> wettkampfGruppen = erstelleWettkampfgruppen(gwks, algorithmus, einstellungen.mattenAnzahl().anzahl());
+			List<WettkampfGruppe> wettkampfGruppen = erstelleWettkampfgruppen(gwks, algorithmus, einstellungen.mattenAnzahl().anzahl(), turnierUUID);
 			List<Matte> matten = erstelleGruppenReihenfolgeRandori(wettkampfGruppen, einstellungen.mattenAnzahl().anzahl(), einstellungen.wettkampfReihenfolge());
 
 			turnierRepository.speichereMatten(matten);
@@ -131,13 +131,13 @@ public class TurnierService {
 		turnierRepository.speichereBegegnung(begegnung);
 	}
 
-	private List<WettkampfGruppe> erstelleWettkampfgruppen(List<GewichtsklassenGruppe> gewichtsklassenGruppen, Algorithmus algorithmus, Integer anzahlMatten) {
+	private List<WettkampfGruppe> erstelleWettkampfgruppen(List<GewichtsklassenGruppe> gewichtsklassenGruppen, Algorithmus algorithmus, Integer anzahlMatten, UUID turnierUUID) {
 		logger.debug("erstelle Wettkampfgruppen aus den Gewichtsklassengruppen");
 		// erstelle alle Begegnungen in jeder Gruppe
 		List<WettkampfGruppe> wettkampfGruppen = new ArrayList<>();
 		for (int i = 0; i < gewichtsklassenGruppen.size(); i++) {
 			var gruppe = gewichtsklassenGruppen.get(i);
-			var wkg = algorithmus.erstelleWettkampfGruppen(i, gruppe, anzahlMatten);
+			var wkg = algorithmus.erstelleWettkampfGruppen(i, gruppe, anzahlMatten, turnierUUID);
 			wettkampfGruppen.addAll(wkg);
 		}
 		logger.debug("Anzahl erstellter Wettkampfgruppen: {}", wettkampfGruppen.size());

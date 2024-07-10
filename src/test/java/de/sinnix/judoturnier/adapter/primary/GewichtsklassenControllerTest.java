@@ -15,6 +15,7 @@ import org.springframework.util.MultiValueMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -34,6 +35,7 @@ class GewichtsklassenControllerTest {
 
 	@Test
 	void speichereGewichtsklassen() {
+		UUID turnierUUID = UUID.randomUUID();
 		MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
 		formData.add("gruppen_teilnehmer","gruppe_47_teilnehmer_74");
 		formData.add("gruppen_teilnehmer","gruppe_47_teilnehmer_81");
@@ -43,8 +45,8 @@ class GewichtsklassenControllerTest {
 		gruppenTeilnehmer.put(47, List.of(74, 81));
 		gruppenTeilnehmer.put(56, List.of(88));
 
-		gewichtsklassenController.speichereGewichtsklassen(formData);
+		gewichtsklassenController.speichereGewichtsklassen(turnierUUID.toString(), formData);
 
-		verify(gewichtsklassenService, times(1)).aktualisiere(gruppenTeilnehmer);
+		verify(gewichtsklassenService, times(1)).aktualisiere(gruppenTeilnehmer, turnierUUID);
 	}
 }

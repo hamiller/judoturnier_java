@@ -1,6 +1,7 @@
 package de.sinnix.judoturnier.model;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public record Wettkaempfer(
 	Integer id,
@@ -11,5 +12,6 @@ public record Wettkaempfer(
 	Double gewicht,
 	Optional<Farbe> farbe,  // TODO die Farbe sollte nicht am Wettkaempfer hinterlegt sein -> dann kann er bei jeder Begegnung eine neue Farbe erhalten
 	Boolean checked,
-	Boolean printed) {
+	Boolean printed,
+	UUID turnierUUID) {
 }

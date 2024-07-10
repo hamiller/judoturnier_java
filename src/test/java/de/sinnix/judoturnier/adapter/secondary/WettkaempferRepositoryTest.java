@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,33 +39,36 @@ class WettkaempferRepositoryTest {
 
     private Wettkaempfer wettkaempfer;
     private WettkaempferJpa wettkaempferJpa;
+    private UUID turnierUUID;
 
     @BeforeEach
     public void setUp() {
-        Verein verein = new Verein(1, "Verein A");
-        wettkaempfer = new Wettkaempfer(1, "John Doe", Geschlecht.m, Altersklasse.U18, verein, 70d, Optional.empty(), false, false);
+        turnierUUID = UUID.randomUUID();
+        Verein verein = new Verein(1, "Verein A", turnierUUID);
+        wettkaempfer = new Wettkaempfer(1, "John Doe", Geschlecht.m, Altersklasse.U18, verein, 70d, Optional.empty(), false, false, turnierUUID);
         wettkaempferJpa = new WettkaempferJpa();
         wettkaempferJpa.setId(1);
         wettkaempferJpa.setName("John Doe");
         wettkaempferJpa.setGeschlecht("MAENNLICH");
         wettkaempferJpa.setAltersklasse("U18");
-        wettkaempferJpa.setVerein(new VereinJpa(1, "Verein A"));
+        wettkaempferJpa.setVerein(new VereinJpa(1, "Verein A", turnierUUID.toString()));
         wettkaempferJpa.setGewicht(70d);
         wettkaempferJpa.setFarbe(null);
         wettkaempferJpa.setChecked(false);
         wettkaempferJpa.setPrinted(false);
+        wettkaempferJpa.setTurnierUUID(turnierUUID.toString());
     }
 
     @Test
     public void testFindAll() {
-        when(wettkaempferJpaRepository.findAll()).thenReturn(List.of(wettkaempferJpa));
+        when(wettkaempferJpaRepository.findAllByTurnierUUID(turnierUUID.toString())).thenReturn(List.of(wettkaempferJpa));
         when(wettkaempferConverter.convertToWettkaempfer(wettkaempferJpa)).thenReturn(wettkaempfer);
 
-        List<Wettkaempfer> result = wettkaempferRepository.findAll();
+        List<Wettkaempfer> result = wettkaempferRepository.findAll(turnierUUID);
 
         assertEquals(1, result.size());
         assertEquals(wettkaempfer, result.get(0));
-        verify(wettkaempferJpaRepository, times(1)).findAll();
+        verify(wettkaempferJpaRepository, times(1)).findAllByTurnierUUID(turnierUUID.toString());
         verify(wettkaempferConverter, times(1)).convertToWettkaempfer(wettkaempferJpa);
     }
 

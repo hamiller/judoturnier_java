@@ -29,8 +29,9 @@ class WertungConverterTest {
 	@InjectMocks
 	private WertungConverter wertungConverter;
 
-	private WettkaempferJpa wk1Jpa = new WettkaempferJpa(1, "Teilnehmer A", "m", "U11", new VereinJpa(1, "Verein1"), 25.0, "ORANGE", true, false);
-	private Wettkaempfer    wk1    = new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1"), 25.0, Optional.of(Farbe.ORANGE), true, false);
+	private static final String UUID_STRING = "550e8400-e29b-41d4-a716-446655440000";
+	private WettkaempferJpa wk1Jpa = new WettkaempferJpa(1, "Teilnehmer A", "m", "U11", new VereinJpa(1, "Verein1", UUID_STRING), 25.0, "ORANGE", true, false, UUID_STRING);
+	private Wettkaempfer    wk1    = new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", UUID.fromString(UUID_STRING)), 25.0, Optional.of(Farbe.ORANGE), true, false, UUID.fromString(UUID_STRING));
 
 	@BeforeEach
 	void setUp() {

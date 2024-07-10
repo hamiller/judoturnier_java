@@ -6,6 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -17,23 +19,27 @@ class VereinConverterTest {
 
     @Test
     void testConvertToVerein() {
-        VereinJpa vereinJpa = new VereinJpa(1, "Verein1");
+        UUID turnierUUID = UUID.randomUUID();
+        VereinJpa vereinJpa = new VereinJpa(1, "Verein1", turnierUUID.toString());
 
         Verein verein = vereinConverter.converToVerein(vereinJpa);
 
         assertNotNull(verein);
         assertEquals(1, verein.id());
         assertEquals("Verein1", verein.name());
+        assertEquals(turnierUUID.toString(), verein.turnierUUID().toString());
     }
 
     @Test
     void testConvertFromVerein() {
-        Verein verein = new Verein(1, "Verein1");
+        UUID turnierUUID = UUID.randomUUID();
+        Verein verein = new Verein(1, "Verein1", turnierUUID);
 
         VereinJpa vereinJpa = vereinConverter.convertFromVerein(verein);
 
         assertNotNull(vereinJpa);
         assertEquals(1, vereinJpa.getId());
         assertEquals("Verein1", vereinJpa.getName());
+        assertEquals(turnierUUID.toString(), vereinJpa.getTurnierUUID());
     }
 }

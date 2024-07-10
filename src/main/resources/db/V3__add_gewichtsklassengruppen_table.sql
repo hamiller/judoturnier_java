@@ -7,5 +7,6 @@ CREATE TABLE gewichtsklassengruppen
     mingewicht        FLOAT,
     "name"            VARCHAR(255),
     teilnehmer        INTEGER[],
-    PRIMARY KEY (id)
+    turnier_uuid      VARCHAR(255),
+    PRIMARY KEY (id, turnier_uuid)
 );

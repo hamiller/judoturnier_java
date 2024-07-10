@@ -24,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
@@ -41,7 +42,7 @@ public class WettkaempferController {
 	@GetMapping("/turnier/{turnierid}/wettkaempfer")
 	public ModelAndView ladeWettkaempferListe(@PathVariable String turnierid) {
 		logger.debug("Alle Wettkaempfer angefragt");
-		var wks = wiegenService.alleKaempfer().stream()
+		var wks = wiegenService.alleKaempfer(UUID.fromString(turnierid)).stream()
 			.sorted(Comparator.comparing(Wettkaempfer::name))
 			.collect(Collectors.toList());
 
@@ -69,7 +70,8 @@ public class WettkaempferController {
 			notEmpty(formData.getFirst("gewicht")) ? Double.parseDouble(formData.getFirst("gewicht")) : 0d,
 			notEmpty(formData.getFirst("farbe")) ? Optional.of(Farbe.valueOf(formData.getFirst("farbe"))) : Optional.empty(),
 			notEmpty(formData.getFirst("checked")) ? true : false,
-			notEmpty(formData.getFirst("printed")) ? true : false);
+			notEmpty(formData.getFirst("printed")) ? true : false,
+			UUID.fromString(turnierid));
 
 		if (wettkaempfer.name().isBlank()) {
 			logger.info("Kämpfer hat keinen Namen!");

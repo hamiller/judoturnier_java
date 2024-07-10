@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public class GewichtsklassenRepository {
@@ -18,8 +19,8 @@ public class GewichtsklassenRepository {
 	@Autowired
 	private GewichtsklassenConverter     gewichtsklassenConverter;
 
-	public List<GewichtsklassenGruppe> findAll() {
-		return gewichtsklassenJpaRepository.findAll().stream()
+	public List<GewichtsklassenGruppe> findAll(UUID turnierUUID) {
+		return gewichtsklassenJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream()
 			.map(jpa -> gewichtsklassenConverter.convertToGewichtsklassen(jpa))
 			.toList();
 	}
@@ -36,7 +37,7 @@ public class GewichtsklassenRepository {
 		gewichtsklassenJpaRepository.saveAll(gewichtsklassenJpaList);
 	}
 
-	public void deleteAllByAltersklasse(Altersklasse altersklasse) {
-		gewichtsklassenJpaRepository.deleteAllByAltersklasse(altersklasse.name());
+	public void deleteAllByAltersklasse(UUID turnierUUID, Altersklasse altersklasse) {
+		gewichtsklassenJpaRepository.deleteAllByAltersklasseAndTurnierUUID(altersklasse.name(), turnierUUID.toString());
 	}
 }

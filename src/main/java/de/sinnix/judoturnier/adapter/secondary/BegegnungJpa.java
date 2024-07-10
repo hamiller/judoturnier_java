@@ -1,6 +1,7 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -40,4 +41,6 @@ public class BegegnungJpa {
 	@JoinColumn(name = "wertung")
 	WertungJpa      wertung;
 	Integer wettkampfGruppeId;
+	@Column(name = "turnier_uuid")
+	private String turnierUUID;
 }

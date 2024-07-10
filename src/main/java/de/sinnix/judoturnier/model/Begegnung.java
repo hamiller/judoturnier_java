@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,4 +25,5 @@ public class Begegnung {
 	private Wettkaempfer      wettkaempfer2;
 	private Optional<Wertung> wertung;
 	private WettkampfGruppe   wettkampfGruppe;
+	private UUID              turnierUUID;
 }

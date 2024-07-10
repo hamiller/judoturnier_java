@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -30,14 +31,16 @@ public class WettkaempferConverterTest {
     private WettkaempferJpa wettkaempferJpa;
     private Verein verein;
     private VereinJpa vereinJpa;
+    private UUID turnierUUID;
 
     @BeforeEach
     void setUp() {
-        verein = new Verein(1, "Verein1");
-        vereinJpa = new VereinJpa(1, "Verein1");
+        turnierUUID = UUID.randomUUID();
+        verein = new Verein(1, "Verein1", turnierUUID);
+        vereinJpa = new VereinJpa(1, "Verein1", turnierUUID.toString());
 
-        wettkaempfer = new Wettkaempfer(1, "Max", Geschlecht.m, Altersklasse.U18, verein, 70d, Optional.of(Farbe.BLAU), true, false);
-        wettkaempferJpa = new WettkaempferJpa(1, "Max", "m", "U18", vereinJpa, 70d, "BLAU", true, false);
+        wettkaempfer = new Wettkaempfer(1, "Max", Geschlecht.m, Altersklasse.U18, verein, 70d, Optional.of(Farbe.BLAU), true, false, turnierUUID);
+        wettkaempferJpa = new WettkaempferJpa(1, "Max", "m", "U18", vereinJpa, 70d, "BLAU", true, false, turnierUUID.toString());
     }
 
     @Test
@@ -78,7 +81,7 @@ public class WettkaempferConverterTest {
 
     @Test
     void convertMissingFields() {
-        Wettkaempfer wettkaempfer = new Wettkaempfer(null, "Name", Geschlecht.m, Altersklasse.U18, verein, 0d, Optional.empty(), false, false);
+        Wettkaempfer wettkaempfer = new Wettkaempfer(null, "Name", Geschlecht.m, Altersklasse.U18, verein, 0d, Optional.empty(), false, false, turnierUUID);
 
         when(vereinConverter.converToVerein(any(VereinJpa.class))).thenReturn(verein);
         when(vereinConverter.convertFromVerein(any(Verein.class))).thenReturn(vereinJpa);
@@ -91,8 +94,8 @@ public class WettkaempferConverterTest {
 
     @Test
     void readJpaWithMissingFields() {
-        WettkaempferJpa wettkaempferJpa = new WettkaempferJpa(1, "Name", null, null, vereinJpa, 0d, "", false, false);
-        Wettkaempfer wettkaempfer = new Wettkaempfer(1, "Name", null, null, verein, 0d, Optional.empty(), false, false);
+        WettkaempferJpa wettkaempferJpa = new WettkaempferJpa(1, "Name", null, null, vereinJpa, 0d, "", false, false, turnierUUID.toString());
+        Wettkaempfer wettkaempfer = new Wettkaempfer(1, "Name", null, null, verein, 0d, Optional.empty(), false, false, turnierUUID);
 
         when(vereinConverter.converToVerein(any(VereinJpa.class))).thenReturn(verein);
 

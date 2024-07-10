@@ -13,6 +13,7 @@ import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.VariablerGewichtsteil;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
 import de.sinnix.judoturnier.model.WettkampfReihenfolge;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -23,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
@@ -44,15 +46,22 @@ class TurnierServiceTest {
 	@InjectMocks
 	private TurnierService turnierService;
 
+	private UUID turnierUUID;
+
+	@BeforeEach
+	void setUp() {
+		turnierUUID = UUID.randomUUID();
+	}
+
 	@Test
 	void erstelleWettkampfreihenfolgeAltersklasse() {
 		List<GewichtsklassenGruppe> gewichtsklassenGruppen = GewichtsklassenGruppeFixture.gewichtsklassenGruppen;
-		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new RandoriGruppengroesse(6), new VariablerGewichtsteil(0.2));
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new RandoriGruppengroesse(6), new VariablerGewichtsteil(0.2), turnierUUID);
 
-		when(einstellungenService.ladeEinstellungen()).thenReturn(einstellungen);
-		when(gewichtsklassenService.ladeGewichtsklassenGruppen()).thenReturn(gewichtsklassenGruppen);
+		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
+		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);
 
-		turnierService.erstelleWettkampfreihenfolgeAltersklasse(Optional.empty());
+		turnierService.erstelleWettkampfreihenfolgeAltersklasse(Optional.empty(), turnierUUID);
 
 		assertEquals(5, gewichtsklassenGruppen.size());
 		assertEquals(25, gewichtsklassenGruppen.stream().mapToInt(g -> g.teilnehmer().size()).sum()); // Anzahl Teilnehmer insgesamt

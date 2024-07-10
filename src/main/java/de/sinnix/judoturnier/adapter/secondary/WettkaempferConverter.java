@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class WettkaempferConverter {
@@ -35,6 +36,7 @@ public class WettkaempferConverter {
 		jpa.setFarbe(wettkaempfer.farbe().map(f -> f.name()).orElse(null));
 		jpa.setChecked(wettkaempfer.checked());
 		jpa.setPrinted(wettkaempfer.printed());
+		jpa.setTurnierUUID(wettkaempfer.turnierUUID().toString());
 		return jpa;
 	}
 
@@ -52,7 +54,8 @@ public class WettkaempferConverter {
 			jpa.getGewicht(),
 			getFarbe(jpa.getFarbe()),
 			jpa.getChecked(),
-			jpa.getPrinted()
+			jpa.getPrinted(),
+			UUID.fromString(jpa.getTurnierUUID())
 		);
 		return wettkaempfer;
 	}

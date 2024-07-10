@@ -58,7 +58,8 @@ class TurnierRepositoryTest {
 
 	@Test
 	void testLadeBegegnung() {
-		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(1, "Gruppe1", "typ1", List.of());
+		UUID turnierUUID = UUID.randomUUID();
+		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(1, "Gruppe1", "typ1", List.of(), turnierUUID);
 		Wertung wertung = new Wertung(
 			UUID.randomUUID(),
 			WettkaempferFixtures.wettkaempfer1,
@@ -68,7 +69,7 @@ class TurnierRepositoryTest {
 			0,
 			1,
 			null, null, null, null, null, null, null, null);
-		Begegnung begegnung = new Begegnung(1, 2, 123, 22, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, Optional.of(wertung), wettkampfGruppe);
+		Begegnung begegnung = new Begegnung(1, 2, 123, 22, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, Optional.of(wertung), wettkampfGruppe, turnierUUID);
 
 		when(begegnungJpaRepository.findById(any())).thenReturn(Optional.of(new BegegnungJpa()));
 		when(wettkampfGruppeJpaRepository.findAll()).thenReturn(List.of());
@@ -103,17 +104,18 @@ class TurnierRepositoryTest {
 
 	@Test
 	public void testSpeichereMatten() {
-		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of());
+		UUID turnierUUID = WettkaempferFixtures.turnierUUID;
+		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of(), turnierUUID);
 		List<Begegnung> begegnungList = new ArrayList<>();
-		begegnungList.add(new Begegnung(1, 2, 3, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, null, wkg));
+		begegnungList.add(new Begegnung(1, 2, 3, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, null, wkg, turnierUUID));
 		List<Runde> rundenList = new ArrayList<>();
 		rundenList.add(new Runde(1, 3, 4, 4, 5, Altersklasse.U11, wkg, begegnungList));
 		Matte matte = new Matte(2, rundenList, new ArrayList<>());
 		List<Matte> mattenList = Arrays.asList(matte);
 
-		WettkampfGruppeJpa wkgJpa = new WettkampfGruppeJpa(1, "name", "typ");
+		WettkampfGruppeJpa wkgJpa = new WettkampfGruppeJpa(1, "name", "typ", turnierUUID.toString());
 		List<BegegnungJpa> begegnungJpaList = new ArrayList<>();
-		begegnungJpaList.add(new BegegnungJpa(null, 2, 3, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, null, wkgJpa.getId()));
+		begegnungJpaList.add(new BegegnungJpa(null, 2, 3, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, null, wkgJpa.getId(), turnierUUID.toString()));
 
 		when(wettkaempferConverter.convertFromWettkaempfer(WettkaempferFixtures.wettkaempfer1)).thenReturn(WettkaempferFixtures.wettkaempferJpa1);
 		when(wettkaempferConverter.convertFromWettkaempfer(WettkaempferFixtures.wettkaempfer2)).thenReturn(WettkaempferFixtures.wettkaempferJpa2);
@@ -126,13 +128,14 @@ class TurnierRepositoryTest {
 
 	@Test
 	public void testSpeichereMatte() {
-		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of());
-		Begegnung begegnung = new Begegnung(1, 5, 3, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, null, wkg);
+		UUID turnierUUID = WettkaempferFixtures.turnierUUID;
+		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of(), turnierUUID);
+		Begegnung begegnung = new Begegnung(1, 5, 3, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, null, wkg, turnierUUID);
 		Runde runde = new Runde(1, 3, 4, 1, 5, Altersklasse.U12, wkg, Arrays.asList(begegnung));
 		Matte matte = new Matte(5, Arrays.asList(runde), new ArrayList<>());
 
-		WettkampfGruppeJpa wkgJpa = new WettkampfGruppeJpa(1, "name", "typ");
-		BegegnungJpa begegnungJpa = new BegegnungJpa(null, 5, 3, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, null, wkgJpa.getId());
+		WettkampfGruppeJpa wkgJpa = new WettkampfGruppeJpa(1, "name", "typ", turnierUUID.toString());
+		BegegnungJpa begegnungJpa = new BegegnungJpa(null, 5, 3, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, null, wkgJpa.getId(), turnierUUID.toString());
 
 		when(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1())).thenReturn(WettkaempferFixtures.wettkaempferJpa1);
 		when(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2())).thenReturn(WettkaempferFixtures.wettkaempferJpa2);
@@ -145,14 +148,15 @@ class TurnierRepositoryTest {
 
 	@Test
 	public void testLadeMatten() {
-		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of());
+		UUID turnierUUID = UUID.randomUUID();
+		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of(), turnierUUID);
 		Wertung wertung = new Wertung(UUID.randomUUID(), null, Duration.of(3, ChronoUnit.MINUTES), null, null, null, null, 1, 2, 3, 4, 5, 6, 7, 8);
-		Begegnung begegnung = new Begegnung(2, 1, 3, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, Optional.of(wertung), wkg);
+		Begegnung begegnung = new Begegnung(2, 1, 3, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, Optional.of(wertung), wkg, turnierUUID);
 
-		when(begegnungJpaRepository.findAll()).thenReturn(List.of(new BegegnungJpa()));
+		when(begegnungJpaRepository.findAllByTurnierUUID(turnierUUID.toString())).thenReturn(List.of(new BegegnungJpa()));
 		when(begegnungConverter.convertToBegegnung(any(BegegnungJpa.class), anyList())).thenReturn(begegnung);
 
-		Map<Integer, Matte> matten = turnierRepository.ladeMatten();
+		Map<Integer, Matte> matten = turnierRepository.ladeMatten(turnierUUID);
 
 		assertEquals(1, matten.size());
 		assertTrue(matten.containsKey(begegnung.getMatteId()));

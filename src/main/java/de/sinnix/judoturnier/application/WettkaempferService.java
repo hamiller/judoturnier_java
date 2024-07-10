@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class WettkaempferService {
@@ -17,9 +18,9 @@ public class WettkaempferService {
 	@Autowired
 	private WettkaempferRepository wettkaempferRepository;
 
-	public List<Wettkaempfer> alleKaempfer() {
+	public List<Wettkaempfer> alleKaempfer(UUID turnierUUID) {
 		logger.info("lade alleKaempfer");
-		return wettkaempferRepository.findAll();
+		return wettkaempferRepository.findAll(turnierUUID);
 	}
 
 	public void loescheKaempfer(Integer id) {

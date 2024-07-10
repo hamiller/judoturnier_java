@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class EinstellungenService {
@@ -28,29 +29,29 @@ public class EinstellungenService {
 	private static final RandoriGruppengroesse DEFAULT_RANDORIGRUPPENGROESSE  = new RandoriGruppengroesse(6);
 	private static final VariablerGewichtsteil DEFAULT_VARIABLER_GEWICHTSTEIL = new VariablerGewichtsteil(0.2);
 
-	public Einstellungen ladeEinstellungen() {
+	public Einstellungen ladeEinstellungen(UUID turnierUUID) {
 		logger.info("EinstellungenService ladeEinstellungen()");
-		List<EinstellungJpa> einstellungenList = einstellungJpaRepository.findAll();
+		List<EinstellungJpa> einstellungenList = einstellungJpaRepository.findAll().stream().filter(e -> e.getTurnierUUID().equalsIgnoreCase(turnierUUID.toString())).toList();
 		TurnierTyp turnierTyp = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(TurnierTyp.TYP)).findFirst().map(t -> TurnierTyp.valueOf(t.getWert())).orElse(DEFAULT_TURNIERTYP);
 		MattenAnzahl mattenAnzahl = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(MattenAnzahl.TYP)).findFirst().map(t -> new MattenAnzahl(Integer.parseInt(t.getWert()))).orElseGet(() -> DEFAULT_MATTENANZAHL);
 		WettkampfReihenfolge wettkampfReihenfolge = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(WettkampfReihenfolge.TYP)).findFirst().map(t -> WettkampfReihenfolge.valueOf(t.getWert())).orElseGet(() -> DEFAULT_WETTKAMPFREIHENFOLGE);
 		RandoriGruppengroesse randoriGruppengroesse = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(RandoriGruppengroesse.TYP)).findFirst().map(r -> new RandoriGruppengroesse(Integer.parseInt(r.getWert()))).orElseGet(() -> DEFAULT_RANDORIGRUPPENGROESSE);
 		VariablerGewichtsteil variablerGewichtsteil = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(VariablerGewichtsteil.TYP)).findFirst().map(v -> new VariablerGewichtsteil(Double.parseDouble(v.getWert()))).orElseGet(() -> DEFAULT_VARIABLER_GEWICHTSTEIL);
 
-		return new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge, randoriGruppengroesse, variablerGewichtsteil);
+		return new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge, randoriGruppengroesse, variablerGewichtsteil, turnierUUID);
 	}
 
 	public Einstellungen speichereTurnierEinstellungen(Einstellungen einstellungen) {
 		logger.info("EinstellungenService speichereTurnierEinstellungen()");
 		List<EinstellungJpa> jpaList = List.of(
-			new EinstellungJpa(einstellungen.turnierTyp().TYP, einstellungen.turnierTyp().name()),
-			new EinstellungJpa(einstellungen.mattenAnzahl().TYP, einstellungen.mattenAnzahl().anzahl().toString()),
-			new EinstellungJpa(einstellungen.wettkampfReihenfolge().TYP, einstellungen.wettkampfReihenfolge().name()),
-			new EinstellungJpa(einstellungen.randoriGruppengroesse().TYP, einstellungen.randoriGruppengroesse().anzahl().toString()),
-			new EinstellungJpa(einstellungen.variablerGewichtsteil().TYP, einstellungen.variablerGewichtsteil().variablerTeil().toString())
+			new EinstellungJpa(einstellungen.turnierTyp().TYP, einstellungen.turnierTyp().name(), einstellungen.turnierUUID().toString()),
+			new EinstellungJpa(einstellungen.mattenAnzahl().TYP, einstellungen.mattenAnzahl().anzahl().toString(), einstellungen.turnierUUID().toString()),
+			new EinstellungJpa(einstellungen.wettkampfReihenfolge().TYP, einstellungen.wettkampfReihenfolge().name(), einstellungen.turnierUUID().toString()),
+			new EinstellungJpa(einstellungen.randoriGruppengroesse().TYP, einstellungen.randoriGruppengroesse().anzahl().toString(), einstellungen.turnierUUID().toString()),
+			new EinstellungJpa(einstellungen.variablerGewichtsteil().TYP, einstellungen.variablerGewichtsteil().variablerTeil().toString(), einstellungen.turnierUUID().toString())
 			);
 		einstellungJpaRepository.saveAll(jpaList);
-		return ladeEinstellungen();
+		return ladeEinstellungen(einstellungen.turnierUUID());
 	}
 
 	public boolean isRandori() {

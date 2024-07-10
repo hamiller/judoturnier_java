@@ -1,5 +1,6 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,5 +26,6 @@ public class VereinJpa {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private String  name;
-
+	@Column(name = "turnier_uuid")
+	private String  turnierUUID;
 }

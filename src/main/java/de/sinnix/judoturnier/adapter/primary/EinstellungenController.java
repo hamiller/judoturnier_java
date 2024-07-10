@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.UUID;
+
 @RestController
 public class EinstellungenController {
 
@@ -37,9 +39,10 @@ public class EinstellungenController {
 	public ModelAndView ladeEinstellungen(@PathVariable String turnierid) {
 		logger.debug("Lade Einstellungen");
 
-		var einstellungen = einstellungenService.ladeEinstellungen();
-		var wks = wiegenService.alleKaempfer();
-		var gwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
+		var turnierUUID = UUID.fromString(turnierid);
+		var einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
+		var wks = wiegenService.alleKaempfer(turnierUUID);
+		var gwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 
 		ModelAndView mav = new ModelAndView("einstellungen");
 		mav.addObject("turnierid", turnierid);
@@ -63,12 +66,13 @@ public class EinstellungenController {
 		var wettkampfReihenfolge = WettkampfReihenfolge.valueOf(formData.getFirst(WettkampfReihenfolge.TYP));
 		var randoriGruppengroesse = new RandoriGruppengroesse(Integer.parseInt(formData.getFirst(RandoriGruppengroesse.TYP)));
 		var variablerGewichtsteil = new VariablerGewichtsteil(Double.parseDouble(formData.getFirst(VariablerGewichtsteil.TYP)));
+		var turnierUUID = UUID.fromString(turnierid);
 
-		var einstellungen = new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge, randoriGruppengroesse, variablerGewichtsteil);
+		var einstellungen = new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge, randoriGruppengroesse, variablerGewichtsteil, turnierUUID);
 
 		einstellungen = einstellungenService.speichereTurnierEinstellungen(einstellungen);
-		var wks = wiegenService.alleKaempfer();
-		var gwks = gewichtsklassenService.ladeGewichtsklassenGruppen();
+		var wks = wiegenService.alleKaempfer(UUID.fromString(turnierid));
+		var gwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 
 		ModelAndView mav = new ModelAndView("einstellungen");
 		mav.addObject("turnierid", turnierid);

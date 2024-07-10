@@ -69,11 +69,6 @@
         document.getElementById('dialogOverlay').style.display = 'none';
         document.getElementById('createTurnierDialog').style.display = 'none';
     }
-
-    const createTurnier = async (name, ort, datum) => {
-        fetch('/turnier', { method: 'POST', body: {name: name, ort: ort, datum: datum} })
-            .then(() => window.location.reload())
-    };
 </script>
 
 </html>

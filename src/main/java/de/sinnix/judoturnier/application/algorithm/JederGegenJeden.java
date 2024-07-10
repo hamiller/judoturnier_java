@@ -10,13 +10,14 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class JederGegenJeden implements Algorithmus {
 	private static final Logger logger                   = LogManager.getLogger(JederGegenJeden.class);
 	private static final int    MAX_TEILNEHMER_JE_GRUPPE = 6;
 
 	@Override
-	public List<WettkampfGruppe> erstelleWettkampfGruppen(Integer gruppenid, GewichtsklassenGruppe gewichtsklassenGruppe, Integer mattenAnzahl) {
+	public List<WettkampfGruppe> erstelleWettkampfGruppen(Integer gruppenid, GewichtsklassenGruppe gewichtsklassenGruppe, Integer mattenAnzahl, UUID turnierUUID) {
 		logger.info("JederGegenJeden Algorithmus genutzt");
 
 		List<WettkampfGruppe> result = new ArrayList<>();
@@ -35,7 +36,8 @@ public class JederGegenJeden implements Algorithmus {
 				gewichtsklassenGruppe.id() != null ? gewichtsklassenGruppe.id() : Integer.parseInt(id),
 				gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
 				"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
-				begegnungen
+				begegnungen,
+				turnierUUID
 			);
 			result.add(wettkampfGruppe);
 		}

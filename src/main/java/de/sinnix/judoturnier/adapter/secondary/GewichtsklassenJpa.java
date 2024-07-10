@@ -1,5 +1,6 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -42,4 +43,6 @@ public class GewichtsklassenJpa {
 	private String                name;
 	private Double                mingewicht;
 	private Double                maxgewicht;
+	@Column(name = "turnier_uuid")
+	private String                turnierUUID;
 }

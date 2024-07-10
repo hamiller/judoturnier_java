@@ -9,5 +9,6 @@ CREATE TABLE wettkaempfer
     farbe        VARCHAR(255),
     checked      BOOLEAN,
     printed      BOOLEAN,
-    PRIMARY KEY (id)
+    turnier_uuid VARCHAR(255),
+    PRIMARY KEY (id, turnier_uuid)
 );

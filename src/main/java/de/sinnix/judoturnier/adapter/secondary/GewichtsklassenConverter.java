@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class GewichtsklassenConverter {
@@ -23,7 +24,8 @@ public class GewichtsklassenConverter {
 			wettkaempferConverter.convertToWettkaempferList(jpa.getTeilnehmer()),
 			getRandoriGruppenName(jpa.getName()),
 			jpa.getMingewicht(),
-			jpa.getMaxgewicht());
+			jpa.getMaxgewicht(),
+			UUID.fromString(jpa.getTurnierUUID()));
 	}
 
 	public GewichtsklassenJpa convertFromGewichtsklassen(GewichtsklassenGruppe gwk) {
@@ -35,6 +37,7 @@ public class GewichtsklassenConverter {
 		jpa.setMaxgewicht(gwk.maxGewicht());
 		jpa.setGruppengeschlecht(gwk.gruppenGeschlecht().map(g -> g.name()).orElse(null));
 		jpa.setTeilnehmer(wettkaempferConverter.convertFromWettkaempferList(gwk.teilnehmer()));
+		jpa.setTurnierUUID(gwk.turnierUUID().toString());
 		return jpa;
 	}
 

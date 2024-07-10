@@ -56,9 +56,9 @@ public class TurnierRepository {
 		wertungJpaRepository.save(jpa);
 	}
 
-	public Map<Integer, Matte> ladeMatten() {
-		List<BegegnungJpa> begegnungenJpaList = begegnungJpaRepository.findAll();
-		List<WettkampfGruppeJpa> wettkampfGruppeJpaList = wettkampfGruppeJpaRepository.findAll();
+	public Map<Integer, Matte> ladeMatten(UUID turnierUUID) {
+		List<BegegnungJpa> begegnungenJpaList = begegnungJpaRepository.findAllByTurnierUUID(turnierUUID.toString());
+		List<WettkampfGruppeJpa> wettkampfGruppeJpaList = wettkampfGruppeJpaRepository.findAllByTurnierUUID(turnierUUID.toString());
 
 		var begegnungenList = begegnungenJpaList.stream()
 			.map(jpa -> begegnungConverter.convertToBegegnung(jpa, wettkampfGruppeJpaList))
@@ -116,6 +116,7 @@ public class TurnierRepository {
 				begegnungJpa.setWettkaempfer1(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1()));
 				begegnungJpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2()));
 				begegnungJpa.setWettkampfGruppeId(wettkampfGruppeId);
+				begegnungJpa.setTurnierUUID(begegnung.getTurnierUUID().toString());
 
 				begegnungJpaList.add(begegnungJpa);
 			}
@@ -125,11 +126,11 @@ public class TurnierRepository {
 		begegnungJpaRepository.saveAll(begegnungJpaList);
 	}
 
-	public void loescheAlleMatten() {
-		begegnungJpaRepository.deleteAll();
+	public void loescheAlleMatten(UUID turnierUUID) {
+		begegnungJpaRepository.deleteAllByTurnierUUID(turnierUUID.toString());
 	}
 
-	public void loescheWettkaempfeMitAltersklasse(Altersklasse altersklasse) {
+	public void loescheWettkaempfeMitAltersklasse(Altersklasse altersklasse, UUID turnierUUID) {
 		logger.warn("loescheWettkaempfeMitAltersklasse - not yet implemented!");
 //		begegnungJpaRepository.findAll().stream().filter(begegnungJpa -> begegnungJpa.)
 	}

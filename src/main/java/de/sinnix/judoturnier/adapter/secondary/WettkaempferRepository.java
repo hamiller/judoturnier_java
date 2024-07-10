@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Repository
@@ -22,8 +23,8 @@ public class WettkaempferRepository {
 	@Autowired
 	private VereinConverter           vereinConverter;
 
-	public List<Wettkaempfer> findAll() {
-		return wettkaempferJpaRepository.findAll().stream().map(jpa -> wettkaempferConverter.convertToWettkaempfer(jpa)).collect(Collectors.toUnmodifiableList());
+	public List<Wettkaempfer> findAll(UUID turnierUUID) {
+		return wettkaempferJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream().map(jpa -> wettkaempferConverter.convertToWettkaempfer(jpa)).collect(Collectors.toUnmodifiableList());
 	}
 
 	public void deleteById(Integer id) {
