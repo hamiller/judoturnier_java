@@ -39,7 +39,7 @@ public class WertungConverter {
 			return null;
 		}
 		WertungJpa jpa = new WertungJpa();
-		jpa.setUuid(fromUUIDString(wertung.uuid()));
+		jpa.setUuid(fromUUID(wertung.uuid()));
 
 		if (wertung.sieger() != null) jpa.setSieger(wettkaempferConverter.convertFromWettkaempfer(wertung.sieger()));
 
@@ -62,7 +62,7 @@ public class WertungConverter {
 		return jpa;
 	}
 
-	private String fromUUIDString(UUID uuid) {
+	private String fromUUID(UUID uuid) {
 		if (uuid != null) {
 			return uuid.toString();
 		}
