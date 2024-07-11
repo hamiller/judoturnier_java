@@ -4,17 +4,6 @@ spring:
     driverClassName: org.h2.Driver
     username: sa
     password: sa
-    hikari:
-      # Optional: These settings optimize HikariCP for testing scenarios
-      maximum-pool-size: 2
-      pool-name: HikariTestPool
-
-  h2:
-    console:
-      enabled: true
-
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
 
   security:
     oauth2:
