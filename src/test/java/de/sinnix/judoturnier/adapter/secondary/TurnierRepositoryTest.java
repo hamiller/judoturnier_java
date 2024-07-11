@@ -57,14 +57,14 @@ class TurnierRepositoryTest {
 
 	@BeforeEach
 	public void setUp() {
-		bewerter = new Bewerter(UUID.randomUUID().toString(), "user1", "Name, Vorname");
+		bewerter = new Bewerter(UUID.randomUUID().toString(), "user1", "Name, Vorname", List.of("ROLE_ZUSCHAUER"));
 	}
 
 	@Test
 	void testLadeBegegnung() {
 		UUID turnierUUID = UUID.randomUUID();
 		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(1, "Gruppe1", "typ1", List.of(), turnierUUID);
-		Bewerter bewerter = new Bewerter(UUID.randomUUID().toString(), "user1", "Name, Vorname");
+		Bewerter bewerter = new Bewerter(UUID.randomUUID().toString(), "user1", "Name, Vorname", List.of("ROLE_ZUSCHAUER"));
 		Wertung wertung = new Wertung(
 			UUID.randomUUID(),
 			WettkaempferFixtures.wettkaempfer1,
@@ -85,7 +85,7 @@ class TurnierRepositoryTest {
 
 		assertTrue(result != null);
 		assertEquals(1, result.getWertungen().size());
-		assertTrue(result.getWertungen().get(0).uuid() != null);
+		assertTrue(result.getWertungen().get(0).getUuid() != null);
 	}
 
 	@Test

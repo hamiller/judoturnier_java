@@ -81,8 +81,8 @@ public class HelperSource {
 		return istLeer ? "leer" : "";
 	}
 
-	public static String wertungVorhanden(Optional<Wertung> wertung, Options options) {
-		return (wertung != null && wertung.isPresent() && (wertung.get().kampfgeistWettkaempfer1() != null || wertung.get().sieger() != null)) ? "vorhanden" : "";
+	public static String wertungVorhanden(List<Wertung> wertung, Options options) {
+		return (wertung != null && wertung.size() > 0 && (wertung.get(0).getKampfgeistWettkaempfer1() != null || wertung.get(0).getSieger() != null)) ? "vorhanden" : "";
 	}
 
 	public static List<ImmutablePair<Runde, Runde>> vorherigeRunde(List<Runde> runden, Options options) {
@@ -115,11 +115,16 @@ public class HelperSource {
 	}
 
 	public static Object optional(Optional<?> optional, Options options) throws IOException {
-		logger.debug("Checking for optional... {}", optional);
+		logger.trace("Checking for optional... {}", optional);
 		if (optional.isPresent()) {
 			return options.fn(optional.get());
 		} else {
 			return options.inverse();
 		}
+	}
+
+	public static String disable(Boolean isEditable, Options options) {
+		logger.trace("isEditable {}", isEditable);
+		return isEditable ? "" : "disabled";
 	}
 }

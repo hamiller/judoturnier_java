@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,7 +41,7 @@ class WertungConverterTest {
 
 	@BeforeEach
 	void setUp() {
-		bewerter = new Bewerter(UUID.randomUUID().toString(), "user1", "Name, Vorname");
+		bewerter = new Bewerter(UUID.randomUUID().toString(), "user1", "Name, Vorname", List.of("ROLE_ZUSCHAUER"));
 	}
 
 	@Test
@@ -58,13 +59,13 @@ class WertungConverterTest {
 
 		Wertung wertung = wertungConverter.convertToWertung(jpa);
 
-		assertEquals(wertung.uuid().toString(), jpa.getUuid());
-		assertEquals(wertung.sieger(), wk1);
-		assertEquals(wertung.zeit(), Duration.of(3l, ChronoUnit.MINUTES));
-		assertEquals(wertung.punkteWettkaempferWeiss(), jpa.getPunkteWettkaempfer1());
-		assertEquals(wertung.punkteWettkaempferRot(), jpa.getPunkteWettkaempfer2());
-		assertEquals(wertung.strafenWettkaempferWeiss(), jpa.getStrafenWettkaempfer1());
-		assertEquals(wertung.strafenWettkaempferRot(), jpa.getStrafenWettkaempfer2());
+		assertEquals(wertung.getUuid().toString(), jpa.getUuid());
+		assertEquals(wertung.getSieger(), wk1);
+		assertEquals(wertung.getZeit(), Duration.of(3l, ChronoUnit.MINUTES));
+		assertEquals(wertung.getPunkteWettkaempferWeiss(), jpa.getPunkteWettkaempfer1());
+		assertEquals(wertung.getPunkteWettkaempferRot(), jpa.getPunkteWettkaempfer2());
+		assertEquals(wertung.getStrafenWettkaempferWeiss(), jpa.getStrafenWettkaempfer1());
+		assertEquals(wertung.getStrafenWettkaempferRot(), jpa.getStrafenWettkaempfer2());
 	}
 
 	@Test
@@ -89,10 +90,10 @@ class WertungConverterTest {
 		assertTrue(jpa.getUuid() != null);
 		assertEquals(jpa.getSieger(), wk1Jpa);
 		assertEquals(jpa.getZeit(), 180_000_000_000l);
-		assertEquals(jpa.getPunkteWettkaempfer1(), wertung.punkteWettkaempferWeiss());
-		assertEquals(jpa.getPunkteWettkaempfer2(), wertung.punkteWettkaempferRot());
-		assertEquals(jpa.getStrafenWettkaempfer1(), wertung.strafenWettkaempferWeiss());
-		assertEquals(jpa.getStrafenWettkaempfer2(), wertung.strafenWettkaempferRot());
+		assertEquals(jpa.getPunkteWettkaempfer1(), wertung.getPunkteWettkaempferWeiss());
+		assertEquals(jpa.getPunkteWettkaempfer2(), wertung.getPunkteWettkaempferRot());
+		assertEquals(jpa.getStrafenWettkaempfer1(), wertung.getStrafenWettkaempferWeiss());
+		assertEquals(jpa.getStrafenWettkaempfer2(), wertung.getStrafenWettkaempferRot());
 	}
 
 	@Test
@@ -111,16 +112,16 @@ class WertungConverterTest {
 
 		Wertung wertung = wertungConverter.convertToWertung(jpa);
 
-		assertEquals(wertung.uuid().toString(), jpa.getUuid());
-		assertEquals(wertung.zeit(), Duration.of(3l, ChronoUnit.MINUTES));
-		assertEquals(wertung.kampfgeistWettkaempfer1(), jpa.getKampfgeistWettkaempfer1());
-		assertEquals(wertung.technikWettkaempfer1(), jpa.getTechnikWettkaempfer1());
-		assertEquals(wertung.kampfstilWettkaempfer1(), jpa.getKampfstilWettkaempfer1());
-		assertEquals(wertung.fairnessWettkaempfer1(), jpa.getFairnessWettkaempfer1());
-		assertEquals(wertung.kampfgeistWettkaempfer2(), jpa.getKampfgeistWettkaempfer2());
-		assertEquals(wertung.technikWettkaempfer2(), jpa.getTechnikWettkaempfer2());
-		assertEquals(wertung.kampfstilWettkaempfer2(), jpa.getKampfstilWettkaempfer2());
-		assertEquals(wertung.fairnessWettkaempfer2(), jpa.getFairnessWettkaempfer2());
+		assertEquals(wertung.getUuid().toString(), jpa.getUuid());
+		assertEquals(wertung.getZeit(), Duration.of(3l, ChronoUnit.MINUTES));
+		assertEquals(wertung.getKampfgeistWettkaempfer1(), jpa.getKampfgeistWettkaempfer1());
+		assertEquals(wertung.getTechnikWettkaempfer1(), jpa.getTechnikWettkaempfer1());
+		assertEquals(wertung.getKampfstilWettkaempfer1(), jpa.getKampfstilWettkaempfer1());
+		assertEquals(wertung.getFairnessWettkaempfer1(), jpa.getFairnessWettkaempfer1());
+		assertEquals(wertung.getKampfgeistWettkaempfer2(), jpa.getKampfgeistWettkaempfer2());
+		assertEquals(wertung.getTechnikWettkaempfer2(), jpa.getTechnikWettkaempfer2());
+		assertEquals(wertung.getKampfstilWettkaempfer2(), jpa.getKampfstilWettkaempfer2());
+		assertEquals(wertung.getFairnessWettkaempfer2(), jpa.getFairnessWettkaempfer2());
 	}
 
 	@Test
@@ -138,13 +139,13 @@ class WertungConverterTest {
 		assertTrue(jpa.getUuid() != null);
 		assertEquals(jpa.getSieger(), null);
 		assertEquals(jpa.getZeit(), 180_000_000_000l);
-		assertEquals(jpa.getKampfgeistWettkaempfer1(), wertung.kampfgeistWettkaempfer1());
-		assertEquals(jpa.getTechnikWettkaempfer1(), wertung.technikWettkaempfer1());
-		assertEquals(jpa.getKampfstilWettkaempfer1(), wertung.kampfstilWettkaempfer1());
-		assertEquals(jpa.getFairnessWettkaempfer1(), wertung.fairnessWettkaempfer1());
-		assertEquals(jpa.getKampfgeistWettkaempfer2(), wertung.kampfgeistWettkaempfer2());
-		assertEquals(jpa.getTechnikWettkaempfer2(), wertung.technikWettkaempfer2());
-		assertEquals(jpa.getKampfstilWettkaempfer2(), wertung.kampfstilWettkaempfer2());
-		assertEquals(jpa.getFairnessWettkaempfer2(), wertung.fairnessWettkaempfer2());
+		assertEquals(jpa.getKampfgeistWettkaempfer1(), wertung.getKampfgeistWettkaempfer1());
+		assertEquals(jpa.getTechnikWettkaempfer1(), wertung.getTechnikWettkaempfer1());
+		assertEquals(jpa.getKampfstilWettkaempfer1(), wertung.getKampfstilWettkaempfer1());
+		assertEquals(jpa.getFairnessWettkaempfer1(), wertung.getFairnessWettkaempfer1());
+		assertEquals(jpa.getKampfgeistWettkaempfer2(), wertung.getKampfgeistWettkaempfer2());
+		assertEquals(jpa.getTechnikWettkaempfer2(), wertung.getTechnikWettkaempfer2());
+		assertEquals(jpa.getKampfstilWettkaempfer2(), wertung.getKampfstilWettkaempfer2());
+		assertEquals(jpa.getFairnessWettkaempfer2(), wertung.getFairnessWettkaempfer2());
 	}
 }

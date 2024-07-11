@@ -6,19 +6,18 @@ import de.sinnix.judoturnier.application.TurnierService;
 import de.sinnix.judoturnier.application.WettkaempferService;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
+import de.sinnix.judoturnier.model.Bewerter;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.GruppenRunde;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Turnier;
-import de.sinnix.judoturnier.model.Wertung;
-import de.sinnix.judoturnier.model.Wettkaempfer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -75,8 +74,7 @@ public class TurnierController {
 	@PostMapping("/turnier")
 	public ModelAndView erstelleTurnier(@RequestBody MultiValueMap<String, String> formData) {
 		logger.debug("erstelle ein neues Turnier {}", formData);
-		var s = SecurityContextHolder.getContext().getAuthentication();
-		logger.info("Eingeloggter User {} {}", s.getName(), s.getAuthorities());
+		Bewerter bewerter = extractBewerter(SecurityContextHolder.getContext().getAuthentication());
 
 		var name = formData.get("name").getFirst();
 		var ort = formData.get("ort").getFirst();
@@ -90,8 +88,10 @@ public class TurnierController {
 	@GetMapping("/turnier/{turnierid}")
 	public ModelAndView turnierUebersicht(@PathVariable String turnierid) {
 		logger.debug("Turnierübersicht {} angefragt, eingeloggt", turnierid);
-		var s = SecurityContextHolder.getContext().getAuthentication();
-		logger.info("Eingeloggter User {} {}", s.getName(), s.getAuthorities());
+
+		// aktuell nur zum prüfen...
+		Bewerter bewerter = extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		Turnier t = turnierService.ladeTurnier(turnierid);
 
 		var wks = wettkaempferService.alleKaempfer(UUID.fromString(turnierid));
 		var einstellungen = einstellungenService.ladeEinstellungen(UUID.fromString(turnierid));
@@ -225,19 +225,16 @@ public class TurnierController {
 
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori/{id}")
 	public ModelAndView begegnungRandori(@PathVariable String turnierid, @PathVariable String id) {
-		var s = SecurityContextHolder.getContext().getAuthentication();
-		var userid = s.getPrincipal().toString();
-		var username = s.getName();
-		//		final var oidcUserAuthority = (OidcUserAuthority) s;
-		logger.info("Eingeloggter User {} {} {}", userid, username, s.getAuthorities());
-
+		Bewerter bewerter = extractBewerter(SecurityContextHolder.getContext().getAuthentication());
 		Begegnung begegnung = turnierService.ladeBegegnung(Integer.parseInt(id));
-		BegegnungDto begegnungDto = convertFromBegegnung(begegnung, userid);
+		BegegnungDto begegnungDto = convertFromBegegnung(begegnung, bewerter.id());
 
 		ModelAndView mav = new ModelAndView("wettkampf_randori");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("begegnung", begegnungDto);
 		mav.addObject("begegnungid", id);
+		mav.addObject("bewerter", bewerter);
+		mav.addObject("enableEditing", bewerter.darfEditieren());
 		return mav;
 	}
 
@@ -245,19 +242,17 @@ public class TurnierController {
 		var begegnungId = begegnung.getBegegnungId();
 		var	wettkaempfer1 = begegnung.getWettkaempfer1();
 		var	wettkaempfer2 = begegnung.getWettkaempfer2();
-		var wertung = begegnung.getWertungen().stream().filter(w -> w.bewerter().id().equals(userid)).findFirst();
+		var wertung = begegnung.getWertungen().stream().filter(w -> w.getBewerter().id().equals(userid)).findFirst();
 		return new BegegnungDto(begegnungId, wettkaempfer1, wettkaempfer2, wertung);
 	}
 
+
 	@PostMapping("/turnier/{turnierid}/begegnungen/randori/{begegnungId}")
+	@PreAuthorize("hasRole('ROLE_KAMPFRICHTER')")
 	public ModelAndView speichereBegegnungRandori(@PathVariable String turnierid, @PathVariable String begegnungId, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("Speichere Wertung für Begegnung {}: {}", begegnungId, formData);
 
-		var s = SecurityContextHolder.getContext().getAuthentication();
-		var userid = s.getPrincipal().toString();
-		var username = s.getName();
-//		final var oidcUserAuthority = (OidcUserAuthority) s;
-		logger.info("Eingeloggter User {} {} {}", userid, username, s.getAuthorities());
+		Bewerter bewerter = extractBewerter(SecurityContextHolder.getContext().getAuthentication());
 
 		var kampfgeist1 = Integer.parseInt(formData.get("kampfgeist1").getFirst());
 		var technik1 = Integer.parseInt(formData.get("technik1").getFirst());
@@ -268,8 +263,26 @@ public class TurnierController {
 		var stil2 = Integer.parseInt(formData.get("stil2").getFirst());
 		var fairness2 = Integer.parseInt(formData.get("fairness2").getFirst());
 
-		turnierService.speichereRandoriWertung(begegnungId, kampfgeist1, technik1, stil1, fairness1, kampfgeist2, technik2, stil2, fairness2, userid);
+		turnierService.speichereRandoriWertung(begegnungId, kampfgeist1, technik1, stil1, fairness1, kampfgeist2, technik2, stil2, fairness2, bewerter.id());
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori");
+	}
+
+	private Bewerter extractBewerter(Authentication authentication) {
+		try {
+			var principal = (DefaultOidcUser) authentication.getPrincipal();
+			var userid = principal.getUserInfo().getSubject();
+			var username = principal.getUserInfo().getPreferredUsername();
+			var fullname = principal.getUserInfo().getFullName();
+			var rollen = authentication.getAuthorities().stream().map(a -> a.getAuthority()).toList();
+
+			Bewerter result = new Bewerter(userid, username, fullname, rollen);
+			logger.info("Eingeloggter User {}", result);
+			return result;
+		}
+		catch (Exception e) {
+			logger.info("Nutzer konnte nicht geparsed werden! {}", authentication, e);
+			throw e;
+		}
 	}
 
 	private List<Matte> gruppiereNachGruppen(List<Matte> matten) {

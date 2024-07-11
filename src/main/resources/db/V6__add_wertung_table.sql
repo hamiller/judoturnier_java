@@ -16,5 +16,6 @@ CREATE TABLE wertung
     technik_wettkaempfer2    INTEGER,
     kampfstil_wettkaempfer2  INTEGER,
     fairness_wettkaempfer2   INTEGER,
+    bewerter                 VARCHAR(255) NOT NULL,
     PRIMARY KEY (uuid)
 );

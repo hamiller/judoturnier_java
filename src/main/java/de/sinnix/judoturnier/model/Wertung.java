@@ -1,29 +1,42 @@
 package de.sinnix.judoturnier.model;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.time.Duration;
 import java.util.UUID;
 
-public record Wertung(
-	UUID uuid,
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
+@Getter
+@Setter
+public class Wertung {
+	private UUID uuid;
 
-	// turnier
-	Wettkaempfer sieger,
-	Duration zeit,
-	Integer punkteWettkaempferWeiss,
-	Integer strafenWettkaempferWeiss,
-	Integer punkteWettkaempferRot,
-	Integer strafenWettkaempferRot,
+	// turnie;
+	private Wettkaempfer sieger;
+	private Duration zeit;
+	private Integer punkteWettkaempferWeiss;
+	private Integer strafenWettkaempferWeiss;
+	private Integer punkteWettkaempferRot;
+	private Integer strafenWettkaempferRot;
 
-	// randori
-	Integer kampfgeistWettkaempfer1,
-	Integer technikWettkaempfer1,
-	Integer kampfstilWettkaempfer1,
-	Integer fairnessWettkaempfer1,
+	// randor;
+	private Integer kampfgeistWettkaempfer1;
+	private Integer technikWettkaempfer1;
+	private Integer kampfstilWettkaempfer1;
+	private Integer fairnessWettkaempfer1;
 
-	Integer kampfgeistWettkaempfer2,
-	Integer technikWettkaempfer2,
-	Integer kampfstilWettkaempfer2,
-	Integer fairnessWettkaempfer2,
+	private Integer kampfgeistWettkaempfer2;
+	private Integer technikWettkaempfer2;
+	private Integer kampfstilWettkaempfer2;
+	private Integer fairnessWettkaempfer2;
 
-	Bewerter bewerter) {
+	private Bewerter bewerter;
 }

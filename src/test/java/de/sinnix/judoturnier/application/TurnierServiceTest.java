@@ -54,7 +54,7 @@ class TurnierServiceTest {
 	}
 
 	@Test
-	void erstelleWettkampfreihenfolgeAltersklasse() {
+	void testErstelleWettkampfreihenfolgeAltersklasse() {
 		List<GewichtsklassenGruppe> gewichtsklassenGruppen = GewichtsklassenGruppeFixture.gewichtsklassenGruppen;
 		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new RandoriGruppengroesse(6), new VariablerGewichtsteil(0.2), turnierUUID);
 
@@ -80,5 +80,13 @@ class TurnierServiceTest {
 			berechneteBegegnungen += N;
 		}
 		assertEquals(berechneteBegegnungen, anzahlBegegnungen);
+	}
+
+	@Test
+	void testSpeichereRandoriWertung() {
+		UUID bewerterUUID = UUID.randomUUID();
+		String begegnungId = "1";
+
+		turnierService.speichereRandoriWertung(begegnungId, 1, 2, 3, 4, 4, 3, 2, 1, bewerterUUID.toString());
 	}
 }

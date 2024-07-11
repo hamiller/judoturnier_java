@@ -19,6 +19,7 @@ import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.Wertung;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
 import de.sinnix.judoturnier.model.WettkampfReihenfolge;
+import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,29 +118,42 @@ public class TurnierService {
 		return turnierRepository.ladeBegegnung(begegnungId);
 	}
 
+	@Transactional
 	public void speichereRandoriWertung(String begegnungId, int kampfgeist1, int technik1, int stil1, int fairness1, int kampfgeist2, int technik2, int stil2, int fairness2, String bewerterUUID) {
 		logger.info("speichereRandoriWertung: {}", begegnungId);
 		Begegnung begegnung = ladeBegegnung(Integer.parseInt(begegnungId));
 
 		Bewerter bewerter = bewerterRepository.findById(bewerterUUID);
-		UUID wertungId = UUID.randomUUID();
 		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), bewerter);
 		if (existierendeWertung.isPresent()) {
-			wertungId = existierendeWertung.get().uuid();
+			logger.debug("Aktualisiere existierende Wertung");
+			var wertung = existierendeWertung.get();
+			wertung.setKampfgeistWettkaempfer1(kampfgeist1);
+			wertung.setTechnikWettkaempfer1(technik1);
+			wertung.setKampfstilWettkaempfer1(stil1);
+			wertung.setFairnessWettkaempfer1(fairness1);
+			wertung.setKampfgeistWettkaempfer2(kampfgeist2);
+			wertung.setTechnikWettkaempfer2(technik2);
+			wertung.setKampfstilWettkaempfer2(stil2);
+			wertung.setFairnessWettkaempfer2(fairness2);
+
+			turnierRepository.speichereBegegnung(begegnung);
+			return;
 		}
 
+		logger.debug("Erstelle neue Wertung");
+		UUID wertungId = UUID.randomUUID();
 		Wertung wertungNeu = new Wertung(wertungId, null, null, null, null, null, null,
 			kampfgeist1, technik1, stil1, fairness1,
 			kampfgeist2, technik2, stil2, fairness2,
 			bewerter
 		);
 		begegnung.getWertungen().add(wertungNeu);
-		turnierRepository.speichereWertung(wertungNeu);
 		turnierRepository.speichereBegegnung(begegnung);
 	}
 
 	private Optional<Wertung> wertungVonBewerter(List<Wertung> wertungen, Bewerter bewerter) {
-		return wertungen.stream().filter(w -> w.bewerter().equals(bewerter)).findFirst();
+		return wertungen.stream().filter(w -> w.getBewerter().equals(bewerter)).findFirst();
 	}
 
 	private List<WettkampfGruppe> erstelleWettkampfgruppen(List<GewichtsklassenGruppe> gewichtsklassenGruppen, Algorithmus algorithmus, Integer anzahlMatten) {
@@ -238,5 +252,9 @@ public class TurnierService {
 			logger.error(e);
 			throw e;
 		}
+	}
+
+	public Turnier ladeTurnier(String turnierid) {
+		return turnierJpaRepository.findById(turnierid).map(t -> turnierConverter.convertToTurnier(t)).orElseThrow();
 	}
 }

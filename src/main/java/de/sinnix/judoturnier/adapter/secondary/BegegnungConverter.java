@@ -39,6 +39,7 @@ public class BegegnungConverter {
 		jpa.setGruppenRunde(begegnung.getGruppenRunde());
 		jpa.setWettkaempfer1(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1()));
 		jpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2()));
+		jpa.setWertungen(begegnung.getWertungen().stream().map(wertung -> wertungConverter.convertFromWertung(wertung)).toList());
 		begegnung.getWertungen().stream().map(wertung -> wertungConverter.convertFromWertung(wertung)).toList();
 		jpa.setWettkampfGruppeId(begegnung.getWettkampfGruppe().id());
 		jpa.setTurnierUUID(begegnung.getTurnierUUID().toString());

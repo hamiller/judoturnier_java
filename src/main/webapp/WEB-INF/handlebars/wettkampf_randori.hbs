@@ -18,10 +18,10 @@
             <label class="centertext">{{begegnung.wettkaempfer1.id}}</label>
             <label>{{begegnung.wettkaempfer1.verein.name}}</label>
           </div>
-          <span class="row"><label>Vielfalt</label><input type="number" name="fairness1" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.fairnessWettkaempfer1}}{{/optional}} /><br/></span>
-          <span class="row"><label>Kampfgeist</label><input type="number" name="kampfgeist1" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.kampfgeistWettkaempfer1}}{{/optional}} /><br/></span>
-          <span class="row"><label>Technik</label><input type="number" name="technik1" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.technikWettkaempfer1}}{{/optional}} /><br/></span>
-          <span class="row"><label>Stil</label><input type="number" name="stil1" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.kampfstilWettkaempfer1}}{{/optional}} /><br/></span>
+          <span class="row"><label>Vielfalt</label><input {{disable enableEditing}} type="number" name="fairness1" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.fairnessWettkaempfer1}}{{/optional}} /><br/></span>
+          <span class="row"><label>Kampfgeist</label><input {{disable enableEditing}} type="number" name="kampfgeist1" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.kampfgeistWettkaempfer1}}{{/optional}} /><br/></span>
+          <span class="row"><label>Technik</label><input {{disable enableEditing}} type="number" name="technik1" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.technikWettkaempfer1}}{{/optional}} /><br/></span>
+          <span class="row"><label>Stil</label><input {{disable enableEditing}} type="number" name="stil1" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.kampfstilWettkaempfer1}}{{/optional}} /><br/></span>
         </div>
 
         <div class="ergebnis_eintrag rot">
@@ -31,10 +31,10 @@
             <label class="centertext">{{begegnung.wettkaempfer2.id}}</label>
             <label>{{begegnung.wettkaempfer2.verein.name}}</label>
           </div>
-          <span class="row"><label>Vielfalt</label><input type="number" name="fairness2" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.fairnessWettkaempfer2}}{{/optional}} /><br/></span>
-          <span class="row"><label>Kampfgeist</label><input type="number" name="kampfgeist2" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.kampfgeistWettkaempfer2}}{{/optional}} /><br/></span>
-          <span class="row"><label>Technik</label><input type="number" name="technik2" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.technikWettkaempfer2}}{{/optional}} /><br/></span>
-          <span class="row"><label>Stil</label><input type="number" name="stil2" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.kampfstilWettkaempfer2}}{{/optional}} /><br/></span>
+          <span class="row"><label>Vielfalt</label><input {{disable enableEditing}} type="number" name="fairness2" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.fairnessWettkaempfer2}}{{/optional}} /><br/></span>
+          <span class="row"><label>Kampfgeist</label><input {{disable enableEditing}} type="number" name="kampfgeist2" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.kampfgeistWettkaempfer2}}{{/optional}} /><br/></span>
+          <span class="row"><label>Technik</label><input {{disable enableEditing}} type="number" name="technik2" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.technikWettkaempfer2}}{{/optional}} /><br/></span>
+          <span class="row"><label>Stil</label><input {{disable enableEditing}} type="number" name="stil2" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.kampfstilWettkaempfer2}}{{/optional}} /><br/></span>
         </div>
       </div>
       <button type="submit"><span class="material-icons md-48 centered" title="speichern">save</span> Ergebnis eintragen</button>

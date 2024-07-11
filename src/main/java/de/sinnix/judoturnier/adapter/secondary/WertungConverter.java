@@ -42,28 +42,28 @@ public class WertungConverter {
 			return null;
 		}
 		WertungJpa jpa = new WertungJpa();
-		jpa.setUuid(fromUUID(wertung.uuid()));
+		jpa.setUuid(fromUUID(wertung.getUuid()));
 
-		if (wertung.sieger() != null) jpa.setSieger(wettkaempferConverter.convertFromWettkaempfer(wertung.sieger()));
+		if (wertung.getSieger() != null) jpa.setSieger(wettkaempferConverter.convertFromWettkaempfer(wertung.getSieger()));
 
 		// Turnier
-		jpa.setZeit(fromDuration(wertung.zeit()));
-		jpa.setPunkteWettkaempfer1(wertung.punkteWettkaempferWeiss());
-		jpa.setStrafenWettkaempfer1(wertung.strafenWettkaempferWeiss());
-		jpa.setPunkteWettkaempfer2(wertung.punkteWettkaempferRot());
-		jpa.setStrafenWettkaempfer2(wertung.strafenWettkaempferRot());
+		jpa.setZeit(fromDuration(wertung.getZeit()));
+		jpa.setPunkteWettkaempfer1(wertung.getPunkteWettkaempferWeiss());
+		jpa.setStrafenWettkaempfer1(wertung.getStrafenWettkaempferWeiss());
+		jpa.setPunkteWettkaempfer2(wertung.getPunkteWettkaempferRot());
+		jpa.setStrafenWettkaempfer2(wertung.getStrafenWettkaempferRot());
 
 		// Randori
-		jpa.setKampfgeistWettkaempfer1(wertung.kampfgeistWettkaempfer1());
-		jpa.setTechnikWettkaempfer1(wertung.technikWettkaempfer1());
-		jpa.setKampfstilWettkaempfer1(wertung.kampfstilWettkaempfer1());
-		jpa.setFairnessWettkaempfer1(wertung.fairnessWettkaempfer1());
-		jpa.setKampfgeistWettkaempfer2(wertung.kampfgeistWettkaempfer2());
-		jpa.setTechnikWettkaempfer2(wertung.technikWettkaempfer2());
-		jpa.setKampfstilWettkaempfer2(wertung.kampfstilWettkaempfer2());
-		jpa.setFairnessWettkaempfer2(wertung.fairnessWettkaempfer2());
+		jpa.setKampfgeistWettkaempfer1(wertung.getKampfgeistWettkaempfer1());
+		jpa.setTechnikWettkaempfer1(wertung.getTechnikWettkaempfer1());
+		jpa.setKampfstilWettkaempfer1(wertung.getKampfstilWettkaempfer1());
+		jpa.setFairnessWettkaempfer1(wertung.getFairnessWettkaempfer1());
+		jpa.setKampfgeistWettkaempfer2(wertung.getKampfgeistWettkaempfer2());
+		jpa.setTechnikWettkaempfer2(wertung.getTechnikWettkaempfer2());
+		jpa.setKampfstilWettkaempfer2(wertung.getKampfstilWettkaempfer2());
+		jpa.setFairnessWettkaempfer2(wertung.getFairnessWettkaempfer2());
 
-		jpa.setBewerter(bewerterConverter.convertFromBewerter(wertung.bewerter()));
+		jpa.setBewerter(bewerterConverter.convertFromBewerter(wertung.getBewerter()));
 
 		return jpa;
 	}

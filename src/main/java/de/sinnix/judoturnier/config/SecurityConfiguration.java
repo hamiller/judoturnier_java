@@ -41,12 +41,12 @@ public class SecurityConfiguration {
 		http
 			.authorizeRequests(request -> request
 				.requestMatchers("/").permitAll()
-//				.requestMatchers("/turnier*").hasAuthority("ROLE_ADMIN")
-//				.requestMatchers("/turnier/**").hasAnyAuthority("ROLE_ZUSCHAUER", "ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
+				.requestMatchers("/turnier*").hasAuthority("ROLE_ADMIN")
+				.requestMatchers("/turnier/**").hasAnyAuthority("ROLE_ZUSCHAUER", "ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 //				.requestMatchers("/turnier/*/wettkaempfer/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
-//				.requestMatchers("/turnier/*/vereine/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
+				.requestMatchers("/turnier/*/vereine/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 //				.requestMatchers("/turnier/*/gewichtsklassen/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_KAMPFRICHTER")
-				.requestMatchers("/turnier/*/begegnungen/**").hasAuthority("ROLE_KAMPFRICHTER")
+				.requestMatchers("/turnier/*/begegnungen/**").hasAnyAuthority("ROLE_ZUSCHAUER", "ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 				.anyRequest().authenticated());
 
 		http

@@ -1,5 +1,3 @@
-ALTER TABLE begegnungen DROP COLUMN wertung;
-
 CREATE TABLE begegnung_wertung
 (
     begegnung_id INTEGER,

@@ -8,7 +8,6 @@ CREATE TABLE begegnungen
     wettkaempfer1       INTEGER,
     wettkaempfer2       INTEGER,
     wettkampf_gruppe_id INTEGER,
-    wertung             VARCHAR(255),
     turnier_uuid        VARCHAR(255),
     PRIMARY KEY (id, turnier_uuid)
 );

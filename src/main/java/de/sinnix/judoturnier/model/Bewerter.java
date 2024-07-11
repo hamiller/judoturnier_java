@@ -1,4 +1,10 @@
 package de.sinnix.judoturnier.model;
 
-public record Bewerter(String id, String username, String name) {
+import java.util.List;
+
+public record Bewerter(String id, String username, String name, List<String> rollen) {
+
+	public boolean darfEditieren() {
+		return rollen.contains("ROLE_KAMPFRICHTER");
+	}
 }
