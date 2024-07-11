@@ -23,5 +23,7 @@ public record Wertung(
 	Integer kampfgeistWettkaempfer2,
 	Integer technikWettkaempfer2,
 	Integer kampfstilWettkaempfer2,
-	Integer fairnessWettkaempfer2) {
+	Integer fairnessWettkaempfer2,
+
+	Bewerter bewerter) {
 }

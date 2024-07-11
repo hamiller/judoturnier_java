@@ -1,5 +1,6 @@
 package de.sinnix.judoturnier.application;
 
+import de.sinnix.judoturnier.adapter.secondary.BewerterRepository;
 import de.sinnix.judoturnier.adapter.secondary.TurnierConverter;
 import de.sinnix.judoturnier.adapter.secondary.TurnierJpa;
 import de.sinnix.judoturnier.adapter.secondary.TurnierJpaRepository;
@@ -8,6 +9,7 @@ import de.sinnix.judoturnier.application.algorithm.Algorithmus;
 import de.sinnix.judoturnier.application.algorithm.JederGegenJeden;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
+import de.sinnix.judoturnier.model.Bewerter;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Matte;
@@ -42,11 +44,13 @@ public class TurnierService {
 	@Autowired
 	private GewichtsklassenService gewichtsklassenService;
 	@Autowired
-	private Sortierer            sortierer;
+	private Sortierer              sortierer;
 	@Autowired
-	private TurnierJpaRepository turnierJpaRepository;
+	private TurnierJpaRepository   turnierJpaRepository;
 	@Autowired
-	private TurnierConverter     turnierConverter;
+	private TurnierConverter       turnierConverter;
+	@Autowired
+	private BewerterRepository     bewerterRepository;
 
 	public List<Turnier> ladeTurniere() {
 		logger.info("ladeTurniere");
@@ -113,22 +117,29 @@ public class TurnierService {
 		return turnierRepository.ladeBegegnung(begegnungId);
 	}
 
-	public void speichereRandoriWertung(String begegnungId, int kampfgeist1, int technik1, int stil1, int fairness1, int kampfgeist2, int technik2, int stil2, int fairness2) {
+	public void speichereRandoriWertung(String begegnungId, int kampfgeist1, int technik1, int stil1, int fairness1, int kampfgeist2, int technik2, int stil2, int fairness2, String bewerterUUID) {
 		logger.info("speichereRandoriWertung: {}", begegnungId);
 		Begegnung begegnung = ladeBegegnung(Integer.parseInt(begegnungId));
 
+		Bewerter bewerter = bewerterRepository.findById(bewerterUUID);
 		UUID wertungId = UUID.randomUUID();
-		if (begegnung.getWertung().isPresent()) {
-			wertungId = begegnung.getWertung().get().uuid();
+		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), bewerter);
+		if (existierendeWertung.isPresent()) {
+			wertungId = existierendeWertung.get().uuid();
 		}
 
 		Wertung wertungNeu = new Wertung(wertungId, null, null, null, null, null, null,
 			kampfgeist1, technik1, stil1, fairness1,
-			kampfgeist2, technik2, stil2, fairness2
+			kampfgeist2, technik2, stil2, fairness2,
+			bewerter
 		);
-		begegnung.setWertung(Optional.of(wertungNeu));
+		begegnung.getWertungen().add(wertungNeu);
 		turnierRepository.speichereWertung(wertungNeu);
 		turnierRepository.speichereBegegnung(begegnung);
+	}
+
+	private Optional<Wertung> wertungVonBewerter(List<Wertung> wertungen, Bewerter bewerter) {
+		return wertungen.stream().filter(w -> w.bewerter().equals(bewerter)).findFirst();
 	}
 
 	private List<WettkampfGruppe> erstelleWettkampfgruppen(List<GewichtsklassenGruppe> gewichtsklassenGruppen, Algorithmus algorithmus, Integer anzahlMatten) {

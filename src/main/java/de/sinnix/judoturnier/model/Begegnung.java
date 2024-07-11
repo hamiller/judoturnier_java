@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -17,13 +17,13 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Begegnung {
-	private Integer           begegnungId;
-	private Integer           matteId;
-	private Integer           mattenRunde;
-	private Integer           gruppenRunde;
-	private Wettkaempfer      wettkaempfer1;
-	private Wettkaempfer      wettkaempfer2;
-	private Optional<Wertung> wertung;
-	private WettkampfGruppe   wettkampfGruppe;
-	private UUID              turnierUUID;
+	private Integer         begegnungId;
+	private Integer         matteId;
+	private Integer         mattenRunde;
+	private Integer         gruppenRunde;
+	private Wettkaempfer    wettkaempfer1;
+	private Wettkaempfer    wettkaempfer2;
+	private List<Wertung>   wertungen;
+	private WettkampfGruppe wettkampfGruppe;
+	private UUID            turnierUUID;
 }

@@ -1,7 +1,10 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -21,25 +24,29 @@ import lombok.ToString;
 @Table(name = "wertung")
 public class WertungJpa {
 	@Id
-	String uuid;
-	Long zeit;
+	private String uuid;
+	private Long   zeit;
 
 	// turnier
 	@OneToOne
-	WettkaempferJpa sieger;
-	Integer punkteWettkaempfer1;
-	Integer strafenWettkaempfer1;
-	Integer punkteWettkaempfer2;
-	Integer strafenWettkaempfer2;
+	private WettkaempferJpa sieger;
+	private Integer         punkteWettkaempfer1;
+	private Integer         strafenWettkaempfer1;
+	private Integer         punkteWettkaempfer2;
+	private Integer         strafenWettkaempfer2;
 
 	// randori
-	Integer kampfgeistWettkaempfer1;
-	Integer technikWettkaempfer1;
-	Integer kampfstilWettkaempfer1;
-	Integer fairnessWettkaempfer1;
+	private Integer         kampfgeistWettkaempfer1;
+	private Integer         technikWettkaempfer1;
+	private Integer         kampfstilWettkaempfer1;
+	private Integer         fairnessWettkaempfer1;
 
-	Integer kampfgeistWettkaempfer2;
-	Integer technikWettkaempfer2;
-	Integer kampfstilWettkaempfer2;
-	Integer fairnessWettkaempfer2;
+	private Integer         kampfgeistWettkaempfer2;
+	private Integer         technikWettkaempfer2;
+	private Integer         kampfstilWettkaempfer2;
+	private Integer         fairnessWettkaempfer2;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "bewerter", nullable = false)
+	private BewerterJpa     bewerter;
 }

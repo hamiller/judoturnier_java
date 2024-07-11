@@ -1,6 +1,7 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
 import de.sinnix.judoturnier.model.Altersklasse;
+import de.sinnix.judoturnier.model.Bewerter;
 import de.sinnix.judoturnier.model.Farbe;
 import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.Verein;
@@ -26,15 +27,20 @@ class WertungConverterTest {
 
 	@Mock
 	private WettkaempferConverter wettkaempferConverter;
+	@Mock
+	private BewerterConverter     bewerterConverter;
+
 	@InjectMocks
 	private WertungConverter wertungConverter;
 
-	private static final String UUID_STRING = "550e8400-e29b-41d4-a716-446655440000";
-	private WettkaempferJpa wk1Jpa = new WettkaempferJpa(1, "Teilnehmer A", "m", "U11", new VereinJpa(1, "Verein1", UUID_STRING), 25.0, "ORANGE", true, false, UUID_STRING);
-	private Wettkaempfer    wk1    = new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", UUID.fromString(UUID_STRING)), 25.0, Optional.of(Farbe.ORANGE), true, false, UUID.fromString(UUID_STRING));
+	private static final String          UUID_STRING = "550e8400-e29b-41d4-a716-446655440000";
+	private              WettkaempferJpa wk1Jpa      = new WettkaempferJpa(1, "Teilnehmer A", "m", "U11", new VereinJpa(1, "Verein1", UUID_STRING), 25.0, "ORANGE", true, false, UUID_STRING);
+	private              Wettkaempfer    wk1         = new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", UUID.fromString(UUID_STRING)), 25.0, Optional.of(Farbe.ORANGE), true, false, UUID.fromString(UUID_STRING));
+	private              Bewerter        bewerter;
 
 	@BeforeEach
 	void setUp() {
+		bewerter = new Bewerter(UUID.randomUUID().toString(), "user1", "Name, Vorname");
 	}
 
 	@Test
@@ -50,7 +56,7 @@ class WertungConverterTest {
 
 		when(wettkaempferConverter.convertToWettkaempfer(wk1Jpa)).thenReturn(wk1);
 
-		Wertung wertung =  wertungConverter.convertToWertung(jpa);
+		Wertung wertung = wertungConverter.convertToWertung(jpa);
 
 		assertEquals(wertung.uuid().toString(), jpa.getUuid());
 		assertEquals(wertung.sieger(), wk1);
@@ -71,7 +77,9 @@ class WertungConverterTest {
 			0,
 			0,
 			1,
-			null, null, null, null, null, null, null, null);
+			null, null, null, null, null, null, null, null,
+			bewerter
+			);
 
 
 		when(wettkaempferConverter.convertFromWettkaempfer(wk1)).thenReturn(wk1Jpa);
@@ -101,7 +109,7 @@ class WertungConverterTest {
 		jpa.setKampfstilWettkaempfer2(1);
 		jpa.setFairnessWettkaempfer2(2);
 
-		Wertung wertung =  wertungConverter.convertToWertung(jpa);
+		Wertung wertung = wertungConverter.convertToWertung(jpa);
 
 		assertEquals(wertung.uuid().toString(), jpa.getUuid());
 		assertEquals(wertung.zeit(), Duration.of(3l, ChronoUnit.MINUTES));
@@ -121,8 +129,9 @@ class WertungConverterTest {
 			null,
 			null,
 			Duration.of(3l, ChronoUnit.MINUTES),
-			null,null, null,null,
-			1, 2, 3, 4, 5, 6, 1, 2);
+			null, null, null, null,
+			1, 2, 3, 4, 5, 6, 1, 2,
+			bewerter);
 
 		WertungJpa jpa = wertungConverter.convertFromWertung(wertung);
 

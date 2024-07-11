@@ -10,12 +10,15 @@ import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.GruppenRunde;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Turnier;
+import de.sinnix.judoturnier.model.Wertung;
+import de.sinnix.judoturnier.model.Wettkaempfer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -222,18 +225,39 @@ public class TurnierController {
 
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori/{id}")
 	public ModelAndView begegnungRandori(@PathVariable String turnierid, @PathVariable String id) {
+		var s = SecurityContextHolder.getContext().getAuthentication();
+		var userid = s.getPrincipal().toString();
+		var username = s.getName();
+		//		final var oidcUserAuthority = (OidcUserAuthority) s;
+		logger.info("Eingeloggter User {} {} {}", userid, username, s.getAuthorities());
+
 		Begegnung begegnung = turnierService.ladeBegegnung(Integer.parseInt(id));
+		BegegnungDto begegnungDto = convertFromBegegnung(begegnung, userid);
 
 		ModelAndView mav = new ModelAndView("wettkampf_randori");
 		mav.addObject("turnierid", turnierid);
-		mav.addObject("begegnung", begegnung);
+		mav.addObject("begegnung", begegnungDto);
 		mav.addObject("begegnungid", id);
 		return mav;
+	}
+
+	private BegegnungDto convertFromBegegnung(Begegnung begegnung, String userid) {
+		var begegnungId = begegnung.getBegegnungId();
+		var	wettkaempfer1 = begegnung.getWettkaempfer1();
+		var	wettkaempfer2 = begegnung.getWettkaempfer2();
+		var wertung = begegnung.getWertungen().stream().filter(w -> w.bewerter().id().equals(userid)).findFirst();
+		return new BegegnungDto(begegnungId, wettkaempfer1, wettkaempfer2, wertung);
 	}
 
 	@PostMapping("/turnier/{turnierid}/begegnungen/randori/{begegnungId}")
 	public ModelAndView speichereBegegnungRandori(@PathVariable String turnierid, @PathVariable String begegnungId, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("Speichere Wertung für Begegnung {}: {}", begegnungId, formData);
+
+		var s = SecurityContextHolder.getContext().getAuthentication();
+		var userid = s.getPrincipal().toString();
+		var username = s.getName();
+//		final var oidcUserAuthority = (OidcUserAuthority) s;
+		logger.info("Eingeloggter User {} {} {}", userid, username, s.getAuthorities());
 
 		var kampfgeist1 = Integer.parseInt(formData.get("kampfgeist1").getFirst());
 		var technik1 = Integer.parseInt(formData.get("technik1").getFirst());
@@ -244,7 +268,7 @@ public class TurnierController {
 		var stil2 = Integer.parseInt(formData.get("stil2").getFirst());
 		var fairness2 = Integer.parseInt(formData.get("fairness2").getFirst());
 
-		turnierService.speichereRandoriWertung(begegnungId, kampfgeist1, technik1, stil1, fairness1, kampfgeist2, technik2, stil2, fairness2);
+		turnierService.speichereRandoriWertung(begegnungId, kampfgeist1, technik1, stil1, fairness1, kampfgeist2, technik2, stil2, fairness2, userid);
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori");
 	}
 

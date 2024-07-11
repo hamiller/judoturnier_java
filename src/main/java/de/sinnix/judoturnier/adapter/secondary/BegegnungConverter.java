@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class BegegnungConverter {
@@ -25,7 +25,7 @@ public class BegegnungConverter {
 			jpa.getGruppenRunde(),
 			wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer1()),
 			wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer2()),
-			Optional.ofNullable(wertungConverter.convertToWertung(jpa.getWertung())),
+			jpa.getWertungen().stream().map(wertung -> wertungConverter.convertToWertung(wertung)).collect(Collectors.toList()),
 			wettkampfGruppeConverter.convertToWettkampfGruppe(jpa.getWettkampfGruppeId(), wettkampfGruppeJpaList),
 			UUID.fromString(jpa.getTurnierUUID())
 			);
@@ -39,9 +39,7 @@ public class BegegnungConverter {
 		jpa.setGruppenRunde(begegnung.getGruppenRunde());
 		jpa.setWettkaempfer1(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1()));
 		jpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2()));
-		if (begegnung.getWertung().isPresent()) {
-			jpa.setWertung(wertungConverter.convertFromWertung(begegnung.getWertung().get()));
-		}
+		begegnung.getWertungen().stream().map(wertung -> wertungConverter.convertFromWertung(wertung)).toList();
 		jpa.setWettkampfGruppeId(begegnung.getWettkampfGruppe().id());
 		jpa.setTurnierUUID(begegnung.getTurnierUUID().toString());
 		return jpa;

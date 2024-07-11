@@ -3,6 +3,7 @@ package de.sinnix.judoturnier.adapter.secondary;
 import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
+import de.sinnix.judoturnier.model.Bewerter;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Wertung;
@@ -52,14 +53,18 @@ class TurnierRepositoryTest {
 	@InjectMocks
 	private TurnierRepository            turnierRepository;
 
+	private Bewerter bewerter;
+
 	@BeforeEach
 	public void setUp() {
+		bewerter = new Bewerter(UUID.randomUUID().toString(), "user1", "Name, Vorname");
 	}
 
 	@Test
 	void testLadeBegegnung() {
 		UUID turnierUUID = UUID.randomUUID();
 		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(1, "Gruppe1", "typ1", List.of(), turnierUUID);
+		Bewerter bewerter = new Bewerter(UUID.randomUUID().toString(), "user1", "Name, Vorname");
 		Wertung wertung = new Wertung(
 			UUID.randomUUID(),
 			WettkaempferFixtures.wettkaempfer1,
@@ -68,8 +73,9 @@ class TurnierRepositoryTest {
 			0,
 			0,
 			1,
-			null, null, null, null, null, null, null, null);
-		Begegnung begegnung = new Begegnung(1, 2, 123, 22, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, Optional.of(wertung), wettkampfGruppe, turnierUUID);
+			null, null, null, null, null, null, null, null,
+			bewerter);
+		Begegnung begegnung = new Begegnung(1, 2, 123, 22, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(wertung), wettkampfGruppe, turnierUUID);
 
 		when(begegnungJpaRepository.findById(any())).thenReturn(Optional.of(new BegegnungJpa()));
 		when(wettkampfGruppeJpaRepository.findAll()).thenReturn(List.of());
@@ -78,8 +84,8 @@ class TurnierRepositoryTest {
 		Begegnung result = turnierRepository.ladeBegegnung(1);
 
 		assertTrue(result != null);
-		assertTrue(result.getWertung().isPresent());
-		assertTrue(result.getWertung().get().uuid() != null);
+		assertEquals(1, result.getWertungen().size());
+		assertTrue(result.getWertungen().get(0).uuid() != null);
 	}
 
 	@Test
@@ -90,7 +96,8 @@ class TurnierRepositoryTest {
 			WettkaempferFixtures.wettkaempfer1,
 			Duration.of(3l, ChronoUnit.MINUTES),
 			1, 0, 0, 1,
-			null, null, null, null, null, null, null, null);
+			null, null, null, null, null, null, null, null,
+			bewerter);
 
 		when(wertungConverter.convertFromWertung(any(Wertung.class))).thenReturn(wertungJpa);
 
@@ -150,8 +157,8 @@ class TurnierRepositoryTest {
 	public void testLadeMatten() {
 		UUID turnierUUID = UUID.randomUUID();
 		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of(), turnierUUID);
-		Wertung wertung = new Wertung(UUID.randomUUID(), null, Duration.of(3, ChronoUnit.MINUTES), null, null, null, null, 1, 2, 3, 4, 5, 6, 7, 8);
-		Begegnung begegnung = new Begegnung(2, 1, 3, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, Optional.of(wertung), wkg, turnierUUID);
+		Wertung wertung = new Wertung(UUID.randomUUID(), null, Duration.of(3, ChronoUnit.MINUTES), null, null, null, null, 1, 2, 3, 4, 5, 6, 7, 8, bewerter);
+		Begegnung begegnung = new Begegnung(2, 1, 3, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(wertung), wkg, turnierUUID);
 
 		when(begegnungJpaRepository.findAllByTurnierUUID(turnierUUID.toString())).thenReturn(List.of(new BegegnungJpa()));
 		when(begegnungConverter.convertToBegegnung(any(BegegnungJpa.class), anyList())).thenReturn(begegnung);

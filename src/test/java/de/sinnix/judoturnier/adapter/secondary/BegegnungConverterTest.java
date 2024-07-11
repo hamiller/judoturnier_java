@@ -2,9 +2,11 @@ package de.sinnix.judoturnier.adapter.secondary;
 
 import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.model.Begegnung;
+import de.sinnix.judoturnier.model.Bewerter;
 import de.sinnix.judoturnier.model.Wertung;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,6 +37,13 @@ class BegegnungConverterTest {
 	@InjectMocks
 	private BegegnungConverter begegnungConverter;
 
+	private Bewerter bewerter;
+
+	@BeforeEach
+	void setUp() {
+		bewerter = new Bewerter(UUID.randomUUID().toString(), "user1", "Name, Vorname");
+	}
+
 	@Test
 	void testConvertToBegegnung() {
 		UUID turnierUUID = UUID.randomUUID();
@@ -48,9 +57,9 @@ class BegegnungConverterTest {
 		begegnungJpa.setWettkaempfer2(new WettkaempferJpa());
 		begegnungJpa.setWettkampfGruppeId(wettkampfGruppeJpa.getId());
 		begegnungJpa.setTurnierUUID(turnierUUID.toString());
+		begegnungJpa.setWertungen(List.of());
 
 		when(wettkaempferConverter.convertToWettkaempfer(any(WettkaempferJpa.class))).thenReturn(WettkaempferFixtures.wettkaempfer1);
-		when(wertungConverter.convertToWertung(any())).thenReturn(null);
 		when(wettkampfGruppeConverter.convertToWettkampfGruppe(any(), any())).thenReturn(new WettkampfGruppe(1, "name", "typ", List.of(), turnierUUID));
 
 		Begegnung result = begegnungConverter.convertToBegegnung(begegnungJpa, List.of(wettkampfGruppeJpa));
@@ -74,9 +83,10 @@ class BegegnungConverterTest {
 			0,
 			0,
 			1,
-			null, null, null, null, null, null, null, null);
+			null, null, null, null, null, null, null, null,
+			bewerter);
 
-		Begegnung begegnung = new Begegnung(1, 2, 123, 22, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, Optional.of(wertung), new WettkampfGruppe(1, "Gruppe1", "typ1", List.of(), turnierUUID), turnierUUID);
+		Begegnung begegnung = new Begegnung(1, 2, 123, 22, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(wertung), new WettkampfGruppe(1, "Gruppe1", "typ1", List.of(), turnierUUID), turnierUUID);
 
 
 		when(wettkaempferConverter.convertFromWettkaempfer(WettkaempferFixtures.wettkaempfer1)).thenReturn(WettkaempferFixtures.wettkaempferJpa1);
