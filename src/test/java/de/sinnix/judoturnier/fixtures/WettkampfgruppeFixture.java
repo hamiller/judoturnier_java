@@ -16,6 +16,64 @@ import java.util.UUID;
 public class WettkampfgruppeFixture {
     private static final UUID  turnierUUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
 
+    public static WettkampfGruppe gruppe1 = new WettkampfGruppe(100, "Antilope", "(Gewichtskl.1 U11)", Arrays.asList(
+        Arrays.asList(
+            new Begegnung(1, 1, 1,1,
+                new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
+                new Wettkaempfer(6, "Teilnehmer F", Geschlecht.m, Altersklasse.U11, new Verein(6, "Verein6", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID),
+            new Begegnung(2,1, 1,1,
+                new Wettkaempfer(2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
+                new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID),
+            new Begegnung(3,1, 1,1,
+                new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
+                new Wettkaempfer(4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID)
+        ),
+        Arrays.asList(
+            new Begegnung(4,1, 1,1,
+                new Wettkaempfer(6, "Teilnehmer F", Geschlecht.m, Altersklasse.U11, new Verein(6, "Verein6", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
+                new Wettkaempfer(4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID),
+            new Begegnung(5,1, 1,1,
+                new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
+                new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID),
+            new Begegnung(6,1, 1,1,
+                new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
+                new Wettkaempfer(2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID)
+        ),
+        Arrays.asList(
+            new Begegnung(7,1, 1,1,
+                new Wettkaempfer(2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
+                new Wettkaempfer(6, "Teilnehmer F", Geschlecht.m, Altersklasse.U11, new Verein(6, "Verein6", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID),
+            new Begegnung(8,1, 1,1,
+                new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
+                new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID),
+            new Begegnung(9,1, 1,1,
+                new Wettkaempfer(4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
+                new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID)
+        ),
+        Arrays.asList(
+            new Begegnung(10,1, 1,1,
+                new Wettkaempfer(6, "Teilnehmer F", Geschlecht.m, Altersklasse.U11, new Verein(6, "Verein6", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
+                new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID),
+            new Begegnung(11,1, 1,1,
+                new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
+                new Wettkaempfer(4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID),
+            new Begegnung(12,1, 1,1,
+                new Wettkaempfer(2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
+                new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID)
+        ),
+        Arrays.asList(
+            new Begegnung(13, 1, 1, 1,
+                new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
+                new Wettkaempfer(6, "Teilnehmer F", Geschlecht.m, Altersklasse.U11, new Verein(6, "Verein6", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID),
+            new Begegnung(14, 1, 1, 1,
+                new Wettkaempfer(4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
+                new Wettkaempfer(2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID),
+            new Begegnung(15, 1, 1, 1,
+                new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
+                new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID)
+        )
+    ), turnierUUID);
+
     public static    List<WettkampfGruppe> wks         = Arrays.asList(new WettkampfGruppe(100, "Antilope", "(Gewichtskl.1 U11)", Arrays.asList(
                 Arrays.asList(
                     new Begegnung(1, 1, 1,1,
