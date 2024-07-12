@@ -18,10 +18,19 @@
             <label class="centertext">{{begegnung.wettkaempfer1.id}}</label>
             <label>{{begegnung.wettkaempfer1.verein.name}}</label>
           </div>
-          <span class="row"><label>Vielfalt</label><input {{disable enableEditing}} type="number" name="fairness1" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.fairnessWettkaempfer1}}{{/optional}} /><br/></span>
-          <span class="row"><label>Kampfgeist</label><input {{disable enableEditing}} type="number" name="kampfgeist1" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.kampfgeistWettkaempfer1}}{{/optional}} /><br/></span>
-          <span class="row"><label>Technik</label><input {{disable enableEditing}} type="number" name="technik1" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.technikWettkaempfer1}}{{/optional}} /><br/></span>
-          <span class="row"><label>Stil</label><input {{disable enableEditing}} type="number" name="stil1" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.kampfstilWettkaempfer1}}{{/optional}} /><br/></span>
+          <span class="row"><label>Vielfalt</label><input {{disable enableEditing}} type="number" name="fairness1" required min="1" max="6" value={{#optional begegnung.kampfrichterWertung}}{{this.fairnessWettkaempfer1}}{{/optional}} /><br/></span>
+          <span class="row"><label>Kampfgeist</label><input {{disable enableEditing}} type="number" name="kampfgeist1" required min="1" max="6" value={{#optional begegnung.kampfrichterWertung}}{{this.kampfgeistWettkaempfer1}}{{/optional}} /><br/></span>
+          <span class="row"><label>Technik</label><input {{disable enableEditing}} type="number" name="technik1" required min="1" max="6" value={{#optional begegnung.kampfrichterWertung}}{{this.technikWettkaempfer1}}{{/optional}} /><br/></span>
+          <span class="row"><label>Stil</label><input {{disable enableEditing}} type="number" name="stil1" required min="1" max="6" value={{#optional begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer1}}{{/optional}} /><br/></span>
+          <div class="allewertungen">
+            {{#each begegnung.alleWertungen}}
+                <span class="row_small bewerterinfo">Kampfrichter {{truncate this.bewerter.id 5}}</span>
+                <span class="row_small"><label>Vielfalt</label>{{this.fairnessWettkaempfer1}}</span>
+                <span class="row_small"><label>Kampfgeist</label>{{this.kampfgeistWettkaempfer1}}</span>
+                <span class="row_small"><label>Technik</label>{{this.technikWettkaempfer1}}</span>
+                <span class="row_small"><label>Stil</label>{{this.kampfstilWettkaempfer1}}</span>
+            {{/each}}
+          </div>
         </div>
 
         <div class="ergebnis_eintrag rot">
@@ -31,13 +40,24 @@
             <label class="centertext">{{begegnung.wettkaempfer2.id}}</label>
             <label>{{begegnung.wettkaempfer2.verein.name}}</label>
           </div>
-          <span class="row"><label>Vielfalt</label><input {{disable enableEditing}} type="number" name="fairness2" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.fairnessWettkaempfer2}}{{/optional}} /><br/></span>
-          <span class="row"><label>Kampfgeist</label><input {{disable enableEditing}} type="number" name="kampfgeist2" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.kampfgeistWettkaempfer2}}{{/optional}} /><br/></span>
-          <span class="row"><label>Technik</label><input {{disable enableEditing}} type="number" name="technik2" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.technikWettkaempfer2}}{{/optional}} /><br/></span>
-          <span class="row"><label>Stil</label><input {{disable enableEditing}} type="number" name="stil2" required min="1" max="6" value={{#optional begegnung.wertung}}{{this.kampfstilWettkaempfer2}}{{/optional}} /><br/></span>
+          <span class="row"><label>Vielfalt</label><input {{disable enableEditing}} type="number" name="fairness2" required min="1" max="6" value={{#optional begegnung.kampfrichterWertung}}{{this.fairnessWettkaempfer2}}{{/optional}} /><br/></span>
+          <span class="row"><label>Kampfgeist</label><input {{disable enableEditing}} type="number" name="kampfgeist2" required min="1" max="6" value={{#optional begegnung.kampfrichterWertung}}{{this.kampfgeistWettkaempfer2}}{{/optional}} /><br/></span>
+          <span class="row"><label>Technik</label><input {{disable enableEditing}} type="number" name="technik2" required min="1" max="6" value={{#optional begegnung.kampfrichterWertung}}{{this.technikWettkaempfer2}}{{/optional}} /><br/></span>
+          <span class="row"><label>Stil</label><input {{disable enableEditing}} type="number" name="stil2" required min="1" max="6" value={{#optional begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer2}}{{/optional}} /><br/></span>
+          <div class="allewertungen">
+            {{#each begegnung.alleWertungen}}
+                <span class="row_small bewerterinfo">Kampfrichter {{truncate this.bewerter.id 5}}</span>
+                <span class="row_small"><label>Vielfalt</label>{{this.fairnessWettkaempfer2}}</span>
+                <span class="row_small"><label>Kampfgeist</label>{{this.kampfgeistWettkaempfer2}}</span>
+                <span class="row_small"><label>Technik</label>{{this.technikWettkaempfer2}}</span>
+                <span class="row_small"><label>Stil</label>{{this.kampfstilWettkaempfer2}}</span>
+            {{/each}}
+          </div>
         </div>
       </div>
-      <button type="submit"><span class="material-icons md-48 centered" title="speichern">save</span> Ergebnis eintragen</button>
+      {{#if enableEditing}}
+        <button type="submit"><span class="material-icons md-48 centered" title="speichern">save</span> Ergebnis eintragen</button>
+      {{/if}}
     </form>
   </div>
 

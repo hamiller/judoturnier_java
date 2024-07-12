@@ -109,7 +109,7 @@ li {
   }  
   
   .row label {
-    margin: 20px !important;
+    margin-right: 20px !important;
   }
 }
 
@@ -346,7 +346,27 @@ button {
 }
 
 .row label {
-  margin: 2px;
+  margin-right: 2px;
+}
+
+.row_small {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.row_small label {
+  margin-right: 2px;
+}
+
+.allewertungen {
+  margin-top: 5px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ccc;
+}
+.bewerterinfo {
+  justify-content: left;
 }
 
 .WEISS {

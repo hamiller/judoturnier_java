@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,6 +55,7 @@ public class WettkaempferController {
 	}
 
 	@PostMapping("/turnier/{turnierid}/wettkaempfer")
+	@PreAuthorize("hasAnyRole('ROLE_AMDIN', 'ROLE_TRAINER')")
 	public ModelAndView speichereWettkaempfer(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("empfange Wettkaempfer {}", formData);
 
@@ -89,6 +91,7 @@ public class WettkaempferController {
 	}
 
 	@DeleteMapping("/turnier/{turnierid}/wettkaempfer/{id}")
+	@PreAuthorize("hasAnyRole('ROLE_AMDIN', 'ROLE_TRAINER')")
 	public ModelAndView loescheWettkaempfer(@PathVariable String turnierid, @PathVariable Integer id) {
 		logger.debug("lösche Wettkaempfer {}", id);
 		wiegenService.loescheKaempfer(id);

@@ -11,6 +11,7 @@ import de.sinnix.judoturnier.model.TurnierTyp;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -78,6 +79,7 @@ public class GewichtsklassenController {
 	}
 
 	@PostMapping("/turnier/{turnierid}/gewichtsklassen-renew")
+	@PreAuthorize("hasRole('ROLE_AMDIN')")
 	public ModelAndView erstelleGewichtsklassenNeu(@PathVariable String turnierid) {
 		logger.info("erstelle Gewichtsklassen");
 		var wks = wettkaempferService.alleKaempfer(UUID.fromString(turnierid));
@@ -88,6 +90,7 @@ public class GewichtsklassenController {
 	}
 
 	@PostMapping("/turnier/{turnierid}/gewichtsklasse-renew")
+	@PreAuthorize("hasRole('ROLE_AMDIN')")
 	public ModelAndView erstelleGewichtsklasseNeu(@PathVariable String turnierid, @RequestBody String altersklasseString) {
 		logger.info("erneuere Gewichtsklasse für Altersklasse {}", altersklasseString);
 		if (altersklasseString == null || altersklasseString.isBlank()) {
@@ -108,6 +111,7 @@ public class GewichtsklassenController {
 	}
 
 	@PostMapping("/turnier/{turnierid}/gewichtsklassen")
+	@PreAuthorize("hasRole('ROLE_AMDIN')")
 	public ModelAndView speichereGewichtsklassen(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
 		logger.debug("speichere Gewichtsklassen {}", formData);
 

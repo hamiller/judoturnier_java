@@ -3,6 +3,7 @@ package de.sinnix.judoturnier.adapter.primary;
 import com.github.jknack.handlebars.Options;
 import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Wertung;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -126,5 +127,13 @@ public class HelperSource {
 	public static String disable(Boolean isEditable, Options options) {
 		logger.trace("isEditable {}", isEditable);
 		return isEditable ? "" : "disabled";
+	}
+
+	public static String truncate(String text, Integer size, Options options) {
+		if (StringUtils.isBlank(text)) {
+			return "";
+		}
+
+		return text.substring(0, size);
 	}
 }

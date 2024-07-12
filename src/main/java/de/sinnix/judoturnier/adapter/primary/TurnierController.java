@@ -73,6 +73,7 @@ public class TurnierController {
 	}
 
 	@PostMapping("/turnier")
+	@PreAuthorize("hasRole('ROLE_AMDIN')")
 	public ModelAndView erstelleTurnier(@RequestBody MultiValueMap<String, String> formData) {
 		logger.debug("erstelle ein neues Turnier {}", formData);
 		Bewerter bewerter = extractBewerter(SecurityContextHolder.getContext().getAuthentication());
@@ -145,6 +146,7 @@ public class TurnierController {
 	}
 
 	@PostMapping("/turnier/{turnierid}/begegnungen")
+	@PreAuthorize("hasRole('ROLE_AMDIN')")
 	public ModelAndView erstelleWettkampfreihenfolgeJeMatte(@PathVariable String turnierid) {
 		String error = "";
 		try {
@@ -162,6 +164,7 @@ public class TurnierController {
 	}
 
 	@PostMapping("/turnier/{turnierid}/begegnung")
+	@PreAuthorize("hasRole('ROLE_AMDIN')")
 	public ModelAndView erneuerWettkampfreihenfolgeFuerAltersklasse(@PathVariable String turnierid, @RequestBody Altersklasse ak) {
 		String error = "";
 		try {
@@ -178,6 +181,7 @@ public class TurnierController {
 	}
 
 	@DeleteMapping("/turnier/{turnierid}/begegnung")
+	@PreAuthorize("hasRole('ROLE_AMDIN')")
 	public ModelAndView entferneWettkampfreihenfolgeFuerAltersklasse(@PathVariable String turnierid) {
 		String error = "";
 		try {
@@ -243,8 +247,8 @@ public class TurnierController {
 		var begegnungId = begegnung.getBegegnungId();
 		var	wettkaempfer1 = begegnung.getWettkaempfer1();
 		var	wettkaempfer2 = begegnung.getWettkaempfer2();
-		var wertung = begegnung.getWertungen().stream().filter(w -> w.getBewerter().id().equals(userid)).findFirst();
-		return new BegegnungDto(begegnungId, wettkaempfer1, wettkaempfer2, wertung);
+		var kampfrichterWertung = begegnung.getWertungen().stream().filter(w -> w.getBewerter().id().equals(userid)).findFirst();
+		return new BegegnungDto(begegnungId, wettkaempfer1, wettkaempfer2, kampfrichterWertung, begegnung.getWertungen());
 	}
 
 
