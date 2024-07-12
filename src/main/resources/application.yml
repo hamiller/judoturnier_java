@@ -1,4 +1,8 @@
-server.port: 8080
+server:
+  port: 8080
+  error:
+    whitelabel:
+      enabled: false
 
 spring:
   application.name: judoturnier

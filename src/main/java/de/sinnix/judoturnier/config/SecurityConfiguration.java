@@ -1,8 +1,10 @@
 package de.sinnix.judoturnier.config;
 
+import de.sinnix.judoturnier.adapter.primary.FehlerseiteHandler;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -33,26 +35,30 @@ public class SecurityConfiguration {
 
 	private static final Logger logger = LogManager.getLogger(SecurityConfiguration.class);
 
+	@Autowired
+	private FehlerseiteHandler fehlerseiteHandler;
+
 	@Bean
 	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+
 		http
 			.csrf(AbstractHttpConfigurer::disable);
 
 		http
 			.authorizeRequests(request -> request
-				.requestMatchers("/").permitAll()
-				.requestMatchers("/turnier*").hasAuthority("ROLE_ADMIN")
+				.requestMatchers("/css/**", "/js/**", "/assets/**").permitAll() // Statische Dateien erlauben
+				.requestMatchers("/*").permitAll()
 				.requestMatchers("/turnier/**").hasAnyAuthority("ROLE_ZUSCHAUER", "ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
-//				.requestMatchers("/turnier/*/wettkaempfer/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
+				.requestMatchers("/turnier/*/wettkaempfer/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 				.requestMatchers("/turnier/*/vereine/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
-//				.requestMatchers("/turnier/*/gewichtsklassen/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_KAMPFRICHTER")
+				.requestMatchers("/turnier/*/gewichtsklassen/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_KAMPFRICHTER")
 				.requestMatchers("/turnier/*/begegnungen/**").hasAnyAuthority("ROLE_ZUSCHAUER", "ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 				.anyRequest().authenticated());
 
 		http
-			.oauth2Login(Customizer.withDefaults());
-//			.logout(logout -> logout
-//				.logoutSuccessUrl("/"));
+			.oauth2Login(Customizer.withDefaults())
+			.logout(logout -> logout
+				.logoutSuccessUrl("/"));
 
 		return http.build();
 	}
