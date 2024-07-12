@@ -51,7 +51,8 @@ public class TurnierController {
 
 	@GetMapping("/")
 	public ModelAndView startPage() {
-		logger.debug("Turnierübersicht angefragt, kein Login");
+		var s = SecurityContextHolder.getContext().getAuthentication();
+		logger.info("Turniere-Startseite. User {} {}", s.getName(), s.getAuthorities());
 
 		ModelAndView mav = new ModelAndView("startseite");
 		return mav;

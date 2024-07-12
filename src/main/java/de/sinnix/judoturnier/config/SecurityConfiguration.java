@@ -1,24 +1,31 @@
 package de.sinnix.judoturnier.config;
 
-import de.sinnix.judoturnier.adapter.primary.FehlerseiteHandler;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -36,11 +43,10 @@ public class SecurityConfiguration {
 	private static final Logger logger = LogManager.getLogger(SecurityConfiguration.class);
 
 	@Autowired
-	private FehlerseiteHandler fehlerseiteHandler;
+	private KeycloakLogoutHandler keycloakLogoutHandler;
 
 	@Bean
 	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
-
 		http
 			.csrf(AbstractHttpConfigurer::disable);
 
@@ -58,6 +64,10 @@ public class SecurityConfiguration {
 		http
 			.oauth2Login(Customizer.withDefaults())
 			.logout(logout -> logout
+				.addLogoutHandler(keycloakLogoutHandler)
+				.invalidateHttpSession(true)
+				.clearAuthentication(true)
+				.deleteCookies("JSESSIONID")
 				.logoutSuccessUrl("/"));
 
 		return http.build();
@@ -92,6 +102,28 @@ public class SecurityConfiguration {
 				}
 			}
 			return List.of();
+		}
+	}
+
+	@Component
+	static class KeycloakLogoutHandler implements LogoutHandler {
+		private final RestTemplate restTemplate = new RestTemplate();;
+
+		@Override
+		public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+			var user = (OidcUser) authentication.getPrincipal();
+			String endSessionEndpoint = user.getIssuer() + "/protocol/openid-connect/logout";
+			logger.debug("Logging out endpoint {}", endSessionEndpoint);
+			UriComponentsBuilder builder = UriComponentsBuilder
+				.fromUriString(endSessionEndpoint)
+				.queryParam("id_token_hint", user.getIdToken().getTokenValue());
+
+			ResponseEntity<String> logoutResponse = restTemplate.getForEntity(builder.toUriString(), String.class);
+			if (logoutResponse.getStatusCode().is2xxSuccessful()) {
+				logger.info("Successfulley logged out from Keycloak");
+			} else {
+				logger.error("Could not propagate logout to Keycloak");
+			}
 		}
 	}
 }
