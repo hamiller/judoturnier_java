@@ -50,10 +50,10 @@ class JederGegenJedenTest {
 		assertEquals("Antilope", erstellteWettkampfgruppen.getFirst().name());
 		// Anzahl der Runden
 		var anzahlRunden = n - 1;
-		assertEquals(anzahlRunden, erstellteWettkampfgruppen.getFirst().alleGruppenBegegnungen().size());
+		assertEquals(anzahlRunden, erstellteWettkampfgruppen.getFirst().alleRundenBegegnungen().size());
 		// Berechnung der Gesamtanzahl aller Begegnungen bei Jeder-Gegen-Jeden: N = (n * (n-1)) /2, mit n==AnzahlTeilnehmer
 		var N = (n * (n-1)) /2;
-		assertEquals(N, erstellteWettkampfgruppen.getFirst().alleGruppenBegegnungen().stream().mapToInt(begegnung -> begegnung.begegnungen().size()).sum());
+		assertEquals(N, erstellteWettkampfgruppen.getFirst().alleRundenBegegnungen().stream().mapToInt(begegnung -> begegnung.begegnungenJeRunde().size()).sum());
 	}
 
 	@Test
@@ -74,10 +74,10 @@ class JederGegenJedenTest {
 		assertEquals("Tiger", erstellteWettkampfgruppen.getFirst().name());
 		// Anzahl der Runden
 		var anzahlRunden = n;
-		assertEquals(anzahlRunden, erstellteWettkampfgruppen.getFirst().alleGruppenBegegnungen().size());
+		assertEquals(anzahlRunden, erstellteWettkampfgruppen.getFirst().alleRundenBegegnungen().size());
 		// Berechnung der Gesamtanzahl aller Begegnungen bei Jeder-Gegen-Jeden: N = (n * (n-1)) /2, mit n==AnzahlTeilnehmer
 		var N = (n * (n-1)) /2;
-		assertEquals(N, erstellteWettkampfgruppen.getFirst().alleGruppenBegegnungen().stream().mapToInt(begegnung -> begegnung.begegnungen().size()).sum());
+		assertEquals(N, erstellteWettkampfgruppen.getFirst().alleRundenBegegnungen().stream().mapToInt(begegnung -> begegnung.begegnungenJeRunde().size()).sum());
 
 		System.out.println(erstellteWettkampfgruppen);
 	}
@@ -90,7 +90,7 @@ class JederGegenJedenTest {
 		List<WettkampfGruppe> erstellteWettkampfgruppen = algorithmus.erstelleWettkampfGruppen(1, gewichtsklassenGruppe, 10);
 
 		assertEquals(1, erstellteWettkampfgruppen.size());
-		assertTrue(!erstellteWettkampfgruppen.getFirst().alleGruppenBegegnungen().isEmpty());
-		assertEquals(1, erstellteWettkampfgruppen.getFirst().alleGruppenBegegnungen().stream().mapToInt(b -> b.begegnungen().size()).sum());
+		assertTrue(!erstellteWettkampfgruppen.getFirst().alleRundenBegegnungen().isEmpty());
+		assertEquals(1, erstellteWettkampfgruppen.getFirst().alleRundenBegegnungen().stream().mapToInt(b -> b.begegnungenJeRunde().size()).sum());
 	}
 }

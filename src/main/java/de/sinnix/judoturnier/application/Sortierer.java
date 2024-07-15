@@ -2,7 +2,7 @@ package de.sinnix.judoturnier.application;
 
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
-import de.sinnix.judoturnier.model.BegegnungsListe;
+import de.sinnix.judoturnier.model.BegegnungenJeRunde;
 import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
@@ -45,11 +45,11 @@ public class Sortierer {
 	}
 
 	private Runde kopiereRunde(int rundenNummer, WettkampfGruppe wettkampfGruppe) {
-		if (wettkampfGruppe.alleGruppenBegegnungen().size() <= rundenNummer) return null;
+		if (wettkampfGruppe.alleRundenBegegnungen().size() <= rundenNummer) return null;
 
 		int mattenRunde = rundenNummer + 1;
-		Altersklasse altersKlasse = wettkampfGruppe.alleGruppenBegegnungen().get(rundenNummer).begegnungen().get(0).getWettkaempfer1().altersklasse();
-		return new Runde(rundenNummer, mattenRunde, 0, null, null, altersKlasse, wettkampfGruppe, wettkampfGruppe.alleGruppenBegegnungen().get(rundenNummer).begegnungen());
+		Altersklasse altersKlasse = wettkampfGruppe.alleRundenBegegnungen().get(rundenNummer).begegnungenJeRunde().get(0).getWettkaempfer1().altersklasse();
+		return new Runde(rundenNummer, mattenRunde, 0, null, null, altersKlasse, wettkampfGruppe, wettkampfGruppe.alleRundenBegegnungen().get(rundenNummer).begegnungenJeRunde());
 	}
 
 	/**
@@ -87,11 +87,11 @@ public class Sortierer {
 				logger.info("Es existiert nur eine Gruppe, daher fügen wir diese komplett hinzu");
 				WettkampfGruppe gruppeZuletzt = gruppen.get(gruppen.size() - 1);
 				int gruppeRunde = 0;
-				for (BegegnungsListe begegnungen : gruppeZuletzt.alleGruppenBegegnungen()) {
-					Altersklasse altersKlasseZuletzt = begegnungen.begegnungen().get(0).getWettkaempfer1().altersklasse();
+				for (BegegnungenJeRunde begegnungen : gruppeZuletzt.alleRundenBegegnungen()) {
+					Altersklasse altersKlasseZuletzt = begegnungen.begegnungenJeRunde().get(0).getWettkaempfer1().altersklasse();
 					gruppeRunde++;
 					int mattenRunde = rundenNummer + 1;
-					Runde rundeZuletzt = new Runde(rundenNummer, mattenRunde, gruppeRunde, null, null, altersKlasseZuletzt, gruppeZuletzt, begegnungen.begegnungen());
+					Runde rundeZuletzt = new Runde(rundenNummer, mattenRunde, gruppeRunde, null, null, altersKlasseZuletzt, gruppeZuletzt, begegnungen.begegnungenJeRunde());
 					runden.add(rundeZuletzt);
 					rundenNummer++;
 				}
@@ -106,18 +106,18 @@ public class Sortierer {
 		for (int gruppenNr = 0; gruppenNr < gruppen.size(); gruppenNr += 2) {
 			WettkampfGruppe gruppe1 = gruppen.get(gruppenNr);
 			WettkampfGruppe gruppe2 = gruppen.get(gruppenNr + 1);
-			Altersklasse altersKlasse1 = gruppe1.alleGruppenBegegnungen().get(0).begegnungen().get(0).getWettkaempfer1().altersklasse();
-			Altersklasse altersKlasse2 = gruppe2.alleGruppenBegegnungen().get(0).begegnungen().get(0).getWettkaempfer1().altersklasse();
+			Altersklasse altersKlasse1 = gruppe1.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().altersklasse();
+			Altersklasse altersKlasse2 = gruppe2.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().altersklasse();
 
 			int gruppe1Runde = 0;
 			int gruppe2Runde = 0;
 			// Abwechselnd die Begegnungen der gruppe1 und gruppe2 nehmen und der Matte hinzufügen
-			int maxAnzahlBegegnungen = Math.max(gruppe1.alleGruppenBegegnungen().size(), gruppe2.alleGruppenBegegnungen().size());
+			int maxAnzahlBegegnungen = Math.max(gruppe1.alleRundenBegegnungen().size(), gruppe2.alleRundenBegegnungen().size());
 			for (int r = 0; r < maxAnzahlBegegnungen; r++) {
-				if (gruppe1.alleGruppenBegegnungen().size() > r) {
+				if (gruppe1.alleRundenBegegnungen().size() > r) {
 					gruppe1Runde++;
 					int mattenRunde = resultRundenNummer + 1;
-					Runde runde1 = new Runde(resultRundenNummer, mattenRunde, gruppe1Runde, null, null, altersKlasse1, gruppe1, gruppe1.alleGruppenBegegnungen().get(r).begegnungen());
+					Runde runde1 = new Runde(resultRundenNummer, mattenRunde, gruppe1Runde, null, null, altersKlasse1, gruppe1, gruppe1.alleRundenBegegnungen().get(r).begegnungenJeRunde());
 					runden.add(runde1);
 					resultRundenNummer++;
 				} else {
@@ -129,10 +129,10 @@ public class Sortierer {
 					resultRundenNummer++;
 				}
 
-				if (gruppe2.alleGruppenBegegnungen().size() > r) {
+				if (gruppe2.alleRundenBegegnungen().size() > r) {
 					gruppe2Runde++;
 					int mattenRunde = resultRundenNummer + 1;
-					Runde runde2 = new Runde(resultRundenNummer, mattenRunde, gruppe2Runde, null, null, altersKlasse2, gruppe2, gruppe2.alleGruppenBegegnungen().get(r).begegnungen());
+					Runde runde2 = new Runde(resultRundenNummer, mattenRunde, gruppe2Runde, null, null, altersKlasse2, gruppe2, gruppe2.alleRundenBegegnungen().get(r).begegnungenJeRunde());
 					runden.add(runde2);
 					resultRundenNummer++;
 				} else {
@@ -164,9 +164,9 @@ public class Sortierer {
 		WettkampfGruppe gruppe1 = gruppen.get(0);
 		WettkampfGruppe gruppe2 = gruppen.get(1);
 		WettkampfGruppe gruppe3 = gruppen.get(2);
-		Altersklasse altersKlasse1 = gruppe1.alleGruppenBegegnungen().get(0).begegnungen().get(0).getWettkaempfer1().altersklasse();
-		Altersklasse altersKlasse2 = gruppe2.alleGruppenBegegnungen().get(0).begegnungen().get(0).getWettkaempfer1().altersklasse();
-		Altersklasse altersKlasse3 = gruppe3.alleGruppenBegegnungen().get(0).begegnungen().get(0).getWettkaempfer1().altersklasse();
+		Altersklasse altersKlasse1 = gruppe1.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().altersklasse();
+		Altersklasse altersKlasse2 = gruppe2.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().altersklasse();
+		Altersklasse altersKlasse3 = gruppe3.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().altersklasse();
 
 		int resultRundenNummer = rundenNummer;
 		int gruppe1Runde = 0;
@@ -174,11 +174,11 @@ public class Sortierer {
 		int gruppe3Runde = 0;
 
 		// Abwechselnd die Begegnungen der gruppe1 und gruppe2 nehmen und der Matte hinzufügen
-		for (int r = 0; r < Math.max(gruppe1.alleGruppenBegegnungen().size(), Math.max(gruppe2.alleGruppenBegegnungen().size(), gruppe3.alleGruppenBegegnungen().size())); r++) {
-			if (gruppe1.alleGruppenBegegnungen().size() > r) {
+		for (int r = 0; r < Math.max(gruppe1.alleRundenBegegnungen().size(), Math.max(gruppe2.alleRundenBegegnungen().size(), gruppe3.alleRundenBegegnungen().size())); r++) {
+			if (gruppe1.alleRundenBegegnungen().size() > r) {
 				gruppe1Runde++;
 				int mattenRunde = resultRundenNummer + 1;
-				Runde runde1 = new Runde(resultRundenNummer, mattenRunde, gruppe1Runde, null, null, altersKlasse1, gruppe1, gruppe1.alleGruppenBegegnungen().get(r).begegnungen());
+				Runde runde1 = new Runde(resultRundenNummer, mattenRunde, gruppe1Runde, null, null, altersKlasse1, gruppe1, gruppe1.alleRundenBegegnungen().get(r).begegnungenJeRunde());
 				runden.add(runde1);
 				resultRundenNummer++;
 			} else {
@@ -186,10 +186,10 @@ public class Sortierer {
 				logger.info("Gruppe 1 (von 3) ist leer, füge Dummy ein");
 			}
 
-			if (gruppe2.alleGruppenBegegnungen().size() > r) {
+			if (gruppe2.alleRundenBegegnungen().size() > r) {
 				gruppe2Runde++;
 				int mattenRunde = resultRundenNummer + 1;
-				Runde runde2 = new Runde(resultRundenNummer, mattenRunde, gruppe2Runde, null, null, altersKlasse2, gruppe2, gruppe2.alleGruppenBegegnungen().get(r).begegnungen());
+				Runde runde2 = new Runde(resultRundenNummer, mattenRunde, gruppe2Runde, null, null, altersKlasse2, gruppe2, gruppe2.alleRundenBegegnungen().get(r).begegnungenJeRunde());
 				runden.add(runde2);
 				resultRundenNummer++;
 			} else {
@@ -197,10 +197,10 @@ public class Sortierer {
 				logger.info("Gruppe 2 (von 3) ist leer, füge Dummy ein");
 			}
 
-			if (gruppe3.alleGruppenBegegnungen().size() > r) {
+			if (gruppe3.alleRundenBegegnungen().size() > r) {
 				gruppe3Runde++;
 				int mattenRunde = resultRundenNummer + 1;
-				Runde runde3 = new Runde(resultRundenNummer, mattenRunde, gruppe3Runde, null, null, altersKlasse3, gruppe3, gruppe3.alleGruppenBegegnungen().get(r).begegnungen());
+				Runde runde3 = new Runde(resultRundenNummer, mattenRunde, gruppe3Runde, null, null, altersKlasse3, gruppe3, gruppe3.alleRundenBegegnungen().get(r).begegnungenJeRunde());
 				runden.add(runde3);
 				resultRundenNummer++;
 			} else {

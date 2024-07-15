@@ -115,7 +115,7 @@
     if (sicher) {
       console.log("Erstelle die Begegnungen neu", data);
       fetch('/turnier/{{turnierid}}/begegnung', { method: 'POST', body: data })
-        .then(() => window.location.href='/turnier/{{turnierid}}/begegnungen/randori')
+        .then(() => window.location.href='/turnier/{{turnierid}}/begegnungenJeRunde/randori')
     };
   }
 
@@ -123,7 +123,7 @@
     var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern aller Altersklassen\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
     if (sicher) {
       fetch('/turnier/{{turnierid}}/begegnung', { method: 'DELETE' })
-        .then(() => window.location.href='/turnier/{{turnierid}}/begegnungen/randori')
+        .then(() => window.location.href='/turnier/{{turnierid}}/begegnungenJeRunde/randori')
     };
   };
 
