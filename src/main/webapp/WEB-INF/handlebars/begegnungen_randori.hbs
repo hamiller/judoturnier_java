@@ -37,6 +37,14 @@
     {{/if}}
     
     <div class="generalcontent">
+      {{#if separatealtersklassen.name "GETRENNT"}}
+        <div class="supertab">
+        {{#each altersklassen}}
+            <a><a href="/turnier/{{turnierid}}/begegnungen/randori?altersklasse={{this}}">Alterklasse {{this}}</a></div>
+        {{/each}}
+        </div>
+      {{/if}}
+
       <div class="tab">
         {{#each matten}}
         <button class="tablinks" onclick="openMatte(event, '{{id}}')">Matte {{id}}</button>
@@ -102,11 +110,11 @@
     };
   };
 
-  const renewBegegnung = async (altersklasse) => {
-    var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in der Altersklasse\n\t" + altersklasse + "\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+  const renewBegegnung = async (data) => {
+    var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in der Altersklasse\n\t" + data + "\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
     if (sicher) {
-      console.log("Erstelle die Begegnungen neu", altersklasse);
-      fetch('/turnier/{{turnierid}}/begegnung', { method: 'POST', body: altersklasse })
+      console.log("Erstelle die Begegnungen neu", data);
+      fetch('/turnier/{{turnierid}}/begegnung', { method: 'POST', body: data })
         .then(() => window.location.href='/turnier/{{turnierid}}/begegnungen/randori')
     };
   }

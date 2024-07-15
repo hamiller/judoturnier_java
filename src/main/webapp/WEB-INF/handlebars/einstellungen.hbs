@@ -39,6 +39,12 @@
           <input type="radio" name="wettkampfreihenfolge" value="ALLE" {{setChecked "ALLE" wettkampfreihenfolge.name}}/><label>Es kämpfen je Durchgang alle Gruppen</label>
         </div>
 
+        <div class="listeneintrag">
+          <input type="radio" name="separatealtersklassen" value="GETRENNT" {{setChecked "GETRENNT" separatealtersklassen.name}}/><label>Die Jahrgänge kämpfen nacheinander, immer nur ein Jahrgang gleichzeitig bis er komplett fertig ist</label>
+          <input type="radio" name="separatealtersklassen" value="GETRENNT_NACH_MATTEN" {{setChecked "GETRENNT_NACH_MATTEN" separatealtersklassen.name}} disabled/><label>(Nicht implementiert!) Die Jahrgänge kämpfen parallel, jedoch strikt nach Matten getrennt</label>
+          <input type="radio" name="separatealtersklassen" value="ZUSAMMEN" {{setChecked "ZUSAMMEN" separatealtersklassen.name}}/><label>Die Jahrgänge kämpfen gleichzeitig</label>
+        </div>
+
       </form>
     </div>
 

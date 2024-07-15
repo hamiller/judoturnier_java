@@ -14,6 +14,7 @@ import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Runde;
+import de.sinnix.judoturnier.model.SeparateAlterklassen;
 import de.sinnix.judoturnier.model.Turnier;
 import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.Wertung;
@@ -30,8 +31,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class TurnierService {
@@ -99,6 +102,22 @@ public class TurnierService {
 
 		Einstellungen einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
 		List<GewichtsklassenGruppe> gwks = altersklasse.isPresent() ? gewichtsklassenService.ladeGewichtsklassenGruppe(altersklasse.get(), turnierUUID) : gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
+		if (einstellungen.separateAlterklassen().equals(SeparateAlterklassen.GETRENNT)) {
+			logger.info("Trenne nach Altersklassen...");
+
+			// Gruppieren nach Altersklasse
+			Map<Altersklasse, List<GewichtsklassenGruppe>> groupedByAltersklasse = gwks.stream()
+				.collect(Collectors.groupingBy(GewichtsklassenGruppe::altersKlasse));
+
+			groupedByAltersklasse.values().stream().forEach(groupedGwks -> erstelleMatten(groupedGwks, einstellungen));
+			return;
+		}
+
+		logger.info("Alle Altersklassen zusammen...");
+		erstelleMatten(gwks, einstellungen);
+	}
+
+	private void erstelleMatten(List<GewichtsklassenGruppe> gwks, Einstellungen einstellungen) {
 		if (einstellungen.turnierTyp() == TurnierTyp.RANDORI) {
 			// check gruppe auf vorhandene Daten
 			checkGruppenSindValide(gwks);
@@ -170,7 +189,7 @@ public class TurnierService {
 	}
 
 	private List<Matte> erstelleGruppenReihenfolgeRandori(List<WettkampfGruppe> wettkampfGruppen, Integer anzahlMatten, WettkampfReihenfolge reihenfolge) {
-		logger.debug("erstelle Reihenfolge der Wettkämpfe aus den Wettkampfgruppen: {} ", wettkampfGruppen.size(), reihenfolge);
+		logger.debug("erstelle Reihenfolge der Wettkämpfe aus den Wettkampfgruppen: {}, {}", wettkampfGruppen.size(), reihenfolge);
 		List<Matte> matten = new ArrayList<>();
 
 		// Ausplitten der Begegnungen auf die Matten
@@ -179,13 +198,9 @@ public class TurnierService {
 
 		for (int m = 0; m < anzahlMatten; m++) {
 			var gruppen = wettkampfGruppenJeMatten.get(m);
-
-			// TODO
-			// sortiere die Gruppen, sodass die Gruppen mit wenigen Kämpfen ganz hinten sind, aber die Altersklassen zusammen bleiben
-			// gruppen.sort((gs1, gs2) => if (gs2.alleGruppenBegegnungen[0][0].wettkaempfer1.altersklasse ) gs2.alleGruppenBegegnungen.length - gs1.alleGruppenBegegnungen.length);
-			// this.logWettkampfGruppen(gruppen)
 			List<Runde> runden = new ArrayList<>();
 			Integer matteId = m + 1;
+			logger.debug("Sortiere für Matte {}", matteId);
 			switch (reihenfolge) {
 				case WettkampfReihenfolge.ABWECHSELND:
 					runden = sortierer.erstelleReihenfolgeMitAbwechselndenGruppen(gruppen);
@@ -198,22 +213,6 @@ public class TurnierService {
 			}
 		}
 		logger.trace("Matten {}", matten);
-
-		//		int erwartet = wettkampfGruppenJeMatten.stream()
-		//			.mapToInt(wgm -> wgm.stream()
-		//				.mapToInt(gr -> gr.alleGruppenBegegnungen().stream()
-		//					.mapToInt(br -> br.size())
-		//					.sum())
-		//				.sum())
-		//			.sum();
-
-		// Berechnung der "summe"
-		int summe = matten.stream()
-			.mapToInt(m -> m.runden().stream()
-				.mapToInt(r -> r.begegnungen().size())
-				.sum())
-			.sum();
-		logger.debug("erwartet {}, summe {}, mattenanzahl {}", "nicht implementier", summe, anzahlMatten);
 		return matten;
 	}
 

@@ -79,7 +79,7 @@ public class GewichtsklassenController {
 	}
 
 	@PostMapping("/turnier/{turnierid}/gewichtsklassen-renew")
-	@PreAuthorize("hasRole('ROLE_AMDIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView erstelleGewichtsklassenNeu(@PathVariable String turnierid) {
 		logger.info("erstelle Gewichtsklassen");
 		var wks = wettkaempferService.alleKaempfer(UUID.fromString(turnierid));
@@ -90,7 +90,7 @@ public class GewichtsklassenController {
 	}
 
 	@PostMapping("/turnier/{turnierid}/gewichtsklasse-renew")
-	@PreAuthorize("hasRole('ROLE_AMDIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView erstelleGewichtsklasseNeu(@PathVariable String turnierid, @RequestBody String altersklasseString) {
 		logger.info("erneuere Gewichtsklasse für Altersklasse {}", altersklasseString);
 		if (altersklasseString == null || altersklasseString.isBlank()) {
@@ -111,7 +111,7 @@ public class GewichtsklassenController {
 	}
 
 	@PostMapping("/turnier/{turnierid}/gewichtsklassen")
-	@PreAuthorize("hasRole('ROLE_AMDIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView speichereGewichtsklassen(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
 		logger.debug("speichere Gewichtsklassen {}", formData);
 

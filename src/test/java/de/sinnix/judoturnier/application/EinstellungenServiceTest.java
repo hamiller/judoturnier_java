@@ -5,6 +5,7 @@ import de.sinnix.judoturnier.adapter.secondary.EinstellungJpaRepository;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.MattenAnzahl;
 import de.sinnix.judoturnier.model.RandoriGruppengroesse;
+import de.sinnix.judoturnier.model.SeparateAlterklassen;
 import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.VariablerGewichtsteil;
 import de.sinnix.judoturnier.model.WettkampfReihenfolge;
@@ -57,7 +58,7 @@ class EinstellungenServiceTest {
 
     @Test
     void testSpeichereTurnierEinstellungen() {
-        Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(4), WettkampfReihenfolge.ABWECHSELND, new RandoriGruppengroesse(6), new VariablerGewichtsteil(0.2d), turnierUUID);
+        Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(4), WettkampfReihenfolge.ABWECHSELND, new RandoriGruppengroesse(6), new VariablerGewichtsteil(0.2d), SeparateAlterklassen.ZUSAMMEN, turnierUUID);
 
         EinstellungJpa turnierTypJpa = new EinstellungJpa(TurnierTyp.TYP, "RANDORI", turnierUUID.toString());
         EinstellungJpa mattenAnzahlJpa = new EinstellungJpa(MattenAnzahl.TYP, "4", turnierUUID.toString());

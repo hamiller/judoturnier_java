@@ -5,19 +5,19 @@ import de.sinnix.judoturnier.application.GewichtsklassenService;
 import de.sinnix.judoturnier.application.TurnierService;
 import de.sinnix.judoturnier.application.WettkaempferService;
 import de.sinnix.judoturnier.model.Altersklasse;
-import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Bewerter;
+import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.GruppenRunde;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Turnier;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -114,21 +114,40 @@ public class TurnierController {
 	}
 
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori")
-	public ModelAndView ladeWettkampfreihenfolgeJeMatteRandori(@PathVariable String turnierid, @RequestParam(value = "error", required = false) String error) {
+	public ModelAndView ladeWettkampfreihenfolgeJeMatteRandori(@PathVariable String turnierid, @RequestParam(value = "error", required = false) String error, @RequestParam(value = "altersklasse", required = false) String altersklasse) {
 		var turnierUUID = UUID.fromString(turnierid);
 		List<GewichtsklassenGruppe> gwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID);
 		Set<Altersklasse> altersklassen = gwks.stream()
 			.map(GewichtsklassenGruppe::altersKlasse)
 			.collect(Collectors.toSet());
+		Einstellungen einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
+
+		List<Matte> gefilterteMatten = wettkampfreihenfolgeJeMatte; // Initialisiere mit der ursprünglichen Liste
+
+		if (!StringUtils.isBlank(altersklasse)) {
+			var altersKlasse = Altersklasse.valueOf(altersklasse);
+			// Filtern der Liste nach Altersklasse "U11" und Erstellen der neuen Liste von Matten
+			gefilterteMatten = wettkampfreihenfolgeJeMatte.stream()
+				.map(matte -> new Matte(
+					matte.id(),
+					matte.runden().stream()
+						.filter(runde -> altersKlasse.equals(runde.altersklasse()))
+						.collect(Collectors.toList()),
+					matte.gruppenRunden()
+				))
+				.filter(matte -> !matte.runden().isEmpty())
+				.collect(Collectors.toList());
+		}
 
 		logger.trace("wettkampfreihenfolgeJeMatte {} ", wettkampfreihenfolgeJeMatte);
 		ModelAndView mav = new ModelAndView("begegnungen_randori");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("gewichtsklassenGruppe", gwks);
-		mav.addObject("matten", wettkampfreihenfolgeJeMatte);
+		mav.addObject("matten", gefilterteMatten);
 		mav.addObject("altersklassen", altersklassen);
 		mav.addObject("preverror", error);
+		mav.addObject("separatealtersklassen", einstellungen.separateAlterklassen());
 		return mav;
 	}
 
@@ -163,13 +182,14 @@ public class TurnierController {
 		}
 	}
 
-	@PostMapping("/turnier/{turnierid}/begegnung")
+	@PostMapping(value = "/turnier/{turnierid}/begegnung")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ModelAndView erneuerWettkampfreihenfolgeFuerAltersklasse(@PathVariable String turnierid, @RequestBody Altersklasse ak) {
+	public ModelAndView erneuerWettkampfreihenfolgeFuerAltersklasse(@PathVariable String turnierid, @RequestBody String altersklasse) {
+		logger.info("Erneuere Wettkampfbegegnungen für Altersklasse {}", altersklasse);
 		String error = "";
 		try {
-			turnierService.loescheWettkampfreihenfolgeAltersklasse(ak, UUID.fromString(turnierid));
-			turnierService.erstelleWettkampfreihenfolgeAltersklasse(Optional.of(ak), UUID.fromString(turnierid));
+			turnierService.loescheWettkampfreihenfolgeAltersklasse(Altersklasse.valueOf(altersklasse), UUID.fromString(turnierid));
+			turnierService.erstelleWettkampfreihenfolgeAltersklasse(Optional.of(Altersklasse.valueOf(altersklasse)), UUID.fromString(turnierid));
 		} catch (Exception e) {
 			error = e.toString();
 		}
@@ -182,7 +202,7 @@ public class TurnierController {
 
 	@DeleteMapping("/turnier/{turnierid}/begegnung")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ModelAndView entferneWettkampfreihenfolgeFuerAltersklasse(@PathVariable String turnierid) {
+	public ModelAndView entferneWettkampfreihenfolgen(@PathVariable String turnierid) {
 		logger.info("Lösche alle Begegnungen...");
 		String error = "";
 		try {
@@ -227,50 +247,6 @@ public class TurnierController {
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("matten", wettkampfreihenfolgeJeMatteGefiltertUndGruppiert);
 		return mav;
-	}
-
-	@GetMapping("/turnier/{turnierid}/begegnungen/randori/{id}")
-	public ModelAndView begegnungRandori(@PathVariable String turnierid, @PathVariable String id) {
-		Bewerter bewerter = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
-		Begegnung begegnung = turnierService.ladeBegegnung(Integer.parseInt(id));
-		BegegnungDto begegnungDto = convertFromBegegnung(begegnung, bewerter.id());
-
-		ModelAndView mav = new ModelAndView("wettkampf_randori");
-		mav.addObject("turnierid", turnierid);
-		mav.addObject("begegnung", begegnungDto);
-		mav.addObject("begegnungid", id);
-		mav.addObject("bewerter", bewerter);
-		mav.addObject("enableEditing", bewerter.darfEditieren());
-		return mav;
-	}
-
-	private BegegnungDto convertFromBegegnung(Begegnung begegnung, String userid) {
-		var begegnungId = begegnung.getBegegnungId();
-		var	wettkaempfer1 = begegnung.getWettkaempfer1();
-		var	wettkaempfer2 = begegnung.getWettkaempfer2();
-		var kampfrichterWertung = begegnung.getWertungen().stream().filter(w -> w.getBewerter().id().equals(userid)).findFirst();
-		return new BegegnungDto(begegnungId, wettkaempfer1, wettkaempfer2, kampfrichterWertung, begegnung.getWertungen());
-	}
-
-
-	@PostMapping("/turnier/{turnierid}/begegnungen/randori/{begegnungId}")
-	@PreAuthorize("hasRole('ROLE_KAMPFRICHTER')")
-	public ModelAndView speichereBegegnungRandori(@PathVariable String turnierid, @PathVariable String begegnungId, @RequestBody MultiValueMap<String, String> formData) {
-		logger.info("Speichere Wertung für Begegnung {}: {}", begegnungId, formData);
-
-		Bewerter bewerter = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
-
-		var kampfgeist1 = Integer.parseInt(formData.get("kampfgeist1").getFirst());
-		var technik1 = Integer.parseInt(formData.get("technik1").getFirst());
-		var stil1 = Integer.parseInt(formData.get("stil1").getFirst());
-		var fairness1 = Integer.parseInt(formData.get("fairness1").getFirst());
-		var kampfgeist2 = Integer.parseInt(formData.get("kampfgeist2").getFirst());
-		var technik2 = Integer.parseInt(formData.get("technik2").getFirst());
-		var stil2 = Integer.parseInt(formData.get("stil2").getFirst());
-		var fairness2 = Integer.parseInt(formData.get("fairness2").getFirst());
-
-		turnierService.speichereRandoriWertung(begegnungId, kampfgeist1, technik1, stil1, fairness1, kampfgeist2, technik2, stil2, fairness2, bewerter.id());
-		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori");
 	}
 
 	private List<Matte> gruppiereNachGruppen(List<Matte> matten) {

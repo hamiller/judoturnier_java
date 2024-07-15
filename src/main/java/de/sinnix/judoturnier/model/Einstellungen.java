@@ -8,5 +8,6 @@ public record Einstellungen(
 	WettkampfReihenfolge wettkampfReihenfolge,
 	RandoriGruppengroesse randoriGruppengroesse,
 	VariablerGewichtsteil variablerGewichtsteil,
+	SeparateAlterklassen separateAlterklassen,
 	UUID turnierUUID) {
 }

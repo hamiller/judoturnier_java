@@ -5,6 +5,7 @@ import de.sinnix.judoturnier.adapter.secondary.EinstellungJpaRepository;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.MattenAnzahl;
 import de.sinnix.judoturnier.model.RandoriGruppengroesse;
+import de.sinnix.judoturnier.model.SeparateAlterklassen;
 import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.VariablerGewichtsteil;
 import de.sinnix.judoturnier.model.WettkampfReihenfolge;
@@ -28,6 +29,8 @@ public class EinstellungenService {
 	private static final WettkampfReihenfolge  DEFAULT_WETTKAMPFREIHENFOLGE   = WettkampfReihenfolge.ABWECHSELND;
 	private static final RandoriGruppengroesse DEFAULT_RANDORIGRUPPENGROESSE  = new RandoriGruppengroesse(6);
 	private static final VariablerGewichtsteil DEFAULT_VARIABLER_GEWICHTSTEIL = new VariablerGewichtsteil(0.2);
+	private static final SeparateAlterklassen  DEFAULT_SEPARATE_ALTERKLASSEN  = SeparateAlterklassen.GETRENNT;
+
 
 	public Einstellungen ladeEinstellungen(UUID turnierUUID) {
 		logger.info("EinstellungenService ladeEinstellungen()");
@@ -37,8 +40,8 @@ public class EinstellungenService {
 		WettkampfReihenfolge wettkampfReihenfolge = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(WettkampfReihenfolge.TYP)).findFirst().map(t -> WettkampfReihenfolge.valueOf(t.getWert())).orElseGet(() -> DEFAULT_WETTKAMPFREIHENFOLGE);
 		RandoriGruppengroesse randoriGruppengroesse = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(RandoriGruppengroesse.TYP)).findFirst().map(r -> new RandoriGruppengroesse(Integer.parseInt(r.getWert()))).orElseGet(() -> DEFAULT_RANDORIGRUPPENGROESSE);
 		VariablerGewichtsteil variablerGewichtsteil = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(VariablerGewichtsteil.TYP)).findFirst().map(v -> new VariablerGewichtsteil(Double.parseDouble(v.getWert()))).orElseGet(() -> DEFAULT_VARIABLER_GEWICHTSTEIL);
-
-		return new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge, randoriGruppengroesse, variablerGewichtsteil, turnierUUID);
+		SeparateAlterklassen separateAlterklassen = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(SeparateAlterklassen.TYP)).findFirst().map(t -> SeparateAlterklassen.valueOf(t.getWert())).orElse(DEFAULT_SEPARATE_ALTERKLASSEN);
+		return new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge, randoriGruppengroesse, variablerGewichtsteil, separateAlterklassen, turnierUUID);
 	}
 
 	public Einstellungen speichereTurnierEinstellungen(Einstellungen einstellungen) {
@@ -48,8 +51,9 @@ public class EinstellungenService {
 			new EinstellungJpa(einstellungen.mattenAnzahl().TYP, einstellungen.mattenAnzahl().anzahl().toString(), einstellungen.turnierUUID().toString()),
 			new EinstellungJpa(einstellungen.wettkampfReihenfolge().TYP, einstellungen.wettkampfReihenfolge().name(), einstellungen.turnierUUID().toString()),
 			new EinstellungJpa(einstellungen.randoriGruppengroesse().TYP, einstellungen.randoriGruppengroesse().anzahl().toString(), einstellungen.turnierUUID().toString()),
-			new EinstellungJpa(einstellungen.variablerGewichtsteil().TYP, einstellungen.variablerGewichtsteil().variablerTeil().toString(), einstellungen.turnierUUID().toString())
-			);
+			new EinstellungJpa(einstellungen.variablerGewichtsteil().TYP, einstellungen.variablerGewichtsteil().variablerTeil().toString(), einstellungen.turnierUUID().toString()),
+			new EinstellungJpa(einstellungen.separateAlterklassen().TYP, einstellungen.separateAlterklassen().name(), einstellungen.turnierUUID().toString())
+		);
 		einstellungJpaRepository.saveAll(jpaList);
 		return ladeEinstellungen(einstellungen.turnierUUID());
 	}

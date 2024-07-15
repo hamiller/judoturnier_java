@@ -24,7 +24,7 @@ public class Sortierer {
 	private static final int DEFAULT_MAX_RUNDEN = 100;
 
 	/**
-	 * Es werd die erste Runde aller Gruppen gekämpft, danach die zweite Runde aller Gruppen usw.
+	 * Es wird die erste Runde aller Gruppen gekämpft, danach die zweite Runde aller Gruppen usw.
 	 */
 	public List<Runde> erstelleReihenfolgeMitAllenGruppenJeDurchgang(List<WettkampfGruppe> gruppen) {
 		logger.info("erstelleReihenfolgeMitAllenGruppenJeDurchgang...");

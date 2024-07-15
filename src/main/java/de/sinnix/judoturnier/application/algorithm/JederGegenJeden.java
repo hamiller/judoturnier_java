@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class JederGegenJeden implements Algorithmus {
 	private static final Logger logger                   = LogManager.getLogger(JederGegenJeden.class);

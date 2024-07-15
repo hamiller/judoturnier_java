@@ -59,6 +59,7 @@ public class GewichtsklassenService {
 		return ladeGewichtsklassenGruppen(turnierUUID).stream()
 			.filter(g -> g.altersKlasse().equals(altersklasse))
 			.sorted(Comparator.comparingDouble(GewichtsklassenGruppe::maxGewicht))
+			.peek(g -> logger.debug("Gruppengröße {}", g.teilnehmer().size()))
 			.collect(Collectors.toList());
 	}
 

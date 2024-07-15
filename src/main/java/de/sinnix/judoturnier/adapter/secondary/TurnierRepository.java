@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Repository
 public class TurnierRepository {
@@ -122,7 +123,7 @@ public class TurnierRepository {
 			}
 		}
 
-		logger.info("Speichere Begegnungen {}", begegnungJpaList);
+		logger.info("Speichere Begegnungen-Liste (Größe: {}) für Matte {}", begegnungJpaList.size(), matte.id());
 		begegnungJpaRepository.saveAll(begegnungJpaList);
 	}
 
@@ -136,9 +137,12 @@ public class TurnierRepository {
 		}
 	}
 
+	@Transactional
 	public void loescheWettkaempfeMitAltersklasse(Altersklasse altersklasse, UUID turnierUUID) {
-		logger.warn("loescheWettkaempfeMitAltersklasse - not yet implemented!");
-//		begegnungJpaRepository.findAll().stream().filter(begegnungJpa -> begegnungJpa.)
+		logger.info("loesche Wettkaempfe mit Altersklasse {}", altersklasse);
+		begegnungJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream()
+			.filter(begegnungJpa -> begegnungJpa.getWettkaempfer1().getAltersklasse().equals(altersklasse.name()))
+			.forEach(begegnungJpa -> begegnungJpaRepository.deleteById(begegnungJpa.getId()));
 	}
 
 	public void speichereBegegnung(Begegnung begegnung) {
