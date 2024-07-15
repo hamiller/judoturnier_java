@@ -53,7 +53,7 @@ class JederGegenJedenTest {
 		assertEquals(anzahlRunden, erstellteWettkampfgruppen.getFirst().alleGruppenBegegnungen().size());
 		// Berechnung der Gesamtanzahl aller Begegnungen bei Jeder-Gegen-Jeden: N = (n * (n-1)) /2, mit n==AnzahlTeilnehmer
 		var N = (n * (n-1)) /2;
-		assertEquals(N, erstellteWettkampfgruppen.getFirst().alleGruppenBegegnungen().stream().mapToInt(begegnung -> begegnung.size()).sum());
+		assertEquals(N, erstellteWettkampfgruppen.getFirst().alleGruppenBegegnungen().stream().mapToInt(begegnung -> begegnung.begegnungen().size()).sum());
 	}
 
 	@Test
@@ -77,7 +77,7 @@ class JederGegenJedenTest {
 		assertEquals(anzahlRunden, erstellteWettkampfgruppen.getFirst().alleGruppenBegegnungen().size());
 		// Berechnung der Gesamtanzahl aller Begegnungen bei Jeder-Gegen-Jeden: N = (n * (n-1)) /2, mit n==AnzahlTeilnehmer
 		var N = (n * (n-1)) /2;
-		assertEquals(N, erstellteWettkampfgruppen.getFirst().alleGruppenBegegnungen().stream().mapToInt(begegnung -> begegnung.size()).sum());
+		assertEquals(N, erstellteWettkampfgruppen.getFirst().alleGruppenBegegnungen().stream().mapToInt(begegnung -> begegnung.begegnungen().size()).sum());
 
 		System.out.println(erstellteWettkampfgruppen);
 	}
@@ -91,6 +91,6 @@ class JederGegenJedenTest {
 
 		assertEquals(1, erstellteWettkampfgruppen.size());
 		assertTrue(!erstellteWettkampfgruppen.getFirst().alleGruppenBegegnungen().isEmpty());
-		assertEquals(1, erstellteWettkampfgruppen.getFirst().alleGruppenBegegnungen().stream().mapToInt(b -> b.size()).sum());
+		assertEquals(1, erstellteWettkampfgruppen.getFirst().alleGruppenBegegnungen().stream().mapToInt(b -> b.begegnungen().size()).sum());
 	}
 }
