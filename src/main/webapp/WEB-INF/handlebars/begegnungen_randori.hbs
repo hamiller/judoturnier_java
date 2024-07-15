@@ -107,7 +107,7 @@
     if (sicher) {
       console.log("Erstelle die Begegnungen neu", altersklasse);
       fetch('/turnier/{{turnierid}}/begegnung', { method: 'POST', body: altersklasse })
-        .then(() => window.location.href='/turnier/begegnungen/randori')
+        .then(() => window.location.href='/turnier/{{turnierid}}/begegnungen/randori')
     };
   }
 
@@ -115,7 +115,7 @@
     var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern aller Altersklassen\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
     if (sicher) {
       fetch('/turnier/{{turnierid}}/begegnung', { method: 'DELETE' })
-        .then(() => window.location.href='/turnier/begegnungen/randori')
+        .then(() => window.location.href='/turnier/{{turnierid}}/begegnungen/randori')
     };
   };
 

@@ -126,8 +126,14 @@ public class TurnierRepository {
 		begegnungJpaRepository.saveAll(begegnungJpaList);
 	}
 
+	@Transactional
 	public void loescheAlleMatten(UUID turnierUUID) {
-		begegnungJpaRepository.deleteAllByTurnierUUID(turnierUUID.toString());
+		logger.info("Lösche alle Matten für Turnier {}", turnierUUID);
+		try {
+			begegnungJpaRepository.deleteAllByTurnierUUID(turnierUUID.toString());
+		}catch (Exception e) {
+			logger.error("Fehler", e);
+		}
 	}
 
 	public void loescheWettkaempfeMitAltersklasse(Altersklasse altersklasse, UUID turnierUUID) {

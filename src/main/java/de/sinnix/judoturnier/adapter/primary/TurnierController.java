@@ -73,10 +73,10 @@ public class TurnierController {
 	}
 
 	@PostMapping("/turnier")
-	@PreAuthorize("hasRole('ROLE_AMDIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView erstelleTurnier(@RequestBody MultiValueMap<String, String> formData) {
 		logger.debug("erstelle ein neues Turnier {}", formData);
-		Bewerter bewerter = extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		Bewerter bewerter = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
 
 		var name = formData.get("name").getFirst();
 		var ort = formData.get("ort").getFirst();
@@ -92,7 +92,7 @@ public class TurnierController {
 		logger.debug("Turnierübersicht {} angefragt, eingeloggt", turnierid);
 
 		// aktuell nur zum prüfen...
-		Bewerter bewerter = extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		Bewerter bewerter = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
 		Turnier t = turnierService.ladeTurnier(turnierid);
 
 		var wks = wettkaempferService.alleKaempfer(UUID.fromString(turnierid));
@@ -146,7 +146,7 @@ public class TurnierController {
 	}
 
 	@PostMapping("/turnier/{turnierid}/begegnungen")
-	@PreAuthorize("hasRole('ROLE_AMDIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView erstelleWettkampfreihenfolgeJeMatte(@PathVariable String turnierid) {
 		String error = "";
 		try {
@@ -164,7 +164,7 @@ public class TurnierController {
 	}
 
 	@PostMapping("/turnier/{turnierid}/begegnung")
-	@PreAuthorize("hasRole('ROLE_AMDIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView erneuerWettkampfreihenfolgeFuerAltersklasse(@PathVariable String turnierid, @RequestBody Altersklasse ak) {
 		String error = "";
 		try {
@@ -181,8 +181,9 @@ public class TurnierController {
 	}
 
 	@DeleteMapping("/turnier/{turnierid}/begegnung")
-	@PreAuthorize("hasRole('ROLE_AMDIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView entferneWettkampfreihenfolgeFuerAltersklasse(@PathVariable String turnierid) {
+		logger.info("Lösche alle Begegnungen...");
 		String error = "";
 		try {
 			turnierService.loescheWettkampfreihenfolge(UUID.fromString(turnierid));
@@ -230,7 +231,7 @@ public class TurnierController {
 
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori/{id}")
 	public ModelAndView begegnungRandori(@PathVariable String turnierid, @PathVariable String id) {
-		Bewerter bewerter = extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		Bewerter bewerter = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
 		Begegnung begegnung = turnierService.ladeBegegnung(Integer.parseInt(id));
 		BegegnungDto begegnungDto = convertFromBegegnung(begegnung, bewerter.id());
 
@@ -257,7 +258,7 @@ public class TurnierController {
 	public ModelAndView speichereBegegnungRandori(@PathVariable String turnierid, @PathVariable String begegnungId, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("Speichere Wertung für Begegnung {}: {}", begegnungId, formData);
 
-		Bewerter bewerter = extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		Bewerter bewerter = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
 
 		var kampfgeist1 = Integer.parseInt(formData.get("kampfgeist1").getFirst());
 		var technik1 = Integer.parseInt(formData.get("technik1").getFirst());
@@ -270,24 +271,6 @@ public class TurnierController {
 
 		turnierService.speichereRandoriWertung(begegnungId, kampfgeist1, technik1, stil1, fairness1, kampfgeist2, technik2, stil2, fairness2, bewerter.id());
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori");
-	}
-
-	private Bewerter extractBewerter(Authentication authentication) {
-		try {
-			var principal = (DefaultOidcUser) authentication.getPrincipal();
-			var userid = principal.getUserInfo().getSubject();
-			var username = principal.getUserInfo().getPreferredUsername();
-			var fullname = principal.getUserInfo().getFullName();
-			var rollen = authentication.getAuthorities().stream().map(a -> a.getAuthority()).toList();
-
-			Bewerter result = new Bewerter(userid, username, fullname, rollen);
-			logger.info("Eingeloggter User {}", result);
-			return result;
-		}
-		catch (Exception e) {
-			logger.info("Nutzer konnte nicht geparsed werden! {}", authentication, e);
-			throw e;
-		}
 	}
 
 	private List<Matte> gruppiereNachGruppen(List<Matte> matten) {

@@ -1,12 +1,15 @@
 package de.sinnix.judoturnier.adapter.primary;
 
 import com.github.jknack.handlebars.Options;
+import de.sinnix.judoturnier.model.Bewerter;
 import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Wertung;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -117,6 +120,10 @@ public class HelperSource {
 
 	public static Object optional(Optional<?> optional, Options options) throws IOException {
 		logger.trace("Checking for optional... {}", optional);
+		if (optional == null) {
+			logger.warn("Null statt Optional erhalten...");
+			return null;
+		}
 		if (optional.isPresent()) {
 			return options.fn(optional.get());
 		} else {
@@ -135,5 +142,23 @@ public class HelperSource {
 		}
 
 		return text.substring(0, size);
+	}
+
+	public static Bewerter extractBewerter(Authentication authentication) {
+		try {
+			var principal = (DefaultOidcUser) authentication.getPrincipal();
+			var userid = principal.getUserInfo().getSubject();
+			var username = principal.getUserInfo().getPreferredUsername();
+			var fullname = principal.getUserInfo().getFullName();
+			var rollen = authentication.getAuthorities().stream().map(a -> a.getAuthority()).toList();
+
+			Bewerter result = new Bewerter(userid, username, fullname, rollen);
+			logger.info("Eingeloggter User {}", result);
+			return result;
+		}
+		catch (Exception e) {
+			logger.info("Nutzer konnte nicht geparsed werden! {}", authentication, e);
+			throw e;
+		}
 	}
 }
