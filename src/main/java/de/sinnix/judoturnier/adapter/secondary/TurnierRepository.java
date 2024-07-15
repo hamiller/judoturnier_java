@@ -79,8 +79,7 @@ public class TurnierRepository {
 				List.of(b));
 			if (!matteMap.containsKey(matteId)) {
 				List<Runde> rundeList = new ArrayList<>();
-				List<GruppenRunde> gruppenRundeList = new ArrayList<>();
-				matteMap.put(matteId, new Matte(matteId, rundeList, gruppenRundeList));
+				matteMap.put(matteId, new Matte(matteId, rundeList));
 			}
 			matteMap.get(matteId).runden().add(r);
 		}

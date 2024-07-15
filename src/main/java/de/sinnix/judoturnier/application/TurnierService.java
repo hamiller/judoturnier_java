@@ -204,11 +204,11 @@ public class TurnierService {
 			switch (reihenfolge) {
 				case WettkampfReihenfolge.ABWECHSELND:
 					runden = sortierer.erstelleReihenfolgeMitAbwechselndenGruppen(gruppen);
-					matten.add(new Matte(matteId, runden, null));
+					matten.add(new Matte(matteId, runden));
 					break;
 				case WettkampfReihenfolge.ALLE:
 					runden = sortierer.erstelleReihenfolgeMitAllenGruppenJeDurchgang(gruppen);
-					matten.add(new Matte(matteId, runden, null));
+					matten.add(new Matte(matteId, runden));
 					break;
 			}
 		}

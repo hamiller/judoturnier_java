@@ -4,6 +4,5 @@ import java.util.List;
 
 public record Matte(
 	Integer id,
-	List<Runde> runden,
-	List<GruppenRunde> gruppenRunden) {
+	List<Runde> runden) {
 }

@@ -117,7 +117,7 @@ class TurnierRepositoryTest {
 		begegnungList.add(new Begegnung(1, 2, 3, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, null, wkg, turnierUUID));
 		List<Runde> rundenList = new ArrayList<>();
 		rundenList.add(new Runde(1, 3, 4, 4, 5, Altersklasse.U11, wkg, begegnungList));
-		Matte matte = new Matte(2, rundenList, new ArrayList<>());
+		Matte matte = new Matte(2, rundenList);
 		List<Matte> mattenList = Arrays.asList(matte);
 
 		WettkampfGruppeJpa wkgJpa = new WettkampfGruppeJpa(1, "name", "typ", turnierUUID.toString());
@@ -139,7 +139,7 @@ class TurnierRepositoryTest {
 		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of(), turnierUUID);
 		Begegnung begegnung = new Begegnung(1, 5, 3, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, null, wkg, turnierUUID);
 		Runde runde = new Runde(1, 3, 4, 1, 5, Altersklasse.U12, wkg, Arrays.asList(begegnung));
-		Matte matte = new Matte(5, Arrays.asList(runde), new ArrayList<>());
+		Matte matte = new Matte(5, Arrays.asList(runde));
 
 		WettkampfGruppeJpa wkgJpa = new WettkampfGruppeJpa(1, "name", "typ", turnierUUID.toString());
 		BegegnungJpa begegnungJpa = new BegegnungJpa(null, 5, 3, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, null, wkgJpa.getId(), turnierUUID.toString());

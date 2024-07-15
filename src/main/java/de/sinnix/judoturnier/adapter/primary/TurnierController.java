@@ -15,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.MultiValueMap;
@@ -133,8 +132,7 @@ public class TurnierController {
 					matte.id(),
 					matte.runden().stream()
 						.filter(runde -> altersKlasse.equals(runde.altersklasse()))
-						.collect(Collectors.toList()),
-					matte.gruppenRunden()
+						.collect(Collectors.toList())
 				))
 				.filter(matte -> !matte.runden().isEmpty())
 				.collect(Collectors.toList());
@@ -226,7 +224,7 @@ public class TurnierController {
 		List<Matte> wettkampfreihenfolgeJeMatteGefiltert = wettkampfreihenfolgeJeMatte.stream()
 			.filter(matte -> matte.runden().stream().anyMatch(r -> r.altersklasse().name().equals(altersklasse)))
 			.collect(Collectors.toList());
-		List<Matte> wettkampfreihenfolgeJeMatteGefiltertUndGruppiert = gruppiereNachGruppen(wettkampfreihenfolgeJeMatteGefiltert);
+		List<MatteDto> wettkampfreihenfolgeJeMatteGefiltertUndGruppiert = gruppiereNachGruppen(wettkampfreihenfolgeJeMatteGefiltert);
 
 		ModelAndView mav = new ModelAndView("druckansicht_begegnungen_randori");
 		mav.addObject("turnierid", turnierid);
@@ -241,7 +239,7 @@ public class TurnierController {
 		List<Matte> wettkampfreihenfolgeJeMatteGefiltert = wettkampfreihenfolgeJeMatte.stream()
 			.filter(matte -> matte.runden().stream().anyMatch(r -> r.altersklasse().name().equals(altersklasse)))
 			.collect(Collectors.toList());
-		List<Matte> wettkampfreihenfolgeJeMatteGefiltertUndGruppiert = gruppiereNachGruppen(wettkampfreihenfolgeJeMatteGefiltert);
+		List<MatteDto> wettkampfreihenfolgeJeMatteGefiltertUndGruppiert = gruppiereNachGruppen(wettkampfreihenfolgeJeMatteGefiltert);
 
 		ModelAndView mav = new ModelAndView("druckansicht_begegnungen_randori_inserting_data");
 		mav.addObject("turnierid", turnierid);
@@ -249,7 +247,7 @@ public class TurnierController {
 		return mav;
 	}
 
-	private List<Matte> gruppiereNachGruppen(List<Matte> matten) {
+	private List<MatteDto> gruppiereNachGruppen(List<Matte> matten) {
 		return matten.stream().map(mat -> {
 			List<GruppenRunde> gruppenRunden = new ArrayList<>();
 			gruppenRunden.add(new GruppenRunde(new ArrayList<>()));
@@ -266,7 +264,7 @@ public class TurnierController {
 				gruppenRunden.get(gruppenRundenNummer).runde().add(mat.runden().get(i));
 			}
 
-			return new Matte(mat.id(), new ArrayList<>(), gruppenRunden);
+			return new MatteDto(mat.id(), gruppenRunden);
 		}).collect(Collectors.toList());
 	}
 }

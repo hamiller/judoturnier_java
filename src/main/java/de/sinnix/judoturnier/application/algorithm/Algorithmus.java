@@ -4,7 +4,6 @@ import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface Algorithmus {
 
