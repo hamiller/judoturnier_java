@@ -75,9 +75,9 @@
                       {{else}}
                           <a href="/turnier/{{turnierid}}/begegnungen/randori/{{begegnungId}}">
                               <div class="listeneintrag vs {{wertungVorhanden wertungen}}">
-                                  <div class="wettkaempfer name {{wettkaempfer1.farbe.get}}">{{wettkaempfer1.name}}</div><div>({{wettkaempfer1.verein.name}})</div>
+                                  <div class="wettkaempfer name {{#optional wettkaempfer1.farbe}}{{wettkaempfer1.farbe.get}}{{/optional}}">{{wettkaempfer1.name}}</div> <div>({{wettkaempfer1.verein.name}})</div>
                                   <div class="center">vs</div>
-                                  <div class="wettkaempfer name {{wettkaempfer2.farbe.get}}">{{wettkaempfer2.name}}</div><div>({{wettkaempfer2.verein.name}})</div>
+                                  <div class="wettkaempfer name {{#optional wettkaempfer2.farbe}}{{wettkaempfer2.farbe.get}}{{/optional}}">{{wettkaempfer2.name}}</div> <div>({{wettkaempfer2.verein.name}})</div>
                               </div>
                           </a>
                       {{/if}}
