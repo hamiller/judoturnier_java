@@ -26,6 +26,16 @@ public class HelperSource {
 		return o1 == null ? o2 == null : o1.equals(o2);
 	}
 
+	public static String ifCond(Object v1, Object v2, String trueResult, String falseResult) {
+		if (v1 == null && v2 == null) {
+			return trueResult;
+		}
+		if (v1 != null && v1.equals(v2)) {
+			return trueResult;
+		}
+		return falseResult;
+	}
+
 	public static String janein(Boolean value, Options options) {
 		if (value != null && value) {
 			return "Ja";

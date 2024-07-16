@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
+
 @RestController
 public class WertungController {
 
@@ -37,6 +39,7 @@ public class WertungController {
 		mav.addObject("begegnungid", id);
 		mav.addObject("bewerter", bewerter);
 		mav.addObject("enableEditing", bewerter.darfEditieren());
+		mav.addObject("wertungsOptionen", List.of(1, 2, 3, 4, 5, 6));
 		return mav;
 	}
 
