@@ -25,6 +25,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -42,16 +43,18 @@ public class TurnierService {
 	private static final Logger           logger     = LogManager.getLogger(TurnierService.class);
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-	@Autowired
-	private TurnierRepository      turnierRepository;
+	@Lazy
 	@Autowired
 	private EinstellungenService   einstellungenService;
+	@Lazy
 	@Autowired
 	private GewichtsklassenService gewichtsklassenService;
 	@Autowired
-	private TurnierJpaRepository   turnierJpaRepository;
-	@Autowired
 	private TurnierConverter       turnierConverter;
+	@Autowired
+	private TurnierRepository      turnierRepository;
+	@Autowired
+	private TurnierJpaRepository   turnierJpaRepository;
 	@Autowired
 	private BewerterRepository     bewerterRepository;
 

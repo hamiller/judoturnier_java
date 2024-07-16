@@ -8,4 +8,5 @@ import java.util.List;
 @Repository
 public interface WettkampfGruppeJpaRepository extends JpaRepository<WettkampfGruppeJpa, Integer> {
 	List<WettkampfGruppeJpa> findAllByTurnierUUID(String turnierUuid);
+	void deleteAllByTurnierUUID(String turnierUuid);
 }

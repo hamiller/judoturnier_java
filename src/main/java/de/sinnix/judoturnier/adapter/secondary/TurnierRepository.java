@@ -132,6 +132,7 @@ public class TurnierRepository {
 		logger.info("Lösche alle Matten für Turnier {}", turnierUUID);
 		try {
 			begegnungJpaRepository.deleteAllByTurnierUUID(turnierUUID.toString());
+			wettkampfGruppeJpaRepository.deleteAllByTurnierUUID(turnierUUID.toString());
 		}catch (Exception e) {
 			logger.error("Fehler", e);
 		}

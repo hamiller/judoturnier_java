@@ -76,10 +76,10 @@ public class GewichtsklassenRepositoryTest {
     @Test
     public void testDeleteAll() {
         // Execute method under test
-        gewichtsklassenRepository.deleteAll();
+        gewichtsklassenRepository.deleteAll(turnierUUID);
 
         // Verify that deleteAll on the repository was called
-        verify(gewichtsklassenJpaRepository, times(1)).deleteAll();
+        verify(gewichtsklassenJpaRepository, times(1)).deleteAllByTurnierUUID(turnierUUID.toString());
     }
 
     @Test

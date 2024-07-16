@@ -8,8 +8,9 @@ import java.util.List;
 
 @Repository
 public interface GewichtsklassenJpaRepository extends JpaRepository<GewichtsklassenJpa, Integer> {
-	@Transactional
-	void deleteAllByAltersklasse(String altersklasse);
 	List<GewichtsklassenJpa> findAllByTurnierUUID(String turnierUuid);
+	@Transactional
+	void deleteAllByTurnierUUID(String turnierUuid);
+	@Transactional
 	void deleteAllByAltersklasseAndTurnierUUID(String altersklasse, String turnierUuid);
 }

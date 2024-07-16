@@ -84,7 +84,7 @@ public class GewichtsklassenController {
 		logger.info("erstelle Gewichtsklassen");
 		var wks = wettkaempferService.alleKaempfer(UUID.fromString(turnierid));
 		var gwks = gewichtsklassenService.teileInGewichtsklassen(wks, UUID.fromString(turnierid));
-		gewichtsklassenService.loescheAlles();
+		gewichtsklassenService.loescheAlles(UUID.fromString(turnierid));
 		gewichtsklassenService.speichere(gwks);
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/gewichtsklassen");
 	}

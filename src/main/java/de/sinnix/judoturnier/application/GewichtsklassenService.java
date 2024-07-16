@@ -14,6 +14,7 @@ import de.sinnix.judoturnier.model.Wettkaempfer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,14 +33,19 @@ public class GewichtsklassenService {
 	private static final Double DEFAULT_MIN_GEWICHT = 0.0;
 	private static final Double DEFAULT_MAX_GEWICHT = 200.0;
 
-	@Autowired
-	private GewichtsklassenRepository gewichtsklassenRepository;
+	@Lazy
 	@Autowired
 	private WettkaempferService       wettkaempferService;
+	@Lazy
 	@Autowired
 	private EinstellungenService      einstellungenService;
+	@Lazy
+	@Autowired
+	private TurnierService            turnierService;
 	@Autowired
 	private WettkaempferRepository    wettkaempferRepository;
+	@Autowired
+	private GewichtsklassenRepository gewichtsklassenRepository;
 
 
 	public List<GewichtsklassenGruppe> ladeGewichtsklassenGruppen(UUID turnierUUID) {
@@ -105,9 +111,10 @@ public class GewichtsklassenService {
 		return result;
 	}
 
-	public void loescheAlles() {
-		logger.info("loesche alle GewichtsklassenGruppen...");
-		gewichtsklassenRepository.deleteAll();
+	public void loescheAlles(UUID turnierId) {
+		logger.info("loesche alle GewichtsklassenGruppen für Turnier {}", turnierId);
+		gewichtsklassenRepository.deleteAll(turnierId);
+		turnierService.loescheWettkampfreihenfolge(turnierId);
 	}
 
 	public void speichere(List<GewichtsklassenGruppe> gwks) {

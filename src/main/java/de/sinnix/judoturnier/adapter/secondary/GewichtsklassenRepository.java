@@ -26,8 +26,8 @@ public class GewichtsklassenRepository {
 			.toList();
 	}
 
-	public void deleteAll() {
-		gewichtsklassenJpaRepository.deleteAll();
+	public void deleteAll(UUID turnierUUID) {
+		gewichtsklassenJpaRepository.deleteAllByTurnierUUID(turnierUUID.toString());
 	}
 
 	public void saveAll(List<GewichtsklassenGruppe> gewichtsklassenList) {

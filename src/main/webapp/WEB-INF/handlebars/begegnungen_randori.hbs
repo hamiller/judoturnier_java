@@ -105,8 +105,16 @@
     var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
     if (sicher) {
       console.log("Erstelle alle Begegnungen neu");
-      fetch('/turnier/{{turnierid}}/begegnungen', { method: 'POST' })
-        .then((r) => window.location.href=r.url)
+      fetch('/turnier/{{turnierid}}/begegnungen', { method: 'POST', redirect: 'follow'})
+              .then(response => {
+                  if (response.redirected) {
+                      window.location.href = response.url;
+                  } else if (response.ok) {
+                      window.location.reload();
+                  } else {
+                      console.error('Error:', response.statusText);
+                  }
+              })
     };
   };
 
@@ -114,16 +122,32 @@
     var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in der Altersklasse\n\t" + data + "\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
     if (sicher) {
       console.log("Erstelle die Begegnungen neu", data);
-      fetch('/turnier/{{turnierid}}/begegnung', { method: 'POST', body: data })
-        .then(() => window.location.href='/turnier/{{turnierid}}/begegnungen/randori')
+      fetch('/turnier/{{turnierid}}/begegnung', { method: 'POST', body: data, redirect: 'follow'})
+              .then(response => {
+                  if (response.redirected) {
+                      window.location.href = response.url;
+                  } else if (response.ok) {
+                      window.location.reload();
+                  } else {
+                      console.error('Error:', response.statusText);
+                  }
+              })
     };
   }
 
   const deleteBegegnungen = async (altersklasse) => {
     var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern aller Altersklassen\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
     if (sicher) {
-      fetch('/turnier/{{turnierid}}/begegnung', { method: 'DELETE' })
-        .then(() => window.location.href='/turnier/{{turnierid}}/begegnungen/randori')
+      fetch('/turnier/{{turnierid}}/begegnung', { method: 'DELETE' , redirect: 'follow'})
+              .then(response => {
+                  if (response.redirected) {
+                      window.location.href = response.url;
+                  } else if (response.ok) {
+                      window.location.reload();
+                  } else {
+                      console.error('Error:', response.statusText);
+                  }
+              })
     };
   };
 

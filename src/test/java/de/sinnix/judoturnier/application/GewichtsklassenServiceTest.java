@@ -50,6 +50,8 @@ public class GewichtsklassenServiceTest {
 	private EinstellungenService      einstellungenService;
 	@Mock
 	private WettkaempferRepository    wettkaempferRepository;
+	@Mock
+	private TurnierService            turnierService;
 	@InjectMocks
 	private GewichtsklassenService    gewichtsklassenService;
 
@@ -74,11 +76,13 @@ public class GewichtsklassenServiceTest {
 
 	@Test
 	void testLoescheAlles() {
+		UUID uuid = UUID.randomUUID();
+
 		// Execute method under test
-		gewichtsklassenService.loescheAlles();
+		gewichtsklassenService.loescheAlles(uuid);
 
 		// Verify that deleteAll on the repository was called
-		verify(gewichtsklassenRepository, times(1)).deleteAll();
+		verify(gewichtsklassenRepository, times(1)).deleteAll(uuid);
 	}
 
 	@Test

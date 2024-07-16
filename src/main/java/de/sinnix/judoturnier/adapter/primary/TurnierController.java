@@ -114,6 +114,7 @@ public class TurnierController {
 
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori")
 	public ModelAndView ladeWettkampfreihenfolgeJeMatteRandori(@PathVariable String turnierid, @RequestParam(value = "error", required = false) String error, @RequestParam(value = "altersklasse", required = false) String altersklasse) {
+		logger.info("Lade Randori-Begegnungen für Turnier {} und Altersklasse {}", turnierid, altersklasse);
 		var turnierUUID = UUID.fromString(turnierid);
 		List<GewichtsklassenGruppe> gwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID);
@@ -122,21 +123,7 @@ public class TurnierController {
 			.collect(Collectors.toSet());
 		Einstellungen einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
 
-		List<Matte> gefilterteMatten = wettkampfreihenfolgeJeMatte; // Initialisiere mit der ursprünglichen Liste
-
-		if (!StringUtils.isBlank(altersklasse)) {
-			var altersKlasse = Altersklasse.valueOf(altersklasse);
-			// Filtern der Liste nach Altersklasse "U11" und Erstellen der neuen Liste von Matten
-			gefilterteMatten = wettkampfreihenfolgeJeMatte.stream()
-				.map(matte -> new Matte(
-					matte.id(),
-					matte.runden().stream()
-						.filter(runde -> altersKlasse.equals(runde.altersklasse()))
-						.collect(Collectors.toList())
-				))
-				.filter(matte -> !matte.runden().isEmpty())
-				.collect(Collectors.toList());
-		}
+		List<Matte> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte, wettkampfreihenfolgeJeMatte);
 
 		logger.trace("wettkampfreihenfolgeJeMatte {} ", wettkampfreihenfolgeJeMatte);
 		ModelAndView mav = new ModelAndView("begegnungen_randori");
@@ -151,6 +138,7 @@ public class TurnierController {
 
 	@GetMapping("/turnier/{turnierid}/begegnungen/normal")
 	public ModelAndView ladeWettkampfreihenfolgeJeMatteNormal(@PathVariable String turnierid) {
+		logger.info("Lade Begegnungen für Turnier {}", turnierid);
 		var turnierUUID = UUID.fromString(turnierid);
 		List<GewichtsklassenGruppe> gwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID);
@@ -165,6 +153,7 @@ public class TurnierController {
 	@PostMapping("/turnier/{turnierid}/begegnungen")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView erstelleWettkampfreihenfolgeJeMatte(@PathVariable String turnierid) {
+		logger.info("Erstelle Begegnungen für Turnier {}", turnierid);
 		String error = "";
 		try {
 			turnierService.loescheWettkampfreihenfolge(UUID.fromString(turnierid));
@@ -183,7 +172,7 @@ public class TurnierController {
 	@PostMapping(value = "/turnier/{turnierid}/begegnung")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView erneuerWettkampfreihenfolgeFuerAltersklasse(@PathVariable String turnierid, @RequestBody String altersklasse) {
-		logger.info("Erneuere Wettkampfbegegnungen für Altersklasse {}", altersklasse);
+		logger.info("Erneuere Begegnungen für Turnier {} und Altersklasse {}", turnierid, altersklasse);
 		String error = "";
 		try {
 			turnierService.loescheWettkampfreihenfolgeAltersklasse(Altersklasse.valueOf(altersklasse), UUID.fromString(turnierid));
@@ -201,7 +190,7 @@ public class TurnierController {
 	@DeleteMapping("/turnier/{turnierid}/begegnung")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView entferneWettkampfreihenfolgen(@PathVariable String turnierid) {
-		logger.info("Lösche alle Begegnungen...");
+		logger.info("Lösche alle Begegnungen in Turnier {}", turnierid);
 		String error = "";
 		try {
 			turnierService.loescheWettkampfreihenfolge(UUID.fromString(turnierid));
@@ -217,14 +206,13 @@ public class TurnierController {
 
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori_printview_matches/{altersklasse}")
 	public ModelAndView ladeDruckAnsichtBegegnungenRandori(@PathVariable String turnierid, @PathVariable String altersklasse) {
+		logger.info("Lade Randori-Druckansicht für Turnier {} und Altersklasse {}", turnierid, altersklasse);
 		var turnierUUID = UUID.fromString(turnierid);
 		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID).stream()
 			.sorted(Comparator.comparingInt(Matte::id))
 			.toList();
-		List<Matte> wettkampfreihenfolgeJeMatteGefiltert = wettkampfreihenfolgeJeMatte.stream()
-			.filter(matte -> matte.runden().stream().anyMatch(r -> r.altersklasse().name().equals(altersklasse)))
-			.collect(Collectors.toList());
-		List<MatteDto> wettkampfreihenfolgeJeMatteGefiltertUndGruppiert = gruppiereNachGruppen(wettkampfreihenfolgeJeMatteGefiltert);
+		List<Matte> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte, wettkampfreihenfolgeJeMatte);
+		List<MatteDto> wettkampfreihenfolgeJeMatteGefiltertUndGruppiert = gruppiereNachGruppen(gefilterteMatten);
 
 		ModelAndView mav = new ModelAndView("druckansicht_begegnungen_randori");
 		mav.addObject("turnierid", turnierid);
@@ -234,12 +222,11 @@ public class TurnierController {
 
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori_printview_matches_inserting_data/{altersklasse}")
 	public ModelAndView ladeDruckAnsichtBegegnungenRandoriDateneintrag(@PathVariable String turnierid, @PathVariable String altersklasse) {
+		logger.info("Lade Wertungs-Eintrag 'Randori' für Turnier {} und Altersklasse {}", turnierid, altersklasse);
 		var turnierUUID = UUID.fromString(turnierid);
 		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID);
-		List<Matte> wettkampfreihenfolgeJeMatteGefiltert = wettkampfreihenfolgeJeMatte.stream()
-			.filter(matte -> matte.runden().stream().anyMatch(r -> r.altersklasse().name().equals(altersklasse)))
-			.collect(Collectors.toList());
-		List<MatteDto> wettkampfreihenfolgeJeMatteGefiltertUndGruppiert = gruppiereNachGruppen(wettkampfreihenfolgeJeMatteGefiltert);
+		List<Matte> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte, wettkampfreihenfolgeJeMatte);
+		List<MatteDto> wettkampfreihenfolgeJeMatteGefiltertUndGruppiert = gruppiereNachGruppen(gefilterteMatten);
 
 		ModelAndView mav = new ModelAndView("druckansicht_begegnungen_randori_inserting_data");
 		mav.addObject("turnierid", turnierid);
@@ -266,5 +253,22 @@ public class TurnierController {
 
 			return new MatteDto(mat.id(), gruppenRunden);
 		}).collect(Collectors.toList());
+	}
+
+	private static List<Matte> filtereMatten(String altersklasse, List<Matte> matten, List<Matte> wettkampfreihenfolgeJeMatte) {
+		if (!StringUtils.isBlank(altersklasse)) {
+			var altersKlasse = Altersklasse.valueOf(altersklasse);
+			// Filtern der Liste nach Altersklasse "U11" und Erstellen der neuen Liste von Matten
+			matten = wettkampfreihenfolgeJeMatte.stream()
+				.map(matte -> new Matte(
+					matte.id(),
+					matte.runden().stream()
+						.filter(runde -> altersKlasse.equals(runde.altersklasse()))
+						.collect(Collectors.toList())
+				))
+				.filter(matte -> !matte.runden().isEmpty())
+				.collect(Collectors.toList());
+		}
+		return matten;
 	}
 }
