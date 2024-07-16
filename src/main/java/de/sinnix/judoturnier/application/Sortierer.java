@@ -29,8 +29,8 @@ public class Sortierer {
 	private int gruppe3Runde;
 	private int rundeGesamt;
 
-	public Sortierer(Integer mattenRunde, Integer rundeGesamt) {
-		this.mattenRunde = mattenRunde;
+	public Sortierer(Integer rundeGesamt) {
+		this.mattenRunde = 1;
 		this.gruppe1Runde = 1;
 		this.gruppe2Runde = 1;
 		this.gruppe3Runde = 1;

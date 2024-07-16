@@ -196,7 +196,7 @@ public class TurnierService {
 
 		Integer totaleRundenAnzahl = 1;
 		for (int m = 0; m < anzahlMatten; m++) {
-			Sortierer sortierer = new Sortierer(m+1, totaleRundenAnzahl);
+			Sortierer sortierer = new Sortierer(totaleRundenAnzahl);
 			var gruppen = wettkampfGruppenJeMatten.get(m);
 			List<Runde> runden = new ArrayList<>();
 			Integer matteId = m + 1;

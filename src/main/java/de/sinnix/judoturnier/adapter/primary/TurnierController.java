@@ -106,9 +106,9 @@ public class TurnierController {
 	@GetMapping("/turnier/{turnierid}/begegnungen")
 	public ModelAndView unterscheideBegegungen(@PathVariable String turnierid) {
 		if (einstellungenService.isRandori()) {
-			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungenJeRunde/randori");
+			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori");
 		} else {
-			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungenJeRunde/normal");
+			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/normal");
 		}
 	}
 
@@ -174,9 +174,9 @@ public class TurnierController {
 			error = e.toString();
 		}
 		if (einstellungenService.isRandori()) {
-			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungenJeRunde/randori?error=" + error);
+			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori?error=" + error);
 		} else {
-			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungenJeRunde/normal?error=" + error);
+			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/normal?error=" + error);
 		}
 	}
 
@@ -192,9 +192,9 @@ public class TurnierController {
 			error = e.toString();
 		}
 		if (einstellungenService.isRandori()) {
-			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungenJeRunde/randori?error=" + error);
+			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori?error=" + error);
 		} else {
-			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungenJeRunde/normal?error=" + error);
+			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/normal?error=" + error);
 		}
 	}
 
@@ -209,9 +209,9 @@ public class TurnierController {
 			error = e.toString();
 		}
 		if (einstellungenService.isRandori()) {
-			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungenJeRunde/randori?error=" + error);
+			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori?error=" + error);
 		} else {
-			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungenJeRunde/normal?error=" + error);
+			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/normal?error=" + error);
 		}
 	}
 

@@ -23,6 +23,7 @@ public class BegegnungConverter {
 			jpa.getMatteId(),
 			jpa.getMattenRunde(),
 			jpa.getGruppenRunde(),
+			jpa.getGesamtRunde(),
 			wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer1()),
 			wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer2()),
 			jpa.getWertungen().stream().map(wertung -> wertungConverter.convertToWertung(wertung)).collect(Collectors.toList()),
@@ -37,6 +38,7 @@ public class BegegnungConverter {
 		jpa.setMatteId(begegnung.getMatteId());
 		jpa.setMattenRunde(begegnung.getMattenRunde());
 		jpa.setGruppenRunde(begegnung.getGruppenRunde());
+		jpa.setGesamtRunde(begegnung.getGesamtRunde());
 		jpa.setWettkaempfer1(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1()));
 		jpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2()));
 		jpa.setWertungen(begegnung.getWertungen().stream().map(wertung -> wertungConverter.convertFromWertung(wertung)).toList());

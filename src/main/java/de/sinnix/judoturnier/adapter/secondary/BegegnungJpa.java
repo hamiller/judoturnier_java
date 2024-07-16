@@ -36,6 +36,7 @@ public class BegegnungJpa {
 	Integer matteId;
 	Integer mattenRunde;
 	Integer gruppenRunde;
+	Integer gesamtRunde;
 	@OneToOne
 	@JoinColumn(name = "wettkaempfer1")
 	WettkaempferJpa wettkaempfer1;

@@ -48,7 +48,7 @@ class TurnierServiceTest {
 	private BewerterRepository     bewerterRepository;
 
 	@Spy
-	private Sortierer sortierer = new Sortierer(1, 1);
+	private Sortierer sortierer = new Sortierer(1);
 
 	@InjectMocks
 	private TurnierService turnierService;
@@ -101,7 +101,7 @@ class TurnierServiceTest {
 		);
 		wertungList.add(alteWertung);
 		Begegnung begegnung = new Begegnung(Integer.parseInt(begegnungId),
-			1, 2, 3,
+			1, 2, 3, 3,
 			WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2,
 			wertungList,
 			WettkampfgruppeFixture.gruppe1,
@@ -115,7 +115,7 @@ class TurnierServiceTest {
 		);
 		neueWertungList.add(neueWertung);
 		Begegnung updatedBegegnung = new Begegnung(Integer.parseInt(begegnungId),
-			1, 2, 3,
+			1, 2, 3, 3,
 			WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2,
 			neueWertungList,
 			WettkampfgruppeFixture.gruppe1,
@@ -147,7 +147,7 @@ class TurnierServiceTest {
 		);
 		wertungList.add(alteWertung);
 		Begegnung begegnung = new Begegnung(Integer.parseInt(begegnungId),
-			1, 2, 3,
+			1, 2, 3, 3,
 			WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2,
 			wertungList,
 			WettkampfgruppeFixture.gruppe1,
@@ -162,7 +162,7 @@ class TurnierServiceTest {
 		neueWertungList.add(alteWertung);
 		neueWertungList.add(neueWertung);
 		Begegnung updatedBegegnung = new Begegnung(Integer.parseInt(begegnungId),
-			1, 2, 3,
+			1, 2, 3, 3,
 			WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2,
 			neueWertungList,
 			WettkampfgruppeFixture.gruppe1,
@@ -190,7 +190,7 @@ class TurnierServiceTest {
 		String begegnungId = "1";
 
 		Begegnung begegnung = new Begegnung(Integer.parseInt(begegnungId),
-			1, 2, 3,
+			1, 2, 3, 3,
 			WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2,
 			new ArrayList<>(),
 			WettkampfgruppeFixture.gruppe1,

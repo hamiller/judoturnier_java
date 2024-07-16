@@ -65,6 +65,6 @@ public class WertungController {
 		var fairness2 = Integer.parseInt(formData.get("fairness2").getFirst());
 
 		turnierService.speichereRandoriWertung(begegnungId, kampfgeist1, technik1, stil1, fairness1, kampfgeist2, technik2, stil2, fairness2, bewerter.id());
-		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungenJeRunde/randori");
+		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori");
 	}
 }

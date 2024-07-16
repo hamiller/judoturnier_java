@@ -13,7 +13,6 @@ import de.sinnix.judoturnier.model.WettkampfGruppe;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
@@ -42,7 +41,7 @@ class SortiererTest {
 		assertEquals(1, wettkampfGruppeList.size());
 		assertEquals(N, wettkampfGruppeList.get(0).alleRundenBegegnungen().stream().mapToInt(g -> g.begegnungenJeRunde().size()).sum());
 
-		Sortierer sortierer = new Sortierer(1, 1);
+		Sortierer sortierer = new Sortierer(1);
 		List<Runde> runden = sortierer.erstelleReihenfolgeMitAllenGruppenJeDurchgang(wettkampfGruppeList, 1).getRight();
 
 		assertEquals(3, runden.size());
@@ -58,7 +57,7 @@ class SortiererTest {
 		assertEquals(1, wettkampfGruppeList.size());
 		assertEquals(N, wettkampfGruppeList.get(0).alleRundenBegegnungen().stream().mapToInt(g -> g.begegnungenJeRunde().size()).sum());
 
-		Sortierer sortierer = new Sortierer(1, 1);
+		Sortierer sortierer = new Sortierer(1);
 		List<Runde> runden = sortierer.erstelleReihenfolgeMitAbwechselndenGruppen(wettkampfGruppeList, 1).getRight();
 
 		assertEquals(3, runden.size());
@@ -72,7 +71,7 @@ class SortiererTest {
 		assertEquals(4, wettkampfGruppeList.size());
 		assertEquals(51, wettkampfGruppeList.stream().mapToInt(wg -> wg.alleRundenBegegnungen().stream().mapToInt(g -> g.begegnungenJeRunde().size()).sum()).sum());
 
-		Sortierer sortierer = new Sortierer(1, 1);
+		Sortierer sortierer = new Sortierer(1);
 		List<Runde> runden = sortierer.erstelleReihenfolgeMitAllenGruppenJeDurchgang(wettkampfGruppeList, 1).getRight();
 
 		assertEquals(18, runden.size());
@@ -85,38 +84,38 @@ class SortiererTest {
 		List<WettkampfGruppe> wettkampfGruppeList = Arrays.asList(
 			new WettkampfGruppe(100, "Antilope", "(Gewichtskl.1 U11)", Arrays.asList(new BegegnungenJeRunde(
 				Arrays.asList(
-					new Begegnung(1, 1, 1, 1,
+					new Begegnung(1, 1, 1, 1, 1,
 						new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
 						new Wettkaempfer(4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID),
-					new Begegnung(2, 1, 1, 1,
+					new Begegnung(2, 1, 1, 1, 2,
 						new Wettkaempfer(2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
 						new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID))),
 				new BegegnungenJeRunde(
 				Arrays.asList(
-					new Begegnung(3, 1, 3, 2,
+					new Begegnung(3, 1, 3, 2, 3,
 						new Wettkaempfer(4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
 						new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID),
-					new Begegnung(4, 1, 3, 2,
+					new Begegnung(4, 1, 3, 2, 4,
 						new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
 						new Wettkaempfer(2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID))),
 				new BegegnungenJeRunde(Arrays.asList(
-					new Begegnung(5, 1,4 , 3,
+					new Begegnung(5, 1, 4 , 3,5,
 						new Wettkaempfer(2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
 						new Wettkaempfer(4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID),
-					new Begegnung(6, 1, 4, 3,
+					new Begegnung(6, 1, 4, 3, 6,
 						new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
 						new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID)))
 			), turnierUUID),
 			new WettkampfGruppe(101, "Tiger", "(Gewichtskl.1 U11)", Arrays.asList(new BegegnungenJeRunde(
 				Arrays.asList(
-					new Begegnung(7, 1, 2, 1,
+					new Begegnung(7, 1, 2, 1, 7,
 						new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
 						new Wettkaempfer(6, "Teilnehmer F", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID), null, null, turnierUUID)
 					)
 			)), turnierUUID)
 		);
 
-		Sortierer sortierer = new Sortierer(1, 1);
+		Sortierer sortierer = new Sortierer(1);
 		List<Runde> runden = sortierer.erstelleReihenfolgeMitAbwechselndenGruppen(wettkampfGruppeList, 1).getRight();
 
 

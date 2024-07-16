@@ -72,7 +72,7 @@ public class TurnierRepository {
 				b.getBegegnungId(),
 				b.getMattenRunde(),
 				b.getGruppenRunde(),
-				null,
+				b.getGesamtRunde(),
 				matteId,
 				b.getWettkaempfer1() == null ? Altersklasse.PAUSE : b.getWettkaempfer1().altersklasse(), // wir haben eine PAUSE
 				b.getWettkampfGruppe(),
@@ -113,6 +113,7 @@ public class TurnierRepository {
 				begegnungJpa.setMatteId(matte.id());
 				begegnungJpa.setGruppenRunde(runde.gruppenRunde());
 				begegnungJpa.setMattenRunde(runde.mattenRunde());
+				begegnungJpa.setGesamtRunde(runde.rundeGesamt());
 				begegnungJpa.setWettkaempfer1(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1()));
 				begegnungJpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2()));
 				begegnungJpa.setWettkampfGruppeId(wettkampfGruppeId);
