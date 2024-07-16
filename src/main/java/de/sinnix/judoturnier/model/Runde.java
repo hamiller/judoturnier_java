@@ -6,7 +6,7 @@ public record Runde(
 	Integer id,
 	Integer mattenRunde,
 	Integer gruppenRunde, // Optional
-	Integer rundeTotal, // Optional
+	Integer rundeGesamt, // Optional
 	Integer matteId, // Optional
 	Altersklasse altersklasse,
 	WettkampfGruppe gruppe,

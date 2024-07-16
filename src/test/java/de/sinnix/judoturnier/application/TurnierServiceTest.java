@@ -48,7 +48,7 @@ class TurnierServiceTest {
 	private BewerterRepository     bewerterRepository;
 
 	@Spy
-	private Sortierer sortierer = new Sortierer();
+	private Sortierer sortierer = new Sortierer(1, 1);
 
 	@InjectMocks
 	private TurnierService turnierService;

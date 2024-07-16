@@ -173,7 +173,7 @@ class TurnierRepositoryTest {
 		assertEquals(1, matte.runden().size());
 		var runde = matte.runden().get(0);
 		assertEquals(matte.id(), runde.matteId());
-		//		assertEquals(1, runde.rundeTotal());
+		//		assertEquals(1, runde.rundeGesamt());
 		assertEquals(3, runde.mattenRunde());
 		assertEquals(4, runde.gruppenRunde());
 		assertEquals(2, runde.id());

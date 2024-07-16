@@ -21,6 +21,7 @@ import de.sinnix.judoturnier.model.Wertung;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
 import de.sinnix.judoturnier.model.WettkampfReihenfolge;
 import jakarta.transaction.Transactional;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +48,6 @@ public class TurnierService {
 	private EinstellungenService   einstellungenService;
 	@Autowired
 	private GewichtsklassenService gewichtsklassenService;
-	@Autowired
-	private Sortierer              sortierer;
 	@Autowired
 	private TurnierJpaRepository   turnierJpaRepository;
 	@Autowired
@@ -195,19 +194,24 @@ public class TurnierService {
 		// Ausplitten der Begegnungen auf die Matten
 		List<List<WettkampfGruppe>> wettkampfGruppenJeMatten = this.splitArray(wettkampfGruppen, anzahlMatten);
 
-
+		Integer totaleRundenAnzahl = 1;
 		for (int m = 0; m < anzahlMatten; m++) {
+			Sortierer sortierer = new Sortierer(m+1, totaleRundenAnzahl);
 			var gruppen = wettkampfGruppenJeMatten.get(m);
 			List<Runde> runden = new ArrayList<>();
 			Integer matteId = m + 1;
-			logger.debug("Sortiere für Matte {}", matteId);
+			Pair<Integer, List<Runde>> result = null;
 			switch (reihenfolge) {
 				case WettkampfReihenfolge.ABWECHSELND:
-					runden = sortierer.erstelleReihenfolgeMitAbwechselndenGruppen(gruppen);
+					result = sortierer.erstelleReihenfolgeMitAbwechselndenGruppen(gruppen, matteId);
+					totaleRundenAnzahl = result.getLeft();
+					runden = result.getRight();
 					matten.add(new Matte(matteId, runden));
 					break;
 				case WettkampfReihenfolge.ALLE:
-					runden = sortierer.erstelleReihenfolgeMitAllenGruppenJeDurchgang(gruppen);
+					result = sortierer.erstelleReihenfolgeMitAllenGruppenJeDurchgang(gruppen, matteId);
+					totaleRundenAnzahl = result.getLeft();
+					runden = result.getRight();
 					matten.add(new Matte(matteId, runden));
 					break;
 			}

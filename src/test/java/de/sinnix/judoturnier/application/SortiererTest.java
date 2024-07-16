@@ -27,8 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(MockitoExtension.class)
 class SortiererTest {
 
-	@InjectMocks
-	private Sortierer sortierer;
 	private UUID      turnierUUID;
 
 	@BeforeEach
@@ -44,7 +42,9 @@ class SortiererTest {
 		assertEquals(1, wettkampfGruppeList.size());
 		assertEquals(N, wettkampfGruppeList.get(0).alleRundenBegegnungen().stream().mapToInt(g -> g.begegnungenJeRunde().size()).sum());
 
-		List<Runde> runden = sortierer.erstelleReihenfolgeMitAllenGruppenJeDurchgang(wettkampfGruppeList);
+		Sortierer sortierer = new Sortierer(1, 1);
+		List<Runde> runden = sortierer.erstelleReihenfolgeMitAllenGruppenJeDurchgang(wettkampfGruppeList, 1).getRight();
+
 		assertEquals(3, runden.size());
 		var sortierteBegegnungen = runden.stream().mapToInt(r -> r.begegnungen().size()).sum();
 		assertEquals(N, sortierteBegegnungen);
@@ -58,7 +58,9 @@ class SortiererTest {
 		assertEquals(1, wettkampfGruppeList.size());
 		assertEquals(N, wettkampfGruppeList.get(0).alleRundenBegegnungen().stream().mapToInt(g -> g.begegnungenJeRunde().size()).sum());
 
-		List<Runde> runden = sortierer.erstelleReihenfolgeMitAbwechselndenGruppen(wettkampfGruppeList);
+		Sortierer sortierer = new Sortierer(1, 1);
+		List<Runde> runden = sortierer.erstelleReihenfolgeMitAbwechselndenGruppen(wettkampfGruppeList, 1).getRight();
+
 		assertEquals(3, runden.size());
 		var sortierteBegegnungen = runden.stream().mapToInt(r -> r.begegnungen().size()).sum();
 		assertEquals(N, sortierteBegegnungen);
@@ -70,7 +72,8 @@ class SortiererTest {
 		assertEquals(4, wettkampfGruppeList.size());
 		assertEquals(51, wettkampfGruppeList.stream().mapToInt(wg -> wg.alleRundenBegegnungen().stream().mapToInt(g -> g.begegnungenJeRunde().size()).sum()).sum());
 
-		List<Runde> runden = sortierer.erstelleReihenfolgeMitAllenGruppenJeDurchgang(wettkampfGruppeList);
+		Sortierer sortierer = new Sortierer(1, 1);
+		List<Runde> runden = sortierer.erstelleReihenfolgeMitAllenGruppenJeDurchgang(wettkampfGruppeList, 1).getRight();
 
 		assertEquals(18, runden.size());
 		var sortierteBegegnungen = runden.stream().mapToInt(r -> r.begegnungen().size()).sum();
@@ -113,31 +116,41 @@ class SortiererTest {
 			)), turnierUUID)
 		);
 
-
-		List<Runde> runden = sortierer.erstelleReihenfolgeMitAbwechselndenGruppen(wettkampfGruppeList);
+		Sortierer sortierer = new Sortierer(1, 1);
+		List<Runde> runden = sortierer.erstelleReihenfolgeMitAbwechselndenGruppen(wettkampfGruppeList, 1).getRight();
 
 
 		var anzahlRunden = 4 + 1; // 4 Runden plus 1 Pause
 		assertEquals(anzahlRunden, runden.size());
 
-		assertEquals(0, runden.get(0).id());
+		assertEquals(1, runden.get(0).rundeGesamt());
+		assertEquals(1, runden.get(0).mattenRunde());
+		assertEquals(1, runden.get(0).gruppenRunde());
 		assertEquals(2, runden.get(0).begegnungen().size());
 		assertEquals(wettkampfGruppeList.get(0).alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getBegegnungId(), runden.get(0).begegnungen().get(0).getBegegnungId());
 		assertEquals(wettkampfGruppeList.get(0).alleRundenBegegnungen().get(0).begegnungenJeRunde().get(1).getBegegnungId(), runden.get(0).begegnungen().get(1).getBegegnungId());
 
-		assertEquals(1, runden.get(1).id());
+		assertEquals(2, runden.get(1).rundeGesamt());
+		assertEquals(2, runden.get(1).mattenRunde());
+		assertEquals(1, runden.get(1).gruppenRunde());
 		assertEquals(1, runden.get(1).begegnungen().size());
 		assertEquals(wettkampfGruppeList.get(1).alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getBegegnungId(), runden.get(1).begegnungen().get(0).getBegegnungId());
 
-		assertEquals(2, runden.get(2).id());
+		assertEquals(3, runden.get(2).rundeGesamt());
+		assertEquals(3, runden.get(2).mattenRunde());
+		assertEquals(2, runden.get(2).gruppenRunde());
 		assertEquals(2, runden.get(2).begegnungen().size());
 
 		// PAUSE
-		assertEquals(3, runden.get(3).id());
+		assertEquals(4, runden.get(3).rundeGesamt());
+		assertEquals(4, runden.get(3).mattenRunde());
+		assertEquals(2, runden.get(3).gruppenRunde());
 		assertEquals(1, runden.get(3).begegnungen().size());
 		assertTrue(runden.get(3).begegnungen().get(0).getBegegnungId() == null);
 
-		assertEquals(4, runden.get(4).id());
+		assertEquals(5, runden.get(4).rundeGesamt());
+		assertEquals(5, runden.get(4).mattenRunde());
+		assertEquals(3, runden.get(4).gruppenRunde());
 		assertEquals(2, runden.get(4).begegnungen().size());
 	}
 
