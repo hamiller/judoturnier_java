@@ -10,16 +10,14 @@
       <h2>Gewichtsklassen</h2>
       <div class="{{istWarnung anzahlUnterschiedlich}}">Anzahl der Kämpfer insgesamt: {{anzahlwk}}</div>
       <div class="{{istWarnung anzahlUnterschiedlich}}">Anzahl der Kämpfer in Gruppen: {{anzahlwkInGroups}}</div>
-      
-      <div class="actions">
-        <button onclick="renewGewichtsklassen()" ><span class="material-icons md-48 centered" title="Alle Gewichtsklassen neu zuordnen">autorenew</span> Alle Gewichtsklassen neu zuordnen</button>
-      </div>
     </div>
 
     <form id="gewichtsklassenzuordnungformular" action="/turnier/{{turnierid}}/gewichtsklassen" method="POST">
-      <div class="actions">
-        <button type="submit"><span class="material-icons md-48 centered" title="Gewichtsklassen-Zuordnung speichern">save</span> Zuordnungen speichern</button>
-        <br>
+      <div class="navbar navbar_fixed">
+          <ul class="nav-links links">
+          <li><a href="#" onclick="renewGewichtsklassen(); return false;" ><span class="material-icons md-48 centered" title="Alle Gewichtsklassen neu zuordnen">autorenew</span> Alle Gewichtsklassen neu zuordnen</a></li>
+          <li><a href="#" onclick="submitFormular(); return false;"><span class="material-icons md-48 centered" title="Gewichtsklassen-Zuordnung speichern">save</span> Zuordnungen speichern</a></li>
+          </ul>
       </div>
       <div class="grid">
 
@@ -72,10 +70,11 @@
           <h1>Mädchen und Jungs</h1>
           {{#each gruppiertBeiAlter}}
             {{this.altersKlasse}} (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})
-            <div class="actions">
-              <button type="button" onclick="renewGewichtsklasse( '{{this.altersKlasse}}' )" ><span class="material-icons md-48 centered" title="Einzelne Gewichtsklasse neu zuordnen">autorenew</span> Einzelne Gewichtsklasse neu zuordnen</button>
-              <br>
-              <a href="/turnier/{{turnierid}}/gewichtsklassen/randori_printview_groups/{{this.altersKlasse}}" target="_blank" class="buttonlink"><span class="material-icons md-48 centered" title="Druckansicht">print</span> Druckansicht Gruppen {{altersKlasse}}</a>
+            <div class="navbar">
+                <ul class="nav-links links">
+                    <li><a href="#" type="button" onclick="renewGewichtsklasse( '{{this.altersKlasse}}' ); return false;" ><span class="material-icons md-48 centered" title="Einzelne Gewichtsklasse neu zuordnen">autorenew</span> Einzelne Gewichtsklasse neu zuordnen</a></li>
+                    <li><a href="/turnier/{{turnierid}}/gewichtsklassen/randori_printview_groups/{{this.altersKlasse}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht">print</span> Druckansicht Gruppen {{altersKlasse}}</a></li>
+                </ul>
             </div>
 
             <div class="gewichtsklassen">
@@ -161,6 +160,10 @@
       .then(() => window.location.href='gewichtsklassen')
     };
   };
+
+  const submitFormular = () => {
+      document.getElementById('gewichtsklassenzuordnungformular').submit();
+  }
 
 </script>
 
