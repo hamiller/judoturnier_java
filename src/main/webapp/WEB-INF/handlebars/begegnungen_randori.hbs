@@ -15,14 +15,14 @@
       {{/each}}
       </div>
 
-      <div class="navbar">
+      <div class="navbar navbar_small">
           <ul class="nav-links links">
-            <li><a href="#" onclick="renewBegegnungen()"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen neu erstellen">create_new_folder</span> Alle Wettkampfgruppen neu erstellen</a></li>
-            <li><a href="#" onclick="deleteBegegnungen()"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen löschen">autorenew</span> Alle Wettkampfgruppen löschen</a></li>
+            <li><a href="#" onclick="renewBegegnungen(); return false;"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen neu erstellen">create_new_folder</span> Alle Wettkampfgruppen neu erstellen</a></li>
+            <li><a href="#" onclick="deleteBegegnungen(); return false;"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen löschen">autorenew</span> Alle Wettkampfgruppen löschen</a></li>
           </ul>
         {{#each altersklassen}}
             <ul class="nav-links links">
-                <li><a href="#" type="button" onclick="renewBegegnung( '{{this}}' )" ><span class="material-icons md-48 centered" title="Einzelne Wettkampfgruppen neu zuordnen">autorenew</span> Wettkampfgruppen {{this}} neu zuordnen</a></li>
+                <li><a href="#" type="button" onclick="renewBegegnung( '{{this}}' ); return false;" ><span class="material-icons md-48 centered" title="Einzelne Wettkampfgruppen neu zuordnen">autorenew</span> Wettkampfgruppen {{this}} neu zuordnen</a></li>
                 <li><a href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches/{{this}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht Begegnungen">print</span> Druckansicht {{this}} Begegnungen</a></li>
                 <li><a href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches_inserting_data/{{this}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht Begegnungen-Eintragen">print</span> Druckansicht {{this}} Begegnungen-Eintragen</a></li>
             </ul>
