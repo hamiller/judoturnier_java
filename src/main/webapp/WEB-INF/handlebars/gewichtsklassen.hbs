@@ -70,10 +70,10 @@
           <h1>Mädchen und Jungs</h1>
           {{#each gruppiertBeiAlter}}
             {{this.altersKlasse}} (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})
-            <div class="navbar">
+            <div class="navbar navbar_fixed">
                 <ul class="nav-links links">
-                    <li><a href="#" type="button" onclick="renewGewichtsklasse( '{{this.altersKlasse}}' ); return false;" ><span class="material-icons md-48 centered" title="Einzelne Gewichtsklasse neu zuordnen">autorenew</span> Einzelne Gewichtsklasse neu zuordnen</a></li>
-                    <li><a href="/turnier/{{turnierid}}/gewichtsklassen/randori_printview_groups/{{this.altersKlasse}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht">print</span> Druckansicht Gruppen {{altersKlasse}}</a></li>
+                    <li><a href="#" type="button" onclick="renewGewichtsklasse( '{{this.altersKlasse}}' ); return false;" ><span class="material-icons md-48 centered" title="Einzelne Gewichtsklasse neu zuordnen">autorenew</span> Gewichtsklasse {{altersKlasse}} neu zuordnen</a></li>
+                    <li><a href="/turnier/{{turnierid}}/gewichtsklassen/randori_printview_groups/{{this.altersKlasse}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht">print</span> Druckansicht {{altersKlasse}} Gruppen</a></li>
                 </ul>
             </div>
 

@@ -24,7 +24,7 @@
             <ul class="nav-links links">
                 <li><a href="#" type="button" onclick="renewBegegnung( '{{this}}' ); return false;" ><span class="material-icons md-48 centered" title="Einzelne Wettkampfgruppen neu zuordnen">autorenew</span> Wettkampfgruppen {{this}} neu zuordnen</a></li>
                 <li><a href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches/{{this}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht Begegnungen">print</span> Druckansicht {{this}} Begegnungen</a></li>
-                <li><a href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches_inserting_data/{{this}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht Begegnungen-Eintragen">print</span> Druckansicht {{this}} Begegnungen-Eintragen</a></li>
+                <li><a href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches_inserting_data/{{this}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht Begegnungen-Eintragen">print</span> Druckansicht {{this}} Wertungen-Eintragen</a></li>
             </ul>
         {{/each}}
       </div>
@@ -36,7 +36,7 @@
     
     <div class="generalcontent">
       {{#if separatealtersklassen.name "GETRENNT"}}
-        <div class="supertab">
+        <div class="filter">
             <div><a href="/turnier/{{turnierid}}/begegnungen/randori">Alle Alterklassen</a></div>
             {{#each altersklassen}}
                 <div><a href="/turnier/{{turnierid}}/begegnungen/randori?altersklasse={{this}}">Alterklasse {{this}}</a></div>
