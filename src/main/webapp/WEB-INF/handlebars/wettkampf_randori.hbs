@@ -27,28 +27,28 @@
                 <span class="row">
             <label>Vielfalt</label>
                     {{#each wertungsOptionen}}
-                        <button type="button" class="btn" onclick="setInputValue('fairness1', {{this}}, this)">{{this}}</button>
+                        <button type="button" class="btn wertung_btn" onclick="setInputValue('fairness1', {{this}}, this)">{{this}}</button>
                     {{/each}}
                     <input {{disable enableEditing}} type="hidden" name="fairness1" id="fairness1" required value={{#optional begegnung.kampfrichterWertung}}{{this.fairnessWettkaempfer1}}{{/optional}} />
           </span>
                 <span class="row">
             <label>Kampfgeist</label>
                     {{#each wertungsOptionen}}
-                        <button type="button" class="btn" onclick="setInputValue('kampfgeist1', {{this}}, this)">{{this}}</button>
+                        <button type="button" class="btn wertung_btn" onclick="setInputValue('kampfgeist1', {{this}}, this)">{{this}}</button>
                     {{/each}}
                     <input {{disable enableEditing}} type="hidden" name="kampfgeist1" id="kampfgeist1" required value={{#optional begegnung.kampfrichterWertung}}{{this.kampfgeistWettkaempfer1}}{{/optional}} />
           </span>
                 <span class="row">
             <label>Technik</label>
                     {{#each wertungsOptionen}}
-                        <button type="button" class="btn" onclick="setInputValue('technik1', {{this}}, this)">{{this}}</button>
+                        <button type="button" class="btn wertung_btn" onclick="setInputValue('technik1', {{this}}, this)">{{this}}</button>
                     {{/each}}
                     <input {{disable enableEditing}} type="hidden" name="technik1" id="technik1" required value={{#optional begegnung.kampfrichterWertung}}{{this.technikWettkaempfer1}}{{/optional}} />
           </span>
                 <span class="row">
             <label>Stil</label>
                     {{#each wertungsOptionen}}
-                        <button type="button" class="btn" onclick="setInputValue('stil1', {{this}}, this)">{{this}}</button>
+                        <button type="button" class="btn wertung_btn" onclick="setInputValue('stil1', {{this}}, this)">{{this}}</button>
                     {{/each}}
                     <input {{disable enableEditing}} type="hidden" name="stil1" id="stil1" required value={{#optional begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer1}}{{/optional}} />
           </span>
@@ -73,28 +73,28 @@
                 <span class="row">
             <label>Vielfalt</label>
                     {{#each wertungsOptionen}}
-                        <button type="button" class="btn" onclick="setInputValue('fairness2', {{this}}, this)">{{this}}</button>
+                        <button type="button" class="btn wertung_btn" onclick="setInputValue('fairness2', {{this}}, this)">{{this}}</button>
                     {{/each}}
                     <input {{disable enableEditing}} type="hidden" name="fairness2" id="fairness2" required value={{#optional begegnung.kampfrichterWertung}}{{this.fairnessWettkaempfer2}}{{/optional}} />
           </span>
                 <span class="row">
             <label>Kampfgeist</label>
                     {{#each wertungsOptionen}}
-                        <button type="button" class="btn" onclick="setInputValue('kampfgeist2', {{this}}, this)">{{this}}</button>
+                        <button type="button" class="btn wertung_btn" onclick="setInputValue('kampfgeist2', {{this}}, this)">{{this}}</button>
                     {{/each}}
                     <input {{disable enableEditing}} type="hidden" name="kampfgeist2" id="kampfgeist2" required value={{#optional begegnung.kampfrichterWertung}}{{this.kampfgeistWettkaempfer2}}{{/optional}} />
           </span>
                 <span class="row">
             <label>Technik</label>
                     {{#each wertungsOptionen}}
-                        <button type="button" class="btn" onclick="setInputValue('technik2', {{this}}, this)">{{this}}</button>
+                        <button type="button" class="btn wertung_btn" onclick="setInputValue('technik2', {{this}}, this)">{{this}}</button>
                     {{/each}}
                     <input {{disable enableEditing}} type="hidden" name="technik2" id="technik2" required value={{#optional begegnung.kampfrichterWertung}}{{this.technikWettkaempfer2}}{{/optional}} />
           </span>
                 <span class="row">
             <label>Stil</label>
                     {{#each wertungsOptionen}}
-                        <button type="button" class="btn" onclick="setInputValue('stil2', {{this}}, this)">{{this}}</button>
+                        <button type="button" class="btn wertung_btn" onclick="setInputValue('stil2', {{this}}, this)">{{this}}</button>
                     {{/each}}
                     <input {{disable enableEditing}} type="hidden" name="stil2" id="stil2" required value={{#optional begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer2}}{{/optional}} />
           </span>
@@ -110,7 +110,7 @@
             </div>
         </div>
         {{#if enableEditing}}
-            <button type="submit"><span class="material-icons md-48 centered" title="speichern">save</span> Ergebnis eintragen</button>
+            <button class="submit_btn" type="submit"><span class="material-icons md-48 centered" title="speichern">save</span> Ergebnis eintragen</button>
         {{/if}}
     </form>
 </div>

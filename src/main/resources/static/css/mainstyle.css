@@ -97,32 +97,10 @@ li {
   width: 100%;
 }
 
-@media only screen and (min-width: 700px) {
-  .navbar ul {
-    display: flex !important;
-  }
-
-  button {
-    width: unset !important;
-  }
-  
-}
-
-@media only screen and (min-width: 1000px) {
-  .ergebnis {
-    display: flex !important;
-  }  
-  
-  .row label {
-    margin-right: 20px !important;
-  }
-}
-
 button {
   vertical-align: middle;
   font-size: 1em;
   padding: 5px;
-  width: 100%;
 }
 
 .centered {
@@ -143,7 +121,7 @@ button {
 }
 
 .navbar ul {
-  display: block;
+  display: flex;
   justify-content: flex-end;
   padding-left: 0;
   padding-top: 2px;
@@ -351,7 +329,7 @@ button {
 }
 
 .row label {
-  margin-right: 2px;
+  margin-right: 20px;
 }
 
 .row_small {
@@ -408,18 +386,6 @@ button {
 
 .vorhanden {
   background-color: #73ffa2;
-}
-
-@media print {
-  /* Verstecke bestimmte Elemente oder Pseudoelemente im Druckmodus */
-  .no-print {
-    display: none;
-  }
-
-  /* Ändere das Styling für den Druckmodus */
-  body {
-    font-size: 12pt;
-  }
 }
 
 tr {
@@ -569,4 +535,113 @@ tr {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 999;
+}
+
+@media print {
+  /* Verstecke bestimmte Elemente oder Pseudoelemente im Druckmodus */
+  .no-print {
+    display: none;
+  }
+
+  /* Ändere das Styling für den Druckmodus */
+  body {
+    font-size: 12pt;
+  }
+}
+
+@media only screen and (max-width:1000px) {
+
+  body {
+    font-size: 15px;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .allewertungen {
+    font-size: 10px;
+  }
+
+  .pagetitle {
+    display: none;
+  }
+
+  .navbar {
+    display: none;
+  }
+
+  .actions {
+    display: none;
+  }
+
+  .ergebnis_eintrag {
+    border-width: 0;
+  }
+
+  .ergebnis {
+    padding-top: 50px;
+  }
+
+  .listeneintrag {
+    box-shadow: unset;
+    border: 3px solid var(--color-dark-grey2);
+    display: block;
+    margin-bottom: 50px;
+    font-size: 20px;
+  }
+
+  .wettkaempfer {
+    display: block;
+  }
+
+  .allewertungen {
+    font-size: 0.5em;
+  }
+
+  .btn {
+    font-size: 30px;
+    margin-left: 5px;
+  }
+
+
+  .matten_btn {
+    width: 50%;
+    font-size: 30px;
+  }
+
+  .pagefooter {
+    font-size: 10px;
+    padding: 0 10px 0 0;
+    margin-top: unset;
+  }
+
+  .row {
+    justify-content: space-between;
+    font-size: 25px;
+  }
+
+  .row label {
+    margin-right: auto;
+    font-size: 16px;
+  }
+
+  .submit_btn {
+    position: absolute;
+    top: 40px;
+    border: none;
+    font-size: 30px;
+    width: 100%;
+  }
+
+  .vs div.center {
+    width: 100%;
+  }
+
+  .wertung_btn {
+    width: 35px;
+  }
+
+  .wettkaempfer {
+    font-size: 20px;
+    margin-top: 10px;
+  }
 }

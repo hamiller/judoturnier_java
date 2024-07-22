@@ -15,20 +15,18 @@
       {{/each}}
       </div>
 
-      <div class="actions">
-        <button onclick="renewBegegnungen()"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen neu erstellen">create_new_folder</span> Alle Wettkampfgruppen neu erstellen</button>
-        <button onclick="deleteBegegnungen()"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen löschen">autorenew</span> Alle Wettkampfgruppen löschen</button>
-        <div class="sameline">
+      <div class="navbar">
+          <ul class="nav-links links">
+            <li><a href="#" onclick="renewBegegnungen()"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen neu erstellen">create_new_folder</span> Alle Wettkampfgruppen neu erstellen</a></li>
+            <li><a href="#" onclick="deleteBegegnungen()"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen löschen">autorenew</span> Alle Wettkampfgruppen löschen</a></li>
+          </ul>
         {{#each altersklassen}}
-          <div class="actions ">
-            <button type="button" onclick="renewBegegnung( '{{this}}' )" ><span class="material-icons md-48 centered" title="Einzelne Wettkampfgruppen neu zuordnen">autorenew</span> Wettkampfgruppen {{this}} neu zuordnen</button>
-            <br>
-            <a href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches/{{this}}" target="_blank" class="buttonlink"><span class="material-icons md-48 centered" title="Druckansicht Begegnungen">print</span> Druckansicht {{this}} Begegnungen</a>
-            <br>
-            <a href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches_inserting_data/{{this}}" target="_blank" class="buttonlink"><span class="material-icons md-48 centered" title="Druckansicht Begegnungen-Eintragen">print</span> Druckansicht {{this}} Begegnungen-Eintragen</a>
-          </div>
+            <ul class="nav-links links">
+                <li><a href="#" type="button" onclick="renewBegegnung( '{{this}}' )" ><span class="material-icons md-48 centered" title="Einzelne Wettkampfgruppen neu zuordnen">autorenew</span> Wettkampfgruppen {{this}} neu zuordnen</a></li>
+                <li><a href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches/{{this}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht Begegnungen">print</span> Druckansicht {{this}} Begegnungen</a></li>
+                <li><a href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches_inserting_data/{{this}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht Begegnungen-Eintragen">print</span> Druckansicht {{this}} Begegnungen-Eintragen</a></li>
+            </ul>
         {{/each}}
-        </div>
       </div>
     </div>
 
@@ -39,15 +37,16 @@
     <div class="generalcontent">
       {{#if separatealtersklassen.name "GETRENNT"}}
         <div class="supertab">
-        {{#each altersklassen}}
-            <a><a href="/turnier/{{turnierid}}/begegnungen/randori?altersklasse={{this}}">Alterklasse {{this}}</a></div>
-        {{/each}}
+            <div><a href="/turnier/{{turnierid}}/begegnungen/randori">Alle Alterklassen</a></div>
+            {{#each altersklassen}}
+                <div><a href="/turnier/{{turnierid}}/begegnungen/randori?altersklasse={{this}}">Alterklasse {{this}}</a></div>
+            {{/each}}
         </div>
       {{/if}}
 
       <div class="tab">
         {{#each matten}}
-        <button class="tablinks" onclick="openMatte(event, '{{id}}')">Matte {{id}}</button>
+        <button class="tablinks matten_btn" onclick="openMatte(event, '{{id}}')">Matte {{id}}</button>
         {{/each}}
       </div>
       {{#each matten}}
