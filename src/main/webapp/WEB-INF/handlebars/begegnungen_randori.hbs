@@ -36,11 +36,14 @@
     
     <div class="generalcontent">
       {{#if separatealtersklassen.name "GETRENNT"}}
-        <div class="filter">
-            <div><a href="/turnier/{{turnierid}}/begegnungen/randori">Alle Alterklassen</a></div>
-            {{#each altersklassen}}
-                <div><a href="/turnier/{{turnierid}}/begegnungen/randori?altersklasse={{this}}">Alterklasse {{this}}</a></div>
-            {{/each}}
+        <div class="filter_dropdown">
+            <span>Filter nach Alterklasse</span>
+            <div class="filter_dropdown-content">
+                <a href="/turnier/{{turnierid}}/begegnungen/randori">Alle Alterklassen</a>
+                {{#each altersklassen}}
+                    <a href="/turnier/{{turnierid}}/begegnungen/randori?altersklasse={{this}}">Alterklasse {{this}}</a>
+                {{/each}}
+            </div>
         </div>
       {{/if}}
 
