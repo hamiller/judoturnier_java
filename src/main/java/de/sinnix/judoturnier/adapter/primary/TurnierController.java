@@ -11,6 +11,7 @@ import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.GruppenRunde;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Turnier;
+import jakarta.annotation.security.PermitAll;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -204,6 +205,7 @@ public class TurnierController {
 		}
 	}
 
+	@PermitAll
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori_printview_matches/{altersklasse}")
 	public ModelAndView ladeDruckAnsichtBegegnungenRandori(@PathVariable String turnierid, @PathVariable String altersklasse) {
 		logger.info("Lade Randori-Druckansicht für Turnier {} und Altersklasse {}", turnierid, altersklasse);

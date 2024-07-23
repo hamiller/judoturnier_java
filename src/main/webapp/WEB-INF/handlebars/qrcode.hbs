@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Judo-Turniersoftware</title>
+    <link rel="stylesheet" href="/css/interface.css">
+    <link rel="stylesheet" href="/css/mainstyle.css">
+    <style type="text/css">
+        @page {
+            size: A4 landscape;
+            margin: 20mm 15mm 20mm 15mm;
+        }
+
+        tr {
+            vertical-align: middle;
+        }
+    </style>
+<body>
+    <script src="/js/paged.polyfill.min.js"></script>
+    <h1>{{titel}}</h1>
+    <div id="content" class="flex_warp">
+
+        <div class="box">
+            <h1>Gruppen {{altersklasse}}</h1>
+
+            <span class="freiraum"></span>
+
+            <div class="qrcode">
+                <img src="data:image/png;base64,{{imageGruppen}}" alt="QRCode Gruppen"/>
+            </div>
+        </div>
+
+        <div class="box">
+            <h1>Begegnungen {{altersklasse}}</h1>
+
+            <span class="freiraum"></span>
+
+            <div class="qrcode">
+                <img src="data:image/png;base64,{{imageBegegnungen}}" alt="QRCode Begegnungen"/>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

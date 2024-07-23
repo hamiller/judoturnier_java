@@ -8,6 +8,7 @@ import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppen;
 import de.sinnix.judoturnier.model.TurnierTyp;
+import jakarta.annotation.security.PermitAll;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +67,7 @@ public class GewichtsklassenController {
 		return mav;
 	}
 
+	@PermitAll
 	@GetMapping("/turnier/{turnierid}/gewichtsklassen/randori_printview_groups/{altersklasse}")
 	public ModelAndView ladeDruckAnsichtGruppenRandori(@PathVariable String turnierid, @PathVariable("altersklasse") String altersklasse) {
 		logger.info("lade Druckansicht Randori-Gruppen für " + altersklasse);

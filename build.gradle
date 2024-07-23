@@ -37,6 +37,7 @@ dependencies {
 	implementation 'org.flywaydb:flyway-database-postgresql'
 	implementation 'com.github.jknack:handlebars:4.4.0'
 	implementation 'com.github.jknack:handlebars-springmvc:4.4.0'
+	implementation 'com.google.zxing:core:3.5.3'
 	runtimeOnly 'org.postgresql:postgresql'
 	compileOnly 'org.projectlombok:lombok:1.18.32'
 	annotationProcessor 'org.projectlombok:lombok:1.18.32'
