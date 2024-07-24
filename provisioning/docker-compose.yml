@@ -1,0 +1,25 @@
+## Compose Datei für den nginx und certbot um Anfragen an die App weiterzuleiten und https zu terminieren
+## wird nur einmalig manuell auf dem Cloud-Host benötigt
+services:
+  webserver:
+    image: nginx:latest
+    network_mode: host
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      - ./nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./certbot/conf/:/etc/letsencrypt/:ro
+
+  ## eigenes Image, wegen Strato....
+  certbot:
+    image: seneca/strato-certbot_no-wildcard:test
+    network_mode: host
+    environment:
+      - DOMAIN=judo.sinnix.de
+      - EMAIL=florian.miess@sinnix.de
+    volumes:
+      - ./certbot/conf/:/etc/letsencrypt/:rw
+      - /var/log/letsencrypt/:/var/log/letsencrypt/:rw
+

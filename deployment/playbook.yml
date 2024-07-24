@@ -1,0 +1,61 @@
+---
+- name: Build Spring Boot application locally
+  hosts: localhost
+  vars:
+    springboot_war_file: ../build/libs/judoturnier-0.0.1-SNAPSHOT.war
+    app_name: turnier-service
+    app_source_dir: ..
+    docker_image_file: springboot-app.tar
+    docker_image_local_dir: /tmp
+
+  tasks:
+    - name: Test Spring Boot application with Gradle
+      shell: ./gradlew test
+      args:
+        chdir: "{{ app_source_dir }}"
+
+    - name: Build Spring Boot application with Gradle
+      shell: ./gradlew bootJar
+      args:
+        chdir: "{{ app_source_dir }}"
+
+    - name: Build Docker image
+      shell: "docker build -t {{ app_name }}:latest .."
+
+    - name: Export Docker image
+      shell: "docker save -o {{ docker_image_local_dir }}/{{ docker_image_file }} {{ app_name }}:latest"
+
+
+- name: Deploy application to all hosts
+  hosts: servers
+  vars:
+    app_target_dir: /opt/springboot-app
+    docker_image_file: springboot-app.tar
+    docker_image_local_dir: /tmp
+    docker_image_remote_dir: /tmp
+  tasks:
+    - name: Copy Docker image to remote server
+      copy:
+        src: "{{ docker_image_local_dir }}/{{ docker_image_file }}"
+        dest: "{{ docker_image_remote_dir }}/{{ docker_image_file }}"
+
+    - name: Import Docker image
+      shell: "docker load -i {{ docker_image_remote_dir }}/{{ docker_image_file }}"
+
+
+
+    - name: Create application directory on remote server
+      file:
+        path: "{{ app_target_dir }}"
+        state: directory
+
+    - name: Copy docker-compose.yml to remote server
+      template:
+        src: ../docker-compose.yml
+        dest: "{{ app_target_dir }}/docker-compose.yml"
+
+
+    - name: Start application using Docker Compose
+      shell: docker-compose up -d
+      args:
+        chdir: "{{ app_target_dir }}"
