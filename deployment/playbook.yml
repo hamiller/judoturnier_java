@@ -44,20 +44,29 @@
 
 
 
-    - name: Create application directory on remote server
+    - name: Create application directories on remote server
       file:
-        path: "{{ app_target_dir }}"
+        path: "{{ item }}"
         state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_gid }}"
+        mode: '0755'
+      loop:
+        - "{{ app_target_dir }}"
+        - "{{ app_target_dir }}/init-db"
 
-    - name: Copy docker-compose.yml to remote server
-      template:
-        src: ../docker-compose.yml
-        dest: "{{ app_target_dir }}/docker-compose.yml"
+    - name: Copy app files
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      loop:
+        - src: ../docker-compose.yml
+          dest: "{{ app_target_dir }}/docker-compose.yml"
+        - src:  ../.env
+          dest: "{{ app_target_dir }}/.env"
+        - src: ../init-db/init.sql
+          dest: "{{ app_target_dir }}/init-db/init.sql"
 
-    - name: Copy .env to remote server
-      template:
-        src: ../.env
-        dest: "{{ app_target_dir }}/.env"
 
     - name: Start application using Docker Compose
       shell: docker compose up -d
