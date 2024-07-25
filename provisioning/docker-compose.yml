@@ -12,12 +12,12 @@ services:
       - ./nginx/conf/:/etc/nginx/conf.d/:ro
       - ./certbot/conf/:/etc/letsencrypt/:ro
 
-  ## eigenes Image, wegen Strato....
+  ## eigenes Image, wegen hetzner....
   certbot:
-    image: seneca/strato-certbot_no-wildcard:test
+    image: sinnix/hetzner-certbot:latest
     network_mode: host
     environment:
-      - DOMAIN=judo.sinnix.de
+      - DOMAIN=judo-turnier.de
       - EMAIL=florian.miess@sinnix.de
     volumes:
       - ./certbot/conf/:/etc/letsencrypt/:rw

@@ -1,6 +1,7 @@
 # Bereitstellen der Laufzeitumgebung
 
 Auf dem Zielsystem muss ein nginx und ein certbot vorhanden sein um Anfragen an die Anwendung weiterzuleiten und https zu terminieren.
+Die Einrichtung erfolgt einmalig.
 
 
 ### Vorgehen
@@ -20,3 +21,22 @@ Auf dem Zielsystem muss ein nginx und ein certbot vorhanden sein um Anfragen an 
   sudo chmod 775 /opt
 ```
 )
+
+## Certbot
+
+Für Certbot muss ein entsprechendes Image bereitgestellt werden (und im `docker-compose.yaml` entsprechend verwendet werden).
+Zum Bauen muss ein Credentials-File vorhanden sein (hier `../.hetzner-credentials`):
+ACHTUNG: Es kann nicht auf Dateien im Parent zugegriffen werden, daher muss das Erstellen des Images direkt im Parent erfolgen!
+
+(im Parent-Verzeichnis mit `.hetzner-credentials`)
+`docker build -f provisioning/Dockerfile -t sinnix/hetzner-certbot:latest .`
+
+Das Image muss anschließend auf dem Host bereitgestellt werden:
+```
+docker save -o /tmp/hetzner-certbot.tar sinnix/hetzner-certbot:latest
+
+scp /tmp/hetzner-certbot.tar <HOST>:/tmp/
+
+# auf dem Host laden:
+docker load -i /tmp/hetzner-certbot.tar
+```

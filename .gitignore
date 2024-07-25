@@ -39,3 +39,4 @@ out/
 
 .env
 .ssl_certificats
+.hetzner-credentials
