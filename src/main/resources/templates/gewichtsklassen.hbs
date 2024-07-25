@@ -29,8 +29,7 @@
             <div class="generalcontent" id="gruppe_{{id}}" droppable=true>
               <div class="gewichtsklasse-meta">
                 <div>{{altersKlasse}}</div>
-                <div>{{name}}</div>
-                <div>{{gewichtsklasse.name}}</div>
+                <div>{{formatNumber minGewicht}}kg - {{formatNumber maxGewicht}}kg</div>
               </div>
               <div class="gewichtsklasse-teilnehmer">
               {{#each teilnehmer}}
@@ -50,8 +49,7 @@
             <div class="generalcontent" id="gruppe_{{id}}" droppable=true>
               <div class="gewichtsklasse-meta">
                 <div>{{altersKlasse}}</div>
-                <div>{{name}}</div>
-                <div>{{gewichtsklasse.name}}</div>
+                <div>{{formatNumber minGewicht}}kg - {{formatNumber maxGewicht}}kg</div>
               </div>
               <div class="gewichtsklasse-teilnehmer">
               {{#each teilnehmer}}

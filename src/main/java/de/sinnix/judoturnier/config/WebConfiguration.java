@@ -15,7 +15,8 @@ public class WebConfiguration {
 	@Bean
 	public ViewResolver handlebarsViewResolver() {
 		HandlebarsViewResolver viewResolver = new HandlebarsViewResolver();
-		viewResolver.setPrefix("/WEB-INF/handlebars/");
+		viewResolver.setOrder(1);
+		viewResolver.setPrefix("classpath:templates/");
 		viewResolver.setSuffix(".hbs");
 		viewResolver.setCache(false);
 		viewResolver.registerHelpers(HelperSource.class);

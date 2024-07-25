@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'de.sinnix'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.2-SNAPSHOT'
 
 java {
 	toolchain {
@@ -51,6 +51,15 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+springBoot {
+	buildInfo()
+}
+
+//// immer gleichen Namen verwenden, sodass der Copy-Befehl im Dockerfile funktioniert
+bootJar {
+	archiveFileName = 'judoturnier.jar'
 }
 
 test {

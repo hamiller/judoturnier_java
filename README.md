@@ -1,7 +1,8 @@
 
 # Build project
 
-Das Projekt wird mit `./gradlew bootJar` erstellt
+Das Projekt wird mit `./gradlew clean bootJar` erstellt.
+Dies erstellt eine `judoturnier.jar` Datei im Unterverzeichnis `./build/libs`.
 
 ## Provisioning
 

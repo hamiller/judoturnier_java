@@ -37,4 +37,4 @@ spring:
             scope: openid,profile,email,offline_access
         provider:
           keycloak:
-            issuer-uri: http://keycloak:8080/realms/judoturnier
+            issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:7080/realms/judoturnier}
