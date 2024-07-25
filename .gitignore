@@ -40,3 +40,6 @@ out/
 .env
 .ssl_certificats
 .hetzner-credentials
+
+deployment/inventory.yml
+
