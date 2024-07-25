@@ -56,6 +56,6 @@
 
 
     - name: Start application using Docker Compose
-      shell: docker-compose up -d
+      shell: docker compose up -d
       args:
         chdir: "{{ app_target_dir }}"
