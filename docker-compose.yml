@@ -18,6 +18,8 @@ services:
       - 5532:5432
     networks:
       - net
+    env_file:
+      - .env
     restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -37,6 +39,8 @@ services:
       - 8080:8080
     depends_on:
       - db
+    env_file:
+      - .env
     networks:
       - net
 
@@ -64,6 +68,8 @@ services:
       - 7443:7443
     depends_on:
       - db
+    env_file:
+      - .env
     networks:
       - net
     restart: always

@@ -54,6 +54,10 @@
         src: ../docker-compose.yml
         dest: "{{ app_target_dir }}/docker-compose.yml"
 
+    - name: Copy .env to remote server
+      template:
+        src: ../.env
+        dest: "{{ app_target_dir }}/.env"
 
     - name: Start application using Docker Compose
       shell: docker compose up -d
