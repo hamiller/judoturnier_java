@@ -1,8 +1,9 @@
-version: '3.8'
+# Parameter in dieser yaml werden aus der .env Datei übernommen, siehe env_file
 
 networks:
   net:
     driver: bridge
+    enable_ipv6: true
 
 volumes:
   postgres_data:
@@ -27,28 +28,29 @@ services:
 
   turnier-service:
     container_name: turnierservice-judo
-    build:
-      context: .
-      dockerfile: Dockerfile
     image: turnier-service:latest
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      DATASOURCE_USERNAME: ${POSTGRES_USER}
+      DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
+      # Spring security prüft den iss(Issuer) Claim im JWT mit diesem Wert, der hostname muss exakt gleich sein!
+      KEYCLOAK_ISSUER_URI: ${KEYCLOAK_ISSUER_URI}
+      KEYCLOAK_AUTH_URI: ${KEYCLOAK_AUTH_URI}
     ports:
       - 8080:8080
     depends_on:
       - db
+      - keycloak
     env_file:
       - .env
     networks:
       - net
 
   keycloak:
-    image: quay.io/keycloak/keycloak:24.0
+    image: quay.io/keycloak/keycloak:25.0.2
     container_name: keycloak-judo
-    command:
-      - start-dev
+    command: start-dev
     environment:
       KC_DB: postgres
       KC_DB_URL_HOST: db
@@ -58,14 +60,13 @@ services:
       KC_DB_SCHEMA: public
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      KC_HOSTNAME: localhost
-      KC_HOSTNAME_PORT: 7080
-      KC_HOSTNAME_STRICT_BACKCHANNEL: false
+      KC_HTTP_RELATIVE_PATH: "/auth"
+      KC_PROXY_HEADERS: xforwarded
       KC_HEALTH_ENABLED: true
       KC_LOG_LEVEL: info
     ports:
+      - 8443:8443
       - 7080:8080
-      - 7443:7443
     depends_on:
       - db
     env_file:
@@ -73,3 +74,14 @@ services:
     networks:
       - net
     restart: always
+
+
+#  bash:
+#    image: sinnix/bash:latest
+#    container_name: bash
+#    #    command: /usr/bin/bash
+#    #    entrypoint: /usr/bin/bash
+#    tty: true
+#    stdin_open: true
+#    networks:
+#      - net

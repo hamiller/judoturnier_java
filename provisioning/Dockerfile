@@ -13,4 +13,4 @@ VOLUME /var/log/letsencrypt
 # Add credentials file
 ADD ./.hetzner-credentials ./hetzner-credentials
 
-ENTRYPOINT ["sh",  "-c", "certbot certonly --authenticator dns-hetzner --dns-hetzner-credentials ./hetzner-credentials --agree-tos --no-eff-email --email $EMAIL -d $DOMAIN"]
+ENTRYPOINT ["sh",  "-c", "certbot certonly --authenticator dns-hetzner --dns-hetzner-credentials ./hetzner-credentials --agree-tos --no-eff-email --email $EMAIL -d $DOMAIN -d *.$DOMAIN"]

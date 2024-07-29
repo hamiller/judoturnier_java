@@ -13,3 +13,4 @@ spring:
         provider:
           keycloak:
             issuer-uri: http://localhost:7080/realms/judoturnier
+            authorization-uri: http://localhost:7080/realms/judoturnier/protocol/openid-connect/auth

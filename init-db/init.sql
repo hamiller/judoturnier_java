@@ -1,2 +1,2 @@
-CREATE DATABASE keycloak;
-CREATE DATABASE judo;
+SELECT 'CREATE DATABASE judo' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'judo')\gexec
+SELECT 'CREATE DATABASE keycloak' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'keycloak')\gexec

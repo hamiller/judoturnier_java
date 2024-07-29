@@ -8,12 +8,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -156,15 +159,31 @@ public class HelperSource {
 
 	public static Bewerter extractBewerter(Authentication authentication) {
 		try {
-			var principal = (DefaultOidcUser) authentication.getPrincipal();
-			var userid = principal.getUserInfo().getSubject();
-			var username = principal.getUserInfo().getPreferredUsername();
-			var fullname = principal.getUserInfo().getFullName();
-			var rollen = authentication.getAuthorities().stream().map(a -> a.getAuthority()).toList();
+			if (authentication instanceof AnonymousAuthenticationToken) {
+				AnonymousAuthenticationToken token = (AnonymousAuthenticationToken) authentication;
+				var principal = (String) token.getPrincipal();
+				Collection<? extends GrantedAuthority> authorities = token.getAuthorities();
+				List<String> rollen = new ArrayList<>();
+				for (GrantedAuthority authority : authorities) {
+					rollen.add(authority.getAuthority());
+				}
+				return new Bewerter(principal, "", "", rollen);
+			}
 
-			Bewerter result = new Bewerter(userid, username, fullname, rollen);
-			logger.info("Eingeloggter User {}", result);
-			return result;
+			if (authentication.getPrincipal() instanceof DefaultOidcUser) {
+				var principal = (DefaultOidcUser) authentication.getPrincipal();
+				var userid = principal.getUserInfo().getSubject();
+				var username = principal.getUserInfo().getPreferredUsername();
+				var fullname = principal.getUserInfo().getFullName();
+				var rollen = authentication.getAuthorities().stream().map(a -> a.getAuthority()).toList();
+
+				Bewerter result = new Bewerter(userid, username, fullname, rollen);
+				logger.info("Eingeloggter User {}", result);
+				return result;
+			}
+
+			logger.warn("Konnte keinen Bewerter aus dem Authentication parsen, erstelle Dummy");
+			return new Bewerter("dummy", "", "", List.of());
 		}
 		catch (Exception e) {
 			logger.info("Nutzer konnte nicht geparsed werden! {}", authentication, e);

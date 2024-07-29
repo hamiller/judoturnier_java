@@ -40,3 +40,6 @@ scp /tmp/hetzner-certbot.tar <HOST>:/tmp/
 # auf dem Host laden:
 docker load -i /tmp/hetzner-certbot.tar
 ```
+
+## Keycloak
+Keycloak muss die entsprechende Redirect URI erlaubt sein.

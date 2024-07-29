@@ -1,0 +1,51 @@
+networks:
+  net:
+    driver: bridge
+
+volumes:
+  postgres_data_testbed:
+
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres-judo-testbed
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+    ports:
+      - 5532:5432
+    networks:
+      - net
+    volumes:
+      - postgres_data_testbed:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.2
+    container_name: keycloak-judo-testbed
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: db
+      KC_DB_USERNAME: username
+      KC_DB_PASSWORD: password
+      KC_DB_DATABASE: keycloak
+      KC_DB_SCHEMA: public
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: the_admin
+    ports:
+      - 7080:8080
+    depends_on:
+      - db
+    networks:
+      - net
+
+  bash:
+    image: sinnix/bash:latest
+    container_name: bash
+    #    command: /usr/bin/bash
+    #    entrypoint: /usr/bin/bash
+    tty: true
+    stdin_open: true
+    networks:
+      - net
