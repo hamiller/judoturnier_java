@@ -186,19 +186,34 @@ public class TurnierService {
 		Begegnung begegnung = ladeBegegnung(Integer.parseInt(begegnungId));
 
 		Bewerter bewerter = bewerterRepository.findById(bewerterUUID);
+		Wettkaempfer wettkaempfer = wettkaempferService.ladeKaempfer(sieger).orElseThrow();
+		Duration dauer = Duration.of(fightTime, ChronoUnit.SECONDS);
+
 		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), bewerter);
 		if (existierendeWertung.isPresent()) {
 			logger.debug("Aktualisiere existierende Wertung");
+			var wertung = existierendeWertung.get();
+			wertung.setSieger(wettkaempfer);
+			wertung.setPunkteWettkaempferWeiss(scoreWeiss);
+			wertung.setStrafenWettkaempferWeiss(penaltiesWeiss);
+			wertung.setPunkteWettkaempferRot(scoreBlau);
+			wertung.setStrafenWettkaempferRot(penaltiesBlau);
+			wertung.setZeit(dauer);
+
+			turnierRepository.speichereBegegnung(begegnung);
 			return;
 		}
 
 		logger.debug("Erstelle neue Wertung");
 		UUID wertungId = UUID.randomUUID();
-		Wettkaempfer wettkaempfer = wettkaempferService.ladeKaempfer(sieger).orElseThrow();
-		Duration dauer = Duration.of(fightTime, ChronoUnit.SECONDS);
-		Wertung wertungNeu = new Wertung(wertungId, wettkaempfer, dauer, scoreWeiss, penaltiesWeiss, scoreBlau, penaltiesBlau,
-			null, null, null, null,
-			null, null, null, null,
+		Wertung wertungNeu = new Wertung(wertungId,
+			wettkaempfer,
+			dauer,
+			scoreWeiss,
+			penaltiesWeiss,
+			scoreBlau,
+			penaltiesBlau,
+			null, null, null, null, null, null, null, null,
 			bewerter
 		);
 		begegnung.getWertungen().add(wertungNeu);
