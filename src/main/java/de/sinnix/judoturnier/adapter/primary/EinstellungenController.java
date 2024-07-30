@@ -6,7 +6,7 @@ import de.sinnix.judoturnier.application.WettkaempferService;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.Kampfsystem;
 import de.sinnix.judoturnier.model.MattenAnzahl;
-import de.sinnix.judoturnier.model.RandoriGruppengroesse;
+import de.sinnix.judoturnier.model.Gruppengroesse;
 import de.sinnix.judoturnier.model.SeparateAlterklassen;
 import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.VariablerGewichtsteil;
@@ -53,7 +53,7 @@ public class EinstellungenController {
 		mav.addObject("turniertyp", einstellungen.turnierTyp());
 		mav.addObject("mattenanzahl", einstellungen.mattenAnzahl());
 		mav.addObject("wettkampfreihenfolge", einstellungen.wettkampfReihenfolge());
-		mav.addObject("randorigruppengroesse", einstellungen.randoriGruppengroesse());
+		mav.addObject("gruppengroesse", einstellungen.gruppengroesse());
 		mav.addObject("variablergewichtsteil", einstellungen.variablerGewichtsteil());
 		mav.addObject("separatealtersklassen", einstellungen.separateAlterklassen());
 		return mav;
@@ -66,12 +66,12 @@ public class EinstellungenController {
 		var turnierTyp = TurnierTyp.valueOf(formData.getFirst(TurnierTyp.TYP));
 		var mattenAnzahl = new MattenAnzahl(Integer.parseInt(formData.getFirst(MattenAnzahl.TYP)));
 		var wettkampfReihenfolge = WettkampfReihenfolge.valueOf(formData.getFirst(WettkampfReihenfolge.TYP));
-		var randoriGruppengroesse = new RandoriGruppengroesse(Integer.parseInt(formData.getFirst(RandoriGruppengroesse.TYP)));
+		var gruppengroesse = new Gruppengroesse(Integer.parseInt(formData.getFirst(Gruppengroesse.TYP)));
 		var variablerGewichtsteil = new VariablerGewichtsteil(Double.parseDouble(formData.getFirst(VariablerGewichtsteil.TYP)));
 		var separateAltersklassen = SeparateAlterklassen.valueOf(formData.getFirst(SeparateAlterklassen.TYP));
 		var turnierUUID = UUID.fromString(turnierid);
 
-		var einstellungen = new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge, randoriGruppengroesse, variablerGewichtsteil, separateAltersklassen, turnierUUID);
+		var einstellungen = new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge, gruppengroesse, variablerGewichtsteil, separateAltersklassen, turnierUUID);
 
 		einstellungen = einstellungenService.speichereTurnierEinstellungen(einstellungen);
 		var wks = wiegenService.alleKaempfer(UUID.fromString(turnierid));
@@ -85,7 +85,7 @@ public class EinstellungenController {
 		mav.addObject("turniertyp", einstellungen.turnierTyp());
 		mav.addObject("mattenanzahl", einstellungen.mattenAnzahl());
 		mav.addObject("wettkampfreihenfolge", einstellungen.wettkampfReihenfolge());
-		mav.addObject("randorigruppengroesse", einstellungen.randoriGruppengroesse());
+		mav.addObject("gruppengroesse", einstellungen.gruppengroesse());
 		mav.addObject("variablergewichtsteil", einstellungen.variablerGewichtsteil());
 		mav.addObject("separatealtersklassen", einstellungen.separateAlterklassen());
 		return mav;

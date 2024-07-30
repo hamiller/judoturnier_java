@@ -24,49 +24,72 @@
         {{#if standardturnier}}
 
           <h1>Frauen</h1>
-          <div class="gewichtsklassen">
           {{#each gewichtsklassengruppenWeiblich}}
-            <div class="generalcontent" id="gruppe_{{id}}" droppable=true>
-              <div class="gewichtsklasse-meta">
-                <div>{{altersKlasse}}</div>
-                <div>{{formatNumber minGewicht}}kg - {{formatNumber maxGewicht}}kg</div>
+              {{this.altersKlasse}} (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})
+              <div class="navbar navbar_fixed">
+                  <ul class="nav-links links">
+                      <li><a href="#" type="button" onclick="renewGewichtsklasse( '{{this.altersKlasse}}' ); return false;" ><span class="material-icons md-48 centered" title="Einzelne Gewichtsklasse neu zuordnen">autorenew</span> Gewichtsklasse {{altersKlasse}} neu zuordnen</a></li>
+                      <li><a href="/turnier/{{turnierid}}/gewichtsklassen/turnier_printview_groups/{{this.altersKlasse}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht">print</span> Druckansicht {{altersKlasse}} Gruppen</a></li>
+                      <li><a href="/turnier/{{turnierid}}/qrcodes/{{this.altersKlasse}}" target="_blank" class=""><span class="material-icons md-48 centered" title="QRCode">print</span> QR-Codes {{altersKlasse}}</a></li>
+                  </ul>
               </div>
-              <div class="gewichtsklasse-teilnehmer">
-              {{#each teilnehmer}}
-                <div class="listeneintrag justifycontent" id="teilnehmer_{{id}}" draggable=true>
-                {{name}}<div class="gewichtsklasse-teilnehmer-meta"><span>{{verein.name}}</span><span class="gewicht">{{formatNumber gewicht}}kg</span><span>{{geschlecht}}</span></div>
-                <input type="hidden" name="gruppen_teilnehmer" id="input_teilnehmer_{{id}}" value="gruppe_{{../id}}_teilnehmer_{{id}}"/>
+
+              <div class="gewichtsklassen">
+              {{#each gruppen}}
+                <div class="generalcontent" id="gruppe_{{id}}" droppable=true>
+                  <div class="gewichtsklasse-meta">
+                    <div>{{altersKlasse}}</div>
+                    <div>{{formatNumber minGewicht}}kg - {{formatNumber maxGewicht}}kg</div>
+                  </div>
+                  <div class="gewichtsklasse-teilnehmer">
+                  {{#each teilnehmer}}
+                    <div class="listeneintrag justifycontent" id="teilnehmer_{{id}}" draggable=true>
+                    {{name}}<div class="gewichtsklasse-teilnehmer-meta"><span>{{verein.name}}</span><span class="gewicht">{{formatNumber gewicht}}kg</span><span>{{geschlecht}}</span></div>
+                    <input type="hidden" name="gruppen_teilnehmer" id="input_teilnehmer_{{id}}" value="gruppe_{{../id}}_teilnehmer_{{id}}"/>
+                    </div>
+                  {{/each}}
+                  </div>
                 </div>
               {{/each}}
               </div>
-            </div>
           {{/each}}
-          </div>
 
           <h1>Männer</h1>
-          <div class="gewichtsklassen">
           {{#each gewichtsklassengruppenMaennlich}}
-            <div class="generalcontent" id="gruppe_{{id}}" droppable=true>
-              <div class="gewichtsklasse-meta">
-                <div>{{altersKlasse}}</div>
-                <div>{{formatNumber minGewicht}}kg - {{formatNumber maxGewicht}}kg</div>
+              {{this.altersKlasse}} (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})
+              <div class="navbar navbar_fixed">
+                  <ul class="nav-links links">
+                      <li><a href="#" type="button" onclick="renewGewichtsklasse( '{{this.altersKlasse}}' ); return false;" ><span class="material-icons md-48 centered" title="Einzelne Gewichtsklasse neu zuordnen">autorenew</span> Gewichtsklasse {{altersKlasse}} neu zuordnen</a></li>
+                      <li><a href="/turnier/{{turnierid}}/gewichtsklassen/turnier_printview_groups/{{this.altersKlasse}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht">print</span> Druckansicht {{altersKlasse}} Gruppen</a></li>
+                      <li><a href="/turnier/{{turnierid}}/qrcodes/{{this.altersKlasse}}" target="_blank" class=""><span class="material-icons md-48 centered" title="QRCode">print</span> QR-Codes {{altersKlasse}}</a></li>
+                  </ul>
               </div>
-              <div class="gewichtsklasse-teilnehmer">
-              {{#each teilnehmer}}
-                <div class="listeneintrag justifycontent" id="teilnehmer_{{id}}" draggable=true>
-                {{name}}<div class="gewichtsklasse-teilnehmer-meta"><span>{{verein.name}}</span><span class="gewicht">{{gewicht}}kg</span><span>{{geschlecht}}</span></div>
-                <input type="hidden" name="gruppen_teilnehmer" id="input_teilnehmer_{{id}}" value="gruppe_{{../id}}_teilnehmer_{{id}}"/>
+
+              <div class="gewichtsklassen">
+              {{#each gruppen}}
+                <div class="generalcontent" id="gruppe_{{id}}" droppable=true>
+                  <div class="gewichtsklasse-meta">
+                    <div>{{altersKlasse}}</div>
+                    <div>{{formatNumber minGewicht}}kg - {{formatNumber maxGewicht}}kg</div>
+                  </div>
+
+                  <div class="gewichtsklasse-teilnehmer">
+                  {{#each teilnehmer}}
+                    <div class="listeneintrag justifycontent" id="teilnehmer_{{id}}" draggable=true>
+                    {{name}}<div class="gewichtsklasse-teilnehmer-meta"><span>{{verein.name}}</span><span class="gewicht">{{gewicht}}kg</span><span>{{geschlecht}}</span></div>
+                    <input type="hidden" name="gruppen_teilnehmer" id="input_teilnehmer_{{id}}" value="gruppe_{{../id}}_teilnehmer_{{id}}"/>
+                    </div>
+                  {{/each}}
+                  </div>
                 </div>
               {{/each}}
               </div>
-            </div>
           {{/each}}
-          </div>
 
         {{else}}
 
           <h1>Mädchen und Jungs</h1>
-          {{#each gruppiertBeiAlter}}
+          {{#each gewichtsklassengruppenAlter}}
             {{this.altersKlasse}} (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})
             <div class="navbar navbar_fixed">
                 <ul class="nav-links links">

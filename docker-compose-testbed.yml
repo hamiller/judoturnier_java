@@ -39,13 +39,3 @@ services:
       - db
     networks:
       - net
-
-  bash:
-    image: sinnix/bash:latest
-    container_name: bash
-    #    command: /usr/bin/bash
-    #    entrypoint: /usr/bin/bash
-    tty: true
-    stdin_open: true
-    networks:
-      - net

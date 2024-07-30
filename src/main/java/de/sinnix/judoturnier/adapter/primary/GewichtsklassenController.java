@@ -44,26 +44,33 @@ public class GewichtsklassenController {
 
 	@GetMapping("/turnier/{turnierid}/gewichtsklassen")
 	public ModelAndView ladeGewichtsklassen(@PathVariable String turnierid) {
+		logger.info("GewichtsklassenController ladeGewichtsklassen, Turnier {}", turnierid);
 		var turnierUUID = UUID.fromString(turnierid);
 		var wks = wettkaempferService.alleKaempfer(turnierUUID);
 		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 
 		var groupedByAge = this.groupByAge(currentGwks);
+		var groupedByFemale = this.groupByGender(currentGwks, Geschlecht.w); currentGwks.stream().filter(gruppe -> gruppe.gruppenGeschlecht().isPresent() && gruppe.gruppenGeschlecht().get() == Geschlecht.w);
+		var groupedByMale = this.groupByGender(currentGwks, Geschlecht.m);
+
+		logger.trace("groupedByAge: {}", groupedByAge);
+		logger.trace("groupedByFemale: {}", groupedByFemale);
+		logger.trace("groupedByMale: {}", groupedByMale);
+
 		var einstellungen = einstellungenService.ladeEinstellungen(UUID.fromString(turnierid));
 		var anzahlwkInGroups = currentGwks.stream()
 			.mapToInt(group -> group.teilnehmer().size())
 			.sum();
 
-
 		ModelAndView mav = new ModelAndView("gewichtsklassen");
 		mav.addObject("turnierid", turnierid);
-		mav.addObject("gewichtsklassengruppenWeiblich", currentGwks.stream().filter(gruppe -> gruppe.gruppenGeschlecht().isPresent() && gruppe.gruppenGeschlecht().get() == Geschlecht.w));
-		mav.addObject("gewichtsklassengruppenMaennlich", currentGwks.stream().filter(gruppe -> gruppe.gruppenGeschlecht().isPresent() && gruppe.gruppenGeschlecht().get() == Geschlecht.m));
+		mav.addObject("gewichtsklassengruppenWeiblich", groupedByFemale);
+		mav.addObject("gewichtsklassengruppenMaennlich", groupedByMale);
+		mav.addObject("gewichtsklassengruppenAlter", groupedByAge);
 		mav.addObject("anzahlwk", wks.size());
 		mav.addObject("anzahlwkInGroups", anzahlwkInGroups);
 		mav.addObject("anzahlUnterschiedlich", anzahlwkInGroups != wks.size());
 		mav.addObject("standardturnier", einstellungen.turnierTyp() == TurnierTyp.STANDARD);
-		mav.addObject("gruppiertBeiAlter", groupedByAge);
 		return mav;
 	}
 
@@ -115,7 +122,7 @@ public class GewichtsklassenController {
 	@PostMapping("/turnier/{turnierid}/gewichtsklassen")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView speichereGewichtsklassen(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
-		logger.debug("speichere Gewichtsklassen {}", formData);
+		logger.info("speichere Gewichtsklassen {}", formData);
 
 		var gruppenTeilnehmer = new HashMap<Integer, List<Integer>>();
 		for (String w : formData.get("gruppen_teilnehmer")) {
@@ -157,4 +164,12 @@ public class GewichtsklassenController {
 			.sorted(Comparator.comparingInt(a -> a.altersKlasse().getReihenfolge()))
 			.collect(Collectors.toList());
 	}
+
+	private List<GewichtsklassenGruppen> groupByGender(List<GewichtsklassenGruppe> gwk, Geschlecht geschlecht) {
+		// Filtern nach Geschlecht
+		List<GewichtsklassenGruppe> groupeByGender = gwk.stream().filter(gruppe -> gruppe.gruppenGeschlecht().isPresent() && gruppe.gruppenGeschlecht().get().equals(geschlecht)).collect(Collectors.toList());
+		// Gruppieren nach Alter
+		return groupByAge(groupeByGender);
+	}
+
 }

@@ -10,7 +10,7 @@ import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.MattenAnzahl;
 import de.sinnix.judoturnier.model.RandoriGruppenName;
-import de.sinnix.judoturnier.model.RandoriGruppengroesse;
+import de.sinnix.judoturnier.model.Gruppengroesse;
 import de.sinnix.judoturnier.model.SeparateAlterklassen;
 import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.VariablerGewichtsteil;
@@ -168,7 +168,7 @@ public class GewichtsklassenServiceTest {
 		wettkaempferListe.add(new Wettkaempfer(1, "Wettkaempfer 1", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein 1", uuid), 25.0, Optional.empty(), false, false, uuid));
 		wettkaempferListe.add(new Wettkaempfer(2, "Wettkaempfer 2", Geschlecht.w, Altersklasse.U11, new Verein(2, "Verein 2", uuid), 27.0, Optional.empty(), false, false, uuid));
 
-		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new RandoriGruppengroesse(2), new VariablerGewichtsteil(5.0), SeparateAlterklassen.ZUSAMMEN, uuid);
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroesse(2), new VariablerGewichtsteil(5.0), SeparateAlterklassen.ZUSAMMEN, uuid);
 		when(einstellungenService.ladeEinstellungen(any())).thenReturn(einstellungen);
 
 		List<GewichtsklassenGruppe> result = gewichtsklassenService.teileInGewichtsklassen(wettkaempferListe, uuid);
@@ -184,7 +184,7 @@ public class GewichtsklassenServiceTest {
 		wettkaempferListe.add(new Wettkaempfer(1, "Wettkaempfer 1", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein 1", uuid), 25.0, Optional.empty(), false, false, uuid));
 		wettkaempferListe.add(new Wettkaempfer(2, "Wettkaempfer 2", Geschlecht.w, Altersklasse.U11, new Verein(2, "Verein 2", uuid), 27.0, Optional.empty(), false, false, uuid));
 
-		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ALLE, new RandoriGruppengroesse(2), new VariablerGewichtsteil(5.0), SeparateAlterklassen.ZUSAMMEN, uuid);
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ALLE, new Gruppengroesse(2), new VariablerGewichtsteil(5.0), SeparateAlterklassen.ZUSAMMEN, uuid);
 		when(einstellungenService.ladeEinstellungen(any())).thenReturn(einstellungen);
 
 		List<GewichtsklassenGruppe> result = gewichtsklassenService.teileInGewichtsklassen(wettkaempferListe, uuid);
@@ -194,18 +194,76 @@ public class GewichtsklassenServiceTest {
 	}
 
 	@Test
-	void testTeileInGewichtsklassenNormalesTurnier() {
+	void testTeileInGewichtsklassenNormalesTurnierFuerUeberU13() {
+		// Fixe Gewichtsklassen bei U13 und aufwärts
 		UUID uuid = UUID.randomUUID();
 		List<Wettkaempfer> wettkaempferListe = new ArrayList<>();
-		wettkaempferListe.add(new Wettkaempfer(1, "Wettkaempfer 1", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein 1", uuid), 25.0, Optional.empty(), false, false, uuid));
-		wettkaempferListe.add(new Wettkaempfer(2, "Wettkaempfer 2", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein 2", uuid), 27.0, Optional.empty(), false, false, uuid));
+		wettkaempferListe.add(new Wettkaempfer(1, "Wettkaempfer 1", Geschlecht.m, Altersklasse.U13, new Verein(1, "Verein 1", uuid), 25.0, Optional.empty(), false, false, uuid));
+		wettkaempferListe.add(new Wettkaempfer(2, "Wettkaempfer 2", Geschlecht.m, Altersklasse.U13, new Verein(2, "Verein 2", uuid), 27.0, Optional.empty(), false, false, uuid));
+		wettkaempferListe.add(new Wettkaempfer(3, "Wettkaempfer 3", Geschlecht.m, Altersklasse.U13, new Verein(3, "Verein 3", uuid), 28.0, Optional.empty(), false, false, uuid));
+		wettkaempferListe.add(new Wettkaempfer(4, "Wettkaempfer 4", Geschlecht.m, Altersklasse.U13, new Verein(4, "Verein 4", uuid), 29.0, Optional.empty(), false, false, uuid));
+		wettkaempferListe.add(new Wettkaempfer(5, "Wettkaempfer 5", Geschlecht.m, Altersklasse.U13, new Verein(5, "Verein 5", uuid), 31.0, Optional.empty(), false, false, uuid));
 
-		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new RandoriGruppengroesse(2), new VariablerGewichtsteil(5.0), SeparateAlterklassen.ZUSAMMEN, uuid);
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroesse(6), new VariablerGewichtsteil(0.2), SeparateAlterklassen.ZUSAMMEN, uuid);
 		when(einstellungenService.ladeEinstellungen(any())).thenReturn(einstellungen);
 
 		List<GewichtsklassenGruppe> result = gewichtsklassenService.teileInGewichtsklassen(wettkaempferListe, uuid);
 
 		assertNotNull(result);
-		assertEquals(1, result.size());
+
+		assertEquals(3, result.size()); // 2 Gruppen plus eine leere Dummy-Gruppe
+		assertNotNull(result.get(0).gruppenGeschlecht());
+		assertEquals(Optional.of(Geschlecht.m), result.get(0).gruppenGeschlecht());
+		assertEquals(3, result.get(0).teilnehmer().size());
+		assertEquals(Optional.empty(), result.get(0).name());
+		assertEquals(Altersklasse.U13, result.get(0).altersKlasse());
+		assertEquals(25.0, result.get(0).minGewicht());
+		assertEquals(28.0, result.get(0).maxGewicht());
+
+		assertNotNull(result.get(1).gruppenGeschlecht());
+		assertEquals(Optional.of(Geschlecht.m), result.get(1).gruppenGeschlecht());
+		assertEquals(2, result.get(1).teilnehmer().size());
+		assertEquals(Optional.empty(), result.get(1).name());
+		assertEquals(Altersklasse.U13, result.get(1).altersKlasse());
+		assertEquals(29.0, result.get(1).minGewicht());
+		assertEquals(31.0, result.get(1).maxGewicht());
+
+		assertEquals(200.0, result.get(2).maxGewicht()); // dummy
+	}
+
+	@Test
+	void testTeileInGewichtsklassenNormalesTurnierFuerUnterU13() {
+		// Es gibt keine fixen Gewichtsklassen bei unter U13
+		UUID uuid = UUID.randomUUID();
+		List<Wettkaempfer> wettkaempferListe = new ArrayList<>();
+		wettkaempferListe.add(new Wettkaempfer(1, "Wettkaempfer 1", Geschlecht.m, Altersklasse.U9, new Verein(1, "Verein 1", uuid), 25.0, Optional.empty(), false, false, uuid));
+		wettkaempferListe.add(new Wettkaempfer(2, "Wettkaempfer 2", Geschlecht.m, Altersklasse.U9, new Verein(2, "Verein 2", uuid), 27.0, Optional.empty(), false, false, uuid));
+		wettkaempferListe.add(new Wettkaempfer(3, "Wettkaempfer 3", Geschlecht.m, Altersklasse.U9, new Verein(3, "Verein 3", uuid), 28.0, Optional.empty(), false, false, uuid));
+		wettkaempferListe.add(new Wettkaempfer(4, "Wettkaempfer 4", Geschlecht.m, Altersklasse.U9, new Verein(4, "Verein 4", uuid), 29.0, Optional.empty(), false, false, uuid));
+		wettkaempferListe.add(new Wettkaempfer(5, "Wettkaempfer 5", Geschlecht.m, Altersklasse.U9, new Verein(5, "Verein 5", uuid), 31.0, Optional.empty(), false, false, uuid));
+
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroesse(3), new VariablerGewichtsteil(0.2), SeparateAlterklassen.ZUSAMMEN, uuid);
+		when(einstellungenService.ladeEinstellungen(any())).thenReturn(einstellungen);
+
+		List<GewichtsklassenGruppe> result = gewichtsklassenService.teileInGewichtsklassen(wettkaempferListe, uuid);
+
+		assertNotNull(result);
+
+		assertEquals(3, result.size()); // 2 Gruppen (wegen Gruppengröße=3 und keine fixen Gewichtsklassen bei U9) plus eine leere Dummy-Gruppe
+		assertNotNull(result.get(0).gruppenGeschlecht());
+		assertEquals(Optional.of(Geschlecht.m), result.get(0).gruppenGeschlecht());
+		assertEquals(3, result.get(0).teilnehmer().size());
+		assertEquals(Optional.empty(), result.get(0).name());
+		assertEquals(Altersklasse.U9, result.get(0).altersKlasse());
+		assertEquals(25.0, result.get(0).minGewicht());
+		assertEquals(28.0, result.get(0).maxGewicht());
+
+		assertNotNull(result.get(1).gruppenGeschlecht());
+		assertEquals(Optional.of(Geschlecht.m), result.get(1).gruppenGeschlecht());
+		assertEquals(2, result.get(1).teilnehmer().size());
+		assertEquals(Optional.empty(), result.get(1).name());
+		assertEquals(Altersklasse.U9, result.get(1).altersKlasse());
+		assertEquals(29.0, result.get(1).minGewicht());
+		assertEquals(31.0, result.get(1).maxGewicht());
 	}
 }

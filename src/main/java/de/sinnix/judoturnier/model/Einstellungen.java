@@ -6,7 +6,7 @@ public record Einstellungen(
 	TurnierTyp turnierTyp,
 	MattenAnzahl mattenAnzahl,
 	WettkampfReihenfolge wettkampfReihenfolge,
-	RandoriGruppengroesse randoriGruppengroesse,
+	Gruppengroesse gruppengroesse,
 	VariablerGewichtsteil variablerGewichtsteil,
 	SeparateAlterklassen separateAlterklassen,
 	UUID turnierUUID) {

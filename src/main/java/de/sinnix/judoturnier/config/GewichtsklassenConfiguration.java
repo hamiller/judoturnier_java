@@ -67,12 +67,19 @@ public class GewichtsklassenConfiguration {
 		)
 	);
 
-	public static List<Gewichtsklasse> getGewichtsklasse(Geschlecht geschlecht, Altersklasse alter) {
+	public static List<Gewichtsklasse> getGewichtsklassen(Geschlecht geschlecht, Altersklasse alter) {
 		return CONFIG.stream()
 			.filter(c -> c.geschlecht().equals(geschlecht))
 			.flatMap(c -> c.altersKlassenGewichte().stream())
 			.filter(akg -> akg.altersklasse().equals(alter))
 			.flatMap(ak -> ak.gewichtsKlassen().stream())
 			.toList();
+	}
+
+	public static boolean hasGewichtsklasse(Geschlecht geschlecht, Altersklasse alter) {
+		 var numberOfGewichtsklassen = getGewichtsklassen(geschlecht, alter).size();
+
+		 // falls wir nur "Gewichtsklasse Mehr" haben, haben wir keine richtige Einteilung nach Gewichtsklassen
+		 return numberOfGewichtsklassen > 1;
 	}
 }
