@@ -6,6 +6,7 @@ import de.sinnix.judoturnier.adapter.secondary.TurnierJpa;
 import de.sinnix.judoturnier.adapter.secondary.TurnierJpaRepository;
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
 import de.sinnix.judoturnier.application.algorithm.Algorithmus;
+import de.sinnix.judoturnier.application.algorithm.DoppelKOSystem;
 import de.sinnix.judoturnier.application.algorithm.JederGegenJeden;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
@@ -57,6 +58,8 @@ public class TurnierService {
 	private TurnierJpaRepository   turnierJpaRepository;
 	@Autowired
 	private BewerterRepository     bewerterRepository;
+	@Autowired
+	private Helpers                helpers;
 
 	public List<Turnier> ladeTurniere() {
 		logger.info("ladeTurniere");
@@ -120,18 +123,17 @@ public class TurnierService {
 	}
 
 	private void erstelleMatten(List<GewichtsklassenGruppe> gwks, Einstellungen einstellungen) {
-		if (einstellungen.turnierTyp() == TurnierTyp.RANDORI) {
-			// check gruppe auf vorhandene Daten
-			checkGruppenSindValide(gwks);
+		Algorithmus algorithmus = einstellungen.turnierTyp() == TurnierTyp.RANDORI ?
+			new JederGegenJeden() :
+			new DoppelKOSystem();
 
-			Algorithmus algorithmus = new JederGegenJeden();
-			List<WettkampfGruppe> wettkampfGruppen = erstelleWettkampfgruppen(gwks, algorithmus, einstellungen.mattenAnzahl().anzahl());
-			List<Matte> matten = erstelleGruppenReihenfolgeRandori(wettkampfGruppen, einstellungen.mattenAnzahl().anzahl(), einstellungen.wettkampfReihenfolge());
+		// check gruppe auf vorhandene Daten
+		checkGruppenSindValide(gwks);
 
-			turnierRepository.speichereMatten(matten);
-		} else {
-			logger.error("Turniermodus noch nicht implementiert!");
-		}
+		List<WettkampfGruppe> wettkampfGruppen = erstelleWettkampfgruppen(gwks, algorithmus, einstellungen.gruppengroesse().anzahl());
+		List<Matte> matten = erstelleGruppenReihenfolge(wettkampfGruppen, einstellungen.mattenAnzahl().anzahl(), einstellungen.wettkampfReihenfolge());
+
+		turnierRepository.speichereMatten(matten);
 	}
 
 	public Begegnung ladeBegegnung(Integer begegnungId) {
@@ -177,25 +179,25 @@ public class TurnierService {
 		return wertungen.stream().filter(w -> w.getBewerter().equals(bewerter)).findFirst();
 	}
 
-	private List<WettkampfGruppe> erstelleWettkampfgruppen(List<GewichtsklassenGruppe> gewichtsklassenGruppen, Algorithmus algorithmus, Integer anzahlMatten) {
+	private List<WettkampfGruppe> erstelleWettkampfgruppen(List<GewichtsklassenGruppe> gewichtsklassenGruppen, Algorithmus algorithmus, Integer maxGruppenGroesse) {
 		logger.debug("erstelle Wettkampfgruppen aus den Gewichtsklassengruppen");
 		// erstelle alle Begegnungen in jeder Gruppe
 		List<WettkampfGruppe> wettkampfGruppen = new ArrayList<>();
 		for (int i = 0; i < gewichtsklassenGruppen.size(); i++) {
 			var gruppe = gewichtsklassenGruppen.get(i);
-			var wkg = algorithmus.erstelleWettkampfGruppen(i, gruppe, anzahlMatten);
+			var wkg = algorithmus.erstelleWettkampfGruppen(i, gruppe, maxGruppenGroesse);
 			wettkampfGruppen.addAll(wkg);
 		}
 		logger.debug("Anzahl erstellter Wettkampfgruppen: {}", wettkampfGruppen.size());
 		return wettkampfGruppen;
 	}
 
-	private List<Matte> erstelleGruppenReihenfolgeRandori(List<WettkampfGruppe> wettkampfGruppen, Integer anzahlMatten, WettkampfReihenfolge reihenfolge) {
+	private List<Matte> erstelleGruppenReihenfolge(List<WettkampfGruppe> wettkampfGruppen, Integer anzahlMatten, WettkampfReihenfolge reihenfolge) {
 		logger.debug("erstelle Reihenfolge der Wettkämpfe aus den Wettkampfgruppen: {}, {}", wettkampfGruppen.size(), reihenfolge);
 		List<Matte> matten = new ArrayList<>();
 
 		// Ausplitten der Begegnungen auf die Matten
-		List<List<WettkampfGruppe>> wettkampfGruppenJeMatten = this.splitArray(wettkampfGruppen, anzahlMatten);
+		List<List<WettkampfGruppe>> wettkampfGruppenJeMatten = helpers.splitArray(wettkampfGruppen, anzahlMatten);
 
 		Integer totaleRundenAnzahl = 1;
 		for (int m = 0; m < anzahlMatten; m++) {
@@ -223,25 +225,7 @@ public class TurnierService {
 		return matten;
 	}
 
-	private List<List<WettkampfGruppe>> splitArray(List<WettkampfGruppe> list, Integer parts) {
-		int size = list.size();
-		int partSize = (size + parts - 1) / parts; // Calculate part size
 
-		List<List<WettkampfGruppe>> result = new ArrayList<>();
-
-		for (int i = 0; i < parts; i++) {
-			int start = i * partSize;
-			int end = Math.min(start + partSize, size);
-
-			if (start < end) {
-				result.add(new ArrayList<>(list.subList(start, end)));
-			} else {
-				result.add(new ArrayList<>()); // Empty list if no elements left
-			}
-		}
-
-		return result;
-	}
 
 	private void checkGruppenSindValide(List<GewichtsklassenGruppe> gruppen) throws Error {
 		try {

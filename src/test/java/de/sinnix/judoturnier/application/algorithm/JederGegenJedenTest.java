@@ -35,7 +35,7 @@ class JederGegenJedenTest {
 	@Test
 	public void testErstelleWettkampfGruppenGeradeAnzahlTest() {
 		GewichtsklassenGruppe gewichtsklassenGruppe = GewichtsklassenGruppeFixture.gewichtsklassenGruppen.getFirst();
-		List<WettkampfGruppe> erstellteWettkampfgruppen = algorithmus.erstelleWettkampfGruppen(1, gewichtsklassenGruppe, 10);
+		List<WettkampfGruppe> erstellteWettkampfgruppen = algorithmus.erstelleWettkampfGruppen(1, gewichtsklassenGruppe, 6);
 		var n = gewichtsklassenGruppe.teilnehmer().size();
 
 		assertTrue(gewichtsklassenGruppe.name().isPresent());
@@ -59,7 +59,7 @@ class JederGegenJedenTest {
 	@Test
 	public void testErstelleWettkampfGruppenUngeradeAnzahlTest() {
 		GewichtsklassenGruppe gewichtsklassenGruppe = GewichtsklassenGruppeFixture.gewichtsklassenGruppen.getLast();
-		List<WettkampfGruppe> erstellteWettkampfgruppen = algorithmus.erstelleWettkampfGruppen(1, gewichtsklassenGruppe, 10);
+		List<WettkampfGruppe> erstellteWettkampfgruppen = algorithmus.erstelleWettkampfGruppen(1, gewichtsklassenGruppe, 6);
 		var n = gewichtsklassenGruppe.teilnehmer().size();
 
 		assertTrue(gewichtsklassenGruppe.name().isPresent());
@@ -87,7 +87,7 @@ class JederGegenJedenTest {
 		List<Wettkaempfer> teilnehmer = List.of(WettkaempferFixtures.wettkaempfer1);
 		GewichtsklassenGruppe gewichtsklassenGruppe = new GewichtsklassenGruppe(1, Altersklasse.U11, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Adler), 25.0, 25.0, turnierUUID);
 
-		List<WettkampfGruppe> erstellteWettkampfgruppen = algorithmus.erstelleWettkampfGruppen(1, gewichtsklassenGruppe, 10);
+		List<WettkampfGruppe> erstellteWettkampfgruppen = algorithmus.erstelleWettkampfGruppen(1, gewichtsklassenGruppe, 6);
 
 		assertEquals(1, erstellteWettkampfgruppen.size());
 		assertTrue(!erstellteWettkampfgruppen.getFirst().alleRundenBegegnungen().isEmpty());

@@ -14,16 +14,15 @@ import java.util.List;
 
 public class JederGegenJeden implements Algorithmus {
 	private static final Logger logger                   = LogManager.getLogger(JederGegenJeden.class);
-	private static final int    MAX_TEILNEHMER_JE_GRUPPE = 6;
 
 	@Override
-	public List<WettkampfGruppe> erstelleWettkampfGruppen(Integer gruppenid, GewichtsklassenGruppe gewichtsklassenGruppe, Integer mattenAnzahl) {
+	public List<WettkampfGruppe> erstelleWettkampfGruppen(Integer gruppenid, GewichtsklassenGruppe gewichtsklassenGruppe, Integer maxGruppenGroesse) {
 		logger.info("JederGegenJeden Algorithmus genutzt");
 
 		List<WettkampfGruppe> result = new ArrayList<>();
 
 		// erstellt Gruppen mit bis zu 6 Kämpfern
-		List<List<Wettkaempfer>> wettkaempferGruppen = splitArray(gewichtsklassenGruppe.teilnehmer(), MAX_TEILNEHMER_JE_GRUPPE);
+		List<List<Wettkaempfer>> wettkaempferGruppen = splitArray(gewichtsklassenGruppe.teilnehmer(), maxGruppenGroesse);
 
 		// Alle möglichen Begegnungen in jeder Gruppe generieren
 		for (int i = 0; i < wettkaempferGruppen.size(); i++) {
