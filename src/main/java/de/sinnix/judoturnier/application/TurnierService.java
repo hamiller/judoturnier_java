@@ -19,6 +19,7 @@ import de.sinnix.judoturnier.model.SeparateAlterklassen;
 import de.sinnix.judoturnier.model.Turnier;
 import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.Wertung;
+import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
 import de.sinnix.judoturnier.model.WettkampfReihenfolge;
 import jakarta.transaction.Transactional;
@@ -31,6 +32,8 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +63,8 @@ public class TurnierService {
 	private BewerterRepository     bewerterRepository;
 	@Autowired
 	private Helpers                helpers;
+	@Autowired
+	private WettkaempferService    wettkaempferService;
 
 	public List<Turnier> ladeTurniere() {
 		logger.info("ladeTurniere");
@@ -175,6 +180,31 @@ public class TurnierService {
 		turnierRepository.speichereBegegnung(begegnung);
 	}
 
+	@Transactional
+	public void speichereTurnierWertung(String begegnungId, int scoreWeiss, int scoreBlau, int penaltiesWeiss, int penaltiesBlau, int fightTime, int sieger, String bewerterUUID) {
+		logger.info("Begegnung: {}, Sieger: {}, Kampfzeit: {}s", begegnungId, sieger, fightTime);
+		Begegnung begegnung = ladeBegegnung(Integer.parseInt(begegnungId));
+
+		Bewerter bewerter = bewerterRepository.findById(bewerterUUID);
+		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), bewerter);
+		if (existierendeWertung.isPresent()) {
+			logger.debug("Aktualisiere existierende Wertung");
+			return;
+		}
+
+		logger.debug("Erstelle neue Wertung");
+		UUID wertungId = UUID.randomUUID();
+		Wettkaempfer wettkaempfer = wettkaempferService.ladeKaempfer(sieger).orElseThrow();
+		Duration dauer = Duration.of(fightTime, ChronoUnit.SECONDS);
+		Wertung wertungNeu = new Wertung(wertungId, wettkaempfer, dauer, scoreWeiss, penaltiesWeiss, scoreBlau, penaltiesBlau,
+			null, null, null, null,
+			null, null, null, null,
+			bewerter
+		);
+		begegnung.getWertungen().add(wertungNeu);
+		turnierRepository.speichereBegegnung(begegnung);
+	}
+
 	private Optional<Wertung> wertungVonBewerter(List<Wertung> wertungen, Bewerter bewerter) {
 		return wertungen.stream().filter(w -> w.getBewerter().equals(bewerter)).findFirst();
 	}
@@ -197,7 +227,7 @@ public class TurnierService {
 		List<Matte> matten = new ArrayList<>();
 
 		// Ausplitten der Begegnungen auf die Matten
-		List<List<WettkampfGruppe>> wettkampfGruppenJeMatten = helpers.splitArray(wettkampfGruppen, anzahlMatten);
+		List<List<WettkampfGruppe>> wettkampfGruppenJeMatten = helpers.splitArrayToParts(wettkampfGruppen, anzahlMatten);
 
 		Integer totaleRundenAnzahl = 1;
 		for (int m = 0; m < anzahlMatten; m++) {
@@ -247,4 +277,5 @@ public class TurnierService {
 	public Turnier ladeTurnier(String turnierid) {
 		return turnierJpaRepository.findById(turnierid).map(t -> turnierConverter.convertToTurnier(t)).orElseThrow();
 	}
+
 }

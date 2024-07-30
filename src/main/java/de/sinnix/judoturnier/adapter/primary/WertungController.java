@@ -43,6 +43,23 @@ public class WertungController {
 		return mav;
 	}
 
+	@GetMapping("/turnier/{turnierid}/begegnungen/normal/{id}")
+	public ModelAndView begegnungTurnier(@PathVariable String turnierid, @PathVariable String id) {
+		logger.info("Lade Wertung für Begegnung {}", id);
+		Bewerter bewerter = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		Begegnung begegnung = turnierService.ladeBegegnung(Integer.parseInt(id));
+		BegegnungDto begegnungDto = convertFromBegegnung(begegnung, bewerter.id());
+
+		ModelAndView mav = new ModelAndView("wettkampf_normal");
+		mav.addObject("turnierid", turnierid);
+		mav.addObject("begegnung", begegnungDto);
+		mav.addObject("begegnungid", id);
+		mav.addObject("bewerter", bewerter);
+		mav.addObject("enableEditing", bewerter.darfEditieren());
+		mav.addObject("wertungsOptionen", List.of(1, 2, 3, 4, 5, 6));
+		return mav;
+	}
+
 	private BegegnungDto convertFromBegegnung(Begegnung begegnung, String userid) {
 		var begegnungId = begegnung.getBegegnungId();
 		var	wettkaempfer1 = begegnung.getWettkaempfer1();
@@ -69,5 +86,23 @@ public class WertungController {
 
 		turnierService.speichereRandoriWertung(begegnungId, kampfgeist1, technik1, stil1, fairness1, kampfgeist2, technik2, stil2, fairness2, bewerter.id());
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori");
+	}
+
+	@PostMapping("/turnier/{turnierid}/begegnungen/normal/{begegnungId}")
+	@PreAuthorize("hasRole('ROLE_KAMPFRICHTER')")
+	public ModelAndView speichereBegegnungTurnier(@PathVariable String turnierid, @PathVariable String begegnungId, @RequestBody MultiValueMap<String, String> formData) {
+		logger.info("Speichere Wertung für Begegnung {}: {}", begegnungId, formData);
+
+		Bewerter bewerter = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+
+		var scoreWeiss = Integer.parseInt(formData.get("score_weiss").getFirst());
+		var penaltiesWeiss = Integer.parseInt(formData.get("penalties_weiss").getFirst());
+		var scoreBlau = Integer.parseInt(formData.get("score_blau").getFirst());
+		var penaltiesBlau = Integer.parseInt(formData.get("penalties_blau").getFirst());
+		var fightTime = Integer.parseInt(formData.get("fightTime").getFirst());
+		var sieger = Integer.parseInt(formData.get("sieger").getFirst());
+
+		turnierService.speichereTurnierWertung(begegnungId, scoreWeiss, scoreBlau, penaltiesWeiss, penaltiesBlau, fightTime, sieger, bewerter.id());
+		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/normal");
 	}
 }

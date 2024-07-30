@@ -14,7 +14,12 @@ public class DoppelKOSystem implements Algorithmus {
 	public List<WettkampfGruppe> erstelleWettkampfGruppen(Integer gruppenid, GewichtsklassenGruppe gewichtsklassenGruppe, Integer maxGruppenGroesse) {
 		List<WettkampfGruppe> wettkampfGruppen = new ArrayList<>();
 		List<Wettkaempfer> teilnehmer = gewichtsklassenGruppe.teilnehmer();
-		int teilnehmerAnzahl = teilnehmer.size();
+
+		if (teilnehmer.size() < 1) {
+			// wir wollen die Dummies nicht berechnen
+			return List.of();
+		}
+
 
 		// Erstellen der Begegnungen für die Haupt- und Verlierer-Runden
 		List<BegegnungenJeRunde> alleRundenBegegnungen = new ArrayList<>();

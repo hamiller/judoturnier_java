@@ -8,7 +8,15 @@ import java.util.List;
 @Component
 public class Helpers {
 
-	public <T> List<List<T>> splitArray(List<T> list, Integer parts) {
+	/**
+	 * Splittet ein Array in die gewünschte Anzahl von Teilen
+	 *
+	 * @param list
+	 * @param parts
+	 * @return
+	 * @param <T>
+	 */
+	public <T> List<List<T>> splitArrayToParts(List<T> list, Integer parts) {
 		int size = list.size();
 		int minPartSize = size / parts;
 		int extraElements = size % parts;

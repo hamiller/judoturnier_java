@@ -22,7 +22,7 @@ public class JederGegenJeden implements Algorithmus {
 		List<WettkampfGruppe> result = new ArrayList<>();
 
 		// erstellt Gruppen mit bis zu 6 Kämpfern
-		List<List<Wettkaempfer>> wettkaempferGruppen = splitArray(gewichtsklassenGruppe.teilnehmer(), maxGruppenGroesse);
+		List<List<Wettkaempfer>> wettkaempferGruppen = splitArrayToChunkSize(gewichtsklassenGruppe.teilnehmer(), maxGruppenGroesse);
 
 		// Alle möglichen Begegnungen in jeder Gruppe generieren
 		for (int i = 0; i < wettkaempferGruppen.size(); i++) {
@@ -142,7 +142,7 @@ public class JederGegenJeden implements Algorithmus {
 		return alleRundenBegegnungen;
 	}
 
-	private List<List<Wettkaempfer>> splitArray(List<Wettkaempfer> arr, int chunkSize) {
+	private List<List<Wettkaempfer>> splitArrayToChunkSize(List<Wettkaempfer> arr, int chunkSize) {
 		List<List<Wettkaempfer>> result = new ArrayList<>();
 		for (int i = 0; i < arr.size(); i += chunkSize) {
 			result.add(arr.subList(i, Math.min(i + chunkSize, arr.size())));

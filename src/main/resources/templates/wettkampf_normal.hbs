@@ -1,41 +1,73 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-{{> header}}
+    {{> header}}
+    <style>
+        .btn.active {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-  {{> title}}
-  {{> nav}}
+{{> title}}
+{{> nav}}
 
-  <div>
-    Aktuelle Begegnung {{begegnung}}
-    <form action="/turnier/{{turnierid}}/begegnungen/normal/{{begegnung}}" method="POST">
-      <div class="ergebnis">
-        <div class="ergebnis_eintrag">
-          <div class="wettkaempfer name weiss">
-            <label>{{wertung.wettkaempfer1.name}}</label>
-            <label>{{wertung.wettkaempfer1.farbe}}</label>
-            <label>{{wertung.wettkaempfer1.id}}</label>
-            <label>{{wertung.wettkaempfer1.verein.name}}</label>
-          </div>
-          <div class="wettkaempfer name blau">
-            <label>{{wertung.wettkaempfer2.name}}</label>
-            <label>{{wertung.wettkaempfer2.farbe}}</label>
-            <label>{{wertung.wettkaempfer2.id}}</label>
-            <label>{{wertung.wettkaempfer2.verein.name}}</label>
-          </div>
-          <label>Name des Siegers:</label><input type="text" name="winner" required/><br/>
-          <label>Kampfzeit:</label><input type="number" name="fightTime" required/><br/>
-          <div class="weiss"><label>Wertung Weiß:</label><input type="number" name="score_weiss" required/><br/></div>
-          <div class="weiss"><label>Strafen Weiß:</label><input type="number" name="penalties_weiss" required/><</div>
-          <div class="blau"><label>Wertung Blau:</label><input type="number" name="score_blau" required/></div>
-          <div class="blau"><label>Strafen Blau:</label><input type="number" name="penalties_blau" required/><br/></div>
+<div>
+    Aktuelle Begegnung {{begegnungid}}
+    <form action="/turnier/{{turnierid}}/begegnungen/normal/{{begegnungid}}" method="POST">
+        <div class="ergebnis_flex">
+            <div class="ergebnis_eintrag weiss half-width">
+                <div class="wettkaempfer name">
+                    <label>{{begegnung.wettkaempfer1.name}}</label>
+                    <label class="WEISS">weiss</label>
+                    <label class="centertext">{{begegnung.wettkaempfer1.id}}</label>
+                    <label>{{begegnung.wettkaempfer1.verein.name}}</label>
+                </div>
+                <span class="row">
+                    <div class="weiss"><label>Wertung weiss:</label><input type="number" id="score_weiss" name="score_weiss" required value={{#optional begegnung.kampfrichterWertung}}{{this.punkteWettkaempferWeiss}}{{/optional}} /><br/></div>
+                </span>
+                <span class="row">
+                    <div class="weiss"><label>Strafen weiss:</label><input type="number" id="penalties_weiss" name="penalties_weiss" required value={{#optional begegnung.kampfrichterWertung}}{{this.strafenWettkaempferWeiss}}{{/optional}} /></div>
+                </span>
+            </div>
+            <div class="ergebnis_eintrag blau half-width">
+                <div class="wettkaempfer name blau">
+                    <label>{{begegnung.wettkaempfer2.name}}</label>
+                    <label class="BLAU">blau</label>
+                    <label class="centertext">{{begegnung.wettkaempfer2.id}}</label>
+                    <label>{{begegnung.wettkaempfer2.verein.name}}</label>
+                </div>
+                <span class="row">
+                    <div class="blau"><label>Wertung blau:</label><input type="number" id="score_blau" name="score_blau" required value={{#optional begegnung.kampfrichterWertung}}{{this.punkteWettkaempferRot}}{{/optional}} /></div>
+                </span>
+                <span class="row">
+                    <div class="blau"><label>Strafen blau:</label><input type="number" id="penalties_blau" name="penalties_blau" required value={{#optional begegnung.kampfrichterWertung}}{{this.strafenWettkaempferRot}}{{/optional}} /><br/></div>
+                </span>
+            </div>
+            <div class="ergebnis_eintrag full-width">
+                <span class="row-centered">
+                    <label>Sieger:</label>
+                    <div class="element">
+                    <input type="radio" id="sieger_weiss" name="sieger" value="{{begegnung.wettkaempfer1.id}}" {{#optional begegnung.kampfrichterWertung}}{{setChecked this.sieger.id begegnung.wettkaempfer1.id}}{{/optional}}>
+                    <label for="sieger_weiss">{{begegnung.wettkaempfer1.name}} - <span class="WEISS">weiss</span></label>
+                    </div>
+                    <div class="element">
+                    <input type="radio" id="sieger_blau" name="sieger" value="{{begegnung.wettkaempfer2.id}}" {{#optional begegnung.kampfrichterWertung}}{{setChecked this.sieger.id begegnung.wettkaempfer2.id}}{{/optional}}>
+                    <label for="sieger_blau">{{begegnung.wettkaempfer2.name}} - <span class="BLAU">blau</span></label>
+                    </div>
+                </span>
+                <span class="row-centered">
+                    <label>Kampfzeit (in Sekunden):</label><input class="element" type="number" id="fightTime" name="fightTime" required value={{#optional begegnung.kampfrichterWertung}}{{this.zeit}}{{/optional}} /><br/>
+                </span>
+            </div>
         </div>
-      </div>
-      <button type="submit"><span class="material-icons md-48 centered" title="speichern">save</span> Ergebnis eintragen</button>
+        {{#if enableEditing}}
+            <button class="submit_btn" type="submit"><span class="material-icons md-48 centered" title="speichern">save</span> Ergebnis eintragen</button>
+        {{/if}}
     </form>
-  </div>
-  
-  {{> footer}}
+</div>
+
+{{> footer}}
 </body>
 </html>

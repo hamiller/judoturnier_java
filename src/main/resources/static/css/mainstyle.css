@@ -171,6 +171,10 @@ tr {
   width: 180px !important;
 }
 
+.element {
+  margin: 10px 40px 10px 40px;
+}
+
 .emptyTableCell {
   background-color: white;
   border-style: dotted;
@@ -180,6 +184,14 @@ tr {
 
 .ergebnis {
   display: block;
+  justify-content: center; /* Horizontal zentrieren */
+  align-items: center; /* Vertikal zentrieren */
+  column-gap: 5%;
+}
+
+.ergebnis_flex {
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center; /* Horizontal zentrieren */
   align-items: center; /* Vertikal zentrieren */
   column-gap: 5%;
@@ -244,6 +256,10 @@ tr {
   page-break-inside: avoid;
 }
 
+.full-width {
+  width: 100%;
+}
+
 .generalcontent {
   background-color: var(--color-light-grey);
   margin: 2px;
@@ -299,6 +315,10 @@ tr {
 
 .gruppentitel_2 {
   font-size: medium;
+}
+
+.half-width {
+  width: 46%;
 }
 
 .hidden {
@@ -421,6 +441,12 @@ tr {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+}
+
+.row-centered {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
 }
 
 .row label {

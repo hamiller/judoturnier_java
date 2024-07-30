@@ -13,15 +13,15 @@ class HelpersTest {
 	private Helpers helpers = new Helpers();
 
 	@Test
-	public void testEmptySplitArray() {
+	public void testEmptySplitArrayToParts() {
 		List<WettkampfGruppe> wettkampfGruppen = new ArrayList<>();
-		List<List<WettkampfGruppe>> aufgeteilt = helpers.splitArray(wettkampfGruppen, 3);
+		List<List<WettkampfGruppe>> aufgeteilt = helpers.splitArrayToParts(wettkampfGruppen, 3);
 
 		assertEquals(3, aufgeteilt.size());
 	}
 
 	@Test
-	public void testGutesSplitArray() {
+	public void testGutesSplitArrayToParts() {
 		List<String> strings = new ArrayList<>();
 		strings.add("A");
 		strings.add("B");
@@ -32,14 +32,14 @@ class HelpersTest {
 		strings.add("G");
 		strings.add("H");
 
-		List<List<String>> aufgeteilt = helpers.splitArray(strings, 2);
+		List<List<String>> aufgeteilt = helpers.splitArrayToParts(strings, 2);
 		assertEquals(2, aufgeteilt.size());
 		assertEquals(4, aufgeteilt.get(0).size());
 		assertEquals(4, aufgeteilt.get(1).size());
 	}
 
 	@Test
-	public void testGutesUngeradesSplitArray() {
+	public void testGutesUngeradesSplitArrayToParts() {
 		List<String> strings = new ArrayList<>();
 		strings.add("A");
 		strings.add("B");
@@ -50,7 +50,7 @@ class HelpersTest {
 		strings.add("G");
 		strings.add("H");
 
-		List<List<String>> aufgeteilt = helpers.splitArray(strings, 3);
+		List<List<String>> aufgeteilt = helpers.splitArrayToParts(strings, 3);
 		assertEquals(3, aufgeteilt.size());
 		assertEquals(3, aufgeteilt.get(0).size());
 		assertEquals(3, aufgeteilt.get(1).size());
@@ -58,10 +58,10 @@ class HelpersTest {
 	}
 
 	@Test
-	public void testGutesSplitArrayAnders1() {
+	public void testGutesSplitArrayToPartsAnders1() {
 		List<Integer> ints = List.of(1,2,3,4,5,6,7);
 
-		List<List<Integer>> aufgeteilt = helpers.splitArray(ints, 3);
+		List<List<Integer>> aufgeteilt = helpers.splitArrayToParts(ints, 3);
 		assertEquals(3, aufgeteilt.size());
 		assertEquals(3, aufgeteilt.get(0).size());
 		assertEquals(2, aufgeteilt.get(1).size());
@@ -69,10 +69,10 @@ class HelpersTest {
 	}
 
 	@Test
-	public void testGutesSplitArrayAnders2() {
+	public void testGutesSplitArrayToPartsAnders2() {
 		List<Integer> ints = List.of(1,2,3,4,5,6,7,8,9,10,11);
 
-		List<List<Integer>> aufgeteilt = helpers.splitArray(ints, 3);
+		List<List<Integer>> aufgeteilt = helpers.splitArrayToParts(ints, 3);
 		assertEquals(3, aufgeteilt.size());
 		assertEquals(4, aufgeteilt.get(0).size());
 		assertEquals(4, aufgeteilt.get(1).size());
