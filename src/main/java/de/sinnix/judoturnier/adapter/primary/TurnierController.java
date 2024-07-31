@@ -124,7 +124,7 @@ public class TurnierController {
 			.collect(Collectors.toSet());
 		Einstellungen einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
 
-		List<Matte> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte, wettkampfreihenfolgeJeMatte);
+		List<Matte> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte);
 
 		logger.trace("wettkampfreihenfolgeJeMatte {} ", wettkampfreihenfolgeJeMatte);
 		ModelAndView mav = new ModelAndView("begegnungen_randori");
@@ -213,7 +213,7 @@ public class TurnierController {
 		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID).stream()
 			.sorted(Comparator.comparingInt(Matte::id))
 			.toList();
-		List<Matte> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte, wettkampfreihenfolgeJeMatte);
+		List<Matte> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte);
 		List<MatteDto> wettkampfreihenfolgeJeMatteGefiltertUndGruppiert = gruppiereNachGruppen(gefilterteMatten);
 
 		ModelAndView mav = new ModelAndView("druckansicht_begegnungen_randori");
@@ -227,7 +227,7 @@ public class TurnierController {
 		logger.info("Lade Wertungs-Eintrag 'Randori' für Turnier {} und Altersklasse {}", turnierid, altersklasse);
 		var turnierUUID = UUID.fromString(turnierid);
 		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID);
-		List<Matte> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte, wettkampfreihenfolgeJeMatte);
+		List<Matte> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte);
 		List<MatteDto> wettkampfreihenfolgeJeMatteGefiltertUndGruppiert = gruppiereNachGruppen(gefilterteMatten);
 
 		ModelAndView mav = new ModelAndView("druckansicht_begegnungen_randori_inserting_data");
@@ -257,11 +257,11 @@ public class TurnierController {
 		}).collect(Collectors.toList());
 	}
 
-	private static List<Matte> filtereMatten(String altersklasse, List<Matte> matten, List<Matte> wettkampfreihenfolgeJeMatte) {
+	private static List<Matte> filtereMatten(String altersklasse, List<Matte> wettkampfreihenfolgeJeMatte) {
 		if (!StringUtils.isBlank(altersklasse)) {
 			var altersKlasse = Altersklasse.valueOf(altersklasse);
 			// Filtern der Liste nach Altersklasse "U11" und Erstellen der neuen Liste von Matten
-			matten = wettkampfreihenfolgeJeMatte.stream()
+			return wettkampfreihenfolgeJeMatte.stream()
 				.map(matte -> new Matte(
 					matte.id(),
 					matte.runden().stream()
@@ -271,6 +271,6 @@ public class TurnierController {
 				.filter(matte -> !matte.runden().isEmpty())
 				.collect(Collectors.toList());
 		}
-		return matten;
+		return wettkampfreihenfolgeJeMatte;
 	}
 }
