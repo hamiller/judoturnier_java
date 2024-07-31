@@ -707,9 +707,12 @@ tr {
   .submit_btn {
     position: absolute;
     top: 40px;
+    left: 0px;
     border: none;
     font-size: 30px;
     width: 100%;
+    padding: 10px;
+    background-color: var(--color-light-grey2);
   }
 
   .vs div.center {

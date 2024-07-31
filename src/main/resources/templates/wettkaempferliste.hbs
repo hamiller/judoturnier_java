@@ -47,23 +47,23 @@
   </div>
 
   {{> footer}}
+  <script type="text/javascript">
+      const deleteWK = async (id) => {
+          var sicher = confirm("ACHTUNG\n\nHiermit wird der Wettkämpfer gelöscht!\n\nSind sie sicher?");
+          if (sicher) {
+              fetch("/turnier/{{turnierid}}/wettkaempfer/" + id, {method: "DELETE", redirect: 'follow'})
+                      .then(response => {
+                          if (response.redirected) {
+                              window.location.href = response.url;
+                          } else if (response.ok) {
+                              window.location.reload();
+                          } else {
+                              console.error('Error:', response.statusText);
+                          }
+                      })
+                      .catch(error => console.error("Error deleting user:", error));
+          }
+      };
+  </script>
 </body>
-<script type="text/javascript">
-  const deleteWK = async (id) => {
-    var sicher = confirm("ACHTUNG\n\nHiermit wird der Wettkämpfer gelöscht!\n\nSind sie sicher?");
-    if (sicher) {
-      fetch("/turnier/{{turnierid}}/wettkaempfer/"+ id, {method: "DELETE", redirect: 'follow'})
-         .then(response => {
-           if (response.redirected) {
-             window.location.href = response.url;
-           } else if (response.ok) {
-             window.location.reload();
-           } else {
-             console.error('Error:', response.statusText);
-           }
-         })
-        .catch(error => console.error("Error deleting user:", error));
-    };
-  };
-</script>
 </html>

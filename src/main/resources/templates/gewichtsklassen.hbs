@@ -129,64 +129,63 @@
   </div>
 
   {{> footer}}
+
+  <script type="text/javascript">
+      const drag = (event) => {
+          const draggedElement = event.target;
+          event.dataTransfer.setData('text/plain', draggedElement.id);
+          event.dataTransfer.effectAllowed = 'move';
+      };
+
+      const allowDrop = (event) => {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = 'move';
+      };
+
+      const drop = (event) => {
+          event.preventDefault();
+          const id = event.dataTransfer.getData('text/plain');
+          const draggedElement = document.getElementById(id);
+          const currentElement = event.target;
+          const droppableElement = currentElement.closest('[droppable=true]');
+          droppableElement.appendChild(draggedElement);
+          document.getElementById("input_" + id).value = event.target.id + "_" + id;
+      };
+
+      const renewGewichtsklassen = async () => {
+          var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Gewichtsklassen und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+          if (sicher) {
+              fetch('/turnier/{{turnierid}}/gewichtsklassen-renew', {method: 'POST'})
+                      .then(() => window.location.href = 'gewichtsklassen')
+          }
+      };
+
+      const renewGewichtsklasse = async (data) => {
+          console.log(data);
+          var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in dieser Gewichtsklasse und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+          if (sicher) {
+              fetch('/turnier/{{turnierid}}/gewichtsklasse-renew', {method: 'POST', body: data})
+                      .then(() => window.location.href = 'gewichtsklassen')
+          }
+      };
+
+      const submitFormular = () => {
+          document.getElementById('gewichtsklassenzuordnungformular').submit();
+      };
+
+      const draggableElements = document.querySelectorAll('[draggable=true]');
+      draggableElements.forEach(draggable => {
+          draggable.addEventListener('dragstart', drag);
+      });
+
+      const droppableElements = document.querySelectorAll('[droppable=true]');
+      console.log("elements", droppableElements.length)
+      droppableElements.forEach(droppable => {
+          droppable.addEventListener('dragover', allowDrop);
+          droppable.addEventListener('drop', drop);
+      });
+      let draggedElement = null;
+
+  </script>
 </body>
-<script type="text/javascript">
-  const draggableElements = document.querySelectorAll('[draggable=true]');
-  draggableElements.forEach(draggable => {
-    draggable.addEventListener('dragstart', drag);
-  });
-
-  const droppableElements = document.querySelectorAll('[droppable=true]');
-  console.log("elements", droppableElements.length)
-  droppableElements.forEach(droppable => {
-    droppable.addEventListener('dragover', allowDrop);
-    droppable.addEventListener('drop', drop);
-  });
-
-  let draggedElement = null;
-
-  function drag(event) {
-    const draggedElement = event.target;
-    event.dataTransfer.setData('text/plain', draggedElement.id);
-    event.dataTransfer.effectAllowed = 'move';
-  };
-
-  function allowDrop(event) {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
-  };
-
-  function drop(event) {
-    event.preventDefault();
-    const id = event.dataTransfer.getData('text/plain');
-    const draggedElement = document.getElementById(id);
-    const currentElement = event.target;
-    const droppableElement = currentElement.closest('[droppable=true]');
-    droppableElement.appendChild(draggedElement);
-    document.getElementById("input_"+id).value = event.target.id + "_" + id;
-  };
-
-  const renewGewichtsklassen = async () => {
-    var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Gewichtsklassen und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
-    if (sicher) {
-      fetch('/turnier/{{turnierid}}/gewichtsklassen-renew', { method: 'POST' })
-      .then(() => window.location.href='gewichtsklassen')
-    };
-  };
-
-  const renewGewichtsklasse = async (data) => {
-    console.log(data);
-    var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in dieser Gewichtsklasse und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
-    if (sicher) {
-      fetch('/turnier/{{turnierid}}/gewichtsklasse-renew', { method: 'POST', body: data })
-      .then(() => window.location.href='gewichtsklassen')
-    };
-  };
-
-  const submitFormular = () => {
-      document.getElementById('gewichtsklassenzuordnungformular').submit();
-  }
-
-</script>
-
 </html>

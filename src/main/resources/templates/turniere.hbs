@@ -48,27 +48,28 @@
   </div>
 
   {{> footer}}
+  <script type="text/javascript">
+      const closeDialog = () => {
+          document.getElementById('dialogOverlay').style.display = 'none';
+          document.getElementById('createTurnierDialog').style.display = 'none';
+      };
+
+      document.getElementById('openCreateTurnierDialog').addEventListener('click', function () {
+          document.getElementById('dialogOverlay').style.display = 'block';
+          document.getElementById('createTurnierDialog').style.display = 'block';
+      });
+
+      document.getElementById('dialogOk').addEventListener('click', function () {
+          var form = document.getElementById('createturnierformular');
+          form.submit();
+          closeDialog();
+      });
+
+      document.getElementById('dialogCancel').addEventListener('click', function () {
+          closeDialog();
+      });
+
+  </script>
+
 </body>
-<script type="text/javascript">
-    document.getElementById('openCreateTurnierDialog').addEventListener('click', function() {
-        document.getElementById('dialogOverlay').style.display = 'block';
-        document.getElementById('createTurnierDialog').style.display = 'block';
-    });
-
-    document.getElementById('dialogOk').addEventListener('click', function() {
-        var form = document.getElementById('createturnierformular');
-        form.submit();
-        closeDialog();
-    });
-
-    document.getElementById('dialogCancel').addEventListener('click', function() {
-        closeDialog();
-    });
-
-    const closeDialog = () => {
-        document.getElementById('dialogOverlay').style.display = 'none';
-        document.getElementById('createTurnierDialog').style.display = 'none';
-    }
-</script>
-
 </html>
