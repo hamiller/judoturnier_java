@@ -3,6 +3,7 @@ package de.sinnix.judoturnier.adapter.primary;
 import de.sinnix.judoturnier.application.TurnierService;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Bewerter;
+import de.sinnix.judoturnier.model.Metadaten;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 public class WertungController {
@@ -29,9 +32,13 @@ public class WertungController {
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori/{id}")
 	public ModelAndView begegnungRandori(@PathVariable String turnierid, @PathVariable String id) {
 		logger.info("Lade Wertung für Begegnung {}", id);
+		Integer begegnungId = Integer.parseInt(id);
 		Bewerter bewerter = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
-		Begegnung begegnung = turnierService.ladeBegegnung(Integer.parseInt(id));
-		BegegnungDto begegnungDto = convertFromBegegnung(begegnung, bewerter.id());
+		Begegnung begegnung = turnierService.ladeBegegnung(begegnungId);
+
+		Metadaten metadaten = turnierService.ladeMetadaten(begegnungId, UUID.fromString(turnierid));
+		BegegnungDto begegnungDto = convertFromBegegnung(begegnung, bewerter.id(), metadaten.vorherigeBegegnungId(), metadaten.nachfolgendeBegegnungId());
+
 
 		ModelAndView mav = new ModelAndView("wettkampf_randori");
 		mav.addObject("turnierid", turnierid);
@@ -48,7 +55,7 @@ public class WertungController {
 		logger.info("Lade Wertung für Begegnung {}", id);
 		Bewerter bewerter = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
 		Begegnung begegnung = turnierService.ladeBegegnung(Integer.parseInt(id));
-		BegegnungDto begegnungDto = convertFromBegegnung(begegnung, bewerter.id());
+		BegegnungDto begegnungDto = convertFromBegegnung(begegnung, bewerter.id(), null, null);
 
 		ModelAndView mav = new ModelAndView("wettkampf_normal");
 		mav.addObject("turnierid", turnierid);
@@ -60,12 +67,14 @@ public class WertungController {
 		return mav;
 	}
 
-	private BegegnungDto convertFromBegegnung(Begegnung begegnung, String userid) {
+	private BegegnungDto convertFromBegegnung(Begegnung begegnung, String userid, Optional<Integer> vorherigeBegegnungId, Optional<Integer> nachfolgendeBegegnungId) {
 		var begegnungId = begegnung.getBegegnungId();
 		var	wettkaempfer1 = begegnung.getWettkaempfer1();
 		var	wettkaempfer2 = begegnung.getWettkaempfer2();
 		var kampfrichterWertung = begegnung.getWertungen().stream().filter(w -> w.getBewerter().id().equals(userid)).findFirst();
-		return new BegegnungDto(begegnungId, wettkaempfer1, wettkaempfer2, kampfrichterWertung, begegnung.getWertungen());
+		var vorher = vorherigeBegegnungId.map(id -> String.valueOf(id)).orElseGet(() -> "");
+		var nachher = nachfolgendeBegegnungId.map(id -> String.valueOf(id)).orElseGet(() -> "");
+		return new BegegnungDto(begegnungId, wettkaempfer1, wettkaempfer2, kampfrichterWertung, begegnung.getWertungen(), vorher, nachher);
 	}
 
 	@PostMapping("/turnier/{turnierid}/begegnungen/randori/{begegnungId}")

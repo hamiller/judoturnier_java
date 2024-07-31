@@ -14,6 +14,7 @@ import de.sinnix.judoturnier.model.Bewerter;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Matte;
+import de.sinnix.judoturnier.model.Metadaten;
 import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.SeparateAlterklassen;
 import de.sinnix.judoturnier.model.Turnier;
@@ -293,4 +294,32 @@ public class TurnierService {
 		return turnierJpaRepository.findById(turnierid).map(t -> turnierConverter.convertToTurnier(t)).orElseThrow();
 	}
 
+	public Metadaten ladeMetadaten(Integer begegnungId, UUID turnierUUID) {
+		logger.info("Lade Metadaten für Begegnung {}", begegnungId);
+		var matten = turnierRepository.ladeMatten(turnierUUID);;
+
+		var aktuelleRunde = matten.values().stream()
+			.flatMap(matte -> matte.runden().stream())
+			.filter(runde -> runde.begegnungen().stream()
+				.anyMatch(begegnung -> begegnung.getBegegnungId().equals(begegnungId)))
+			.findFirst();
+
+		if (aktuelleRunde.isEmpty()) {
+			throw new IllegalArgumentException("Es konnten keine Daten zu dieser Runde gefunden werden.");
+		}
+
+		var alleRundeBegegnungIds = aktuelleRunde.get().begegnungen().stream().map(Begegnung::getBegegnungId).collect(Collectors.toUnmodifiableList());
+
+		Integer vorgaenger = null;
+		Integer nachfolger = null;
+		int index = alleRundeBegegnungIds.indexOf(begegnungId);
+		if (index > 0) {
+			vorgaenger = alleRundeBegegnungIds.get(index - 1);
+		}
+		if (index < alleRundeBegegnungIds.size() - 1) {
+			nachfolger = alleRundeBegegnungIds.get(index + 1);
+		}
+
+		return new Metadaten(alleRundeBegegnungIds, Optional.ofNullable(vorgaenger), Optional.ofNullable(nachfolger));
+	}
 }

@@ -10,6 +10,8 @@ public record BegegnungDto(Integer begegnungId,
 						   Wettkaempfer wettkaempfer1,
 						   Wettkaempfer wettkaempfer2,
 						   Optional<Wertung> kampfrichterWertung,
-						   List<Wertung> alleWertungen
+						   List<Wertung> alleWertungen,
+						   String vorherigeBegegnungId,
+						   String nachfolgerBegegnungId
 ) {
 }

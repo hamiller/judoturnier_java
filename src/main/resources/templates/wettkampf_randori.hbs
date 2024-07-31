@@ -109,24 +109,33 @@
                     </div>
                 </div>
             </div>
-<!--                <a href="#" type="button" onclick="prev(); return false;"><span class="material-icons md-48 centered" title="chevron_left">chevron_left</span> Vorheriger Kampf</a>-->
+                {{#if vorherigeBegegnungId}}
+                    <a href="#" type="button" onclick="navigate({{vorherigeBegegnungId}}); return false;"><span class="material-icons md-48 centered" title="chevron_left">chevron_left</span> Vorheriger Kampf {{vorherigeBegegnungId}}</a>
+                {{/if}}
 <!--                <a href="#" type="button" onclick="back(); return false;"><span class="material-icons md-48 centered" title="cancel">cancel</span> Zurück</a>-->
                 {{#if enableEditing}}
                     <a href="#" type="button" class="submit_btn" onclick="save(event); return false;"><span class="material-icons md-48 centered" title="speichern">save</span> Ergebnis speichern</a>
                 {{/if}}
-<!--                <a href="#" type="button"  onclick="next(); return false;"><span class="material-icons md-48 centered" title="chevron_right">chevron_right</span> Nächster Kampf</a>-->
+                {{#if nachfolgerBegegnungId}}
+                    <a href="#" type="button" onclick="navigate({{nachfolgerBegegnungId}}); return false;"><span class="material-icons md-48 centered" title="chevron_right">chevron_right</span> Nächster Kampf {{nachfolgerBegegnungId}}</a>
+                {{/if}}
         </form>
     </div>
 
     {{> footer}}
 
     <script>
-        const prev = async () => {
-
-        };
-
-        const back = async () => {
-
+        const navigate = async (begegnungid) => {
+            fetch('/turnier/{{turnierid}}/begegnungen/randori/' + begegnungid, {method: 'GET', redirect: 'follow'})
+                    .then(response => {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                        } else if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            console.error('Error:', response.statusText);
+                        }
+                    })
         };
 
         const save = async (event) => {

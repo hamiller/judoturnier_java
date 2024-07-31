@@ -3,15 +3,16 @@ package de.sinnix.judoturnier.application;
 import de.sinnix.judoturnier.adapter.secondary.BewerterRepository;
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
 import de.sinnix.judoturnier.fixtures.GewichtsklassenGruppeFixture;
+import de.sinnix.judoturnier.fixtures.MatteFixtures;
 import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.fixtures.WettkampfgruppeFixture;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Bewerter;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
+import de.sinnix.judoturnier.model.Gruppengroesse;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.MattenAnzahl;
-import de.sinnix.judoturnier.model.Gruppengroesse;
 import de.sinnix.judoturnier.model.SeparateAlterklassen;
 import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.VariablerGewichtsteil;
@@ -32,6 +33,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -217,5 +219,47 @@ class TurnierServiceTest {
 		assertEquals(3, result.getWertungen().get(0).getTechnikWettkaempfer2());
 		assertEquals(2, result.getWertungen().get(0).getKampfstilWettkaempfer2());
 		assertEquals(1, result.getWertungen().get(0).getFairnessWettkaempfer2());
+	}
+
+	@Test
+	void testLadeMetadaten() {
+		Integer begegnungId = 2;
+
+		when(turnierRepository.ladeMatten(turnierUUID)).thenReturn(MatteFixtures.matteList);
+
+		var metadaten = turnierService.ladeMetadaten(begegnungId, turnierUUID);
+
+		assertNotNull(metadaten);
+		assertEquals(3, metadaten.alleRundenBegegnungIds().size());
+		assertEquals(1, metadaten.vorherigeBegegnungId().get());
+		assertEquals(3, metadaten.nachfolgendeBegegnungId().get());
+	}
+
+	@Test
+	void testLadeMetadatenLetzteBegegnung() {
+		Integer begegnungId = 15;
+
+		when(turnierRepository.ladeMatten(turnierUUID)).thenReturn(MatteFixtures.matteList);
+
+		var metadaten = turnierService.ladeMetadaten(begegnungId, turnierUUID);
+
+		assertNotNull(metadaten);
+		assertEquals(3, metadaten.alleRundenBegegnungIds().size());
+		assertEquals(14, metadaten.vorherigeBegegnungId().get());
+		assertEquals(Optional.empty(), metadaten.nachfolgendeBegegnungId());
+	}
+
+	@Test
+	void testLadeMetadatenErsteBegegnung() {
+		Integer begegnungId = 1;
+
+		when(turnierRepository.ladeMatten(turnierUUID)).thenReturn(MatteFixtures.matteList);
+
+		var metadaten = turnierService.ladeMetadaten(begegnungId, turnierUUID);
+
+		assertNotNull(metadaten);
+		assertEquals(3, metadaten.alleRundenBegegnungIds().size());
+		assertEquals(Optional.empty(), metadaten.vorherigeBegegnungId());
+		assertEquals(2, metadaten.nachfolgendeBegegnungId().get());
 	}
 }
