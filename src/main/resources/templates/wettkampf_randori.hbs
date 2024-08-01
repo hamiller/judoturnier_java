@@ -109,15 +109,15 @@
                     </div>
                 </div>
             </div>
-                {{#if vorherigeBegegnungId}}
-                    <a href="#" type="button" onclick="navigate({{vorherigeBegegnungId}}); return false;"><span class="material-icons md-48 centered" title="chevron_left">chevron_left</span> Vorheriger Kampf {{vorherigeBegegnungId}}</a>
+                {{#if begegnung.vorherigeBegegnungId}}
+                    <a href="#" type="button" onclick="navigate({{begegnung.vorherigeBegegnungId}});"><span class="material-icons md-48 centered" title="chevron_left">chevron_left</span> Vorheriger Kampf</a>
                 {{/if}}
 <!--                <a href="#" type="button" onclick="back(); return false;"><span class="material-icons md-48 centered" title="cancel">cancel</span> Zurück</a>-->
                 {{#if enableEditing}}
                     <a href="#" type="button" class="submit_btn" onclick="save(event); return false;"><span class="material-icons md-48 centered" title="speichern">save</span> Ergebnis speichern</a>
                 {{/if}}
-                {{#if nachfolgerBegegnungId}}
-                    <a href="#" type="button" onclick="navigate({{nachfolgerBegegnungId}}); return false;"><span class="material-icons md-48 centered" title="chevron_right">chevron_right</span> Nächster Kampf {{nachfolgerBegegnungId}}</a>
+                {{#if begegnung.nachfolgerBegegnungId}}
+                    <a href="#" type="button" onclick="navigate({{begegnung.nachfolgerBegegnungId}});"><span class="material-icons md-48 centered" title="chevron_right">chevron_right</span> Nächster Kampf</a>
                 {{/if}}
         </form>
     </div>
@@ -126,12 +126,13 @@
 
     <script>
         const navigate = async (begegnungid) => {
+            console.log("lade Begegnung " + begegnungid);
             fetch('/turnier/{{turnierid}}/begegnungen/randori/' + begegnungid, {method: 'GET', redirect: 'follow'})
                     .then(response => {
                         if (response.redirected) {
                             window.location.href = response.url;
                         } else if (response.ok) {
-                            window.location.reload();
+                            window.location.href = response.url;
                         } else {
                             console.error('Error:', response.statusText);
                         }

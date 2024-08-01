@@ -39,9 +39,6 @@ public class WertungController {
 		Metadaten metadaten = turnierService.ladeMetadaten(begegnungId, UUID.fromString(turnierid));
 		BegegnungDto begegnungDto = convertFromBegegnung(begegnung, bewerter.id(), metadaten.vorherigeBegegnungId(), metadaten.nachfolgendeBegegnungId());
 
-		logger.info("Metadaten: {}", metadaten);
-
-
 		ModelAndView mav = new ModelAndView("wettkampf_randori");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("begegnung", begegnungDto);
