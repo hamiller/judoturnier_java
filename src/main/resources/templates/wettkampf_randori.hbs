@@ -109,17 +109,19 @@
                     </div>
                 </div>
             </div>
-                {{#if begegnung.vorherigeBegegnungId}}
-                    <a href="#" type="button" onclick="navigate({{begegnung.vorherigeBegegnungId}});"><span class="material-icons md-48 centered" title="chevron_left">chevron_left</span> Vorheriger Kampf</a>
-                {{/if}}
-<!--                <a href="#" type="button" onclick="back(); return false;"><span class="material-icons md-48 centered" title="cancel">cancel</span> Zurück</a>-->
-                {{#if enableEditing}}
-                    <a href="#" type="button" class="submit_btn" onclick="save(event); return false;"><span class="material-icons md-48 centered" title="speichern">save</span> Ergebnis speichern</a>
-                {{/if}}
-                {{#if begegnung.nachfolgerBegegnungId}}
-                    <a href="#" type="button" onclick="navigate({{begegnung.nachfolgerBegegnungId}});"><span class="material-icons md-48 centered" title="chevron_right">chevron_right</span> Nächster Kampf</a>
-                {{/if}}
         </form>
+    </div>
+    <div class="nav_btn-container">
+        {{#if begegnung.vorherigeBegegnungId}}
+            <a href="#" type="button" class="nav_btn" onclick="navigate({{begegnung.vorherigeBegegnungId}});"><span class="material-icons md-48 centered" title="chevron_left">chevron_left</span><span class="btn_text"> Vorheriger Kampf</span></a>
+        {{/if}}
+<!--                <a href="#" type="button" onclick="back(); return false;"><span class="material-icons md-48 centered" title="cancel">cancel</span> Zurück</a>-->
+        {{#if enableEditing}}
+            <a href="#" type="button" class="submit_btn" onclick="save(event); return false;"><span class="material-icons md-48 centered" title="speichern">save</span> Ergebnis speichern</a>
+        {{/if}}
+        {{#if begegnung.nachfolgerBegegnungId}}
+            <a href="#" type="button" class="nav_btn" onclick="navigate({{begegnung.nachfolgerBegegnungId}});"><span class="material-icons md-48 centered" title="chevron_right">chevron_right</span> <span class="btn_text">Nächster Kampf</span></a>
+        {{/if}}
     </div>
 
     {{> footer}}

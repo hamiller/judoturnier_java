@@ -399,6 +399,16 @@ tr {
   border-color: var(--color-dark-grey2);
 }
 
+.nav_btn {
+
+}
+
+.nav_btn-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .navbar_fixed li {
   width: 350px;
 }
@@ -659,6 +669,10 @@ tr {
     margin-left: 5px;
   }
 
+  .btn_text {
+    display: none;
+  }
+
   .ergebnis_eintrag {
     border-width: 0;
   }
@@ -669,6 +683,13 @@ tr {
 
   .navbar {
     display: none;
+  }
+
+  .nav_btn {
+    background-color: var(--color-light-grey2);
+    font-size: 30px;
+    padding: 10px;
+    margin: 10px;
   }
 
   .listeneintrag {
@@ -687,7 +708,6 @@ tr {
   .pagefooter {
     font-size: 10px;
     padding: 0 10px 0 0;
-    margin-top: unset;
   }
 
   .pagetitle {
