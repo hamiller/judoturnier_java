@@ -21,6 +21,8 @@ public class WettkaempferFixtures {
 
     public static Wettkaempfer wettkaempfer1 = new Wettkaempfer(1, "Melanie", Geschlecht.w, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID);
     public static Wettkaempfer wettkaempfer2 = new Wettkaempfer(2, "Lea A", Geschlecht.w, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID);
+    public static Wettkaempfer wettkaempfer3 = new Wettkaempfer(3, "Simone S", Geschlecht.w, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID);
+    public static Wettkaempfer wettkaempfer4 = new Wettkaempfer(4, "Beatrice X", Geschlecht.w, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID);
 
     public static List<WettkaempferJpa> wettkaempferJpaList = Arrays.asList(
             new WettkaempferJpa(1, "Teilnehmer A", "m", "U11", new VereinJpa(1, "Verein1", turnierUUID.toString()), 25.0, "ORANGE", true, false, turnierUUID.toString()),

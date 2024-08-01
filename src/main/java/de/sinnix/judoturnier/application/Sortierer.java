@@ -10,7 +10,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -178,10 +177,6 @@ public class Sortierer {
 		Altersklasse altersKlasse2 = gruppe2.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().altersklasse();
 		Altersklasse altersKlasse3 = gruppe3.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().altersklasse();
 
-		int gruppe1Runde = 0;
-		int gruppe2Runde = 0;
-		int gruppe3Runde = 0;
-
 		// Abwechselnd die Begegnungen der gruppe1 und gruppe2 nehmen und der Matte hinzufügen
 		for (int r = 0; r < Math.max(gruppe1.alleRundenBegegnungen().size(), Math.max(gruppe2.alleRundenBegegnungen().size(), gruppe3.alleRundenBegegnungen().size())); r++) {
 			if (gruppe1.alleRundenBegegnungen().size() > r) {
@@ -196,7 +191,7 @@ public class Sortierer {
 			}
 
 			if (gruppe2.alleRundenBegegnungen().size() > r) {
-				Runde runde2 = new Runde(null, mattenRunde, gruppe2Runde, null, matteId, altersKlasse2, gruppe2, gruppe2.alleRundenBegegnungen().get(r).begegnungenJeRunde());
+				Runde runde2 = new Runde(null, mattenRunde, gruppe2Runde, rundeGesamt, matteId, altersKlasse2, gruppe2, gruppe2.alleRundenBegegnungen().get(r).begegnungenJeRunde());
 				runden.add(runde2);
 				gruppe2Runde++;
 				rundeGesamt++;
@@ -207,7 +202,7 @@ public class Sortierer {
 			}
 
 			if (gruppe3.alleRundenBegegnungen().size() > r) {
-				Runde runde3 = new Runde(null, mattenRunde, gruppe3Runde, null, matteId, altersKlasse3, gruppe3, gruppe3.alleRundenBegegnungen().get(r).begegnungenJeRunde());
+				Runde runde3 = new Runde(null, mattenRunde, gruppe3Runde, rundeGesamt, matteId, altersKlasse3, gruppe3, gruppe3.alleRundenBegegnungen().get(r).begegnungenJeRunde());
 				runden.add(runde3);
 				gruppe3Runde++;
 				rundeGesamt++;

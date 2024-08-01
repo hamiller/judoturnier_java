@@ -1,0 +1,1 @@
+ALTER TABLE begegnungen ADD COLUMN runde_uuid VARCHAR(255);

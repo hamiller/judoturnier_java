@@ -67,6 +67,8 @@ public class TurnierService {
 	@Autowired
 	private WettkaempferService    wettkaempferService;
 
+	private volatile Integer totaleRundenAnzahl;
+
 	public List<Turnier> ladeTurniere() {
 		logger.info("ladeTurniere");
 		return turnierRepository.ladeAlleTurniere();
@@ -120,12 +122,20 @@ public class TurnierService {
 			Map<Altersklasse, List<GewichtsklassenGruppe>> groupedByAltersklasse = gwks.stream()
 				.collect(Collectors.groupingBy(GewichtsklassenGruppe::altersKlasse));
 
+			// reset der Gesamtzahl aller Runden
+			totaleRundenAnzahl = 1;
 			groupedByAltersklasse.values().stream().forEach(groupedGwks -> erstelleMatten(groupedGwks, einstellungen));
 			return;
 		}
 
-		logger.info("Alle Altersklassen zusammen...");
-		erstelleMatten(gwks, einstellungen);
+		if (einstellungen.separateAlterklassen().equals(SeparateAlterklassen.ZUSAMMEN)) {
+			logger.info("Alle Altersklassen zusammen...");
+			totaleRundenAnzahl = 1;
+			erstelleMatten(gwks, einstellungen);
+			return;
+		}
+
+		logger.warn("Wettkampfreihenfolge {} nicht implementiert!", einstellungen.separateAlterklassen());
 	}
 
 	private void erstelleMatten(List<GewichtsklassenGruppe> gwks, Einstellungen einstellungen) {
@@ -245,7 +255,6 @@ public class TurnierService {
 		// Ausplitten der Begegnungen auf die Matten
 		List<List<WettkampfGruppe>> wettkampfGruppenJeMatten = helpers.splitArrayToParts(wettkampfGruppen, anzahlMatten);
 
-		Integer totaleRundenAnzahl = 1;
 		for (int m = 0; m < anzahlMatten; m++) {
 			Sortierer sortierer = new Sortierer(totaleRundenAnzahl);
 			var gruppen = wettkampfGruppenJeMatten.get(m);
@@ -266,6 +275,8 @@ public class TurnierService {
 					matten.add(new Matte(matteId, runden));
 					break;
 			}
+
+			logger.debug("Aktuelle totaleRundenAnzahl {}", totaleRundenAnzahl);
 		}
 		logger.trace("Matten {}", matten);
 		return matten;
@@ -305,7 +316,7 @@ public class TurnierService {
 			.findFirst();
 
 		if (aktuelleRunde.isEmpty()) {
-			throw new IllegalArgumentException("Es konnten keine Daten zu dieser Runde gefunden werden.");
+			throw new IllegalArgumentException("Es konnten keine Daten zu dieser Begegnung gefunden werden.");
 		}
 
 		var alleRundeBegegnungIds = aktuelleRunde.get().begegnungen().stream().map(Begegnung::getBegegnungId).collect(Collectors.toUnmodifiableList());
@@ -320,6 +331,6 @@ public class TurnierService {
 			nachfolger = alleRundeBegegnungIds.get(index + 1);
 		}
 
-		return new Metadaten(alleRundeBegegnungIds, Optional.ofNullable(vorgaenger), Optional.ofNullable(nachfolger));
+		return new Metadaten(alleRundeBegegnungIds, Optional.ofNullable(vorgaenger), Optional.ofNullable(nachfolger), aktuelleRunde.get().rundeId());
 	}
 }

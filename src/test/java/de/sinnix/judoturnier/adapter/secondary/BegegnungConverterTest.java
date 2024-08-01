@@ -47,9 +47,11 @@ class BegegnungConverterTest {
 	@Test
 	void testConvertToBegegnung() {
 		UUID turnierUUID = UUID.randomUUID();
+		UUID rundeUUID = UUID.randomUUID();
 		WettkampfGruppeJpa wettkampfGruppeJpa = new WettkampfGruppeJpa(1, "Gruppe1", "typ1", turnierUUID.toString());
 		BegegnungJpa begegnungJpa = new BegegnungJpa();
 		begegnungJpa.setId(1);
+		begegnungJpa.setRundeUUID(rundeUUID.toString());
 		begegnungJpa.setMatteId(2);
 		begegnungJpa.setMattenRunde(123);
 		begegnungJpa.setGruppenRunde(22);
@@ -66,6 +68,7 @@ class BegegnungConverterTest {
 
 		assertTrue(result != null);
 		assertEquals(result.getBegegnungId(), begegnungJpa.getId());
+		assertEquals(result.getRundeId().toString(), begegnungJpa.getRundeUUID());
 		assertEquals(result.getMatteId(), begegnungJpa.getMatteId());
 		assertEquals(result.getMattenRunde(), begegnungJpa.getMattenRunde());
 		assertEquals(result.getGruppenRunde(), begegnungJpa.getGruppenRunde());
@@ -75,6 +78,7 @@ class BegegnungConverterTest {
 	@Test
 	public void testConvertFromBegegnung() {
 		UUID turnierUUID = UUID.randomUUID();
+		UUID rundeUUID = UUID.randomUUID();
 		Wertung wertung = new Wertung(
 			UUID.randomUUID(),
 			WettkaempferFixtures.wettkaempfer1,
@@ -86,7 +90,7 @@ class BegegnungConverterTest {
 			null, null, null, null, null, null, null, null,
 			bewerter);
 
-		Begegnung begegnung = new Begegnung(1, 2, 123, 22, 13, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(wertung), new WettkampfGruppe(1, "Gruppe1", "typ1", List.of(), turnierUUID), turnierUUID);
+		Begegnung begegnung = new Begegnung(1, rundeUUID,2, 123, 22, 13, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(wertung), new WettkampfGruppe(1, "Gruppe1", "typ1", List.of(), turnierUUID), turnierUUID);
 
 		WertungJpa wertungJpa = new WertungJpa();
 		wertungJpa.setUuid(wertung.getUuid().toString());
@@ -105,6 +109,7 @@ class BegegnungConverterTest {
 
 		WettkampfGruppeJpa wettkampfGruppeJpa = new WettkampfGruppeJpa(1, "Gruppe1", "typ1", turnierUUID.toString());
 		BegegnungJpa begegnungJpa = new BegegnungJpa();
+		begegnungJpa.setRundeUUID(rundeUUID.toString());
 		begegnungJpa.setId(1);
 		begegnungJpa.setMatteId(2);
 		begegnungJpa.setMattenRunde(123);

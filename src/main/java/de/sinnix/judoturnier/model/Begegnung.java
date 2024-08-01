@@ -18,6 +18,7 @@ import java.util.UUID;
 @Setter
 public class Begegnung {
 	private Integer         begegnungId;
+	private UUID			rundeId;
 	private Integer         matteId;
 	private Integer         mattenRunde;
 	private Integer         gruppenRunde;

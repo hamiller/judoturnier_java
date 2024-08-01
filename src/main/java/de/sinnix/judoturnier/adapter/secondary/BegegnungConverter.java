@@ -20,6 +20,7 @@ public class BegegnungConverter {
 
 	public Begegnung convertToBegegnung(BegegnungJpa jpa, List<WettkampfGruppeJpa> wettkampfGruppeJpaList) {
 		return new Begegnung(jpa.getId(),
+			jpa.getRundeUUID() != null ? UUID.fromString(jpa.getRundeUUID()) : null,
 			jpa.getMatteId(),
 			jpa.getMattenRunde(),
 			jpa.getGruppenRunde(),
@@ -35,6 +36,7 @@ public class BegegnungConverter {
 	public BegegnungJpa convertFromBegegnung(Begegnung begegnung) {
 		BegegnungJpa jpa = new BegegnungJpa();
 		jpa.setId(begegnung.getBegegnungId());
+		jpa.setRundeUUID(fromUUID(begegnung.getRundeId()));
 		jpa.setMatteId(begegnung.getMatteId());
 		jpa.setMattenRunde(begegnung.getMattenRunde());
 		jpa.setGruppenRunde(begegnung.getGruppenRunde());
@@ -46,5 +48,13 @@ public class BegegnungConverter {
 		jpa.setWettkampfGruppeId(begegnung.getWettkampfGruppe().id());
 		jpa.setTurnierUUID(begegnung.getTurnierUUID().toString());
 		return jpa;
+	}
+
+	private String fromUUID(UUID uuid) {
+		if (uuid != null) {
+			return uuid.toString();
+		}
+
+		return UUID.randomUUID().toString();
 	}
 }

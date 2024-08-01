@@ -32,17 +32,19 @@ import java.util.List;
 public class BegegnungJpa {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Integer id;
-	Integer matteId;
-	Integer mattenRunde;
-	Integer gruppenRunde;
-	Integer gesamtRunde;
+	private Integer id;
+	@Column(name = "runde_uuid")
+	private String  rundeUUID;
+	private Integer matteId;
+	private Integer mattenRunde;
+	private Integer gruppenRunde;
+	private Integer gesamtRunde;
 	@OneToOne
 	@JoinColumn(name = "wettkaempfer1")
-	WettkaempferJpa wettkaempfer1;
+	private WettkaempferJpa wettkaempfer1;
 	@OneToOne
 	@JoinColumn(name = "wettkaempfer2")
-	WettkaempferJpa  wettkaempfer2;
+	private WettkaempferJpa  wettkaempfer2;
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(
 		name = "begegnung_wertung",
@@ -52,8 +54,8 @@ public class BegegnungJpa {
 		},
 		inverseJoinColumns = @JoinColumn(name = "wertung_id")
 	)
-	List<WertungJpa> wertungen;
-	Integer wettkampfGruppeId;
+	private List<WertungJpa> wertungen;
+	private Integer wettkampfGruppeId;
 	@Column(name = "turnier_uuid")
 	private String turnierUUID;
 }

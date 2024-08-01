@@ -14,6 +14,10 @@ public class WettkampfGruppeConverter {
 		return new WettkampfGruppe(jpa.getId(), jpa.getName(), jpa.getTyp(), List.of(), UUID.fromString(jpa.getTurnierUUID()));
 	}
 
+	public WettkampfGruppe convertToWettkampfGruppe(WettkampfGruppeJpa jpa) {
+		return new WettkampfGruppe(jpa.getId(), jpa.getName(), jpa.getTyp(), List.of(), UUID.fromString(jpa.getTurnierUUID()));
+	}
+
 	public WettkampfGruppeJpa convertFromWettkampfGruppe(WettkampfGruppe wettkampfGruppe) {
 		WettkampfGruppeJpa jpa = new WettkampfGruppeJpa();
 		jpa.setId(wettkampfGruppe.id());

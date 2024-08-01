@@ -2,11 +2,11 @@ package de.sinnix.judoturnier.adapter.secondary;
 
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
-import de.sinnix.judoturnier.model.GruppenRunde;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Turnier;
 import de.sinnix.judoturnier.model.Wertung;
+import de.sinnix.judoturnier.model.WettkampfGruppe;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Repository
 public class TurnierRepository {
@@ -65,23 +64,36 @@ public class TurnierRepository {
 			.map(jpa -> begegnungConverter.convertToBegegnung(jpa, wettkampfGruppeJpaList))
 			.toList();
 
+		// Map, um die Runden zu sammeln
+		Map<UUID, List<Begegnung>> rundenMap = new HashMap<>();
+
+		// Iteriere über die Begegnungen, um sie nach Runde zu gruppieren
+		for (Begegnung begegnung : begegnungenList) {
+			UUID rundeId = begegnung.getRundeId();
+			rundenMap.computeIfAbsent(rundeId, k -> new ArrayList<>()).add(begegnung);
+		}
+
 		Map<Integer, Matte> matteMap = new HashMap<>();
-		for (Begegnung b : begegnungenList) {
-			Integer matteId = b.getMatteId();
-			Runde r = new Runde(
-				b.getBegegnungId(),
-				b.getMattenRunde(),
-				b.getGruppenRunde(),
-				b.getGesamtRunde(),
-				matteId,
-				b.getWettkaempfer1() == null ? Altersklasse.PAUSE : b.getWettkaempfer1().altersklasse(), // wir haben eine PAUSE
-				b.getWettkampfGruppe(),
-				List.of(b));
-			if (!matteMap.containsKey(matteId)) {
-				List<Runde> rundeList = new ArrayList<>();
-				matteMap.put(matteId, new Matte(matteId, rundeList));
-			}
-			matteMap.get(matteId).runden().add(r);
+
+		// Iteriere über die RundenMap, um Matte-Objekte zu erstellen
+		for (Map.Entry<UUID, List<Begegnung>> entry : rundenMap.entrySet()) {
+			UUID rundeId = entry.getKey();
+			List<Begegnung> begegnungenInRunde = entry.getValue();
+
+			var ersteBegegnung = begegnungenInRunde.get(0);
+			Integer mattenRunde = ersteBegegnung.getMattenRunde();
+			Integer gruppenRunde = ersteBegegnung.getGruppenRunde();
+			Integer rundeGesamt = ersteBegegnung.getGesamtRunde();
+			Integer matteId = ersteBegegnung.getMatteId();
+			Altersklasse altersklasse = ersteBegegnung.getWettkaempfer1() != null ? ersteBegegnung.getWettkaempfer1().altersklasse(): Altersklasse.PAUSE;
+			WettkampfGruppe gruppe = ersteBegegnung.getWettkampfGruppe();
+
+			// Erstelle eine neue Runde
+			Runde runde = new Runde(rundeId, mattenRunde, gruppenRunde, rundeGesamt, matteId, altersklasse, gruppe, begegnungenInRunde);
+
+			// Füge die Runde zur Matte hinzu
+			Matte matte = matteMap.computeIfAbsent(matteId, k -> new Matte(matteId, new ArrayList<>()));
+			matte.runden().add(runde); // Annahme, dass die Liste modifizierbar ist
 		}
 
 		return matteMap;
@@ -98,27 +110,30 @@ public class TurnierRepository {
 	public void speichereMatte(Matte matte) {
 		List<BegegnungJpa> begegnungJpaList = new ArrayList<>();
 		for (Runde runde : matte.runden()) {
-			Integer wettkampfGruppeId;
 			Optional<WettkampfGruppeJpa> optionalWettkampfGruppeJpa = wettkampfGruppeJpaRepository.findById(runde.gruppe().id());
 
-			if (optionalWettkampfGruppeJpa.isPresent()) {
-				wettkampfGruppeId = optionalWettkampfGruppeJpa.get().getId();
-			} else {
-				wettkampfGruppeId = wettkampfGruppeJpaRepository.save(wettkampfGruppeConverter.convertFromWettkampfGruppe(runde.gruppe()))
-					.getId();
+			if (optionalWettkampfGruppeJpa.isEmpty()) {
+				logger.info("Erstelle neue Wettkampfgruppe");
+				optionalWettkampfGruppeJpa = Optional.of(wettkampfGruppeJpaRepository.save(wettkampfGruppeConverter.convertFromWettkampfGruppe(runde.gruppe())));
 			}
+			var wettkampfGruppe = wettkampfGruppeConverter.convertToWettkampfGruppe(optionalWettkampfGruppeJpa.get());
+			var rundeId = runde.rundeId();
 
 			for (Begegnung begegnung : runde.begegnungen()) {
-				BegegnungJpa begegnungJpa = new BegegnungJpa();
-				begegnungJpa.setMatteId(matte.id());
-				begegnungJpa.setGruppenRunde(runde.gruppenRunde());
-				begegnungJpa.setMattenRunde(runde.mattenRunde());
-				begegnungJpa.setGesamtRunde(runde.rundeGesamt());
-				begegnungJpa.setWettkaempfer1(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1()));
-				begegnungJpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2()));
-				begegnungJpa.setWettkampfGruppeId(wettkampfGruppeId);
-				begegnungJpa.setTurnierUUID(begegnung.getTurnierUUID().toString());
+				Begegnung newBegegnung = new Begegnung();
+				newBegegnung.setRundeId(rundeId);
+				newBegegnung.setMatteId(matte.id());
+				newBegegnung.setGruppenRunde(runde.gruppenRunde());
+				newBegegnung.setMattenRunde(runde.mattenRunde());
+				newBegegnung.setGesamtRunde(runde.rundeGesamt());
+				newBegegnung.setWettkaempfer1(begegnung.getWettkaempfer1());
+				newBegegnung.setWettkaempfer2(begegnung.getWettkaempfer2());
+				newBegegnung.setWettkampfGruppe(wettkampfGruppe);
+				newBegegnung.setTurnierUUID(begegnung.getTurnierUUID());
+				newBegegnung.setWertungen(List.of());
 
+				BegegnungJpa begegnungJpa = begegnungConverter.convertFromBegegnung(newBegegnung);
+				rundeId = UUID.fromString(begegnungJpa.getRundeUUID());
 				begegnungJpaList.add(begegnungJpa);
 			}
 		}
