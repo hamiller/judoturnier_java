@@ -407,6 +407,7 @@ tr {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 20px 0;
 }
 
 .navbar_fixed li {
@@ -673,12 +674,39 @@ tr {
     display: none;
   }
 
+  .center-btn {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
   .ergebnis_eintrag {
     border-width: 0;
   }
 
   .ergebnis {
     padding-top: 50px;
+  }
+
+  .listeneintrag {
+    box-shadow: unset;
+    border: 3px solid var(--color-dark-grey2);
+    display: block;
+    margin-bottom: 50px;
+    font-size: 20px;
+  }
+
+  .left-btn,
+  .center-btn,
+  .right-btn {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+  }
+
+  .left-btn {
+    left: 0;
+    justify-content: flex-start;
   }
 
   .navbar {
@@ -692,20 +720,9 @@ tr {
     margin: 10px;
   }
 
-  .nav_btn-container > .nav_btn:first-of-type {
-    margin-right: auto; /* Schiebt den Button nach links */
-  }
-
-  .nav_btn-container > .nav_btn:last-of-type {
-    margin-left: auto; /* Schiebt den Button nach rechts */
-  }
-
-  .listeneintrag {
-    box-shadow: unset;
-    border: 3px solid var(--color-dark-grey2);
-    display: block;
-    margin-bottom: 50px;
-    font-size: 20px;
+  .nav_btn-container > .nav_btn,
+  .nav_btn-container > .special_btn {
+    position: relative; /* Reset positioning inside the individual button wrappers */
   }
 
   .matten_btn {
@@ -720,6 +737,11 @@ tr {
 
   .pagetitle {
     display: none;
+  }
+
+  .right-btn {
+    right: 0;
+    justify-content: flex-end;
   }
 
   .row {
