@@ -45,5 +45,5 @@ deployment/inventory.yml
 
 keycloak-realm-export.json
 
-testdata.sql
+testdaten/
 
