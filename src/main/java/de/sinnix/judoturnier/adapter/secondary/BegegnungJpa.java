@@ -12,23 +12,20 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@EqualsAndHashCode
-@Getter
-@Setter
+@Data
 @Entity
-@Table(name = "begegnungen")
+@Table(name = "begegnungen", uniqueConstraints = {
+	@UniqueConstraint(columnNames = {"id", "turnier_uuid"})
+})
 public class BegegnungJpa {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,6 +53,6 @@ public class BegegnungJpa {
 	)
 	private List<WertungJpa> wertungen;
 	private Integer wettkampfGruppeId;
-	@Column(name = "turnier_uuid")
+	@Column(name = "turnier_uuid", nullable = false)
 	private String turnierUUID;
 }

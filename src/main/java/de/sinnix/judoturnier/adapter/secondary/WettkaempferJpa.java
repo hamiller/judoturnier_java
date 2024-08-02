@@ -8,21 +8,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@EqualsAndHashCode
-@Getter
-@Setter
+@Data
 @Entity
-@Table(name = "wettkaempfer")
+@Table(name = "wettkaempfer", uniqueConstraints = {
+	@UniqueConstraint(columnNames = {"id", "turnier_uuid"})
+})
 public class WettkaempferJpa {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +34,6 @@ public class WettkaempferJpa {
 	private String    farbe;
 	private Boolean   checked;
 	private Boolean   printed;
-	@Column(name = "turnier_uuid")
+	@Column(name = "turnier_uuid", nullable = false)
 	private String    turnierUUID;
 }

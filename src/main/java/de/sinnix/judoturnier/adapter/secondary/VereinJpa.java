@@ -6,26 +6,23 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@EqualsAndHashCode
-@Getter
-@Setter
+@Data
 @Entity
-@Table(name = "verein")
+@Table(name = "verein", uniqueConstraints = {
+	@UniqueConstraint(columnNames = {"id", "turnier_uuid"})
+})
 public class VereinJpa {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private String  name;
-	@Column(name = "turnier_uuid")
+	@Column(name = "turnier_uuid", nullable = false)
 	private String  turnierUUID;
 }
