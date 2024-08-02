@@ -2,11 +2,10 @@ package de.sinnix.judoturnier.adapter.primary;
 
 import de.sinnix.judoturnier.application.EinstellungenService;
 import de.sinnix.judoturnier.application.GewichtsklassenService;
-import de.sinnix.judoturnier.application.WettkaempferService;
 import de.sinnix.judoturnier.model.Einstellungen;
+import de.sinnix.judoturnier.model.Gruppengroesse;
 import de.sinnix.judoturnier.model.Kampfsystem;
 import de.sinnix.judoturnier.model.MattenAnzahl;
-import de.sinnix.judoturnier.model.Gruppengroesse;
 import de.sinnix.judoturnier.model.SeparateAlterklassen;
 import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.VariablerGewichtsteil;
@@ -32,8 +31,6 @@ public class EinstellungenController {
 	@Autowired
 	private EinstellungenService   einstellungenService;
 	@Autowired
-	private WettkaempferService    wiegenService;
-	@Autowired
 	private GewichtsklassenService gewichtsklassenService;
 
 	@GetMapping("/turnier/{turnierid}/einstellungen")
@@ -42,13 +39,11 @@ public class EinstellungenController {
 
 		var turnierUUID = UUID.fromString(turnierid);
 		var einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
-		var wks = wiegenService.alleKaempfer(turnierUUID);
 		var gwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 
 		ModelAndView mav = new ModelAndView("einstellungen");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("gewichtsklassengruppen", gwks);
-		mav.addObject("anzahlwk", wks.size());
 		mav.addObject("kampfsysteme", Kampfsystem.values());
 		mav.addObject("turniertyp", einstellungen.turnierTyp());
 		mav.addObject("mattenanzahl", einstellungen.mattenAnzahl());
@@ -74,13 +69,11 @@ public class EinstellungenController {
 		var einstellungen = new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge, gruppengroesse, variablerGewichtsteil, separateAltersklassen, turnierUUID);
 
 		einstellungen = einstellungenService.speichereTurnierEinstellungen(einstellungen);
-		var wks = wiegenService.alleKaempfer(UUID.fromString(turnierid));
 		var gwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 
 		ModelAndView mav = new ModelAndView("einstellungen");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("gewichtsklassengruppen", gwks);
-		mav.addObject("anzahlwk", wks.size());
 		mav.addObject("kampfsysteme", Kampfsystem.values());
 		mav.addObject("turniertyp", einstellungen.turnierTyp());
 		mav.addObject("mattenanzahl", einstellungen.mattenAnzahl());
