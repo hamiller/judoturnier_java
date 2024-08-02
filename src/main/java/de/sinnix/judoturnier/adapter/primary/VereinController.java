@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 public class VereinController {
 
@@ -21,6 +23,7 @@ public class VereinController {
 	@GetMapping("/turnier/{turnierid}/vereine")
 	public Verein[] vereine(@PathVariable String turnierid) {
 		logger.info("Lade Vereine...");
-		return vereinService.holeAlleVereine().toArray(Verein[]::new);
+		UUID turnierUUID = UUID.fromString(turnierid);
+		return vereinService.holeAlleVereine(turnierUUID).toArray(Verein[]::new);
 	}
 }

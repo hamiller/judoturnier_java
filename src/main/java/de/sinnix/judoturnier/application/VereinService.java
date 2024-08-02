@@ -1,12 +1,20 @@
 package de.sinnix.judoturnier.application;
 
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
+import de.sinnix.judoturnier.adapter.secondary.VereinConverter;
 import de.sinnix.judoturnier.adapter.secondary.VereinJpaRepository;
 import de.sinnix.judoturnier.model.Verein;
+import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -18,11 +26,47 @@ public class VereinService {
 	@Autowired
 	private VereinJpaRepository vereinJpaRepository;
 
-	public List<Verein> holeAlleVereine() {
-		return vereinJpaRepository.findAll().stream().map(jpa -> new Verein(jpa.getId(), jpa.getName(), UUID.fromString(jpa.getTurnierUUID()))).collect(Collectors.toUnmodifiableList());
+	@Autowired
+	private VereinConverter vereinConverter;
+
+	public List<Verein> holeAlleVereine(UUID turnierUUID) {
+		return vereinJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream().map(jpa -> vereinConverter.converToVerein(jpa)).collect(Collectors.toUnmodifiableList());
 	}
 
-	public Verein holeVerein(Integer vereinsId) {
-		return vereinJpaRepository.findById(vereinsId).map(jpa -> new Verein(jpa.getId(), jpa.getName(), UUID.fromString(jpa.getTurnierUUID()))).orElseThrow();
+	public Verein holeVerein(Integer vereinsId, UUID turnierUUID) {
+		return vereinJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream().filter(jpa -> jpa.getId() == vereinsId).findFirst().map(jpa -> vereinConverter.converToVerein(jpa)).orElseThrow();
+	}
+
+	@Transactional
+	public void speichereCSV(UUID turnierUUID, MultipartFile file) {
+		logger.info("Speichere Vereine");
+		List<String[]> records = new ArrayList<>();
+		String[] headers = null;
+
+		// Überprüfen, ob die Datei nicht leer ist
+		if (!file.isEmpty()) {
+			try (InputStreamReader reader = new InputStreamReader(file.getInputStream());
+				 CSVReader csvReader = new CSVReader(reader)) {
+
+				// Erste Zeile als Header speichern
+				headers = csvReader.readNext();
+
+				String[] nextRecord;
+				while ((nextRecord = csvReader.readNext()) != null) {
+					records.add(nextRecord);
+				}
+
+				logger.info("Geparste Daten: {} mit {} Einträgen", headers, records.size());
+				records.forEach(record -> {
+					Integer id = Integer.parseInt(record[0]);
+					var name = record[1];
+					Verein verein = new Verein(null, name, turnierUUID);
+					vereinJpaRepository.save(vereinConverter.convertFromVerein(verein));
+				});
+			} catch (IOException | CsvValidationException e) {
+				logger.error(e);
+			}
+		}
+
 	}
 }

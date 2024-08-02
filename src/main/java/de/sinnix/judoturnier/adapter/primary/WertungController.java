@@ -44,7 +44,7 @@ public class WertungController {
 		mav.addObject("begegnung", begegnungDto);
 		mav.addObject("begegnungid", id);
 		mav.addObject("bewerter", bewerter);
-		mav.addObject("enableEditing", bewerter.darfEditieren());
+		mav.addObject("enableEditing", bewerter.istKampfrichter());
 		mav.addObject("wertungsOptionen", List.of(1, 2, 3, 4, 5, 6));
 		return mav;
 	}
@@ -61,7 +61,7 @@ public class WertungController {
 		mav.addObject("begegnung", begegnungDto);
 		mav.addObject("begegnungid", id);
 		mav.addObject("bewerter", bewerter);
-		mav.addObject("enableEditing", bewerter.darfEditieren());
+		mav.addObject("enableEditing", bewerter.istKampfrichter());
 		mav.addObject("wertungsOptionen", List.of(1, 2, 3, 4, 5, 6));
 		return mav;
 	}

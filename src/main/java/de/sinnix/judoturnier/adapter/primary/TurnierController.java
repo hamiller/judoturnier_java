@@ -3,6 +3,7 @@ package de.sinnix.judoturnier.adapter.primary;
 import de.sinnix.judoturnier.application.EinstellungenService;
 import de.sinnix.judoturnier.application.GewichtsklassenService;
 import de.sinnix.judoturnier.application.TurnierService;
+import de.sinnix.judoturnier.application.VereinService;
 import de.sinnix.judoturnier.application.WettkaempferService;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Bewerter;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -47,7 +49,9 @@ public class TurnierController {
 	@Autowired
 	private GewichtsklassenService gewichtsklassenService;
 	@Autowired
-	private TurnierService         turnierService;
+	private TurnierService turnierService;
+	@Autowired
+	private VereinService  vereinService;
 
 	@GetMapping("/")
 	public ModelAndView startPage() {
@@ -101,6 +105,7 @@ public class TurnierController {
 		ModelAndView mav = new ModelAndView("turnieruebersicht");
 		mav.addObject("anzahlwk", wks.size());
 		mav.addObject("turniertyp", einstellungen.turnierTyp());
+		mav.addObject("enableEditing", bewerter.istAdmin());
 		return mav;
 	}
 
@@ -149,6 +154,24 @@ public class TurnierController {
 		mav.addObject("gewichtsklassenGruppe", gwks);
 		mav.addObject("matten", wettkampfreihenfolgeJeMatte);
 		return mav;
+	}
+
+	@PostMapping("/turnier/{turnierid}/uploadVerein")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ModelAndView ladeCsvVereinHoch(@PathVariable String turnierid, @RequestParam("fileVereine") MultipartFile file) {
+		logger.info("Hochgeladene CSV-Datei für Vereine {}", file.getName());
+		var turnierUUID = UUID.fromString(turnierid);
+		vereinService.speichereCSV(turnierUUID, file);
+
+		return new ModelAndView("redirect:/turnier/" + turnierid);
+	}
+
+	@PostMapping("/turnier/{turnierid}/uploadWettkaempfer")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ModelAndView ladeCsvWettkaempferHoch(@PathVariable String turnierid, @RequestParam("fileWettkaempfer") MultipartFile file) {
+		logger.info("Hochgeladene CSV-Datei für Wettkaempfer {}", file.getName());
+
+		return new ModelAndView("redirect:/turnier/" + turnierid);
 	}
 
 	@PostMapping("/turnier/{turnierid}/begegnungen")

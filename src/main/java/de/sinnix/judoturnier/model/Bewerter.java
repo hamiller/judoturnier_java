@@ -4,7 +4,11 @@ import java.util.List;
 
 public record Bewerter(String id, String username, String name, List<String> rollen) {
 
-	public boolean darfEditieren() {
+	public boolean istKampfrichter() {
 		return rollen.contains("ROLE_KAMPFRICHTER");
+	}
+
+	public boolean istAdmin() {
+		return rollen.contains("ROLE_ADMIN");
 	}
 }

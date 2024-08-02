@@ -59,9 +59,10 @@ public class WettkaempferController {
 	public ModelAndView speichereWettkaempfer(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("empfange Wettkaempfer {}", formData);
 
+		UUID turnierUUID = UUID.fromString(turnierid);
 		Geschlecht geschlecht = Geschlecht.valueOf(formData.getFirst("geschlecht"));
 		Altersklasse altersklasse = Altersklasse.valueOf(formData.getFirst("altersklasse"));
-		Verein verein = vereinService.holeVerein(Integer.parseInt(formData.getFirst("vereinsid")));
+		Verein verein = vereinService.holeVerein(Integer.parseInt(formData.getFirst("vereinsid")), turnierUUID);
 
 		Wettkaempfer wettkaempfer = new Wettkaempfer(
 			notEmpty(formData.getFirst("id")) ? Integer.parseInt(formData.getFirst("id")) : null,
@@ -101,14 +102,14 @@ public class WettkaempferController {
 	@GetMapping("/turnier/{turnierid}/wettkaempfer/{id}")
 	public ModelAndView ladeWettkaempfer(@PathVariable String turnierid, @PathVariable Integer id) {
 		logger.debug("Wettkaempfer-Seite angefragt " + id);
-
+		UUID turnierUUID = UUID.fromString(turnierid);
 		var wk = wiegenService.ladeKaempfer(id);
 		if (!wk.isPresent()) {
 			logger.warn("Wettkämper: {} nicht gefunden!");
 			throw new HttpClientErrorException(HttpStatusCode.valueOf(404));
 		}
 		logger.info("Wettkämper: {}", wk);
-		var vs = vereinService.holeAlleVereine().stream()
+		var vs = vereinService.holeAlleVereine(turnierUUID).stream()
 			.sorted(Comparator.comparing(Verein::name))
 			.collect(Collectors.toList());
 
@@ -124,7 +125,8 @@ public class WettkaempferController {
 	@GetMapping("/turnier/{turnierid}/wettkaempfer-neu")
 	public ModelAndView leererWettkaempfer(@PathVariable String turnierid, @RequestParam(name = "success", required = false) String id, @RequestParam(name = "error", required = false) String error) {
 		logger.debug("Wettkaempfer-Seite");
-		var vs = vereinService.holeAlleVereine();
+		UUID turnierUUID = UUID.fromString(turnierid);
+		var vs = vereinService.holeAlleVereine(turnierUUID);
 
 		ModelAndView mav = new ModelAndView("wettkaempfer");
 		mav.addObject("turnierid", turnierid);

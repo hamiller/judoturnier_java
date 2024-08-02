@@ -19,6 +19,24 @@
     <h1>Software des des 1.JC-Großkrotzenburg</h1>
   </div>
 
+    {{#if enableEditing}}
+        <div class="cvs_upload">
+        <form action="/turnier/{{turnierid}}/uploadVerein" method="post" enctype="multipart/form-data">
+            <label for="file">Wählen Sie eine CSV-Datei mit den Vereinen:</label>
+            <input type="file" id="fileVereine" name="fileVereine" required>
+            <button type="submit">Hochladen</button>
+        </form>
+        </div>
+
+        <div class="cvs_upload">
+        <form action="/turnier/{{turnierid}}/uploadWettkaempfer" method="post" enctype="multipart/form-data">
+            <label for="file">Wählen Sie eine CSV-Datei mit den Wettkämpfern:</label>
+            <input type="file" id="fileWettkaempfer" name="fileWettkaempfer" required>
+            <button type="submit">Hochladen</button>
+        </form>
+        </div>
+    {{/if}}
+
   {{> footer}}
   <script type="text/javascript">
   </script>
