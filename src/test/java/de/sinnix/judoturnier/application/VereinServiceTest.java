@@ -3,7 +3,6 @@ package de.sinnix.judoturnier.application;
 import de.sinnix.judoturnier.adapter.secondary.VereinConverter;
 import de.sinnix.judoturnier.adapter.secondary.VereinJpa;
 import de.sinnix.judoturnier.adapter.secondary.VereinJpaRepository;
-import de.sinnix.judoturnier.model.Matte;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,13 +11,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -50,15 +48,15 @@ class VereinServiceTest {
 		verify(vereinJpaRepository, times(3)).save(argumentCaptor.capture());
 		List<VereinJpa> capturedArguments = argumentCaptor.getAllValues();
 
-//		assertEquals(1, capturedArguments.get(0).getId());
+		assertEquals(null, capturedArguments.get(0).getId());
 		assertEquals("Dantai Wölfersheim", capturedArguments.get(0).getName());
 		assertEquals(turnierUUID.toString(), capturedArguments.get(0).getTurnierUUID());
 
-//		assertEquals(2, capturedArguments.get(1).getId());
+		assertEquals(null, capturedArguments.get(1).getId());
 		assertEquals("JCN Lindenfels", capturedArguments.get(1).getName());
 		assertEquals(turnierUUID.toString(), capturedArguments.get(1).getTurnierUUID());
 
-//		assertEquals(3, capturedArguments.get(2).getId());
+		assertEquals(null, capturedArguments.get(2).getId());
 		assertEquals("1. JC Großkrotzenburg", capturedArguments.get(2).getName());
 		assertEquals(turnierUUID.toString(), capturedArguments.get(2).getTurnierUUID());
 	}
