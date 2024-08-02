@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -85,17 +86,23 @@ public class HelperSource {
 		}
 	}
 
-	public static String istLeer(Options options) {
-		boolean istLeer = false;
-		logger.trace("options: {}", options.params);
-		for (Object param : options.params) {
-			logger.debug("param: {}", param);
+	public static String istLeer(Object firstObject, Options options) {
+		List<Object> allObjects = new ArrayList<>();
+		allObjects.add(firstObject);
+		allObjects.addAll(Arrays.asList(options.params));
+		for (Object param : allObjects) {
 			if (param == null || "".equals(param)) {
-				istLeer = true;
-				break;
+				return "leer";
+			}
+
+			if (param instanceof Double) {
+				Double d = (Double) param;
+				if (d == 0.0) {
+					return "leer_zahl";
+				}
 			}
 		}
-		return istLeer ? "leer" : "";
+		return "";
 	}
 
 	public static String wertungVorhanden(List<Wertung> wertung, Options options) {

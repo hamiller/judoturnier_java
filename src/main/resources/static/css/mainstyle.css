@@ -16,6 +16,7 @@
   --box-shadow1: #091e424f;
   --box-shadow2: #091e4240;
   --error: #fa7030;
+  --warn: #edc548;
   --info: #73ffa2;
 }
 
@@ -354,6 +355,10 @@ tr {
 
 .leer {
   background-color: var(--error) !important;
+}
+
+.leer_zahl {
+  background-color: var(--warn) !important;
 }
 
 .links {
