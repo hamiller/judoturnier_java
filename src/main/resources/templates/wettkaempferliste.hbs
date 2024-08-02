@@ -26,14 +26,14 @@
     
     <ul class="wettkaempferliste generalcontent">
       <li class="wettkaempferliste-wettkaempfer listeneintrag ">
-        <div  class="listeneintrag-titel">Name</div>
-        <div>Verein</div>
-        <div>Geschlecht</div>
-        <div>Altersklasse</div>
-        <div>Gewicht</div>
-        <div>Geprüft</div>
-        <div>Gedruckt</div>
-        <div>Bearbeiten</div>
+          <div class="listeneintrag-titel"><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=name">Name</a></div>
+          <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=verein">Verein</a></div>
+          <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=geschlecht">Geschlecht</a></div>
+          <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=altersklasse">Altersklasse</a></div>
+          <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=gewicht">Gewicht</a></div>
+          <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=geprueft">Geprüft</a></div>
+          <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=gedruckt">Gedruckt</a></div>
+          <div>Bearbeiten</div>
       </li>
       {{#kaempferListe}}
       <li class="wettkaempferliste-wettkaempfer listeneintrag {{istLeer altersklasse geschlecht verein gewicht}}" >

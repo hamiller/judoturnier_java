@@ -24,6 +24,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -39,18 +40,25 @@ public class WettkaempferController {
 	private VereinService       vereinService;
 
 	@GetMapping("/turnier/{turnierid}/wettkaempfer")
-	public ModelAndView ladeWettkaempferListe(@PathVariable String turnierid, @RequestParam(name = "success", required = false) String id, @RequestParam(name = "error", required = false) String error) {
+	public ModelAndView ladeWettkaempferListe(@PathVariable String turnierid,
+											  @RequestParam(name = "sortingHeader", required = false) String sortingHeader,
+											  @RequestParam(name = "sortingOrder", required = false) String sortingOrder,
+											  @RequestParam(name = "success", required = false) String id,
+											  @RequestParam(name = "error", required = false) String error) {
 		logger.debug("Alle Wettkaempfer angefragt");
-		var wks = wiegenService.alleKaempfer(UUID.fromString(turnierid)).stream()
-			.sorted(Comparator.comparing(Wettkaempfer::name))
+
+		List<Wettkaempfer> wettkaempferList = wiegenService.alleKaempfer(UUID.fromString(turnierid)).stream()
+			.sorted(WettkaempferSortierer.sortiere(sortingHeader))
 			.collect(Collectors.toList());
 
 		ModelAndView mav = new ModelAndView("wettkaempferliste");
 		mav.addObject("turnierid", turnierid);
-		mav.addObject("kaempferListe", wks);
-		mav.addObject("anzahlwk", wks.size());
+		mav.addObject("kaempferListe", wettkaempferList);
+		mav.addObject("anzahlwk", wettkaempferList.size());
 		mav.addObject("prevsuccess", id);
 		mav.addObject("preverror", error);
+		mav.addObject("sortingHeader", sortingHeader);
+		mav.addObject("sortingOrder", sortingOrder);
 		return mav;
 	}
 
