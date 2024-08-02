@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -50,6 +51,11 @@ public class VereinService {
 
 				// Erste Zeile als Header speichern
 				headers = csvReader.readNext();
+				// prüfen ob das Format des CSV korrekt ist:
+				// name
+				if (headers.length != 1 || !headers[0].strip().equalsIgnoreCase("name")) {
+					throw new CsvValidationException("Das CSV hat das falsche Format: NAME");
+				}
 
 				String[] nextRecord;
 				while ((nextRecord = csvReader.readNext()) != null) {
@@ -58,15 +64,18 @@ public class VereinService {
 
 				logger.info("Geparste Daten: {} mit {} Einträgen", headers, records.size());
 				records.forEach(record -> {
-					Integer id = Integer.parseInt(record[0]);
-					var name = record[1];
+					var name = record[0].strip();
 					Verein verein = new Verein(null, name, turnierUUID);
 					vereinJpaRepository.save(vereinConverter.convertFromVerein(verein));
 				});
 			} catch (IOException | CsvValidationException e) {
 				logger.error(e);
+				throw new Error(e);
 			}
 		}
+	}
 
+	public Optional<Verein> sucheVerein(String vereinname, UUID turnierUUID) {
+		return vereinJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream().filter(jpa -> jpa.getName().equalsIgnoreCase(vereinname)).findFirst().map(jpa -> vereinConverter.converToVerein(jpa));
 	}
 }

@@ -29,8 +29,8 @@ public class WettkaempferConverter {
 		WettkaempferJpa jpa = new WettkaempferJpa();
 		if (wettkaempfer.id() != null) jpa.setId(wettkaempfer.id());
 		jpa.setName(wettkaempfer.name());
-		jpa.setGeschlecht(wettkaempfer.geschlecht().name());
-		jpa.setAltersklasse(wettkaempfer.altersklasse().name());
+		if (wettkaempfer.geschlecht() != null) jpa.setGeschlecht(wettkaempfer.geschlecht().name());
+		if (wettkaempfer.altersklasse() != null) jpa.setAltersklasse(wettkaempfer.altersklasse().name());
 		jpa.setVerein(vereinConverter.convertFromVerein(wettkaempfer.verein()));
 		jpa.setGewicht(wettkaempfer.gewicht());
 		jpa.setFarbe(wettkaempfer.farbe().map(f -> f.name()).orElse(null));

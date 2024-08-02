@@ -39,7 +39,7 @@ class VereinServiceTest {
 	@Test
 	void testSpeichereCSV() {
 		UUID turnierUUID = UUID.randomUUID();
-		String csvContent = "ID,NAME\n1,Dantai Wölfersheim\n2,JCN Lindenfels\n3,1. JC Großkrotzenburg";
+		String csvContent = "NAME\nDantai Wölfersheim\nJCN Lindenfels\n1. JC Großkrotzenburg";
 		MockMultipartFile file = new MockMultipartFile("file", "test.csv", "text/csv", csvContent.getBytes());
 
 		vereinService.speichereCSV(turnierUUID, file);

@@ -170,6 +170,8 @@ public class TurnierController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView ladeCsvWettkaempferHoch(@PathVariable String turnierid, @RequestParam("fileWettkaempfer") MultipartFile file) {
 		logger.info("Hochgeladene CSV-Datei für Wettkaempfer {}", file.getName());
+		var turnierUUID = UUID.fromString(turnierid);
+		wettkaempferService.speichereCSV(turnierUUID, file);
 
 		return new ModelAndView("redirect:/turnier/" + turnierid);
 	}
