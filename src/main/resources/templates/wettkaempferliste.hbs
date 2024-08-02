@@ -16,6 +16,13 @@
         <button onclick="window.location.href='/turnier/{{turnierid}}/wettkaempfer-neu';" ><span class="material-icons md-48 centered" title="Weitere Wettkämpfer eintragen">person_add</span> Weitere Wettkämpfer eintragen</button>
       </div>
     </div>
+
+      {{#if prevsuccess}}
+          <div class="infomsg">Wettkämpfer {{prevsuccess}} wurde erfolgreich editiert/angelegt.</div>
+      {{/if}}
+      {{#if preverror}}
+          <div class="errormsg">Der Wettkämpfer konnte nicht editiert/angelegt werden: {{preverror}}</div>
+      {{/if}}
     
     <ul class="wettkaempferliste generalcontent">
       <li class="wettkaempferliste-wettkaempfer listeneintrag ">

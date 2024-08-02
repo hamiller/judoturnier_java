@@ -28,8 +28,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
-
 @RestController
 public class WettkaempferController {
 
@@ -41,7 +39,7 @@ public class WettkaempferController {
 	private VereinService       vereinService;
 
 	@GetMapping("/turnier/{turnierid}/wettkaempfer")
-	public ModelAndView ladeWettkaempferListe(@PathVariable String turnierid) {
+	public ModelAndView ladeWettkaempferListe(@PathVariable String turnierid, @RequestParam(name = "success", required = false) String id, @RequestParam(name = "error", required = false) String error) {
 		logger.debug("Alle Wettkaempfer angefragt");
 		var wks = wiegenService.alleKaempfer(UUID.fromString(turnierid)).stream()
 			.sorted(Comparator.comparing(Wettkaempfer::name))
@@ -51,6 +49,8 @@ public class WettkaempferController {
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("kaempferListe", wks);
 		mav.addObject("anzahlwk", wks.size());
+		mav.addObject("prevsuccess", id);
+		mav.addObject("preverror", error);
 		return mav;
 	}
 
@@ -63,6 +63,8 @@ public class WettkaempferController {
 		Geschlecht geschlecht = Geschlecht.valueOf(formData.getFirst("geschlecht"));
 		Altersklasse altersklasse = Altersklasse.valueOf(formData.getFirst("altersklasse"));
 		Verein verein = vereinService.holeVerein(Integer.parseInt(formData.getFirst("vereinsid")), turnierUUID);
+
+		Boolean neuerEintrag = Boolean.parseBoolean(formData.getFirst("neuereintrag"));
 
 		Wettkaempfer wettkaempfer = new Wettkaempfer(
 			notEmpty(formData.getFirst("id")) ? Integer.parseInt(formData.getFirst("id")) : null,
@@ -84,7 +86,11 @@ public class WettkaempferController {
 		try {
 			var kaempfer = wiegenService.speichereKaempfer(wettkaempfer);
 			logger.info("Kämpfer erfolgreich angelegt {}", kaempfer.id());
-			return new ModelAndView("redirect:/turnier/" + turnierid + "/wettkaempfer-neu?success=" + id, formData);
+
+			if (neuerEintrag) {
+				return new ModelAndView("redirect:/turnier/" + turnierid + "/wettkaempfer-neu?success=" + kaempfer.id(), formData);
+			}
+			return new ModelAndView("redirect:/turnier/" + turnierid + "/wettkaempfer?success=" + kaempfer.id(), formData);
 		} catch (Exception err) {
 			logger.error("Konnte den Kämpfer nicht anlegen!", err);
 			return new ModelAndView("redirect:/turnier/" + turnierid + "/wettkaempfer-neu", formData);
@@ -119,6 +125,7 @@ public class WettkaempferController {
 		mav.addObject("vereine", vs);
 		mav.addObject("geschlechter", Geschlecht.values());
 		mav.addObject("altersklasse", Altersklasse.values());
+		mav.addObject("neuerEintrag", false);
 		return mav;
 	}
 
@@ -136,6 +143,7 @@ public class WettkaempferController {
 		mav.addObject("altersklasse", Altersklasse.values());
 		mav.addObject("prevsuccess", id);
 		mav.addObject("preverror", error);
+		mav.addObject("neuerEintrag", true);
 		return mav;
 	}
 

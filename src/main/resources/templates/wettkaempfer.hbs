@@ -9,7 +9,7 @@
 
   <div>
     <div class="bodyheader">
-      <h2>Neuer Wettkämpfer</h2>
+        <h2>{{#if neuerEintrag}}Neuer Wettkämpfer{{else}}Editiere Wettkämpfer{{/if}}</h2>
     </div>
   </div>
 
@@ -54,6 +54,7 @@
 
       <div class="wettkaempfer printed"><label>gedruckt</label><input class="wd100" type="checkbox" name="printed" {{setChecked true kaempfer.printed}}/></div>
 
+      <input type="hidden" value="{{neuerEintrag}}" name="neuereintrag">
 
       <button type="submit"><span class="material-icons md-48" title="Wettkämpfer eintragen">person_add</span></button>
     </form>
