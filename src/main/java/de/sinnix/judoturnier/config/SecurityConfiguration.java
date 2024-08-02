@@ -53,7 +53,8 @@ public class SecurityConfiguration {
 		http
 			.authorizeRequests(request -> request
 				.requestMatchers("/css/**", "/js/**", "/assets/**").permitAll() // Statische Dateien erlauben
-				.requestMatchers("/*").permitAll()
+				.requestMatchers("/").permitAll()
+				.requestMatchers("/**").hasAnyAuthority("ROLE_ADMIN")
 				.requestMatchers("/turnier/**").hasAnyAuthority("ROLE_ZUSCHAUER", "ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 				.requestMatchers("/turnier/*/wettkaempfer/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 				.requestMatchers("/turnier/*/vereine/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")

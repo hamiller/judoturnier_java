@@ -1,7 +1,7 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
 import de.sinnix.judoturnier.model.Altersklasse;
-import de.sinnix.judoturnier.model.Bewerter;
+import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Farbe;
 import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.Verein;
@@ -29,19 +29,19 @@ class WertungConverterTest {
 	@Mock
 	private WettkaempferConverter wettkaempferConverter;
 	@Mock
-	private BewerterConverter     bewerterConverter;
+	private BenutzerConverter     benutzerConverter;
 
 	@InjectMocks
 	private WertungConverter wertungConverter;
 
 	private static final String          UUID_STRING = "550e8400-e29b-41d4-a716-446655440000";
 	private              WettkaempferJpa wk1Jpa      = new WettkaempferJpa(1, "Teilnehmer A", "m", "U11", new VereinJpa(1, "Verein1", UUID_STRING), 25.0, "ORANGE", true, false, UUID_STRING);
-	private              Wettkaempfer    wk1         = new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", UUID.fromString(UUID_STRING)), 25.0, Optional.of(Farbe.ORANGE), true, false, UUID.fromString(UUID_STRING));
-	private              Bewerter        bewerter;
+	private Wettkaempfer wk1         = new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", UUID.fromString(UUID_STRING)), 25.0, Optional.of(Farbe.ORANGE), true, false, UUID.fromString(UUID_STRING));
+	private Benutzer     bewerter;
 
 	@BeforeEach
 	void setUp() {
-		bewerter = new Bewerter(UUID.randomUUID().toString(), "user1", "Name, Vorname", List.of("ROLE_ZUSCHAUER"));
+		bewerter = new Benutzer(UUID.randomUUID().toString(), "user1", "Name, Vorname", List.of("ROLE_ZUSCHAUER"));
 	}
 
 	@Test

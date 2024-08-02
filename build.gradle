@@ -38,7 +38,9 @@ dependencies {
 	implementation 'com.github.jknack:handlebars:4.4.0'
 	implementation 'com.github.jknack:handlebars-springmvc:4.4.0'
 	implementation 'com.google.zxing:core:3.5.3'
-	implementation 'com.opencsv:opencsv:5.9'
+	implementation 'com.opencsv:opencsv:5.9', {
+		exclude group: 'commons-logging', module: 'commons-logging'
+	}
 	runtimeOnly 'org.postgresql:postgresql'
 	compileOnly 'org.projectlombok:lombok:1.18.32'
 	annotationProcessor 'org.projectlombok:lombok:1.18.32'

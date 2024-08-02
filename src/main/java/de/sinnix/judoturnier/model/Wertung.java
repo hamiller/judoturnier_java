@@ -38,5 +38,5 @@ public class Wertung {
 	private Integer kampfstilWettkaempfer2;
 	private Integer fairnessWettkaempfer2;
 
-	private Bewerter bewerter;
+	private Benutzer bewerter;
 }

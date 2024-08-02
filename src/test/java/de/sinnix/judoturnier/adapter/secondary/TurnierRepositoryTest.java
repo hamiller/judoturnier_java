@@ -3,7 +3,7 @@ package de.sinnix.judoturnier.adapter.secondary;
 import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
-import de.sinnix.judoturnier.model.Bewerter;
+import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Wertung;
@@ -54,18 +54,18 @@ class TurnierRepositoryTest {
 	@InjectMocks
 	private TurnierRepository            turnierRepository;
 
-	private Bewerter bewerter;
+	private Benutzer benutzer;
 
 	@BeforeEach
 	public void setUp() {
-		bewerter = new Bewerter(UUID.randomUUID().toString(), "user1", "Name, Vorname", List.of("ROLE_ZUSCHAUER"));
+		benutzer = new Benutzer(UUID.randomUUID().toString(), "user1", "Name, Vorname", List.of("ROLE_ZUSCHAUER"));
 	}
 
 	@Test
 	void testLadeBegegnung() {
 		UUID turnierUUID = UUID.randomUUID();
 		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(1, "Gruppe1", "typ1", List.of(), turnierUUID);
-		Bewerter bewerter = new Bewerter(UUID.randomUUID().toString(), "user1", "Name, Vorname", List.of("ROLE_ZUSCHAUER"));
+		Benutzer benutzer = new Benutzer(UUID.randomUUID().toString(), "user1", "Name, Vorname", List.of("ROLE_ZUSCHAUER"));
 		Wertung wertung = new Wertung(
 			UUID.randomUUID(),
 			WettkaempferFixtures.wettkaempfer1,
@@ -75,7 +75,7 @@ class TurnierRepositoryTest {
 			0,
 			1,
 			null, null, null, null, null, null, null, null,
-			bewerter);
+			benutzer);
 		Begegnung begegnung = new Begegnung(1, UUID.randomUUID(), 2, 123, 22, 123, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(wertung), wettkampfGruppe, turnierUUID);
 
 		when(begegnungJpaRepository.findById(any())).thenReturn(Optional.of(new BegegnungJpa()));
@@ -98,7 +98,7 @@ class TurnierRepositoryTest {
 			Duration.of(3l, ChronoUnit.MINUTES),
 			1, 0, 0, 1,
 			null, null, null, null, null, null, null, null,
-			bewerter);
+			benutzer);
 
 		when(wertungConverter.convertFromWertung(any(Wertung.class))).thenReturn(wertungJpa);
 

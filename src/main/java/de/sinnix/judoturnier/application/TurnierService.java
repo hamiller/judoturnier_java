@@ -1,6 +1,6 @@
 package de.sinnix.judoturnier.application;
 
-import de.sinnix.judoturnier.adapter.secondary.BewerterRepository;
+import de.sinnix.judoturnier.adapter.secondary.BenutzerRepository;
 import de.sinnix.judoturnier.adapter.secondary.TurnierConverter;
 import de.sinnix.judoturnier.adapter.secondary.TurnierJpa;
 import de.sinnix.judoturnier.adapter.secondary.TurnierJpaRepository;
@@ -10,7 +10,7 @@ import de.sinnix.judoturnier.application.algorithm.DoppelKOSystem;
 import de.sinnix.judoturnier.application.algorithm.JederGegenJeden;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
-import de.sinnix.judoturnier.model.Bewerter;
+import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Matte;
@@ -59,11 +59,11 @@ public class TurnierService {
 	@Autowired
 	private TurnierRepository      turnierRepository;
 	@Autowired
-	private TurnierJpaRepository   turnierJpaRepository;
+	private TurnierJpaRepository turnierJpaRepository;
 	@Autowired
-	private BewerterRepository     bewerterRepository;
+	private BenutzerRepository   benutzerRepository;
 	@Autowired
-	private Helpers                helpers;
+	private Helpers              helpers;
 	@Autowired
 	private WettkaempferService    wettkaempferService;
 
@@ -162,8 +162,8 @@ public class TurnierService {
 		logger.info("speichereRandoriWertung: {}", begegnungId);
 		Begegnung begegnung = ladeBegegnung(Integer.parseInt(begegnungId));
 
-		Bewerter bewerter = bewerterRepository.findById(bewerterUUID);
-		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), bewerter);
+		Benutzer benutzer = benutzerRepository.findById(bewerterUUID);
+		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), benutzer);
 		if (existierendeWertung.isPresent()) {
 			logger.debug("Aktualisiere existierende Wertung");
 			var wertung = existierendeWertung.get();
@@ -185,7 +185,7 @@ public class TurnierService {
 		Wertung wertungNeu = new Wertung(wertungId, null, null, null, null, null, null,
 			kampfgeist1, technik1, stil1, fairness1,
 			kampfgeist2, technik2, stil2, fairness2,
-			bewerter
+			benutzer
 		);
 		begegnung.getWertungen().add(wertungNeu);
 		turnierRepository.speichereBegegnung(begegnung);
@@ -196,11 +196,11 @@ public class TurnierService {
 		logger.info("Begegnung: {}, Sieger: {}, Kampfzeit: {}s", begegnungId, sieger, fightTime);
 		Begegnung begegnung = ladeBegegnung(Integer.parseInt(begegnungId));
 
-		Bewerter bewerter = bewerterRepository.findById(bewerterUUID);
+		Benutzer benutzer = benutzerRepository.findById(bewerterUUID);
 		Wettkaempfer wettkaempfer = wettkaempferService.ladeKaempfer(sieger).orElseThrow();
 		Duration dauer = Duration.of(fightTime, ChronoUnit.SECONDS);
 
-		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), bewerter);
+		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), benutzer);
 		if (existierendeWertung.isPresent()) {
 			logger.debug("Aktualisiere existierende Wertung");
 			var wertung = existierendeWertung.get();
@@ -225,14 +225,14 @@ public class TurnierService {
 			scoreBlau,
 			penaltiesBlau,
 			null, null, null, null, null, null, null, null,
-			bewerter
+			benutzer
 		);
 		begegnung.getWertungen().add(wertungNeu);
 		turnierRepository.speichereBegegnung(begegnung);
 	}
 
-	private Optional<Wertung> wertungVonBewerter(List<Wertung> wertungen, Bewerter bewerter) {
-		return wertungen.stream().filter(w -> w.getBewerter().equals(bewerter)).findFirst();
+	private Optional<Wertung> wertungVonBewerter(List<Wertung> wertungen, Benutzer benutzer) {
+		return wertungen.stream().filter(w -> w.getBewerter().equals(benutzer)).findFirst();
 	}
 
 	private List<WettkampfGruppe> erstelleWettkampfgruppen(List<GewichtsklassenGruppe> gewichtsklassenGruppen, Algorithmus algorithmus, Integer maxGruppenGroesse) {

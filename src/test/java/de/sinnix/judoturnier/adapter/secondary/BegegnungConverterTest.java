@@ -2,9 +2,8 @@ package de.sinnix.judoturnier.adapter.secondary;
 
 import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.model.Begegnung;
-import de.sinnix.judoturnier.model.Bewerter;
+import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Wertung;
-import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,11 +35,11 @@ class BegegnungConverterTest {
 	@InjectMocks
 	private BegegnungConverter begegnungConverter;
 
-	private Bewerter bewerter;
+	private Benutzer bewerter;
 
 	@BeforeEach
 	void setUp() {
-		bewerter = new Bewerter(UUID.randomUUID().toString(), "user1", "Name, Vorname", List.of("ROLE_ZUSCHAUER"));
+		bewerter = new Benutzer(UUID.randomUUID().toString(), "user1", "Name, Vorname", List.of("ROLE_ZUSCHAUER"));
 	}
 
 	@Test

@@ -6,7 +6,7 @@ import de.sinnix.judoturnier.application.TurnierService;
 import de.sinnix.judoturnier.application.VereinService;
 import de.sinnix.judoturnier.application.WettkaempferService;
 import de.sinnix.judoturnier.model.Altersklasse;
-import de.sinnix.judoturnier.model.Bewerter;
+import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.GruppenRunde;
@@ -55,8 +55,8 @@ public class TurnierController {
 
 	@GetMapping("/")
 	public ModelAndView startPage() {
-		var s = SecurityContextHolder.getContext().getAuthentication();
-		logger.info("Turniere-Startseite. User {} {}", s.getName(), s.getAuthorities());
+		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		logger.info("Turniere-Startseite. User {}", benutzer);
 
 		ModelAndView mav = new ModelAndView("startseite");
 		return mav;
@@ -65,14 +65,17 @@ public class TurnierController {
 	@GetMapping("/turnier")
 	public ModelAndView turniere() {
 		logger.debug("lade vorhandene Turniere");
-		var s = SecurityContextHolder.getContext().getAuthentication();
-		logger.info("Eingeloggter User {} {}", s.getName(), s.getAuthorities());
+		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		logger.info("Eingeloggter User {}", benutzer);
 
-		List<Turnier> turniere = turnierService.ladeTurniere();
-
+		List<Turnier> turniere = new ArrayList<>();
+		if (benutzer.istAdmin()) {
+			turniere = turnierService.ladeTurniere();
+		}
 		ModelAndView mav = new ModelAndView("turniere");
 		mav.addObject("turniere", turniere);
 		mav.addObject("anzahlturniere", turniere.size());
+		mav.addObject("enableEditing", benutzer.istAdmin());
 		return mav;
 	}
 
@@ -80,7 +83,7 @@ public class TurnierController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView erstelleTurnier(@RequestBody MultiValueMap<String, String> formData) {
 		logger.debug("erstelle ein neues Turnier {}", formData);
-		Bewerter bewerter = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
 
 		var name = formData.get("name").getFirst();
 		var ort = formData.get("ort").getFirst();
@@ -96,7 +99,7 @@ public class TurnierController {
 		logger.debug("Turnierübersicht {} angefragt, eingeloggt", turnierid);
 
 		// aktuell nur zum prüfen...
-		Bewerter bewerter = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
 		Turnier t = turnierService.ladeTurnier(turnierid);
 
 		var wks = wettkaempferService.alleKaempfer(UUID.fromString(turnierid));
@@ -105,7 +108,7 @@ public class TurnierController {
 		ModelAndView mav = new ModelAndView("turnieruebersicht");
 		mav.addObject("anzahlwk", wks.size());
 		mav.addObject("turniertyp", einstellungen.turnierTyp());
-		mav.addObject("enableEditing", bewerter.istAdmin());
+		mav.addObject("enableEditing", benutzer.istAdmin());
 		return mav;
 	}
 

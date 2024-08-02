@@ -1,13 +1,13 @@
 package de.sinnix.judoturnier.application;
 
-import de.sinnix.judoturnier.adapter.secondary.BewerterRepository;
+import de.sinnix.judoturnier.adapter.secondary.BenutzerRepository;
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
 import de.sinnix.judoturnier.fixtures.GewichtsklassenGruppeFixture;
 import de.sinnix.judoturnier.fixtures.MatteFixtures;
 import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.fixtures.WettkampfgruppeFixture;
 import de.sinnix.judoturnier.model.Begegnung;
-import de.sinnix.judoturnier.model.Bewerter;
+import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Gruppengroesse;
@@ -47,7 +47,7 @@ class TurnierServiceTest {
 	@Mock
 	private GewichtsklassenService gewichtsklassenService;
 	@Mock
-	private BewerterRepository     bewerterRepository;
+	private BenutzerRepository     benutzerRepository;
 
 	@Spy
 	private Sortierer sortierer = new Sortierer(1);
@@ -127,14 +127,14 @@ class TurnierServiceTest {
 
 	@Test
 	void testAktualisiereExistierendeRandoriWertung() {
-		Bewerter bewerter = new Bewerter(UUID.randomUUID().toString(), "username", "name", List.of("ROLE_KAMPFRICHTER"));
+		Benutzer benutzer = new Benutzer(UUID.randomUUID().toString(), "username", "name", List.of("ROLE_KAMPFRICHTER"));
 		UUID turnierUUID = UUID.randomUUID();
 		UUID rundeUUID = UUID.randomUUID();
 		String begegnungId = "1";
 		List<Wertung> wertungList = new ArrayList<>();
 		Wertung alteWertung = new Wertung(UUID.randomUUID(), null, null, null, null, null, null,
 			1, 2, 3, 4, 4, 3, 2, 1,
-			bewerter
+			benutzer
 		);
 		wertungList.add(alteWertung);
 		Begegnung begegnung = new Begegnung(Integer.parseInt(begegnungId), rundeUUID,
@@ -148,7 +148,7 @@ class TurnierServiceTest {
 		List<Wertung> neueWertungList = new ArrayList<>();
 		Wertung neueWertung = new Wertung(alteWertung.getUuid(), null, null, null, null, null, null,
 			1, 2, 3, 4, 4, 3, 2, 1,
-			bewerter
+			benutzer
 		);
 		neueWertungList.add(neueWertung);
 		Begegnung updatedBegegnung = new Begegnung(Integer.parseInt(begegnungId), rundeUUID,
@@ -161,9 +161,9 @@ class TurnierServiceTest {
 
 
 		when(turnierRepository.ladeBegegnung(Integer.parseInt(begegnungId))).thenReturn(begegnung);
-		when(bewerterRepository.findById(bewerter.id())).thenReturn(bewerter);
+		when(benutzerRepository.findById(benutzer.id())).thenReturn(benutzer);
 
-		turnierService.speichereRandoriWertung(begegnungId, 1, 2, 3, 4, 4, 3, 2, 1, bewerter.id());
+		turnierService.speichereRandoriWertung(begegnungId, 1, 2, 3, 4, 4, 3, 2, 1, benutzer.id());
 
 		ArgumentCaptor<Begegnung> argumentCaptor = ArgumentCaptor.forClass(Begegnung.class);
 		verify(turnierRepository).speichereBegegnung(argumentCaptor.capture());
@@ -173,15 +173,15 @@ class TurnierServiceTest {
 
 	@Test
 	void testWeitereRandoriWertung() {
-		Bewerter bewerterA = new Bewerter(UUID.randomUUID().toString(), "username", "name", List.of("ROLE_KAMPFRICHTER"));
-		Bewerter bewerterB = new Bewerter(UUID.randomUUID().toString(), "username", "name", List.of("ROLE_KAMPFRICHTER"));
+		Benutzer benutzerA = new Benutzer(UUID.randomUUID().toString(), "username", "name", List.of("ROLE_KAMPFRICHTER"));
+		Benutzer benutzerB = new Benutzer(UUID.randomUUID().toString(), "username", "name", List.of("ROLE_KAMPFRICHTER"));
 		UUID turnierUUID = UUID.randomUUID();
 		UUID rundeUUID = UUID.randomUUID();
 		String begegnungId = "1";
 		List<Wertung> wertungList = new ArrayList<>();
 		Wertung alteWertung = new Wertung(UUID.randomUUID(), null, null, null, null, null, null,
 			1, 2, 3, 4, 4, 3, 2, 1,
-			bewerterA
+			benutzerA
 		);
 		wertungList.add(alteWertung);
 		Begegnung begegnung = new Begegnung(Integer.parseInt(begegnungId), rundeUUID,
@@ -195,7 +195,7 @@ class TurnierServiceTest {
 		List<Wertung> neueWertungList = new ArrayList<>();
 		Wertung neueWertung = new Wertung(null, null, null, null, null, null, null,
 			1, 2, 3, 4, 4, 3, 2, 1,
-			bewerterB
+			benutzerB
 		);
 		neueWertungList.add(alteWertung);
 		neueWertungList.add(neueWertung);
@@ -209,21 +209,21 @@ class TurnierServiceTest {
 
 
 		when(turnierRepository.ladeBegegnung(Integer.parseInt(begegnungId))).thenReturn(begegnung);
-		when(bewerterRepository.findById(bewerterB.id())).thenReturn(bewerterB);
+		when(benutzerRepository.findById(benutzerB.id())).thenReturn(benutzerB);
 
-		turnierService.speichereRandoriWertung(begegnungId, 1, 2, 3, 4, 4, 3, 2, 1, bewerterB.id());
+		turnierService.speichereRandoriWertung(begegnungId, 1, 2, 3, 4, 4, 3, 2, 1, benutzerB.id());
 
 		ArgumentCaptor<Begegnung> argumentCaptor = ArgumentCaptor.forClass(Begegnung.class);
 		verify(turnierRepository).speichereBegegnung(argumentCaptor.capture());
 		Begegnung result = argumentCaptor.getValue();
 		assertEquals(2, result.getWertungen().size());
-		assertEquals(bewerterA, result.getWertungen().get(0).getBewerter());
-		assertEquals(bewerterB, result.getWertungen().get(1).getBewerter());
+		assertEquals(benutzerA, result.getWertungen().get(0).getBewerter());
+		assertEquals(benutzerB, result.getWertungen().get(1).getBewerter());
 	}
 
 	@Test
 	void testSpeichereNeueRandoriWertung() {
-		Bewerter bewerter = new Bewerter(UUID.randomUUID().toString(), "username", "name", List.of("ROLE_KAMPFRICHTER"));
+		Benutzer benutzer = new Benutzer(UUID.randomUUID().toString(), "username", "name", List.of("ROLE_KAMPFRICHTER"));
 		UUID turnierUUID = UUID.randomUUID();
 		UUID rundeUUID = UUID.randomUUID();
 		String begegnungId = "1";
@@ -237,15 +237,15 @@ class TurnierServiceTest {
 		);
 
 		when(turnierRepository.ladeBegegnung(Integer.parseInt(begegnungId))).thenReturn(begegnung);
-		when(bewerterRepository.findById(bewerter.id())).thenReturn(bewerter);
+		when(benutzerRepository.findById(benutzer.id())).thenReturn(benutzer);
 
-		turnierService.speichereRandoriWertung(begegnungId, 1, 2, 3, 4, 4, 3, 2, 1, bewerter.id());
+		turnierService.speichereRandoriWertung(begegnungId, 1, 2, 3, 4, 4, 3, 2, 1, benutzer.id());
 
 		ArgumentCaptor<Begegnung> argumentCaptor = ArgumentCaptor.forClass(Begegnung.class);
 		verify(turnierRepository).speichereBegegnung(argumentCaptor.capture());
 		Begegnung result = argumentCaptor.getValue();
 		assertEquals(1, result.getWertungen().size());
-		assertEquals(bewerter, result.getWertungen().get(0).getBewerter());
+		assertEquals(benutzer, result.getWertungen().get(0).getBewerter());
 		assertEquals(1, result.getWertungen().get(0).getKampfgeistWettkaempfer1());
 		assertEquals(2, result.getWertungen().get(0).getTechnikWettkaempfer1());
 		assertEquals(3, result.getWertungen().get(0).getKampfstilWettkaempfer1());

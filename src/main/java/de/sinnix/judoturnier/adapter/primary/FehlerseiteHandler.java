@@ -1,6 +1,6 @@
 package de.sinnix.judoturnier.adapter.primary;
 
-import de.sinnix.judoturnier.model.Bewerter;
+import de.sinnix.judoturnier.model.Benutzer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.access.AccessDeniedException;
@@ -35,9 +35,9 @@ public class FehlerseiteHandler {
 	// 403 Fehlerbehandlung
 	@ExceptionHandler(AccessDeniedException.class)
 	public ModelAndView handleAccessDenied(AccessDeniedException ex) {
-		Bewerter bewerter = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
 
-		logger.error("Keine Berechtigung, principal {}", bewerter, ex);
+		logger.error("Keine Berechtigung, principal {}", benutzer, ex);
 		ModelAndView mav = new ModelAndView("error");
 		mav.addObject("fehlerart", "Zugriff verweigert");
 		return mav;

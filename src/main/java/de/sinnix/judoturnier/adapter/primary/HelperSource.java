@@ -1,7 +1,7 @@
 package de.sinnix.judoturnier.adapter.primary;
 
 import com.github.jknack.handlebars.Options;
-import de.sinnix.judoturnier.model.Bewerter;
+import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Wertung;
 import org.apache.commons.lang3.StringUtils;
@@ -89,7 +89,7 @@ public class HelperSource {
 		boolean istLeer = false;
 		logger.trace("options: {}", options.params);
 		for (Object param : options.params) {
-			logger.trace("param: {}", param);
+			logger.debug("param: {}", param);
 			if (param == null || "".equals(param)) {
 				istLeer = true;
 				break;
@@ -157,7 +157,7 @@ public class HelperSource {
 		return text.substring(0, size);
 	}
 
-	public static Bewerter extractBewerter(Authentication authentication) {
+	public static Benutzer extractBewerter(Authentication authentication) {
 		try {
 			if (authentication instanceof AnonymousAuthenticationToken) {
 				AnonymousAuthenticationToken token = (AnonymousAuthenticationToken) authentication;
@@ -167,7 +167,7 @@ public class HelperSource {
 				for (GrantedAuthority authority : authorities) {
 					rollen.add(authority.getAuthority());
 				}
-				return new Bewerter(principal, "", "", rollen);
+				return new Benutzer(principal, "", "", rollen);
 			}
 
 			if (authentication.getPrincipal() instanceof DefaultOidcUser) {
@@ -177,13 +177,13 @@ public class HelperSource {
 				var fullname = principal.getUserInfo().getFullName();
 				var rollen = authentication.getAuthorities().stream().map(a -> a.getAuthority()).toList();
 
-				Bewerter result = new Bewerter(userid, username, fullname, rollen);
+				Benutzer result = new Benutzer(userid, username, fullname, rollen);
 				logger.info("Eingeloggter User {}", result);
 				return result;
 			}
 
 			logger.warn("Konnte keinen Bewerter aus dem Authentication parsen, erstelle Dummy");
-			return new Bewerter("dummy", "", "", List.of());
+			return new Benutzer("dummy", "", "", List.of());
 		}
 		catch (Exception e) {
 			logger.info("Nutzer konnte nicht geparsed werden! {}", authentication, e);
