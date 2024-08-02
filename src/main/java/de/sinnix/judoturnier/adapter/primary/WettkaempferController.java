@@ -47,8 +47,6 @@ public class WettkaempferController {
 			.sorted(Comparator.comparing(Wettkaempfer::name))
 			.collect(Collectors.toList());
 
-		// TODO wettkaempfer hat 0 als leeres Gewicht und wird in Übersicht nicht rot markiert!
-
 		ModelAndView mav = new ModelAndView("wettkaempferliste");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("kaempferListe", wks);
