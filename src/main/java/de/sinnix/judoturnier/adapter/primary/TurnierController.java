@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.MultiValueMap;
@@ -49,9 +50,11 @@ public class TurnierController {
 	@Autowired
 	private GewichtsklassenService gewichtsklassenService;
 	@Autowired
-	private TurnierService turnierService;
+	private TurnierService         turnierService;
 	@Autowired
-	private VereinService  vereinService;
+	private VereinService          vereinService;
+	@Autowired
+	private BuildProperties        buildProperties;
 
 	@GetMapping("/")
 	public ModelAndView startPage() {
@@ -76,6 +79,8 @@ public class TurnierController {
 		mav.addObject("turniere", turniere);
 		mav.addObject("anzahlturniere", turniere.size());
 		mav.addObject("enableEditing", benutzer.istAdmin());
+		mav.addObject("software_version", buildProperties.getVersion());
+		mav.addObject("software_zeit", buildProperties.getTime());
 		return mav;
 	}
 
@@ -91,7 +96,7 @@ public class TurnierController {
 
 		Turnier turnier = turnierService.erstelleTurnier(name, ort, datum);
 
-		return new ModelAndView("redirect:/turnier/" + turnier.uuid().toString() );
+		return new ModelAndView("redirect:/turnier/" + turnier.uuid().toString());
 	}
 
 	@GetMapping("/turnier/{turnierid}")
