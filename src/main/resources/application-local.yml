@@ -4,6 +4,13 @@ spring:
     username: username
     password: password
 
+  # Static resources reloading during development
+  web:
+    resources:
+      static-locations: file:src/main/resources/static/
+      cache-period: 0
+
+
   security:
     oauth2:
       client:
