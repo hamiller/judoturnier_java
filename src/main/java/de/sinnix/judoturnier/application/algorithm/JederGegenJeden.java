@@ -32,7 +32,7 @@ public class JederGegenJeden implements Algorithmus {
 
 			String id = ((gruppenid + 1) * 10) + Integer.toString(i); // ids erstellen und konkatenieren
 			WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(
-				gewichtsklassenGruppe.id() != null ? gewichtsklassenGruppe.id() : Integer.parseInt(id),
+				Integer.parseInt(id),
 				gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
 				"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
 				begegnungen,

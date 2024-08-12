@@ -232,7 +232,6 @@ class TurnierRepositoryTest {
 		assertTrue(matte.runden() != null);
 		assertEquals(3, matte.runden().size());
 		for (int i =0; i < 3; i++) {
-			System.out.println("Test Runde " + i);
 			var runde = matte.runden().get(i);
 			assertEquals(i +1, runde.mattenRunde());
 			assertEquals(1, runde.gruppenRunde());

@@ -28,4 +28,20 @@ public class Begegnung {
 	private List<Wertung>   wertungen;
 	private WettkampfGruppe wettkampfGruppe;
 	private UUID            turnierUUID;
+
+	public Wettkaempfer getGewinner() {
+		// nur sinnvoll bei normalen Turnieren, wenn es nur eine einzelne Wertung gibt
+		if (wertungen.isEmpty() || wertungen.size() > 1) {
+			return null;
+		}
+		return wertungen.get(0).getSieger();
+	}
+
+	public Wettkaempfer getVerlierer() {
+		// nur sinnvoll bei normalen Turnieren, wenn es nur eine einzelne Wertung gibt
+		if (wertungen.isEmpty() || wertungen.size() > 1) {
+			return null;
+		}
+		return wertungen.get(0).getSieger().equals(wettkaempfer1) ? wettkaempfer2 : wettkaempfer1;
+	}
 }

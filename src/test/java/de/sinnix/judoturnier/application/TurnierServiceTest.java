@@ -65,7 +65,7 @@ class TurnierServiceTest {
 	}
 
 	@Test
-	void testErstelleWettkampfreihenfolgeAltersklasse() {
+	void testErstelleWettkampfreihenfolgeAltersklasseRandori() {
 		List<GewichtsklassenGruppe> gewichtsklassenGruppen = GewichtsklassenGruppeFixture.gewichtsklassenGruppen;
 		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroesse(6), new VariablerGewichtsteil(0.2), SeparateAlterklassen.ZUSAMMEN, turnierUUID);
 
@@ -85,10 +85,6 @@ class TurnierServiceTest {
 		assertEquals(5, gewichtsklassenGruppen.size());
 		// Anzahl Teilnehmer insgesamt
 		assertEquals(25, gewichtsklassenGruppen.stream().mapToInt(g -> g.teilnehmer().size()).sum());
-
-		System.out.println(matten.get(1).runden().get(0).mattenRunde());
-		System.out.println(matten.get(1).runden().get(0).gruppenRunde());
-		System.out.println(matten.get(1).runden().get(0).rundeGesamt());
 
 		// 1. Runde für Gruppe A, 1. Runde auf der Matte, 1. Runde ingesamt
 		assertEquals(1, matten.get(0).runden().get(0).mattenRunde());
@@ -296,5 +292,66 @@ class TurnierServiceTest {
 		assertEquals(3, metadaten.alleRundenBegegnungIds().size());
 		assertEquals(Optional.empty(), metadaten.vorherigeBegegnungId());
 		assertEquals(2, metadaten.nachfolgendeBegegnungId().get());
+	}
+
+	@Test
+	void testErstelleWettkampfreihenfolgeAltersklasseNormal() {
+		List<GewichtsklassenGruppe> gewichtsklassenGruppen = GewichtsklassenGruppeFixture.gewichtsklassenGruppen;
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(2), null, null, new VariablerGewichtsteil(0.2), SeparateAlterklassen.GETRENNT, turnierUUID);
+
+		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
+		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);
+
+		turnierService.erstelleWettkampfreihenfolgeAltersklasse(Optional.empty(), turnierUUID);
+
+
+		// ArgumentCaptor verwenden
+		ArgumentCaptor<List<Matte>> argumentCaptor = ArgumentCaptor.forClass(List.class);
+		verify(turnierRepository, times(1)).speichereMatten(argumentCaptor.capture());
+		List<Matte> matten = argumentCaptor.getValue();
+		// Anzahl der Matten
+		assertEquals(2, matten.size());
+		// Anzahl der GewichtsklassenGruppen
+		assertEquals(5, gewichtsklassenGruppen.size());
+		// Anzahl Teilnehmer insgesamt
+		assertEquals(25, gewichtsklassenGruppen.stream().mapToInt(g -> g.teilnehmer().size()).sum());
+
+		System.out.println(matten.get(1).runden().get(0).mattenRunde());
+		System.out.println(matten.get(1).runden().get(0).gruppenRunde());
+		System.out.println(matten.get(1).runden().get(0).rundeGesamt());
+
+		// 1. Runde für Gruppe A, 1. Runde auf der Matte, 1. Runde ingesamt
+		assertEquals(1, matten.get(0).runden().get(0).mattenRunde());
+		assertEquals(1, matten.get(0).runden().get(0).gruppenRunde());
+		assertEquals(1, matten.get(0).runden().get(0).rundeGesamt());
+		// 1. Runde für Gruppe B, 2. Runde auf der Matte, 2. Runde ingesamt
+		assertEquals(2, matten.get(0).runden().get(1).mattenRunde());
+		assertEquals(1, matten.get(0).runden().get(1).gruppenRunde());
+		assertEquals(2, matten.get(0).runden().get(1).rundeGesamt());
+		// 1. Runde für Gruppe C, 3. Runde auf der Matte, 3. Runde ingesamt
+		assertEquals(3, matten.get(0).runden().get(2).mattenRunde());
+		assertEquals(1, matten.get(0).runden().get(2).gruppenRunde());
+		assertEquals(3, matten.get(0).runden().get(2).rundeGesamt());
+		// 2. Runde für Gruppe A, 4. Runde auf der Matte, 4. Runde ingesamt
+		assertEquals(4, matten.get(0).runden().get(3).mattenRunde());
+		assertEquals(2, matten.get(0).runden().get(3).gruppenRunde());
+		assertEquals(4, matten.get(0).runden().get(3).rundeGesamt());
+
+		// Anzahl der Begegnungen auf Matte 1
+		assertEquals(45, matten.get(0).runden().stream().mapToInt(r -> r.begegnungen().size()).sum());
+
+		// Anzahl der Begegnungen auf Matte 1
+		assertEquals(9, matten.get(1).runden().stream().mapToInt(r -> r.begegnungen().size()).sum());
+
+
+		// da Jeder-gegen-Jeden nur je Gruppe gilt, muss die Anzahl für jede Gruppe separat geprüft werden
+		int anzahlBegegnungen = matten.stream().mapToInt(m -> m.runden().stream().mapToInt(r -> r.begegnungen().size()).sum()).sum();
+		int berechneteBegegnungen = 0;
+		for (GewichtsklassenGruppe gruppe : gewichtsklassenGruppen) {
+			var n = gruppe.teilnehmer().size();
+			var N = (n * (n - 1)) / 2; // Berechnete Begegnungen in dieser Gruppe
+			berechneteBegegnungen += N;
+		}
+		assertEquals(berechneteBegegnungen, anzahlBegegnungen);
 	}
 }

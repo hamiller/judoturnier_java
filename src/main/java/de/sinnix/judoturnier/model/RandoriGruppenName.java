@@ -65,12 +65,4 @@ public enum RandoriGruppenName {
 
 		return result;
 	}
-
-	public static void main(String[] args) {
-		// Teste alleGruppenNamen
-		System.out.println("Alle Gruppen Namen: " + RandoriGruppenName.alleGruppenNamen());
-
-		// Teste randomRandoriGruppenNamen
-		System.out.println("Zufällige Gruppen Namen: " + RandoriGruppenName.randomRandoriGruppenNamen(5));
-	}
 }

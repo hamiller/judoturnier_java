@@ -78,8 +78,6 @@ class JederGegenJedenTest {
 		// Berechnung der Gesamtanzahl aller Begegnungen bei Jeder-Gegen-Jeden: N = (n * (n-1)) /2, mit n==AnzahlTeilnehmer
 		var N = (n * (n-1)) /2;
 		assertEquals(N, erstellteWettkampfgruppen.getFirst().alleRundenBegegnungen().stream().mapToInt(begegnung -> begegnung.begegnungenJeRunde().size()).sum());
-
-		System.out.println(erstellteWettkampfgruppen);
 	}
 
 	@Test

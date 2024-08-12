@@ -34,7 +34,6 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -91,7 +90,6 @@ public class TurnierService {
 		try {
 			// Parsen des Strings in ein java.util.Date
 			Date parsedDate = dateFormat.parse(datum);
-			System.out.println("Parsed Date: " + parsedDate);
 			Turnier neuesTurnier = new Turnier(UUID.randomUUID(), name, ort, parsedDate);
 
 			TurnierJpa jpa = turnierJpaRepository.save(turnierConverter.convertFromTurnier(neuesTurnier));
