@@ -157,7 +157,7 @@ class TurnierRepositoryTest {
 	}
 
 	@Test
-	public void testLadeMatten() {
+	public void testLadeMattenRandori() {
 		UUID turnierUUID = UUID.randomUUID();
 		UUID rundeUUID = UUID.randomUUID();
 		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of(), turnierUUID);
@@ -204,5 +204,41 @@ class TurnierRepositoryTest {
 		assertEquals(rundeUUID, begegnungB.getRundeId());
 		assertEquals(WettkaempferFixtures.wettkaempfer3, begegnungB.getWettkaempfer1());
 		assertEquals(WettkaempferFixtures.wettkaempfer4, begegnungB.getWettkaempfer2());
+	}
+
+	@Test
+	public void testLadeMattenNormal() {
+		UUID turnierUUID = UUID.randomUUID();
+		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of(), turnierUUID);
+		BegegnungJpa jpa1 = new BegegnungJpa();
+		jpa1.setId(1);
+		BegegnungJpa jpa2 = new BegegnungJpa();
+		jpa2.setId(2);
+		BegegnungJpa jpa3 = new BegegnungJpa();
+		jpa3.setId(3);
+		Begegnung begegnung1 = new Begegnung(1, UUID.randomUUID(), 1, 1, 1, 1, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(), wkg, turnierUUID);
+		Begegnung begegnung2 = new Begegnung(2, UUID.randomUUID(), 1, 2, 1, 2, WettkaempferFixtures.wettkaempfer3, WettkaempferFixtures.wettkaempfer4, List.of(), wkg, turnierUUID);
+		Begegnung begegnung3 = new Begegnung(3, UUID.randomUUID(), 1, 3, 1, 3, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer4, List.of(), wkg, turnierUUID);
+
+		when(begegnungJpaRepository.findAllByTurnierUUID(turnierUUID.toString())).thenReturn(List.of(jpa1, jpa2, jpa3));
+		when(begegnungConverter.convertToBegegnung(eq(jpa1), anyList())).thenReturn(begegnung1);
+		when(begegnungConverter.convertToBegegnung(eq(jpa2), anyList())).thenReturn(begegnung2);
+		when(begegnungConverter.convertToBegegnung(eq(jpa3), anyList())).thenReturn(begegnung3);
+
+		Map<Integer, Matte> matten = turnierRepository.ladeMatten(turnierUUID);
+
+		assertEquals(1, matten.size());
+		var matte = matten.get(1);
+		assertTrue(matte.runden() != null);
+		assertEquals(3, matte.runden().size());
+		for (int i =0; i < 3; i++) {
+			System.out.println("Test Runde " + i);
+			var runde = matte.runden().get(i);
+			assertEquals(i +1, runde.mattenRunde());
+			assertEquals(1, runde.gruppenRunde());
+			assertEquals(i +1, runde.rundeGesamt());
+			assertEquals(1, runde.begegnungen().size());
+			assertEquals(i +1, runde.begegnungen().get(0).getBegegnungId());
+		}
 	}
 }
