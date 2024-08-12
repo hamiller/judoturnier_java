@@ -49,7 +49,7 @@
                 <span class="row-centered">
                     <label>Sieger:</label>
                     <div class="element">
-                    <input type="radio" id="sieger_weiss" name="sieger" value="{{begegnung.wettkaempfer1.id}}" {{#optional begegnung.kampfrichterWertung}}{{setChecked this.sieger.id begegnung.wettkaempfer1.id}}{{/optional}}>
+                    <input type="radio" id="sieger_weiss" name="sieger" value="{{begegnung.wettkaempfer1.id}}" required {{#optional begegnung.kampfrichterWertung}}{{setChecked this.sieger.id begegnung.wettkaempfer1.id}}{{/optional}}>
                     <label for="sieger_weiss">{{begegnung.wettkaempfer1.name}} - <span class="WEISS">weiss</span></label>
                     </div>
                     <div class="element">
@@ -58,8 +58,14 @@
                     </div>
                 </span>
                 <span class="row-centered">
-                    <label>Kampfzeit (in Sekunden):</label><input class="element" type="number" id="fightTime" name="fightTime" required value={{#optional begegnung.kampfrichterWertung}}{{this.zeit}}{{/optional}} /><br/>
+                    <label>Kampfzeit:</label><input class="element" type="text" id="fightTime" name="fightTime" required value={{#optional begegnung.kampfrichterWertung}}{{this.zeit}}{{/optional}} /><br/>
                 </span>
+            </div>
+            <div class="timer-container">
+                <h1 id="timer-display" class="centered-horizontal">03:00</h1>
+                <button id="start_btn" type="button" class="start_btn"><span class="material-symbols-outlined md-48 centered" title="timer_play">timer_play</span> Start</button>
+                <button id="stop_btn" type="button" class="stop_btn"><span class="material-symbols-outlined md-48 centered" title="timer_pause">timer_pause</span> Stopp</button>
+                <button id="reset_btn" type="button" class="reset_btn"><span class="material-symbols-outlined md-48 centered" title="timer_pause">alarm_off</span> Reset</button>
             </div>
         </div>
         {{#if enableEditing}}
@@ -69,5 +75,64 @@
 </div>
 
 {{> footer}}
+
+<script>
+    const COUNTDOWN = 80000;
+
+    const formatTime = (milliseconds) => {
+        const totalSeconds = Math.floor(Math.abs(milliseconds) / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        const ms = Math.abs(milliseconds % 1000) / 10;
+        return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}.${ms < 10 ? '0' : ''}${Math.floor(ms)}`;
+    }
+
+    const updateTimer = () => {
+        if (countdownTime >= 0) {
+            timerDisplay.textContent = formatTime(countdownTime);
+        } else {
+            timerDisplay.textContent = formatTime(countdownTime);
+            timerDisplay.classList.add('negative');
+        }
+        countdownTime -= 10;
+        totalTime += 10;
+    }
+
+    let countdownTime = COUNTDOWN; // 3min in Millisekunden
+    let timerDisplay = document.getElementById('timer-display');
+    let startButton = document.getElementById('start_btn');
+    let pauseButton = document.getElementById('stop_btn');
+    let resetButton = document.getElementById('reset_btn');
+    let fightTime = document.getElementById('fightTime');
+    let interval;
+    let totalTime = 0;
+
+    startButton.addEventListener('click', () => {
+        console.log("Starte");
+        if (!interval) {
+            interval = setInterval(updateTimer, 10);
+        }
+    });
+
+    pauseButton.addEventListener('click', () => {
+        console.log("Stoppe");
+        clearInterval(interval);
+        interval = null;
+        fightTime.value = formatTime(totalTime);
+    });
+
+    resetButton.addEventListener('click', () => {
+        var sicher = confirm("ACHTUNG\n\nHiermit wird die Wettkampfzeit zurückgesetzt! \n\nSind sie sicher?");
+        if (sicher) {
+            clearInterval(interval);
+            interval = null;
+            totalTime = 0;
+            countdownTime = COUNTDOWN;
+            updateTimer();
+            fightTime.value = formatTime(totalTime);
+        }
+    });
+
+</script>
 </body>
 </html>

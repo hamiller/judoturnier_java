@@ -151,16 +151,25 @@ public class TurnierController {
 	}
 
 	@GetMapping("/turnier/{turnierid}/begegnungen/normal")
-	public ModelAndView ladeWettkampfreihenfolgeJeMatteNormal(@PathVariable String turnierid) {
+	public ModelAndView ladeWettkampfreihenfolgeJeMatteNormal(@PathVariable String turnierid, @RequestParam(value = "error", required = false) String error, @RequestParam(value = "altersklasse", required = false) String altersklasse) {
 		logger.info("Lade Begegnungen für Turnier {}", turnierid);
 		var turnierUUID = UUID.fromString(turnierid);
 		List<GewichtsklassenGruppe> gwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID);
+		Set<Altersklasse> altersklassen = gwks.stream()
+			.map(GewichtsklassenGruppe::altersKlasse)
+			.collect(Collectors.toSet());
+		Einstellungen einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
+
+		List<Matte> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte);
 
 		ModelAndView mav = new ModelAndView("begegnungen_normal");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("gewichtsklassenGruppe", gwks);
-		mav.addObject("matten", wettkampfreihenfolgeJeMatte);
+		mav.addObject("matten", gefilterteMatten);
+		mav.addObject("altersklassen", altersklassen);
+		mav.addObject("preverror", error);
+		mav.addObject("separatealtersklassen", einstellungen.separateAlterklassen());
 		return mav;
 	}
 

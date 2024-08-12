@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -52,9 +53,12 @@ public class WertungController {
 	@GetMapping("/turnier/{turnierid}/begegnungen/normal/{id}")
 	public ModelAndView begegnungTurnier(@PathVariable String turnierid, @PathVariable String id) {
 		logger.info("Lade Wertung für Begegnung {}", id);
+		Integer begegnungId = Integer.parseInt(id);
 		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
-		Begegnung begegnung = turnierService.ladeBegegnung(Integer.parseInt(id));
-		BegegnungDto begegnungDto = convertFromBegegnung(begegnung, benutzer.id(), null, null);
+		Begegnung begegnung = turnierService.ladeBegegnung(begegnungId);
+
+		Metadaten metadaten = turnierService.ladeMetadaten(begegnungId, UUID.fromString(turnierid));
+		BegegnungDto begegnungDto = convertFromBegegnung(begegnung, benutzer.id(), metadaten.vorherigeBegegnungId(), metadaten.nachfolgendeBegegnungId());
 
 		ModelAndView mav = new ModelAndView("wettkampf_normal");
 		mav.addObject("turnierid", turnierid);
@@ -70,7 +74,21 @@ public class WertungController {
 		var begegnungId = begegnung.getBegegnungId();
 		var	wettkaempfer1 = begegnung.getWettkaempfer1();
 		var	wettkaempfer2 = begegnung.getWettkaempfer2();
-		var kampfrichterWertung = begegnung.getWertungen().stream().filter(w -> w.getBewerter().id().equals(userid)).findFirst();
+		var kampfrichterWertung = begegnung.getWertungen().stream().filter(w -> w.getBewerter().id().equals(userid)).findFirst().map(w -> new WertungDto(w.getSieger(),
+			formatDuration(w.getZeit()),
+			w.getPunkteWettkaempferWeiss(),
+			w.getStrafenWettkaempferWeiss(),
+			w.getPunkteWettkaempferRot(),
+			w.getStrafenWettkaempferRot(),
+			w.getKampfgeistWettkaempfer1(),
+			w.getTechnikWettkaempfer1(),
+			w.getKampfstilWettkaempfer1(),
+			w.getFairnessWettkaempfer1(),
+			w.getKampfgeistWettkaempfer2(),
+			w.getTechnikWettkaempfer2(),
+			w.getKampfstilWettkaempfer2(),
+			w.getFairnessWettkaempfer2(),
+			w.getBewerter()));
 		var vorher = vorherigeBegegnungId.map(id -> String.valueOf(id)).orElseGet(() -> "");
 		var nachher = nachfolgendeBegegnungId.map(id -> String.valueOf(id)).orElseGet(() -> "");
 		return new BegegnungDto(begegnungId, wettkaempfer1, wettkaempfer2, kampfrichterWertung, begegnung.getWertungen(), vorher, nachher);
@@ -107,10 +125,26 @@ public class WertungController {
 		var penaltiesWeiss = Integer.parseInt(formData.get("penalties_weiss").getFirst());
 		var scoreBlau = Integer.parseInt(formData.get("score_blau").getFirst());
 		var penaltiesBlau = Integer.parseInt(formData.get("penalties_blau").getFirst());
-		var fightTime = Integer.parseInt(formData.get("fightTime").getFirst());
+		var fightTime = formData.get("fightTime").getFirst();
 		var sieger = Integer.parseInt(formData.get("sieger").getFirst());
 
 		turnierService.speichereTurnierWertung(begegnungId, scoreWeiss, scoreBlau, penaltiesWeiss, penaltiesBlau, fightTime, sieger, benutzer.id());
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/normal");
+	}
+
+	public static String formatDuration(Duration duration) {
+		if (duration == null) {
+			return "";
+		}
+
+		long totalMillis = duration.toMillis();
+
+		// Extrahiere Minuten, Sekunden und Millisekunden
+		long minutes = totalMillis / (60 * 1000);
+		long seconds = (totalMillis % (60 * 1000)) / 1000;
+		long millis = (totalMillis % 1000) / 10; // Wir verwenden nur zwei Stellen für Millisekunden
+
+		// Formatiere den String als "mm:ss.SS"
+		return String.format("%02d:%02d.%02d", minutes, seconds, millis);
 	}
 }

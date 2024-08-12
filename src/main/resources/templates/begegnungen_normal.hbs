@@ -21,29 +21,74 @@
         </div>
       </form>
     </div>
+
     <div class="generalcontent">
-      {{#each matten}}
-        <div class="wettkampfgruppe">
-          <div class="listeneintrag-titel">Matte {{id}}</div>
-          {{#each runden}}
-            <div class="listeneintrag-titel">Kampf {{id}}</div>
-            <div>{{gruppe.id}} {{gruppe.name}}</div>
-            {{#each begegnungen}}
-              <a href="/turnier/{{turnierid}}/begegnungen/normal/{{ ../id }}">
-              <div class="listeneintrag vs {{wertungVorhanden randoriWertung turnierWertung}}">
-                <div class="wettkaempfer name weiss">{{wettkaempfer1.name}}</div><div>({{wettkaempfer1.verein.name}})</div> 
-                <div class="center">vs</div> 
-                <div class="wettkaempfer name rot">{{wettkaempfer2.name}}</div><div>({{wettkaempfer2.verein.name}})</div>
-              </div>
-              </a>
+        {{#if separatealtersklassen.name "GETRENNT"}}
+            <div class="filter_dropdown">
+                <span>Filter nach Alterklasse</span>
+                <div class="filter_dropdown-content">
+                    <a href="/turnier/{{turnierid}}/begegnungen/normal">Alle Alterklassen</a>
+                    {{#each altersklassen}}
+                        <a href="/turnier/{{turnierid}}/begegnungen/normal?altersklasse={{this}}">Alterklasse {{this}}</a>
+                    {{/each}}
+                </div>
+            </div>
+        {{/if}}
+
+        <div class="tab">
+            {{#each matten}}
+                <button class="tablinks matten_btn" onclick="openMatte(event, '{{id}}')">Matte {{id}}</button>
             {{/each}}
-          {{/each}}
         </div>
+
+      {{#each matten}}
+      <div class="matte tabcontent" id="{{id}}">
+          <div class="listeneintrag-titel">Matte {{id}}</div>
+          <div class="wettkampfgruppe">
+              {{#each runden}}
+                {{#each begegnungen}}
+
+                    <div class="">(Wettkampf Nr. {{mattenRunde}} auf Matte {{../id}}, Runde Nr. {{gruppenRunde}} für Gruppe {{gruppe.id}}, Gesamtrunde {{rundeGesamt}})</div>
+
+                  <a href="/turnier/{{turnierid}}/begegnungen/normal/{{begegnungId}}">
+                  <div class="listeneintrag vs {{wertungVorhanden wertungen}}">
+                    <div class="wettkaempfer name weiss">{{wettkaempfer1.name}}</div><div>({{wettkaempfer1.verein.name}})</div>
+                    <div class="center">vs</div>
+                    <div class="wettkaempfer name rot">{{wettkaempfer2.name}}</div><div>({{wettkaempfer2.verein.name}})</div>
+                  </div>
+                  </a>
+                {{/each}}
+              {{/each}}
+          </div>
+      </div>
       {{/each}}
       </form>
     </div>
   </div>
   {{> footer}}
+
+    <script>
+        const openMatte = (evt, id) => {
+            // Declare all variables
+            var i, tabcontent, tablinks;
+
+            // Get all elements with class="tabcontent" and hide them
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Get all elements with class="tablinks" and remove the class "active"
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // Show the current tab, and add an "active" class to the button that opened the tab
+            document.getElementById(id).style.display = "block";
+            evt.currentTarget.className += " active";
+        };
+    </script>
 </body>
 
 </html>

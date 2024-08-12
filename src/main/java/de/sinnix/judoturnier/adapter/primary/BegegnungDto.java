@@ -9,7 +9,7 @@ import java.util.Optional;
 public record BegegnungDto(Integer begegnungId,
 						   Wettkaempfer wettkaempfer1,
 						   Wettkaempfer wettkaempfer2,
-						   Optional<Wertung> kampfrichterWertung,
+						   Optional<WertungDto> kampfrichterWertung,
 						   List<Wertung> alleWertungen,
 						   String vorherigeBegegnungId,
 						   String nachfolgerBegegnungId

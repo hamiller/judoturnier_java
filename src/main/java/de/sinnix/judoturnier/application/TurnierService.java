@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -192,13 +194,13 @@ public class TurnierService {
 	}
 
 	@Transactional
-	public void speichereTurnierWertung(String begegnungId, int scoreWeiss, int scoreBlau, int penaltiesWeiss, int penaltiesBlau, int fightTime, int sieger, String bewerterUUID) {
+	public void speichereTurnierWertung(String begegnungId, int scoreWeiss, int scoreBlau, int penaltiesWeiss, int penaltiesBlau, String fightTime, int sieger, String bewerterUUID) {
 		logger.info("Begegnung: {}, Sieger: {}, Kampfzeit: {}s", begegnungId, sieger, fightTime);
 		Begegnung begegnung = ladeBegegnung(Integer.parseInt(begegnungId));
 
 		Benutzer benutzer = benutzerRepository.findById(bewerterUUID);
 		Wettkaempfer wettkaempfer = wettkaempferService.ladeKaempfer(sieger).orElseThrow();
-		Duration dauer = Duration.of(fightTime, ChronoUnit.SECONDS);
+		Duration dauer = parseDuration(fightTime);
 
 		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), benutzer);
 		if (existierendeWertung.isPresent()) {
@@ -298,6 +300,23 @@ public class TurnierService {
 		} catch (Error e) {
 			logger.error(e);
 			throw e;
+		}
+	}
+
+	public static Duration parseDuration(String input) {
+		// Regex für das Parsen von "mm:ss.SS"
+		Pattern pattern = Pattern.compile("(\\d{2}):(\\d{2})\\.(\\d{2})");
+		Matcher matcher = pattern.matcher(input);
+
+		if (matcher.matches()) {
+			int minutes = Integer.parseInt(matcher.group(1));
+			int seconds = Integer.parseInt(matcher.group(2));
+			int millis = Integer.parseInt(matcher.group(3)) * 10; // 36 bedeutet 360 Millisekunden
+
+			long totalMillis = minutes * 60 * 1000 + seconds * 1000 + millis;
+			return Duration.ofMillis(totalMillis);
+		} else {
+			throw new IllegalArgumentException("Invalid duration format: " + input);
 		}
 	}
 

@@ -1,5 +1,6 @@
 
 @import 'material-icons/iconfont/material-icons.css';
+@import 'material-symbols-outlined/material-symbols.css';
 
 @font-face {
   font-family: 'Roboto';
@@ -153,6 +154,11 @@ tr {
 
 .centertext {
   text-align: center;
+}
+
+.centered-horizontal {
+  justify-content: center;
+  display: flex;
 }
 
 .clickbar  {
@@ -577,6 +583,15 @@ tr {
   display: table-cell;
   padding: 8px; /* Abstand innerhalb der Zellen */
   text-align: left; /* Textausrichtung */
+}
+
+#timer-display {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+#timer-display.negative {
+  color: red;
 }
 
 .titel {
