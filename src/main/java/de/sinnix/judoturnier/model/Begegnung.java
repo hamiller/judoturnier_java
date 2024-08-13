@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -17,31 +18,47 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Begegnung {
-	private Integer         begegnungId;
-	private UUID			rundeId;
-	private Integer         matteId;
-	private Integer         mattenRunde;
-	private Integer         gruppenRunde;
-	private Integer         gesamtRunde;
-	private Wettkaempfer    wettkaempfer1;
-	private Wettkaempfer    wettkaempfer2;
-	private List<Wertung>   wertungen;
-	private WettkampfGruppe wettkampfGruppe;
-	private UUID            turnierUUID;
+	private BegegnungId            begegnungId;
+	private UUID                   rundeId;
+	private Integer                matteId;
+	private Integer                mattenRunde;
+	private Integer                gruppenRunde;
+	private Integer                gesamtRunde;
+	private Optional<Wettkaempfer> wettkaempfer1;
+	private Optional<Wettkaempfer> wettkaempfer2;
+	private List<Wertung>          wertungen;
+	private WettkampfGruppe        wettkampfGruppe;
+	private UUID                   turnierUUID;
 
-	public Wettkaempfer getGewinner() {
-		// nur sinnvoll bei normalen Turnieren, wenn es nur eine einzelne Wertung gibt
-		if (wertungen.isEmpty() || wertungen.size() > 1) {
-			return null;
+	public static class BegegnungId {
+		public RundenTyp rundenTyp;
+		public int runde;
+		public int akuellePaarung;
+
+		public BegegnungId(RundenTyp rundenTyp, int runde, int akuellePaarung) {
+			this.rundenTyp = rundenTyp;
+			this.runde = runde;
+			this.akuellePaarung = akuellePaarung;
 		}
-		return wertungen.get(0).getSieger();
+
+		@Override
+		public String toString() {
+			return (this.rundenTyp == RundenTyp.GEWINNER_RUNDE ? "GewinnerRunde" : "VerliererRunde") + " Runde" + this.runde + " Begegnung" + this.akuellePaarung;
+		}
 	}
 
-	public Wettkaempfer getVerlierer() {
-		// nur sinnvoll bei normalen Turnieren, wenn es nur eine einzelne Wertung gibt
-		if (wertungen.isEmpty() || wertungen.size() > 1) {
-			return null;
+	public enum RundenTyp {
+		GEWINNER_RUNDE(1),
+		VERLIERER_RUNDE(2);
+
+		private final int value;
+
+		RundenTyp(int value) {
+			this.value = value;
 		}
-		return wertungen.get(0).getSieger().equals(wettkaempfer1) ? wettkaempfer2 : wettkaempfer1;
+
+		public int getValue() {
+			return value;
+		}
 	}
 }
