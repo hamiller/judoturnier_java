@@ -14,4 +14,8 @@ public record Wettkaempfer(
 	Boolean checked,
 	Boolean printed,
 	UUID turnierUUID) {
+
+	public static Wettkaempfer Freilos() {
+		return new Wettkaempfer(-0, null, null, null, null, null, Optional.empty(), false, false, null);
+	}
 }

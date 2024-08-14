@@ -29,16 +29,16 @@ import java.util.List;
 public class BegegnungJpa {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Integer          id;
 	@Column(name = "runde_uuid")
-	private String  rundeUUID;
-	private Integer matteId;
-	private Integer mattenRunde;
-	private Integer gruppenRunde;
-	private Integer gesamtRunde;
+	private String           rundeUUID;
+	private Integer          matteId;
+	private Integer          mattenRunde;
+	private Integer          gruppenRunde;
+	private Integer          gesamtRunde;
 	@OneToOne
 	@JoinColumn(name = "wettkaempfer1")
-	private WettkaempferJpa wettkaempfer1;
+	private WettkaempferJpa  wettkaempfer1;
 	@OneToOne
 	@JoinColumn(name = "wettkaempfer2")
 	private WettkaempferJpa  wettkaempfer2;
@@ -52,7 +52,10 @@ public class BegegnungJpa {
 		inverseJoinColumns = @JoinColumn(name = "wertung_id")
 	)
 	private List<WertungJpa> wertungen;
-	private Integer wettkampfGruppeId;
+	private Integer          wettkampfGruppeId;
 	@Column(name = "turnier_uuid", nullable = false)
-	private String turnierUUID;
+	private String           turnierUUID;
+	private Integer          runde;
+	private Integer          rundenTyp;
+	private Integer          paarung;
 }

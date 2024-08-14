@@ -322,25 +322,25 @@ public class TurnierService {
 		return turnierJpaRepository.findById(turnierid).map(t -> turnierConverter.convertToTurnier(t)).orElseThrow();
 	}
 
-	public Metadaten ladeMetadaten(Integer begegnungId, UUID turnierUUID) {
-		logger.info("Lade Metadaten für Begegnung {}", begegnungId);
+	public Metadaten ladeMetadaten(Integer id, UUID turnierUUID) {
+		logger.info("Lade Metadaten für Begegnung {}", id);
 		var matten = turnierRepository.ladeMatten(turnierUUID);;
 
 		var aktuelleRunde = matten.values().stream()
 			.flatMap(matte -> matte.runden().stream())
 			.filter(runde -> runde.begegnungen().stream()
-				.anyMatch(begegnung -> begegnung.getBegegnungId().equals(begegnungId)))
+				.anyMatch(begegnung -> begegnung.getId().equals(id)))
 			.findFirst();
 
 		if (aktuelleRunde.isEmpty()) {
 			throw new IllegalArgumentException("Es konnten keine Daten zu dieser Begegnung gefunden werden.");
 		}
 
-		var alleRundeBegegnungIds = aktuelleRunde.get().begegnungen().stream().map(Begegnung::getBegegnungId).collect(Collectors.toUnmodifiableList());
+		var alleRundeBegegnungIds = aktuelleRunde.get().begegnungen().stream().map(Begegnung::getId).collect(Collectors.toUnmodifiableList());
 
 		Integer vorgaenger = null;
 		Integer nachfolger = null;
-		int index = alleRundeBegegnungIds.indexOf(begegnungId);
+		int index = alleRundeBegegnungIds.indexOf(id);
 		if (index > 0) {
 			vorgaenger = alleRundeBegegnungIds.get(index - 1);
 		}

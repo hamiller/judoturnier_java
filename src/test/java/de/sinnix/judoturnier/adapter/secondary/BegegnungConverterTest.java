@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -46,6 +47,7 @@ class BegegnungConverterTest {
 	void testConvertToBegegnung() {
 		UUID turnierUUID = UUID.randomUUID();
 		UUID rundeUUID = UUID.randomUUID();
+		Begegnung.BegegnungId begegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1);
 		WettkampfGruppeJpa wettkampfGruppeJpa = new WettkampfGruppeJpa(1, "Gruppe1", "typ1", turnierUUID.toString());
 		BegegnungJpa begegnungJpa = new BegegnungJpa();
 		begegnungJpa.setId(1);
@@ -58,19 +60,27 @@ class BegegnungConverterTest {
 		begegnungJpa.setWettkampfGruppeId(wettkampfGruppeJpa.getId());
 		begegnungJpa.setTurnierUUID(turnierUUID.toString());
 		begegnungJpa.setWertungen(List.of());
+		begegnungJpa.setRundenTyp(begegnungId.getRundenTyp().getValue());
+		begegnungJpa.setRunde(begegnungId.getRunde());
+		begegnungJpa.setPaarung(begegnungId.getAkuellePaarung());
 
-		when(wettkaempferConverter.convertToWettkaempfer(any(WettkaempferJpa.class))).thenReturn(WettkaempferFixtures.wettkaempfer1);
+		when(wettkaempferConverter.convertToWettkaempfer(any(WettkaempferJpa.class))).thenReturn(WettkaempferFixtures.wettkaempfer1.get());
 		when(wettkampfGruppeConverter.convertToWettkampfGruppe(any(), any())).thenReturn(new WettkampfGruppe(1, "name", "typ", List.of(), turnierUUID));
 
 		Begegnung result = begegnungConverter.convertToBegegnung(begegnungJpa, List.of(wettkampfGruppeJpa));
 
 		assertTrue(result != null);
-		assertEquals(result.getBegegnungId(), begegnungJpa.getId());
-		assertEquals(result.getRundeId().toString(), begegnungJpa.getRundeUUID());
-		assertEquals(result.getMatteId(), begegnungJpa.getMatteId());
-		assertEquals(result.getMattenRunde(), begegnungJpa.getMattenRunde());
-		assertEquals(result.getGruppenRunde(), begegnungJpa.getGruppenRunde());
+		assertEquals(begegnungJpa.getId(), result.getId());
+		assertNotNull(result.getBegegnungId());
+		assertEquals(begegnungJpa.getRundenTyp(), result.getBegegnungId().getRundenTyp().getValue());
+		assertEquals(begegnungJpa.getRunde(), result.getBegegnungId().getRunde());
+		assertEquals(begegnungJpa.getPaarung(), result.getBegegnungId().getAkuellePaarung());
+		assertEquals(begegnungJpa.getRundeUUID(), result.getRundeId().toString());
+		assertEquals(begegnungJpa.getMatteId(), result.getMatteId());
+		assertEquals(begegnungJpa.getMattenRunde(), result.getMattenRunde());
+		assertEquals(begegnungJpa.getGruppenRunde(), result.getGruppenRunde());
 		assertTrue(result.getWettkampfGruppe() != null);
+		assertEquals(begegnungId, result.getBegegnungId());
 	}
 
 	@Test
@@ -79,7 +89,7 @@ class BegegnungConverterTest {
 		UUID rundeUUID = UUID.randomUUID();
 		Wertung wertung = new Wertung(
 			UUID.randomUUID(),
-			WettkaempferFixtures.wettkaempfer1,
+			WettkaempferFixtures.wettkaempfer1.get(),
 			Duration.of(3l, ChronoUnit.MINUTES),
 			1,
 			0,
@@ -88,7 +98,8 @@ class BegegnungConverterTest {
 			null, null, null, null, null, null, null, null,
 			bewerter);
 
-		Begegnung begegnung = new Begegnung(1, rundeUUID,2, 123, 22, 13, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(wertung), new WettkampfGruppe(1, "Gruppe1", "typ1", List.of(), turnierUUID), turnierUUID);
+		Begegnung.BegegnungId begegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1);
+		Begegnung begegnung = new Begegnung(1, begegnungId, rundeUUID,2, 123, 22, 13, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(wertung), new WettkampfGruppe(1, "Gruppe1", "typ1", List.of(), turnierUUID), turnierUUID);
 
 		WertungJpa wertungJpa = new WertungJpa();
 		wertungJpa.setUuid(wertung.getUuid().toString());
@@ -99,8 +110,8 @@ class BegegnungConverterTest {
 		wertungJpa.setPunkteWettkaempfer2(0);
 		wertungJpa.setStrafenWettkaempfer2(1);
 
-		when(wettkaempferConverter.convertFromWettkaempfer(WettkaempferFixtures.wettkaempfer1)).thenReturn(WettkaempferFixtures.wettkaempferJpa1);
-		when(wettkaempferConverter.convertFromWettkaempfer(WettkaempferFixtures.wettkaempfer2)).thenReturn(WettkaempferFixtures.wettkaempferJpa2);
+		when(wettkaempferConverter.convertFromWettkaempfer(WettkaempferFixtures.wettkaempfer1.get())).thenReturn(WettkaempferFixtures.wettkaempferJpa1);
+		when(wettkaempferConverter.convertFromWettkaempfer(WettkaempferFixtures.wettkaempfer2.get())).thenReturn(WettkaempferFixtures.wettkaempferJpa2);
 		when(wertungConverter.convertFromWertung(wertung)).thenReturn(wertungJpa);
 
 		BegegnungJpa result = begegnungConverter.convertFromBegegnung(begegnung);
@@ -118,6 +129,9 @@ class BegegnungConverterTest {
 		begegnungJpa.setWettkampfGruppeId(wettkampfGruppeJpa.getId());
 		begegnungJpa.setTurnierUUID(turnierUUID.toString());
 		begegnungJpa.setWertungen(List.of(wertungJpa));
+		begegnungJpa.setRunde(begegnungId.getRunde());
+		begegnungJpa.setPaarung(begegnungId.getAkuellePaarung());
+		begegnungJpa.setRundenTyp(begegnungId.getRundenTyp().getValue());
 
 		assertEquals(begegnungJpa, result);
 	}

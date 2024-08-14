@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class JederGegenJeden implements Algorithmus {
 	private static final Logger logger                   = LogManager.getLogger(JederGegenJeden.class);
@@ -59,7 +60,10 @@ public class JederGegenJeden implements Algorithmus {
 		if (teilnehmerZahl == 1) {
 			logger.warn("Einzelner Teilnehmer in einer Gruppe, KEINE Kampfbegegnungen! Erstelle einzelne Dummy-Begegnung...");
 			var dummyBegegnung = new Begegnung();
-			dummyBegegnung.setWettkaempfer1(teilnehmer.get(0));
+			var begegnungsId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1);
+			dummyBegegnung.setBegegnungId(begegnungsId);
+			dummyBegegnung.setWettkaempfer1(Optional.of(teilnehmer.get(0)));
+			dummyBegegnung.setWettkaempfer2(Optional.empty());
 			dummyBegegnung.setTurnierUUID(teilnehmer.get(0).turnierUUID());
 			alleRundenBegegnungen.add(new BegegnungenJeRunde(List.of(dummyBegegnung)));
 			return alleRundenBegegnungen;
@@ -71,7 +75,10 @@ public class JederGegenJeden implements Algorithmus {
 			for (int j = -1; j < anzahlBegegnungenJeRunden; j++) {
 				if (j >= 0) {
 					var newBegegnung = new Begegnung();
-					newBegegnung.setWettkaempfer1(teilnehmer.get(k));
+					var begegnungsId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, i+1, j+1);
+					newBegegnung.setBegegnungId(begegnungsId);
+					newBegegnung.setWettkaempfer1(Optional.of(teilnehmer.get(k)));
+					newBegegnung.setWettkaempfer2(Optional.empty());
 					newBegegnung.setTurnierUUID(teilnehmer.get(k).turnierUUID());
 					begegnungList.add(newBegegnung);
 				}
@@ -86,7 +93,7 @@ public class JederGegenJeden implements Algorithmus {
 		int letzteTeilnehmerZahl = teilnehmerZahl - 1;
 		for (int i = 0, k = letzteTeilnehmerZahl; i < anzahlRunden; i++) {
 			for (int j = 0; j < anzahlBegegnungenJeRunden; j++) {
-				alleRundenBegegnungen.get(i).begegnungenJeRunde().get(j).setWettkaempfer2(teilnehmer.get(k));
+				alleRundenBegegnungen.get(i).begegnungenJeRunde().get(j).setWettkaempfer2(Optional.of(teilnehmer.get(k)));
 				k--;
 				if (k == -1) {
 					k = letzteTeilnehmerZahl;
@@ -108,7 +115,10 @@ public class JederGegenJeden implements Algorithmus {
 			BegegnungenJeRunde begegnungenJeRunde = new BegegnungenJeRunde(begegnungList);
 			for (int j = 0; j < anzahlBegegnungenJeRunden; j++) {
 				var newBegegnung = new Begegnung();
-				newBegegnung.setWettkaempfer1(teilnehmer.get(k));
+				var begegnungsId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, i+1, j+1);
+				newBegegnung.setBegegnungId(begegnungsId);
+				newBegegnung.setWettkaempfer1(Optional.of(teilnehmer.get(k)));
+				newBegegnung.setWettkaempfer2(Optional.empty());
 				newBegegnung.setTurnierUUID(teilnehmer.get(k).turnierUUID());
 				begegnungList.add(newBegegnung);
 				k++;
@@ -121,17 +131,17 @@ public class JederGegenJeden implements Algorithmus {
 
 		for (int i = 0; i < anzahlRunden; i++) {
 			if (i % 2 == 0) {
-				alleRundenBegegnungen.get(i).begegnungenJeRunde().get(0).setWettkaempfer2(teilnehmer.get(teilnehmerZahl - 1));
+				alleRundenBegegnungen.get(i).begegnungenJeRunde().get(0).setWettkaempfer2(Optional.of(teilnehmer.get(teilnehmerZahl - 1)));
 			} else {
 				alleRundenBegegnungen.get(i).begegnungenJeRunde().get(0).setWettkaempfer2(alleRundenBegegnungen.get(i).begegnungenJeRunde().get(0).getWettkaempfer1());
-				alleRundenBegegnungen.get(i).begegnungenJeRunde().get(0).setWettkaempfer1(teilnehmer.get(teilnehmerZahl - 1));
+				alleRundenBegegnungen.get(i).begegnungenJeRunde().get(0).setWettkaempfer1(Optional.of(teilnehmer.get(teilnehmerZahl - 1)));
 			}
 		}
 
 		int letzteUngeradeTeilnehmerZahl = teilnehmerZahl - 2;
 		for (int i = 0, k = letzteUngeradeTeilnehmerZahl; i < anzahlRunden; i++) {
 			for (int j = 1; j < anzahlBegegnungenJeRunden; j++) {
-				alleRundenBegegnungen.get(i).begegnungenJeRunde().get(j).setWettkaempfer2(teilnehmer.get(k));
+				alleRundenBegegnungen.get(i).begegnungenJeRunde().get(j).setWettkaempfer2(Optional.of(teilnehmer.get(k)));
 				k--;
 				if (k == -1) {
 					k = letzteUngeradeTeilnehmerZahl;

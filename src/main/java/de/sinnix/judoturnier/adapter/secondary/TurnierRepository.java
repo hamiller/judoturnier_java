@@ -88,7 +88,7 @@ public class TurnierRepository {
 			Integer gruppenRunde = ersteBegegnung.getGruppenRunde();
 			Integer rundeGesamt = ersteBegegnung.getGesamtRunde();
 			Integer matteId = ersteBegegnung.getMatteId();
-			Altersklasse altersklasse = ersteBegegnung.getWettkaempfer1() != null ? ersteBegegnung.getWettkaempfer1().altersklasse(): Altersklasse.PAUSE;
+			Altersklasse altersklasse = ersteBegegnung.getWettkaempfer1().isPresent() ? ersteBegegnung.getWettkaempfer1().get().altersklasse(): Altersklasse.PAUSE;
 			WettkampfGruppe gruppe = ersteBegegnung.getWettkampfGruppe();
 
 			// Erstelle eine neue Runde
@@ -116,8 +116,9 @@ public class TurnierRepository {
 			Optional<WettkampfGruppeJpa> optionalWettkampfGruppeJpa = wettkampfGruppeJpaRepository.findById(runde.gruppe().id());
 
 			if (optionalWettkampfGruppeJpa.isEmpty()) {
-				logger.info("Erstelle neue Wettkampfgruppe");
+				logger.info("Erstelle neue Wettkampfgruppe {} {}", runde.gruppe().name(), runde.gruppe().id());
 				optionalWettkampfGruppeJpa = Optional.of(wettkampfGruppeJpaRepository.save(wettkampfGruppeConverter.convertFromWettkampfGruppe(runde.gruppe())));
+				logger.info("optionalWettkampfGruppeJpa {}", optionalWettkampfGruppeJpa);
 			}
 			var wettkampfGruppe = wettkampfGruppeConverter.convertToWettkampfGruppe(optionalWettkampfGruppeJpa.get());
 			var rundeId = runde.rundeId();
@@ -134,6 +135,7 @@ public class TurnierRepository {
 				newBegegnung.setWettkampfGruppe(wettkampfGruppe);
 				newBegegnung.setTurnierUUID(begegnung.getTurnierUUID());
 				newBegegnung.setWertungen(List.of());
+				newBegegnung.setBegegnungId(begegnung.getBegegnungId());
 
 				BegegnungJpa begegnungJpa = begegnungConverter.convertFromBegegnung(newBegegnung);
 				rundeId = UUID.fromString(begegnungJpa.getRundeUUID());

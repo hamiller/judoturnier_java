@@ -140,15 +140,10 @@ public class HelperSource {
 
 	public static Object optional(Optional<?> optional, Options options) throws IOException {
 		logger.trace("Checking for optional... {}", optional);
-		if (optional == null) {
-			logger.warn("Null statt Optional erhalten...");
-			return null;
+		if (optional == null || !optional.isPresent()) {
+			return "";
 		}
-		if (optional.isPresent()) {
-			return options.fn(optional.get());
-		} else {
-			return options.inverse();
-		}
+		return optional.get();
 	}
 
 	public static String disable(Boolean isEditable, Options options) {

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -19,14 +20,19 @@ public class BegegnungConverter {
 	private WettkampfGruppeConverter wettkampfGruppeConverter;
 
 	public Begegnung convertToBegegnung(BegegnungJpa jpa, List<WettkampfGruppeJpa> wettkampfGruppeJpaList) {
+		Begegnung.BegegnungId begegnungId = null;
+		if (jpa.getRundenTyp() != null && jpa.getRunde() != null && jpa.getPaarung() != null) {
+			begegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.fromValue(jpa.getRundenTyp()), jpa.getRunde(), jpa.getPaarung());
+		}
 		return new Begegnung(jpa.getId(),
+			begegnungId,
 			jpa.getRundeUUID() != null ? UUID.fromString(jpa.getRundeUUID()) : null,
 			jpa.getMatteId(),
 			jpa.getMattenRunde(),
 			jpa.getGruppenRunde(),
 			jpa.getGesamtRunde(),
-			wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer1()),
-			wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer2()),
+			Optional.ofNullable(wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer1())),
+			Optional.ofNullable(wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer2())),
 			jpa.getWertungen().stream().map(wertung -> wertungConverter.convertToWertung(wertung)).collect(Collectors.toList()),
 			wettkampfGruppeConverter.convertToWettkampfGruppe(jpa.getWettkampfGruppeId(), wettkampfGruppeJpaList),
 			UUID.fromString(jpa.getTurnierUUID())
@@ -35,14 +41,17 @@ public class BegegnungConverter {
 
 	public BegegnungJpa convertFromBegegnung(Begegnung begegnung) {
 		BegegnungJpa jpa = new BegegnungJpa();
-		jpa.setId(begegnung.getBegegnungId());
+		jpa.setId(begegnung.getId());
+		jpa.setRunde(begegnung.getBegegnungId().getRunde());
+		jpa.setRundenTyp(begegnung.getBegegnungId().getRundenTyp().getValue());
+		jpa.setPaarung(begegnung.getBegegnungId().getAkuellePaarung());
 		jpa.setRundeUUID(fromUUID(begegnung.getRundeId()));
 		jpa.setMatteId(begegnung.getMatteId());
 		jpa.setMattenRunde(begegnung.getMattenRunde());
 		jpa.setGruppenRunde(begegnung.getGruppenRunde());
 		jpa.setGesamtRunde(begegnung.getGesamtRunde());
-		jpa.setWettkaempfer1(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1()));
-		jpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2()));
+		jpa.setWettkaempfer1(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1().orElse(null)));
+		jpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2().orElse(null)));
 		jpa.setWertungen(begegnung.getWertungen().stream().map(wertung -> wertungConverter.convertFromWertung(wertung)).toList());
 		begegnung.getWertungen().stream().map(wertung -> wertungConverter.convertFromWertung(wertung)).toList();
 		jpa.setWettkampfGruppeId(begegnung.getWettkampfGruppe().id());

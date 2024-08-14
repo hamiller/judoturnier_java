@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class Sortierer {
 
@@ -53,7 +54,7 @@ public class Sortierer {
 				}
 
 				// hole Altersklasse aus der ersten Begegnung
-				Altersklasse altersKlasse = gruppe.alleRundenBegegnungen().get(rundenNummer).begegnungenJeRunde().get(0).getWettkaempfer1().altersklasse();
+				Altersklasse altersKlasse = gruppe.alleRundenBegegnungen().get(rundenNummer).begegnungenJeRunde().get(0).getWettkaempfer1().get().altersklasse();
 
 				Runde runde = new Runde(null, mattenRunde, gruppenRunde, rundeGesamt, matteId, altersKlasse, gruppe, gruppe.alleRundenBegegnungen().get(rundenNummer).begegnungenJeRunde());
 				if (runde != null) {
@@ -77,13 +78,13 @@ public class Sortierer {
 		List<Runde> runden = new ArrayList<>();
 		// gerade Anzahl an Gruppen -> 2 Gruppen je Matte
 		if (gruppen.size() % 2 == 0) {
-			logger.info("Berechne gerade Anzahl an Gruppen (" + gruppen.size() + ")");
+			logger.info("Gerade Anzahl an Gruppen ({})", gruppen.size());
 			var result = gruppiereAbwechselndPaare(gruppen, matteId);
 			runden.addAll(result);
 		}
 		// ungerade Anzahl an Gruppen -> 2 Gruppen je Matte und einmal 3 Gruppen je Matte
 		else {
-			logger.info("Berechne ungerade Anzahl an Gruppen");
+			logger.info("Ungerade Anzahl an Gruppen ({})", gruppen.size());
 			if (gruppen.size() > 1) {
 				logger.info("Wir haben mehr als 1 Gruppe, also splitten wir");
 				// behandle die letzten 3 Gruppen separat und gruppiere zuerst die anderen Gruppen
@@ -99,7 +100,7 @@ public class Sortierer {
 				logger.info("Es existiert nur eine Gruppe, daher fügen wir diese komplett hinzu");
 				WettkampfGruppe gruppeZuletzt = gruppen.get(gruppen.size() - 1);
 				for (BegegnungenJeRunde begegnungen : gruppeZuletzt.alleRundenBegegnungen()) {
-					Altersklasse altersKlasseZuletzt = begegnungen.begegnungenJeRunde().get(0).getWettkaempfer1().altersklasse();
+					Altersklasse altersKlasseZuletzt = begegnungen.begegnungenJeRunde().get(0).getWettkaempfer1().get().altersklasse();
 					Runde rundeZuletzt = new Runde(null, mattenRunde, 1, rundeGesamt, matteId, altersKlasseZuletzt, gruppeZuletzt, begegnungen.begegnungenJeRunde());
 					runden.add(rundeZuletzt);
 					rundeGesamt++;
@@ -115,8 +116,8 @@ public class Sortierer {
 		for (int gruppenNr = 0; gruppenNr < gruppen.size(); gruppenNr += 2) {
 			WettkampfGruppe gruppe1 = gruppen.get(gruppenNr);
 			WettkampfGruppe gruppe2 = gruppen.get(gruppenNr + 1);
-			Altersklasse altersKlasse1 = gruppe1.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().altersklasse();
-			Altersklasse altersKlasse2 = gruppe2.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().altersklasse();
+			Altersklasse altersKlasse1 = gruppe1.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().get().altersklasse();
+			Altersklasse altersKlasse2 = gruppe2.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().get().altersklasse();
 
 			// Abwechselnd die Begegnungen der gruppe1 und gruppe2 nehmen und der Matte hinzufügen
 			int maxAnzahlBegegnungen = Math.max(gruppe1.alleRundenBegegnungen().size(), gruppe2.alleRundenBegegnungen().size());
@@ -164,6 +165,9 @@ public class Sortierer {
 	private Runde dummyRunde(Altersklasse altersKlasse, WettkampfGruppe gruppe, Integer gruppenRunde) {
 		logger.info("erstelle Pause");
 		Begegnung pausenBegegnung = new Begegnung();
+		pausenBegegnung.setBegegnungId(new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, mattenRunde, gruppenRunde));
+		pausenBegegnung.setWettkaempfer1(Optional.empty());
+		pausenBegegnung.setWettkaempfer2(Optional.empty());
 		pausenBegegnung.setTurnierUUID(gruppe.turnierUUID());
 		return new Runde(null, mattenRunde, gruppenRunde, rundeGesamt, null, altersKlasse, gruppe, List.of(pausenBegegnung));
 	}
@@ -173,9 +177,9 @@ public class Sortierer {
 		WettkampfGruppe gruppe1 = gruppen.get(0);
 		WettkampfGruppe gruppe2 = gruppen.get(1);
 		WettkampfGruppe gruppe3 = gruppen.get(2);
-		Altersklasse altersKlasse1 = gruppe1.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().altersklasse();
-		Altersklasse altersKlasse2 = gruppe2.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().altersklasse();
-		Altersklasse altersKlasse3 = gruppe3.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().altersklasse();
+		Altersklasse altersKlasse1 = gruppe1.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().get().altersklasse();
+		Altersklasse altersKlasse2 = gruppe2.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().get().altersklasse();
+		Altersklasse altersKlasse3 = gruppe3.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().get().altersklasse();
 
 		// Abwechselnd die Begegnungen der gruppe1 und gruppe2 nehmen und der Matte hinzufügen
 		for (int r = 0; r < Math.max(gruppe1.alleRundenBegegnungen().size(), Math.max(gruppe2.alleRundenBegegnungen().size(), gruppe3.alleRundenBegegnungen().size())); r++) {
@@ -220,10 +224,10 @@ public class Sortierer {
 
 		for (int i = 0; i < sortedBegegnungen.size() - 2; i++) {
 			for (int j = 0; j < sortedBegegnungen.size() - i - 2; j++) {
-				Wettkaempfer wettkaempfer1Jetzt = sortedBegegnungen.get(j).getWettkaempfer1();
-				Wettkaempfer wettkaempfer2Jetzt = sortedBegegnungen.get(j).getWettkaempfer2();
-				Wettkaempfer wettkaempfer1Danach = sortedBegegnungen.get(j + 1).getWettkaempfer1();
-				Wettkaempfer wettkaempfer2Danach = sortedBegegnungen.get(j + 1).getWettkaempfer2();
+				Wettkaempfer wettkaempfer1Jetzt = sortedBegegnungen.get(j).getWettkaempfer1().get();
+				Wettkaempfer wettkaempfer2Jetzt = sortedBegegnungen.get(j).getWettkaempfer2().get();
+				Wettkaempfer wettkaempfer1Danach = sortedBegegnungen.get(j + 1).getWettkaempfer1().get();
+				Wettkaempfer wettkaempfer2Danach = sortedBegegnungen.get(j + 1).getWettkaempfer2().get();
 
 				if (wettkaempfer1Jetzt.equals(wettkaempfer1Danach) || wettkaempfer1Jetzt.equals(wettkaempfer2Danach) ||
 					wettkaempfer2Jetzt.equals(wettkaempfer1Danach) || wettkaempfer2Jetzt.equals(wettkaempfer2Danach)) {
@@ -243,10 +247,10 @@ public class Sortierer {
 
 		for (int i = 0; i < sortedBegegnungen.size() - 1; i++) {
 			for (int j = 0; j < sortedBegegnungen.size() - i - 1; j++) {
-				Wettkaempfer teilnehmerA1 = sortedBegegnungen.get(j).getWettkaempfer1();
-				Wettkaempfer teilnehmerA2 = sortedBegegnungen.get(j).getWettkaempfer2();
-				Wettkaempfer teilnehmerB1 = sortedBegegnungen.get(j + 1).getWettkaempfer1();
-				Wettkaempfer teilnehmerB2 = sortedBegegnungen.get(j + 1).getWettkaempfer2();
+				Wettkaempfer teilnehmerA1 = sortedBegegnungen.get(j).getWettkaempfer1().get();
+				Wettkaempfer teilnehmerA2 = sortedBegegnungen.get(j).getWettkaempfer2().get();
+				Wettkaempfer teilnehmerB1 = sortedBegegnungen.get(j + 1).getWettkaempfer1().get();
+				Wettkaempfer teilnehmerB2 = sortedBegegnungen.get(j + 1).getWettkaempfer2().get();
 
 				if (istTeilnehmerInAufeinanderfolgendenBegegnungen(teilnehmerA1, sortedBegegnungen) ||
 					istTeilnehmerInAufeinanderfolgendenBegegnungen(teilnehmerA2, sortedBegegnungen)) {

@@ -1,7 +1,9 @@
 package de.sinnix.judoturnier.application.algorithm;
 
 import de.sinnix.judoturnier.model.Begegnung;
+import de.sinnix.judoturnier.model.BegegnungenJeRunde;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
+import de.sinnix.judoturnier.model.RandoriGruppenName;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -13,12 +15,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+/**
+ * Anzahl der Begegnungen bei 8 Teilnehmern:
+ *
+ * Anzahl der Begegnungen = (n−1)+(n/2 -1)= 3n/2 -2
+ *
+ * Gewinnerrunde:
+ * 1. Runde: 4 Begegnungen (8 Teilnehmer)
+ * 2. Runde: 2 Begegnungen (4 verbleibende Teilnehmer)
+ * 3. Runde: 1 Begegnung (2 verbleibende Teilnehmer)
+ * Das ergibt 7 Begegnungen in der Gewinnerrunde.
+ *
+ * Trostrunde:
+ * 1. Runde: 2 Begegnungen (4 Verlierer aus der 1. Runde der Gewinnerrunde)
+ * 2. Runde: 1 Begegnung (Gewinner aus der 1. Runde der Trostrunde gegen die Verlierer aus der 2. Runde der Gewinnerrunde)
+ * 3. Runde: 1 Begegnung (Gewinner aus der 2. Runde der Trostrunde gegen den Verlierer aus der 3. Runde der Gewinnerrunde um den 3. Platz)
+ * Das ergibt 4 Begegnungen in der Trostrunde.
+ *
+ *
+ */
 
 public class DoppelKOSystem implements Algorithmus {
 
 	private static final Logger logger          = LogManager.getLogger(DoppelKOSystem.class);
-	public static final  int    VERLIERER_RUNDE = 2;
-
 
 	@Override
 	public List<WettkampfGruppe> erstelleWettkampfGruppen(Integer gruppenid, GewichtsklassenGruppe gewichtsklassenGruppe, Integer maxGruppenGroesse) {
@@ -26,80 +47,82 @@ public class DoppelKOSystem implements Algorithmus {
 
 		// Teilnehmer der Gruppe
 		List<Wettkaempfer> teilnehmer = gewichtsklassenGruppe.teilnehmer();
-		int teilnehmerAnzahl = teilnehmer.size();
 
-		// Alle Begegnungen in der Gruppe generieren
-		int gesamtRunden = (int) Math.ceil(Math.log(teilnehmerAnzahl) / Math.log(2));
-		boolean bronzeFinale = true;
-		int letzteRunde = 1;
-
-		List<Begegnung> begegnungen = erstelleBegegnungen(teilnehmer, teilnehmerAnzahl, gesamtRunden, letzteRunde, bronzeFinale);
-
-
-		String id = ((gruppenid + 1) * 10) + Integer.toString(1); // ids erstellen und konkatenieren
-//		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(
-//			Integer.parseInt(id),
-//			gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
-//			"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
-//			begegnungen,
-//			gewichtsklassenGruppe.turnierUUID()
-//		);
-//		result.add(wettkampfGruppe);
-
-
+		List<Begegnung> begegnungen = erstelleBegegnungen(teilnehmer);
 		// Ausgabe des Turnierbaums
 		for (Begegnung begegnung : begegnungen) {
-			logger.info("{} - Wettkaempfer1: {}, Wettkaempfer2: {}, Ergebnis: {}", begegnung.getBegegnungId(), begegnung.getWettkaempfer1().map(Wettkaempfer::name), begegnung.getWettkaempfer2().map(Wettkaempfer::name), begegnung.getWertungen());
+			logger.debug("{} - Wettkaempfer1: {}, Wettkaempfer2: {}, Ergebnis: {}", begegnung.getBegegnungId(), begegnung.getWettkaempfer1().map(Wettkaempfer::name), begegnung.getWettkaempfer2().map(Wettkaempfer::name), begegnung.getWertungen());
 		}
+		// Gruppiere nach Runde
+		List<BegegnungenJeRunde> begegnungenJeRunde = begegnungen.stream()
+			.collect(Collectors.groupingBy(begegnung -> begegnung.getBegegnungId().getRunde()))
+			.values().stream()
+			.map(BegegnungenJeRunde::new)
+			.collect(Collectors.toList());
+
+		String id = ((gruppenid + 1) * 10) + Integer.toString(1); // ids erstellen und konkatenieren
+		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(
+			Integer.parseInt(id),
+			gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
+			"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
+			begegnungenJeRunde,
+			gewichtsklassenGruppe.turnierUUID()
+		);
+		result.add(wettkampfGruppe);
 		return result;
 
 	}
 
-	// Erstelle ALLE Spiele für ein KO-Turnier
-	public List<Begegnung> erstelleBegegnungen(List<Wettkaempfer> teilnehmer, int gesamtAnzahlSpieler, int gesamtRunden, int letzteRunde, boolean bronzeFinale) {
-		List<Begegnung> spieleListe = new ArrayList<>();
+	// Erstelle Begegnungen dieser Gruppe (Gewinner- und Trostrunden)
+	private List<Begegnung> erstelleBegegnungen(List<Wettkaempfer> teilnehmer) {
+		List<Begegnung> result = new ArrayList<>();
 
-		logger.debug("gesamtAnzahlSpieler: {}", gesamtAnzahlSpieler);
-		logger.debug("gesamtRunden: {}", gesamtRunden);
-		logger.debug("letzteRunde: {}", letzteRunde);
+		// Alle Begegnungen in der Gruppe generieren
+		var teilnehmerAnzahl = teilnehmer.size();
+		var gesamtRunden = (int) Math.ceil(Math.log(teilnehmerAnzahl) / Math.log(2));
+
+		logger.debug("Teilnehmer dieser Gruppe: {}", teilnehmerAnzahl);
+		logger.debug("Gesamtrunden dieser Gruppe: {}", gesamtRunden);
 
 		List<Wettkaempfer> gemischteTeilnehmer = mischeTeilnehmer(teilnehmer);
 
 		// in der ersten Runde müssen eventuell Freilose erstellt werden, sodass im weiteren Turnierverlauf ein ausgeglichener Baum entsteht
-		List<Pair<Optional<Wettkaempfer>, Optional<Wettkaempfer>>> paarungen = freilosMarkierung(gemischteTeilnehmer, gesamtRunden);
+		List<Pair<Optional<Wettkaempfer>, Optional<Wettkaempfer>>> paarungenRunde1 = freilosMarkierung(gemischteTeilnehmer, gesamtRunden);
+		logger.debug("Paarungen: {}", paarungenRunde1.size());
 
 		// erste Gewinner-Runde zur Initialisierung der Spieler
-		for (int akuellePaarungsId = 1; akuellePaarungsId <= Math.pow(2, gesamtRunden - 1); akuellePaarungsId++) {
+		for (int akuellePaarungsId = 1; akuellePaarungsId <= paarungenRunde1.size(); akuellePaarungsId++) {
 			var begegnung = new Begegnung();
 			begegnung.setTurnierUUID(UUID.randomUUID());
-			begegnung.setBegegnungId(erstelleID(Begegnung.RundenTyp.GEWINNER_RUNDE, 1, akuellePaarungsId));
-			begegnung.setWettkaempfer1(paarungen.get(akuellePaarungsId - 1).getLeft());
-			begegnung.setWettkaempfer2(paarungen.get(akuellePaarungsId - 1).getRight());
-			spieleListe.add(begegnung);
+			begegnung.setBegegnungId(erstelleID(Begegnung.RundenTyp.GEWINNERRUNDE, 1, akuellePaarungsId));
+			begegnung.setWettkaempfer1(paarungenRunde1.get(akuellePaarungsId - 1).getLeft());
+			begegnung.setWettkaempfer2(paarungenRunde1.get(akuellePaarungsId - 1).getRight());
+			result.add(begegnung);
 		}
+		logger.trace("Jetzt haben wir {} Begegnungen", result.size());
 
 		// leere Gewinner-Runden
 		for (int aktuelleRunde = 2; aktuelleRunde <= gesamtRunden; aktuelleRunde++) {
 			for (int akuellePaarungsId = 1; akuellePaarungsId <= Math.pow(2, gesamtRunden - aktuelleRunde); akuellePaarungsId++) {
-				spieleListe.add(leereBegegnung(erstelleID(Begegnung.RundenTyp.GEWINNER_RUNDE, aktuelleRunde, akuellePaarungsId)));
+				result.add(leereBegegnung(erstelleID(Begegnung.RundenTyp.GEWINNERRUNDE, aktuelleRunde, akuellePaarungsId)));
 			}
 		}
+		logger.trace("Jetzt haben wir {} Begegnungen", result.size());
 
-		// leere Verlierer-Runden
-		if (letzteRunde >= VERLIERER_RUNDE) {
-			for (int aktuelleRunde = 1; aktuelleRunde <= 2 * gesamtRunden - 2; aktuelleRunde++) {
-				// Anzahl der Spiele halbiert sich in jeder ungeraden Runde im Verlierer-Turnierbaum
-				for (int akuellePaarungsId = 1; akuellePaarungsId <= Math.pow(2, gesamtRunden - 1 - Math.floorDiv(aktuelleRunde + 1, 2)); akuellePaarungsId++) {
-					spieleListe.add(leereBegegnung(erstelleID(Begegnung.RundenTyp.VERLIERER_RUNDE, aktuelleRunde, akuellePaarungsId)));
-				}
+		// leere Trost-Runden
+		// TODO: die Trostrunde darf erst später beginnen, damit nicht die ausgeschiedenen Kämpfer sofort wieder dran sind...
+		var trostrunden = (2* (gesamtRunden-1) ) -2;
+		logger.trace("Anzahl Trostrunden: {}", trostrunden);
+		for (int aktuelleRunde = 1; aktuelleRunde <= trostrunden; aktuelleRunde++) {
+			logger.trace("Trostrunde: {} von {}", aktuelleRunde, gesamtRunden);
+			// Anzahl der Begegnungen halbiert sich in jeder ungeraden Runde im Trostrunden-Turnierbaum
+			for (int akuellePaarungsId = 1; akuellePaarungsId <= Math.pow(2, gesamtRunden - 1 - Math.floorDiv(aktuelleRunde + 1, 2)); akuellePaarungsId++) {
+				logger.trace("akuellePaarungsId {}", akuellePaarungsId);
+				result.add(leereBegegnung(erstelleID(Begegnung.RundenTyp.TROSTRUNDE, aktuelleRunde, akuellePaarungsId)));
 			}
-			spieleListe.add(leereBegegnung(erstelleID(Begegnung.RundenTyp.VERLIERER_RUNDE, 2 * gesamtRunden - 1, 1))); // Großes Finale Spiel 1
 		}
-		if (bronzeFinale) {
-			// Bronze-Finale, wenn letzteRunde === GEWINNER_RUNDE, sonst Großes Finale Spiel 2
-			spieleListe.add(leereBegegnung(erstelleID(Begegnung.RundenTyp.VERLIERER_RUNDE, letzteRunde == VERLIERER_RUNDE ? 2 * gesamtRunden : 1, 1)));
-		}
-		return spieleListe;
+		logger.trace("Jetzt haben wir {} Begegnungen", result.size());
+		return result;
 	}
 
 	private static List<Wettkaempfer> mischeTeilnehmer(List<Wettkaempfer> teilnehmer) {
@@ -117,6 +140,7 @@ public class DoppelKOSystem implements Algorithmus {
 		// Berechne die Anzahl der Paarungen in der ersten Runde
 		// für einen ausgeglichenen Baum benötigen wir immer ein Vielfaches von 2^x
 		int anzahlPaarungenRunde1 = (int) Math.pow(2, gesamtRunden - 1);
+		logger.trace("Paarungen Runde 1: {}", anzahlPaarungenRunde1);
 
 		List<Wettkaempfer> erweiterteListe = new ArrayList<>(wettkaempfer);
 
@@ -127,7 +151,7 @@ public class DoppelKOSystem implements Algorithmus {
 			erweiterteListe.add(insertPosition, null);
 			insertPosition += 2;
 		}
-		logger.debug("erweiterteListe: {}", erweiterteListe);
+		logger.trace("Erweitert auf {} Teilnehmer - erweiterteListe: {}", erweiterteListe.size(), erweiterteListe);
 
 		// Erstelle die Paarungen
 		for (int i = 0; i < anzahlPaarungenRunde1 * 2; i += 2) {

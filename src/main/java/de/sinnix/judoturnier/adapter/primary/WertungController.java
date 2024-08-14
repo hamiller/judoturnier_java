@@ -4,6 +4,7 @@ import de.sinnix.judoturnier.application.TurnierService;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Metadaten;
+import de.sinnix.judoturnier.model.Wettkaempfer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,9 +72,9 @@ public class WertungController {
 	}
 
 	private BegegnungDto convertFromBegegnung(Begegnung begegnung, String userid, Optional<Integer> vorherigeBegegnungId, Optional<Integer> nachfolgendeBegegnungId) {
-		var begegnungId = begegnung.getBegegnungId();
-		var	wettkaempfer1 = begegnung.getWettkaempfer1();
-		var	wettkaempfer2 = begegnung.getWettkaempfer2();
+		var begegnungId = begegnung.getId();
+		var	wettkaempfer1 = begegnung.getWettkaempfer1().orElseGet(() -> Wettkaempfer.Freilos());
+		var	wettkaempfer2 = begegnung.getWettkaempfer2().orElseGet(() -> Wettkaempfer.Freilos());
 		var kampfrichterWertung = begegnung.getWertungen().stream().filter(w -> w.getBewerter().id().equals(userid)).findFirst().map(w -> new WertungDto(w.getSieger(),
 			formatDuration(w.getZeit()),
 			w.getPunkteWettkaempferWeiss(),
