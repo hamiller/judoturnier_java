@@ -119,7 +119,7 @@ public class TurnierController {
 
 	@GetMapping("/turnier/{turnierid}/begegnungen")
 	public ModelAndView unterscheideBegegungen(@PathVariable String turnierid) {
-		if (einstellungenService.isRandori()) {
+		if (einstellungenService.isRandori(UUID.fromString(turnierid))) {
 			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori");
 		} else {
 			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/normal");
@@ -209,7 +209,7 @@ public class TurnierController {
 			logger.error("Ein unerwarteter Fehler ist aufgetreten", e);
 			error = e.toString();
 		}
-		if (einstellungenService.isRandori()) {
+		if (einstellungenService.isRandori(UUID.fromString(turnierid))) {
 			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori?error=" + error);
 		} else {
 			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/normal?error=" + error);
@@ -227,7 +227,7 @@ public class TurnierController {
 		} catch (Exception e) {
 			error = e.toString();
 		}
-		if (einstellungenService.isRandori()) {
+		if (einstellungenService.isRandori(UUID.fromString(turnierid))) {
 			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori?error=" + error);
 		} else {
 			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/normal?error=" + error);
@@ -244,7 +244,7 @@ public class TurnierController {
 		} catch (Exception e) {
 			error = e.toString();
 		}
-		if (einstellungenService.isRandori()) {
+		if (einstellungenService.isRandori(UUID.fromString(turnierid))) {
 			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori?error=" + error);
 		} else {
 			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/normal?error=" + error);

@@ -34,32 +34,33 @@ public class EinstellungenService {
 
 	public Einstellungen ladeEinstellungen(UUID turnierUUID) {
 		logger.info("EinstellungenService ladeEinstellungen()");
-		List<EinstellungJpa> einstellungenList = einstellungJpaRepository.findAll().stream().filter(e -> e.getTurnierUUID().equalsIgnoreCase(turnierUUID.toString())).toList();
-		TurnierTyp turnierTyp = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(TurnierTyp.TYP)).findFirst().map(t -> TurnierTyp.valueOf(t.getWert())).orElse(DEFAULT_TURNIERTYP);
-		MattenAnzahl mattenAnzahl = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(MattenAnzahl.TYP)).findFirst().map(t -> new MattenAnzahl(Integer.parseInt(t.getWert()))).orElseGet(() -> DEFAULT_MATTENANZAHL);
-		WettkampfReihenfolge wettkampfReihenfolge = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(WettkampfReihenfolge.TYP)).findFirst().map(t -> WettkampfReihenfolge.valueOf(t.getWert())).orElseGet(() -> DEFAULT_WETTKAMPFREIHENFOLGE);
-		Gruppengroesse gruppengroesse = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(Gruppengroesse.TYP)).findFirst().map(r -> new Gruppengroesse(Integer.parseInt(r.getWert()))).orElseGet(() -> DEFAULT_GRUPPENGROESSE);
-		VariablerGewichtsteil variablerGewichtsteil = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(VariablerGewichtsteil.TYP)).findFirst().map(v -> new VariablerGewichtsteil(Double.parseDouble(v.getWert()))).orElseGet(() -> DEFAULT_VARIABLER_GEWICHTSTEIL);
-		SeparateAlterklassen separateAlterklassen = einstellungenList.stream().filter(e -> e.getArt().equalsIgnoreCase(SeparateAlterklassen.TYP)).findFirst().map(t -> SeparateAlterklassen.valueOf(t.getWert())).orElse(DEFAULT_SEPARATE_ALTERKLASSEN);
+		List<EinstellungJpa> einstellungenList = einstellungJpaRepository.findAll().stream().filter(e -> e.getId().getTurnierUUID().equalsIgnoreCase(turnierUUID.toString())).toList();
+		TurnierTyp turnierTyp = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(TurnierTyp.TYP)).findFirst().map(t -> TurnierTyp.valueOf(t.getWert())).orElse(DEFAULT_TURNIERTYP);
+		MattenAnzahl mattenAnzahl = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(MattenAnzahl.TYP)).findFirst().map(t -> new MattenAnzahl(Integer.parseInt(t.getWert()))).orElseGet(() -> DEFAULT_MATTENANZAHL);
+		WettkampfReihenfolge wettkampfReihenfolge = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(WettkampfReihenfolge.TYP)).findFirst().map(t -> WettkampfReihenfolge.valueOf(t.getWert())).orElseGet(() -> DEFAULT_WETTKAMPFREIHENFOLGE);
+		Gruppengroesse gruppengroesse = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(Gruppengroesse.TYP)).findFirst().map(r -> new Gruppengroesse(Integer.parseInt(r.getWert()))).orElseGet(() -> DEFAULT_GRUPPENGROESSE);
+		VariablerGewichtsteil variablerGewichtsteil = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(VariablerGewichtsteil.TYP)).findFirst().map(v -> new VariablerGewichtsteil(Double.parseDouble(v.getWert()))).orElseGet(() -> DEFAULT_VARIABLER_GEWICHTSTEIL);
+		SeparateAlterklassen separateAlterklassen = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(SeparateAlterklassen.TYP)).findFirst().map(t -> SeparateAlterklassen.valueOf(t.getWert())).orElse(DEFAULT_SEPARATE_ALTERKLASSEN);
 		return new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge, gruppengroesse, variablerGewichtsteil, separateAlterklassen, turnierUUID);
 	}
 
 	public Einstellungen speichereTurnierEinstellungen(Einstellungen einstellungen) {
 		logger.info("EinstellungenService speichereTurnierEinstellungen()");
 		List<EinstellungJpa> jpaList = List.of(
-			new EinstellungJpa(einstellungen.turnierTyp().TYP, einstellungen.turnierTyp().name(), einstellungen.turnierUUID().toString()),
-			new EinstellungJpa(einstellungen.mattenAnzahl().TYP, einstellungen.mattenAnzahl().anzahl().toString(), einstellungen.turnierUUID().toString()),
-			new EinstellungJpa(einstellungen.wettkampfReihenfolge().TYP, einstellungen.wettkampfReihenfolge().name(), einstellungen.turnierUUID().toString()),
-			new EinstellungJpa(einstellungen.gruppengroesse().TYP, einstellungen.gruppengroesse().anzahl().toString(), einstellungen.turnierUUID().toString()),
-			new EinstellungJpa(einstellungen.variablerGewichtsteil().TYP, einstellungen.variablerGewichtsteil().variablerTeil().toString(), einstellungen.turnierUUID().toString()),
-			new EinstellungJpa(einstellungen.separateAlterklassen().TYP, einstellungen.separateAlterklassen().name(), einstellungen.turnierUUID().toString())
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.turnierTyp().TYP, einstellungen.turnierUUID().toString()), einstellungen.turnierTyp().name()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.mattenAnzahl().TYP, einstellungen.turnierUUID().toString()), einstellungen.mattenAnzahl().anzahl().toString()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.wettkampfReihenfolge().TYP, einstellungen.turnierUUID().toString()), einstellungen.wettkampfReihenfolge().name()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.gruppengroesse().TYP, einstellungen.turnierUUID().toString()), einstellungen.gruppengroesse().anzahl().toString()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.variablerGewichtsteil().TYP, einstellungen.turnierUUID().toString()), einstellungen.variablerGewichtsteil().variablerTeil().toString()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.separateAlterklassen().TYP, einstellungen.turnierUUID().toString()), einstellungen.separateAlterklassen().name())
 		);
 		einstellungJpaRepository.saveAll(jpaList);
 		return ladeEinstellungen(einstellungen.turnierUUID());
 	}
 
-	public boolean isRandori() {
-		TurnierTyp turnierTyp = einstellungJpaRepository.findById(TurnierTyp.TYP).map(typ -> TurnierTyp.valueOf(typ.getWert())).orElseThrow();
+	public boolean isRandori(UUID turnierUUID) {
+		EinstellungJpa.EinstellungId einstellungId = new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString());
+		TurnierTyp turnierTyp = einstellungJpaRepository.findById(einstellungId).map(typ -> TurnierTyp.valueOf(typ.getWert())).orElseThrow();
 		return turnierTyp == TurnierTyp.RANDORI;
 	}
 }

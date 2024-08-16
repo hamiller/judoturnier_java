@@ -42,9 +42,9 @@ class EinstellungenServiceTest {
 
     @Test
     void testLadeEinstellungen() {
-        EinstellungJpa turnierTypJpa = new EinstellungJpa(TurnierTyp.TYP, "RANDORI", turnierUUID.toString());
-        EinstellungJpa mattenAnzahlJpa = new EinstellungJpa(MattenAnzahl.TYP, "4", turnierUUID.toString());
-        EinstellungJpa wettkampfReihenfolgeJpa = new EinstellungJpa(WettkampfReihenfolge.TYP, "ABWECHSELND", turnierUUID.toString());
+        EinstellungJpa turnierTypJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString()), "RANDORI");
+        EinstellungJpa mattenAnzahlJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(MattenAnzahl.TYP, turnierUUID.toString()), "4");
+        EinstellungJpa wettkampfReihenfolgeJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(WettkampfReihenfolge.TYP, turnierUUID.toString()), "ABWECHSELND");
 
         when(einstellungJpaRepository.findAll()).thenReturn(List.of(turnierTypJpa, mattenAnzahlJpa, wettkampfReihenfolgeJpa));
 
@@ -60,9 +60,9 @@ class EinstellungenServiceTest {
     void testSpeichereTurnierEinstellungen() {
         Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(4), WettkampfReihenfolge.ABWECHSELND, new Gruppengroesse(6), new VariablerGewichtsteil(0.2d), SeparateAlterklassen.ZUSAMMEN, turnierUUID);
 
-        EinstellungJpa turnierTypJpa = new EinstellungJpa(TurnierTyp.TYP, "RANDORI", turnierUUID.toString());
-        EinstellungJpa mattenAnzahlJpa = new EinstellungJpa(MattenAnzahl.TYP, "4", turnierUUID.toString());
-        EinstellungJpa wettkampfReihenfolgeJpa = new EinstellungJpa(WettkampfReihenfolge.TYP, "ABWECHSELND", turnierUUID.toString());
+        EinstellungJpa turnierTypJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString()), "RANDORI");
+        EinstellungJpa mattenAnzahlJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(MattenAnzahl.TYP, turnierUUID.toString()), "4");
+        EinstellungJpa wettkampfReihenfolgeJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(WettkampfReihenfolge.TYP, turnierUUID.toString()), "ABWECHSELND");
 
         when(einstellungJpaRepository.saveAll(anyList())).thenReturn(List.of(turnierTypJpa, mattenAnzahlJpa, wettkampfReihenfolgeJpa));
         when(einstellungJpaRepository.findAll()).thenReturn(List.of(turnierTypJpa, mattenAnzahlJpa, wettkampfReihenfolgeJpa));
@@ -76,22 +76,22 @@ class EinstellungenServiceTest {
 
     @Test
     void testIsRandori() {
-        EinstellungJpa turnierTypJpa = new EinstellungJpa(TurnierTyp.TYP, "RANDORI", turnierUUID.toString());
+        EinstellungJpa turnierTypJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString()), "RANDORI");
 
-        when(einstellungJpaRepository.findById(TurnierTyp.TYP)).thenReturn(Optional.of(turnierTypJpa));
+        when(einstellungJpaRepository.findById(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString()))).thenReturn(Optional.of(turnierTypJpa));
 
-        boolean isRandori = einstellungenService.isRandori();
+        boolean isRandori = einstellungenService.isRandori(turnierUUID);
 
         assertTrue(isRandori);
     }
 
     @Test
     void testIsNotRandori() {
-        EinstellungJpa turnierTypJpa = new EinstellungJpa(TurnierTyp.TYP, "STANDARD", turnierUUID.toString());
+        EinstellungJpa turnierTypJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString()), "STANDARD");
 
-        when(einstellungJpaRepository.findById(TurnierTyp.TYP)).thenReturn(Optional.of(turnierTypJpa));
+        when(einstellungJpaRepository.findById(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString()))).thenReturn(Optional.of(turnierTypJpa));
 
-        boolean isRandori = einstellungenService.isRandori();
+        boolean isRandori = einstellungenService.isRandori(turnierUUID);
 
         assertFalse(isRandori);
     }
