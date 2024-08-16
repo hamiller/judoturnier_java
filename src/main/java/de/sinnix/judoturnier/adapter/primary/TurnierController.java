@@ -137,7 +137,9 @@ public class TurnierController {
 			.collect(Collectors.toSet());
 		Einstellungen einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
 
-		List<Matte> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte);
+		List<MatteDto> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte).stream()
+			.map(m -> DtosConverter.convertFromMatte(m))
+			.collect(Collectors.toList());
 
 		logger.trace("wettkampfreihenfolgeJeMatte {} ", wettkampfreihenfolgeJeMatte);
 		ModelAndView mav = new ModelAndView("begegnungen_randori");
@@ -161,7 +163,9 @@ public class TurnierController {
 			.collect(Collectors.toSet());
 		Einstellungen einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
 
-		List<Matte> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte);
+		List<MatteDto> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte).stream()
+			.map(m -> DtosConverter.convertFromMatte(m))
+			.collect(Collectors.toList());
 
 		ModelAndView mav = new ModelAndView("begegnungen_normal");
 		mav.addObject("turnierid", turnierid);
@@ -279,24 +283,7 @@ public class TurnierController {
 	}
 
 	private List<MatteDto> gruppiereNachGruppen(List<Matte> matten) {
-		return matten.stream().map(mat -> {
-			List<GruppenRunde> gruppenRunden = new ArrayList<>();
-			gruppenRunden.add(new GruppenRunde(new ArrayList<>()));
-			int gruppenRundenNummer = 0;
-
-			for (int i = 0; i < mat.runden().size(); i++) {
-				Integer aktuelleGruppe = mat.runden().get(i).gruppe().id();
-				Integer vorherigeGruppe = i > 0 ? mat.runden().get(i - 1).gruppe().id() : aktuelleGruppe;
-
-				if (!aktuelleGruppe.equals(vorherigeGruppe)) {
-					gruppenRunden.add(new GruppenRunde(new ArrayList<>()));
-					gruppenRundenNummer++;
-				}
-				gruppenRunden.get(gruppenRundenNummer).runde().add(mat.runden().get(i));
-			}
-
-			return new MatteDto(mat.id(), gruppenRunden);
-		}).collect(Collectors.toList());
+		return matten.stream().map(mat -> DtosConverter.convertFromMatte(mat)).collect(Collectors.toList());
 	}
 
 	private static List<Matte> filtereMatten(String altersklasse, List<Matte> wettkampfreihenfolgeJeMatte) {

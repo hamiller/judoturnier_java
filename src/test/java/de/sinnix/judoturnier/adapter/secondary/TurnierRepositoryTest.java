@@ -64,7 +64,7 @@ class TurnierRepositoryTest {
 	@Test
 	void testLadeBegegnung() {
 		UUID turnierUUID = UUID.randomUUID();
-		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(1, "Gruppe1", "typ1", List.of(), turnierUUID);
+		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(1, "Gruppe1", "typ1", Altersklasse.U11, List.of(), turnierUUID);
 		Benutzer benutzer = new Benutzer(UUID.randomUUID().toString(), "user1", "Name, Vorname", List.of("ROLE_ZUSCHAUER"));
 		Wertung wertung = new Wertung(
 			UUID.randomUUID(),
@@ -115,7 +115,7 @@ class TurnierRepositoryTest {
 	public void testSpeichereMatten() {
 		UUID turnierUUID = WettkaempferFixtures.turnierUUID;
 		UUID rundeUUID = UUID.randomUUID();
-		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of(), turnierUUID);
+		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", Altersklasse.U11, List.of(), turnierUUID);
 		List<Begegnung> begegnungList = new ArrayList<>();
 		Begegnung.BegegnungId begegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1);
 		begegnungList.add(new Begegnung(null, begegnungId, rundeUUID,2, 3, 4, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(), wkg, turnierUUID));
@@ -124,7 +124,7 @@ class TurnierRepositoryTest {
 		Matte matte = new Matte(2, rundenList);
 		List<Matte> mattenList = Arrays.asList(matte);
 
-		WettkampfGruppeJpa wkgJpa = new WettkampfGruppeJpa(1, "name", "typ", turnierUUID.toString());
+		WettkampfGruppeJpa wkgJpa = new WettkampfGruppeJpa(1, "name", "typ", "U11", turnierUUID.toString());
 		List<BegegnungJpa> begegnungJpaList = new ArrayList<>();
 		begegnungJpaList.add(new BegegnungJpa(null, rundeUUID.toString(), 2, 3, 4, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, List.of(), wkgJpa.getId(), turnierUUID.toString(), 1, 1, 1));
 
@@ -141,13 +141,13 @@ class TurnierRepositoryTest {
 	public void testSpeichereMatte() {
 		UUID turnierUUID = WettkaempferFixtures.turnierUUID;
 		UUID rundeUUID = UUID.randomUUID();
-		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of(), turnierUUID);
+		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", Altersklasse.U11, List.of(), turnierUUID);
 		Begegnung.BegegnungId begegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1);
 		Begegnung begegnung = new Begegnung(null, begegnungId, rundeUUID,5, 3, 4, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(), wkg, turnierUUID);
 		Runde runde = new Runde(rundeUUID,3, 4, 4, 5, Altersklasse.U12, wkg, Arrays.asList(begegnung));
 		Matte matte = new Matte(5, Arrays.asList(runde));
 
-		WettkampfGruppeJpa wkgJpa = new WettkampfGruppeJpa(1, "name", "typ", turnierUUID.toString());
+		WettkampfGruppeJpa wkgJpa = new WettkampfGruppeJpa(1, "name", "typ", "U11", turnierUUID.toString());
 		BegegnungJpa begegnungJpa = new BegegnungJpa(null, rundeUUID.toString(), 5, 3, 4, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, List.of(), wkgJpa.getId(), turnierUUID.toString(), 1, 1, 1);
 
 		when(wettkampfGruppeJpaRepository.findById(any())).thenReturn(Optional.of(wkgJpa));
@@ -163,7 +163,7 @@ class TurnierRepositoryTest {
 	public void testLadeMattenRandori() {
 		UUID turnierUUID = UUID.randomUUID();
 		UUID rundeUUID = UUID.randomUUID();
-		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of(), turnierUUID);
+		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", Altersklasse.U11, List.of(), turnierUUID);
 		BegegnungJpa jpa1 = new BegegnungJpa();
 		jpa1.setId(1);
 		BegegnungJpa jpa2 = new BegegnungJpa();
@@ -215,7 +215,7 @@ class TurnierRepositoryTest {
 	@Test
 	public void testLadeMattenNormal() {
 		UUID turnierUUID = UUID.randomUUID();
-		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", List.of(), turnierUUID);
+		WettkampfGruppe wkg = new WettkampfGruppe(1, "name", "typ", Altersklasse.U11, List.of(), turnierUUID);
 		BegegnungJpa jpa1 = new BegegnungJpa();
 		jpa1.setId(1);
 		BegegnungJpa jpa2 = new BegegnungJpa();

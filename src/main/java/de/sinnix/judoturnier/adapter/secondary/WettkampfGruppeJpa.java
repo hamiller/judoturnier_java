@@ -25,6 +25,7 @@ public class WettkampfGruppeJpa {
 	Integer id;
 	String name;
 	String typ;
+	String altersklasse;
 	@Column(name = "turnier_uuid", nullable = false)
 	private String turnierUUID;
 }

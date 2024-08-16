@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 /**
  * Anzahl der Begegnungen bei 8 Teilnehmern:
  *
- * Anzahl der Begegnungen = (n−1)+(n/2 -1)= 3n/2 -2
  *
  * Gewinnerrunde:
  * 1. Runde: 4 Begegnungen (8 Teilnehmer)
@@ -48,7 +47,7 @@ public class DoppelKOSystem implements Algorithmus {
 		// Teilnehmer der Gruppe
 		List<Wettkaempfer> teilnehmer = gewichtsklassenGruppe.teilnehmer();
 
-		List<Begegnung> begegnungen = erstelleBegegnungen(teilnehmer);
+		List<Begegnung> begegnungen = erstelleBegegnungen(teilnehmer, gewichtsklassenGruppe.turnierUUID());
 		// Ausgabe des Turnierbaums
 		for (Begegnung begegnung : begegnungen) {
 			logger.debug("{} - Wettkaempfer1: {}, Wettkaempfer2: {}, Ergebnis: {}", begegnung.getBegegnungId(), begegnung.getWettkaempfer1().map(Wettkaempfer::name), begegnung.getWettkaempfer2().map(Wettkaempfer::name), begegnung.getWertungen());
@@ -65,6 +64,7 @@ public class DoppelKOSystem implements Algorithmus {
 			Integer.parseInt(id),
 			gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
 			"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
+			gewichtsklassenGruppe.altersKlasse(),
 			begegnungenJeRunde,
 			gewichtsklassenGruppe.turnierUUID()
 		);
@@ -74,7 +74,7 @@ public class DoppelKOSystem implements Algorithmus {
 	}
 
 	// Erstelle Begegnungen dieser Gruppe (Gewinner- und Trostrunden)
-	private List<Begegnung> erstelleBegegnungen(List<Wettkaempfer> teilnehmer) {
+	private List<Begegnung> erstelleBegegnungen(List<Wettkaempfer> teilnehmer, UUID turnierUUID) {
 		List<Begegnung> result = new ArrayList<>();
 
 		// Alle Begegnungen in der Gruppe generieren
@@ -93,7 +93,7 @@ public class DoppelKOSystem implements Algorithmus {
 		// erste Gewinner-Runde zur Initialisierung der Spieler
 		for (int akuellePaarungsId = 1; akuellePaarungsId <= paarungenRunde1.size(); akuellePaarungsId++) {
 			var begegnung = new Begegnung();
-			begegnung.setTurnierUUID(UUID.randomUUID());
+			begegnung.setTurnierUUID(turnierUUID);
 			begegnung.setBegegnungId(erstelleID(Begegnung.RundenTyp.GEWINNERRUNDE, 1, akuellePaarungsId));
 			begegnung.setWettkaempfer1(paarungenRunde1.get(akuellePaarungsId - 1).getLeft());
 			begegnung.setWettkaempfer2(paarungenRunde1.get(akuellePaarungsId - 1).getRight());
@@ -104,7 +104,7 @@ public class DoppelKOSystem implements Algorithmus {
 		// leere Gewinner-Runden
 		for (int aktuelleRunde = 2; aktuelleRunde <= gesamtRunden; aktuelleRunde++) {
 			for (int akuellePaarungsId = 1; akuellePaarungsId <= Math.pow(2, gesamtRunden - aktuelleRunde); akuellePaarungsId++) {
-				result.add(leereBegegnung(erstelleID(Begegnung.RundenTyp.GEWINNERRUNDE, aktuelleRunde, akuellePaarungsId)));
+				result.add(leereBegegnung(erstelleID(Begegnung.RundenTyp.GEWINNERRUNDE, aktuelleRunde, akuellePaarungsId), turnierUUID));
 			}
 		}
 		logger.trace("Jetzt haben wir {} Begegnungen", result.size());
@@ -118,7 +118,7 @@ public class DoppelKOSystem implements Algorithmus {
 			// Anzahl der Begegnungen halbiert sich in jeder ungeraden Runde im Trostrunden-Turnierbaum
 			for (int akuellePaarungsId = 1; akuellePaarungsId <= Math.pow(2, gesamtRunden - 1 - Math.floorDiv(aktuelleRunde + 1, 2)); akuellePaarungsId++) {
 				logger.trace("akuellePaarungsId {}", akuellePaarungsId);
-				result.add(leereBegegnung(erstelleID(Begegnung.RundenTyp.TROSTRUNDE, aktuelleRunde, akuellePaarungsId)));
+				result.add(leereBegegnung(erstelleID(Begegnung.RundenTyp.TROSTRUNDE, aktuelleRunde, akuellePaarungsId), turnierUUID));
 			}
 		}
 		logger.trace("Jetzt haben wir {} Begegnungen", result.size());
@@ -168,9 +168,9 @@ public class DoppelKOSystem implements Algorithmus {
 		return new Begegnung.BegegnungId(rundenTyp, runde, akuellePaarungsId);
 	}
 
-	private Begegnung leereBegegnung(Begegnung.BegegnungId begegnungId) {
+	private Begegnung leereBegegnung(Begegnung.BegegnungId begegnungId, UUID turnierUUID) {
 		var begegnung = new Begegnung();
-		begegnung.setTurnierUUID(UUID.randomUUID());
+		begegnung.setTurnierUUID(turnierUUID);
 		begegnung.setBegegnungId(begegnungId);
 		// leer
 		begegnung.setWettkaempfer1(Optional.empty());

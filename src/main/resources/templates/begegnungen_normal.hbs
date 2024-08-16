@@ -45,10 +45,10 @@
       <div class="matte tabcontent" id="{{id}}">
           <div class="listeneintrag-titel">Matte {{id}}</div>
           <div class="wettkampfgruppe">
-              {{#each runden}}
+              {{#each gruppenRunden}}
+              {{#each runde}}
                 {{#each begegnungen}}
-
-                    <div class="">(Wettkampf Nr. {{mattenRunde}} auf Matte {{../id}}, Runde Nr. {{gruppenRunde}} für Gruppe {{gruppe.id}}, Gesamtrunde {{rundeGesamt}})</div>
+                  <div class="">Gruppe {{gruppe.id}} Typ {{rundenTyp}} Runde {{runde}} Paarung {{akuellePaarung}}</div>
 
                   <a href="/turnier/{{turnierid}}/begegnungen/normal/{{begegnungId}}">
                   <div class="listeneintrag vs {{wertungVorhanden wertungen}}">
@@ -58,6 +58,7 @@
                   </div>
                   </a>
                 {{/each}}
+              {{/each}}
               {{/each}}
           </div>
       </div>

@@ -36,6 +36,7 @@ public class JederGegenJeden implements Algorithmus {
 				Integer.parseInt(id),
 				gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
 				"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
+				gewichtsklassenGruppe.altersKlasse(),
 				begegnungen,
 				gewichtsklassenGruppe.turnierUUID()
 			);

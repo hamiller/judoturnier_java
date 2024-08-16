@@ -29,9 +29,9 @@ class HelperSourceTest {
 		var a = UUID.randomUUID();
 		var b = UUID.randomUUID();
 		var c = UUID.randomUUID();
-		List<Runde> runden = List.of(new Runde(a, 1, 1, 1,1, Altersklasse.U11, null, List.of()),
-			new Runde(b, 2, 2, 2,2, Altersklasse.U11, null, List.of()),
-			new Runde(c, 3, 3, 3,3, Altersklasse.U11, null, List.of())
+		List<RundeDto> runden = List.of(new RundeDto(a, 1, 1, 1,1, Altersklasse.U11, null, List.of()),
+			new RundeDto(b, 2, 2, 2,2, Altersklasse.U11, null, List.of()),
+			new RundeDto(c, 3, 3, 3,3, Altersklasse.U11, null, List.of())
 			);
 		var newRunden = HelperSource.vorherigeRunde(runden, null);
 

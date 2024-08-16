@@ -50,41 +50,32 @@
         <div class="matte tabcontent" id="{{id}}">
           <div class="listeneintrag-titel">Matte {{id}}</div>
           <div class="wettkampfgruppe">
-              {{#each (vorherigeRunde runden)}}
-                  {{#if left}}
-                      {{#if (istGleich (combineString left.gruppe.name left.altersklasse) (combineString right.gruppe.name right.altersklasse))}}
-                      {{else}}
-                          <div class="listeneintrag-header">
-                              {{#if (istGleich right.altersklasse null)}}
-                                  <div class="listeneintrag-titel pause">PAUSE</div>
-                              {{else}}
-                                  <div class="listeneintrag-titel">{{right.gruppe.name}} ({{right.altersklasse}})</div>
-                                  <div class="listeneintrag-titel-info rechts">(Wettkampf Nr. {{right.mattenRunde}} auf Matte {{../id}}, Runde Nr. {{right.gruppenRunde}} für Gruppe {{right.gruppe.name}}, Gesamtrunde {{right.rundeGesamt}})</div>
-                              {{/if}}
-                          </div>
-                      {{/if}}
-                  {{else}}
+
+              {{#each gruppenRunden}}
+
+                  {{#each runde}}
                       <div class="listeneintrag-header">
-                          {{#if (istGleich right.altersklasse null)}}
+                          {{#if (istGleich altersklasse null)}}
                               <div class="listeneintrag-titel pause">PAUSE</div>
                           {{else}}
-                              <div class="listeneintrag-titel">{{right.gruppe.name}} ({{right.altersklasse}})</div>
-                              <div class="listeneintrag-titel-info rechts">(Wettkampf Nr. {{right.mattenRunde}} auf Matte {{../id}}, Runde Nr. {{right.gruppenRunde}} für Gruppe {{right.gruppe.name}}, Gesamtrunde {{right.rundeGesamt}})</div>
+                              <div class="listeneintrag-titel">{{gruppe.name}} ({{altersklasse}})</div>
+                              <div class="listeneintrag-titel-info rechts">(Wettkampf Nr. {{mattenRunde}} auf Matte {{../id}}, Runde Nr. {{gruppenRunde}} für Gruppe {{gruppe.name}}, Gesamtrunde {{rundeGesamt}})</div>
                           {{/if}}
                       </div>
-                  {{/if}}
-                  {{#each right.begegnungen}}
-                      {{#if (istGleich wettkaempfer1.name null)}}
-                          <div class="listeneintrag">(Ansonsten wäre nun Gruppe {{../gruppe.name}} an der Reihe)</div>
-                      {{else}}
-                          <a href="/turnier/{{turnierid}}/begegnungen/randori/{{begegnungId}}">
-                              <div class="listeneintrag vs {{wertungVorhanden wertungen}}">
-                                  <div class="wettkaempfer name {{#optional wettkaempfer1.farbe}}{{wettkaempfer1.farbe.get}}{{/optional}}">{{wettkaempfer1.name}}</div> <div>({{wettkaempfer1.verein.name}})</div>
-                                  <div class="center">vs</div>
-                                  <div class="wettkaempfer name {{#optional wettkaempfer2.farbe}}{{wettkaempfer2.farbe.get}}{{/optional}}">{{wettkaempfer2.name}}</div> <div>({{wettkaempfer2.verein.name}})</div>
-                              </div>
-                          </a>
-                      {{/if}}
+
+                      {{#each begegnungen}}
+                          {{#if (istGleich wettkaempfer1.name null)}}
+                              <div class="listeneintrag">(Ansonsten wäre nun Gruppe {{../gruppe.name}} an der Reihe)</div>
+                          {{else}}
+                              <a href="/turnier/{{turnierid}}/begegnungen/randori/{{begegnungId}}">
+                                  <div class="listeneintrag vs {{wertungVorhanden wertungen}}">
+                                      <div class="wettkaempfer name {{#optional wettkaempfer1.farbe}}{{wettkaempfer1.farbe.get}}{{/optional}}">{{wettkaempfer1.name}}</div> <div>({{wettkaempfer1.verein.name}})</div>
+                                      <div class="center">vs</div>
+                                      <div class="wettkaempfer name {{#optional wettkaempfer2.farbe}}{{wettkaempfer2.farbe.get}}{{/optional}}">{{wettkaempfer2.name}}</div> <div>({{wettkaempfer2.verein.name}})</div>
+                                  </div>
+                              </a>
+                          {{/if}}
+                      {{/each}}
                   {{/each}}
               {{/each}}
           </div>

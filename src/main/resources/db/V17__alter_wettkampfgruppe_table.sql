@@ -1,0 +1,1 @@
+ALTER TABLE wettkampfgruppe ADD COLUMN altersklasse VARCHAR(255);

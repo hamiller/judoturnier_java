@@ -23,7 +23,7 @@ public class WettkaempferConverter {
 
 	public WettkaempferJpa convertFromWettkaempfer(Wettkaempfer wettkaempfer) {
 		if (wettkaempfer == null) {
-			logger.debug("Kein Wettkaempfer zum convertieren erhalten!");
+			logger.trace("Kein Wettkaempfer zum convertieren erhalten!");
 			return null;
 		}
 		WettkaempferJpa jpa = new WettkaempferJpa();
@@ -42,7 +42,7 @@ public class WettkaempferConverter {
 
 	public Wettkaempfer convertToWettkaempfer(WettkaempferJpa jpa) {
 		if (jpa == null) {
-			logger.debug("Kein WettkaempferJpa zum convertieren erhalten!");
+			logger.trace("Kein WettkaempferJpa zum convertieren erhalten!");
 			return null;
 		}
 		Wettkaempfer wettkaempfer = new Wettkaempfer(

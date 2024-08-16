@@ -87,7 +87,7 @@ class SortiererTest {
 		UUID rundeUUID4 = UUID.randomUUID();
 
 		List<WettkampfGruppe> wettkampfGruppeList = Arrays.asList(
-			new WettkampfGruppe(100, "Antilope", "(Gewichtskl.1 U11)", Arrays.asList(new BegegnungenJeRunde(
+			new WettkampfGruppe(100, "Antilope", "(Gewichtskl.1 U11)", Altersklasse.U11, Arrays.asList(new BegegnungenJeRunde(
 				Arrays.asList(
 					new Begegnung(1, new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), rundeUUID1, 1, 1, 1, 1,
 						Optional.of(new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)),
@@ -111,7 +111,7 @@ class SortiererTest {
 						Optional.of(new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)),
 						Optional.of(new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)), null, null, turnierUUID)))
 			), turnierUUID),
-			new WettkampfGruppe(101, "Tiger", "(Gewichtskl.1 U11)", Arrays.asList(new BegegnungenJeRunde(
+			new WettkampfGruppe(101, "Tiger", "(Gewichtskl.1 U11)", Altersklasse.U11, Arrays.asList(new BegegnungenJeRunde(
 				Arrays.asList(
 					new Begegnung(7, new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), rundeUUID4, 1, 2, 1, 7,
 						Optional.of(new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)),

@@ -109,12 +109,14 @@ public class HelperSource {
 		return (wertung != null && wertung.size() > 0 && (wertung.get(0).getKampfgeistWettkaempfer1() != null || wertung.get(0).getSieger() != null)) ? "vorhanden" : "";
 	}
 
-	public static List<ImmutablePair<Runde, Runde>> vorherigeRunde(List<Runde> runden, Options options) {
-		List<ImmutablePair<Runde, Runde>> result = new ArrayList<>();
-		for (int i = 0; i < runden.size(); i++) {
-			Runde vorherigeRunde = i > 0 ? runden.get(i - 1) : null;
-			Runde runde = runden.get(i);
-			result.add(new ImmutablePair(vorherigeRunde, runde));
+	public static List<ImmutablePair<RundeDto, RundeDto>> vorherigeRunde(List<RundeDto> runden, Options options) {
+		List<ImmutablePair<RundeDto, RundeDto>> result = new ArrayList<>();
+		if (runden != null) {
+			for (int i = 0; i < runden.size(); i++) {
+				RundeDto vorherigeRunde = i > 0 ? runden.get(i - 1) : null;
+				RundeDto runde = runden.get(i);
+				result.add(new ImmutablePair(vorherigeRunde, runde));
+			}
 		}
 		return result;
 	}

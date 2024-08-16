@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class MatteFixtures {
 	private static final UUID            turnierUUID    = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-	private static final WettkampfGruppe WKG            = new WettkampfGruppe(1, "name", "typ", List.of(), turnierUUID);
+	private static final WettkampfGruppe WKG            = new WettkampfGruppe(1, "name", "typ", Altersklasse.U11, List.of(), turnierUUID);
 	private static final UUID rundeUUID1 = UUID.randomUUID();
 	private static final UUID rundeUUID2 = UUID.randomUUID();
 	private static final UUID rundeUUID3 = UUID.randomUUID();

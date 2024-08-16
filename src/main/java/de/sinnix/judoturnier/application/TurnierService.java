@@ -10,6 +10,7 @@ import de.sinnix.judoturnier.application.algorithm.DoppelKOSystem;
 import de.sinnix.judoturnier.application.algorithm.JederGegenJeden;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
+import de.sinnix.judoturnier.model.BegegnungenJeRunde;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
@@ -147,6 +148,18 @@ public class TurnierService {
 		checkGruppenSindValide(gwks);
 
 		List<WettkampfGruppe> wettkampfGruppen = erstelleWettkampfgruppen(gwks, algorithmus, einstellungen.gruppengroesse().anzahl());
+
+		for (WettkampfGruppe wettkampfGruppe : wettkampfGruppen) {
+			int r = 1;
+			for (BegegnungenJeRunde begegnungenJeRunde : wettkampfGruppe.alleRundenBegegnungen()) {
+				logger.debug("Runde {}", r);
+				for (Begegnung begegnung : begegnungenJeRunde.begegnungenJeRunde()) {
+					logger.debug("{} | {} - Wettkaempfer1: {}, Wettkaempfer2: {}", begegnung.getId(), begegnung.getBegegnungId(),  begegnung.getWettkaempfer1().map(Wettkaempfer::name), begegnung.getWettkaempfer2().map(Wettkaempfer::name));
+				}
+				r++;
+			}
+		}
+
 		List<Matte> matten = erstelleGruppenReihenfolge(wettkampfGruppen, einstellungen.mattenAnzahl().anzahl(), einstellungen.wettkampfReihenfolge());
 
 		turnierRepository.speichereMatten(matten);

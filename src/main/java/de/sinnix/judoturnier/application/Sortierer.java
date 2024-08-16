@@ -116,8 +116,8 @@ public class Sortierer {
 		for (int gruppenNr = 0; gruppenNr < gruppen.size(); gruppenNr += 2) {
 			WettkampfGruppe gruppe1 = gruppen.get(gruppenNr);
 			WettkampfGruppe gruppe2 = gruppen.get(gruppenNr + 1);
-			Altersklasse altersKlasse1 = gruppe1.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().get().altersklasse();
-			Altersklasse altersKlasse2 = gruppe2.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().get().altersklasse();
+			Altersklasse altersKlasse1 = gruppe1.altersklasse();
+			Altersklasse altersKlasse2 = gruppe2.altersklasse();
 
 			// Abwechselnd die Begegnungen der gruppe1 und gruppe2 nehmen und der Matte hinzufügen
 			int maxAnzahlBegegnungen = Math.max(gruppe1.alleRundenBegegnungen().size(), gruppe2.alleRundenBegegnungen().size());
@@ -173,13 +173,14 @@ public class Sortierer {
 	}
 
 	private List<Runde> gruppiereAbwechselndTrios(List<WettkampfGruppe> gruppen, Integer matteId) {
+		logger.debug("gruppiere Matte {}", matteId);
 		List<Runde> runden = new ArrayList<>();
 		WettkampfGruppe gruppe1 = gruppen.get(0);
 		WettkampfGruppe gruppe2 = gruppen.get(1);
 		WettkampfGruppe gruppe3 = gruppen.get(2);
-		Altersklasse altersKlasse1 = gruppe1.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().get().altersklasse();
-		Altersklasse altersKlasse2 = gruppe2.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().get().altersklasse();
-		Altersklasse altersKlasse3 = gruppe3.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(0).getWettkaempfer1().get().altersklasse();
+		Altersklasse altersKlasse1 = gruppe1.altersklasse();
+		Altersklasse altersKlasse2 = gruppe2.altersklasse();
+		Altersklasse altersKlasse3 = gruppe3.altersklasse();
 
 		// Abwechselnd die Begegnungen der gruppe1 und gruppe2 nehmen und der Matte hinzufügen
 		for (int r = 0; r < Math.max(gruppe1.alleRundenBegegnungen().size(), Math.max(gruppe2.alleRundenBegegnungen().size(), gruppe3.alleRundenBegegnungen().size())); r++) {

@@ -7,6 +7,7 @@ public record WettkampfGruppe(
 	Integer id,
 	String name,
 	String typ,
+	Altersklasse altersklasse,
 	List<BegegnungenJeRunde> alleRundenBegegnungen,
 	UUID turnierUUID) {
 }
