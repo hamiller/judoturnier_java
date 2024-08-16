@@ -80,6 +80,56 @@
   {{> footer}}
 
     <script>
+        const renewBegegnungen = async () => {
+            var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+            if (sicher) {
+                console.log("Erstelle alle Begegnungen neu");
+                fetch('/turnier/{{turnierid}}/begegnungen', {method: 'POST', redirect: 'follow'})
+                        .then(response => {
+                            if (response.redirected) {
+                                window.location.href = response.url;
+                            } else if (response.ok) {
+                                window.location.reload();
+                            } else {
+                                console.error('Error:', response.statusText);
+                            }
+                        })
+            }
+        };
+
+        const renewBegegnung = async (data) => {
+            var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in der Altersklasse\n\t" + data + "\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+            if (sicher) {
+                console.log("Erstelle die Begegnungen neu", data);
+                fetch('/turnier/{{turnierid}}/begegnung', {method: 'POST', body: data, redirect: 'follow'})
+                        .then(response => {
+                            if (response.redirected) {
+                                window.location.href = response.url;
+                            } else if (response.ok) {
+                                window.location.reload();
+                            } else {
+                                console.error('Error:', response.statusText);
+                            }
+                        })
+            }
+        };
+
+        const deleteBegegnungen = async (altersklasse) => {
+            var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern aller Altersklassen\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+            if (sicher) {
+                fetch('/turnier/{{turnierid}}/begegnung', {method: 'DELETE', redirect: 'follow'})
+                        .then(response => {
+                            if (response.redirected) {
+                                window.location.href = response.url;
+                            } else if (response.ok) {
+                                window.location.reload();
+                            } else {
+                                console.error('Error:', response.statusText);
+                            }
+                        })
+            }
+        };
+
         const openMatte = (evt, id) => {
             // Declare all variables
             var i, tabcontent, tablinks;

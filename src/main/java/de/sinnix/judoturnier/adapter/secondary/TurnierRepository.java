@@ -113,13 +113,16 @@ public class TurnierRepository {
 	public void speichereMatte(Matte matte) {
 		List<BegegnungJpa> begegnungJpaList = new ArrayList<>();
 		for (Runde runde : matte.runden()) {
-			Optional<WettkampfGruppeJpa> optionalWettkampfGruppeJpa = wettkampfGruppeJpaRepository.findById(runde.gruppe().id());
-
+			Integer wettkamfpGruppeID = runde.gruppe().id();
+			Optional<WettkampfGruppeJpa> optionalWettkampfGruppeJpa = wettkampfGruppeJpaRepository.findById(wettkamfpGruppeID);
 			if (optionalWettkampfGruppeJpa.isEmpty()) {
-				logger.info("Erstelle neue Wettkampfgruppe {} {}", runde.gruppe().name(), runde.gruppe().id());
-				optionalWettkampfGruppeJpa = Optional.of(wettkampfGruppeJpaRepository.save(wettkampfGruppeConverter.convertFromWettkampfGruppe(runde.gruppe())));
-				logger.info("optionalWettkampfGruppeJpa {}", optionalWettkampfGruppeJpa);
+				logger.info("Erstelle neue Wettkampfgruppe {} {}", runde.gruppe().name(), wettkamfpGruppeID);
+				WettkampfGruppeJpa wettkampfGruppeJpa = wettkampfGruppeConverter.convertFromWettkampfGruppe(runde.gruppe());
+				wettkampfGruppeJpa = wettkampfGruppeJpaRepository.save(wettkampfGruppeJpa);
+
+				optionalWettkampfGruppeJpa = Optional.of(wettkampfGruppeJpa);
 			}
+
 			var wettkampfGruppe = wettkampfGruppeConverter.convertToWettkampfGruppe(optionalWettkampfGruppeJpa.get());
 			var rundeId = runde.rundeId();
 
