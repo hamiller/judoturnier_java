@@ -4,23 +4,26 @@
 <body>
   {{> title }}
   {{> nav }}
-  
+
   <div>
-    <div class="bodyheader">
-      <h2>Begegnungen</h2>
-      <div onclick="document.getElementById('infobox').classList.toggle('hidden');" ><span class="material-icons md-48" title="Info">info</span></div>
-      <div id="infobox" class="hidden">
-      {{#each gewichtsklassenGruppe}}
-        <div>{{altersKlasse}} {{gewichtsklasse.name}}: {{teilnehmer.length}} Teilnehmer</div>
-      {{/each}}
+      <div class="bodyheader no-print">
+          <div class="navbar navbar_fixed">
+              <ul class="nav-links-sub links">
+                  <li><a href="#" onclick="renewBegegnungen(); return false;"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen neu erstellen">create_new_folder</span> Alle Wettkampfgruppen neu erstellen</a></li>
+                  <li><a href="#" onclick="deleteBegegnungen(); return false;"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen löschen">autorenew</span> Alle Wettkampfgruppen löschen</a></li>
+              </ul>
+              {{#each altersklassen}}
+                  <ul class="nav-links-sub links">
+                      <li><a href="#" type="button" onclick="renewBegegnung( '{{this}}' ); return false;" ><span class="material-icons md-48 centered" title="Einzelne Wettkampfgruppen neu zuordnen">autorenew</span> Wettkampfgruppen {{this}} neu zuordnen</a></li>
+                      <li><a href="/turnier/{{turnierid}}/qrcodes/{{this}}" target="_blank" class=""><span class="material-icons md-48 centered" title="QRCode">print</span> QR-Codes {{this}}</a></li>
+                  </ul>
+              {{/each}}
+          </div>
       </div>
 
-      <form id="turniereinstellungenformular" action="/turnier/{{turnierid}}/begegnungen" method="POST">
-        <div class="actions">
-          <button type="submit">Wettkampfgruppen erstellen<span class="material-icons md-48" title="Wettkampfgruppen erstellen">create_new_folder</span></button>
-        </div>
-      </form>
-    </div>
+      {{#if preverror}}
+          <div class="errormsg">Der vorheriger Wettkämpfer konnte nicht angelegt werden: {{preverror}}</div>
+      {{/if}}
 
     <div class="generalcontent">
         {{#if separatealtersklassen.name "GETRENNT"}}
@@ -47,8 +50,16 @@
           <div class="wettkampfgruppe">
               {{#each gruppenRunden}}
               {{#each runde}}
+                <div class="listeneintrag-header">
+                  {{#if (istGleich altersklasse null)}}
+                      <div class="listeneintrag-titel pause">PAUSE</div>
+                  {{else}}
+                      <div class="listeneintrag-titel">Gruppe {{gruppe.id}} ({{altersklasse}})</div>
+                  {{/if}}
+                </div>
+
                 {{#each begegnungen}}
-                  <div class="">Gruppe {{gruppe.id}} Typ {{rundenTyp}} Runde {{runde}} Paarung {{akuellePaarung}}</div>
+                  <div class="">Typ {{rundenTyp}} Runde {{runde}} Paarung {{akuellePaarung}}</div>
 
                   <a href="/turnier/{{turnierid}}/begegnungen/normal/{{begegnungId}}">
                   <div class="listeneintrag vs {{wertungVorhanden wertungen}}">
