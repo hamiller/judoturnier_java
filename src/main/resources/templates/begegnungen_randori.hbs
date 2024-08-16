@@ -68,7 +68,7 @@
                               <div class="listeneintrag">(Ansonsten wäre nun Gruppe {{../gruppe.name}} an der Reihe)</div>
                           {{else}}
                               <a href="/turnier/{{turnierid}}/begegnungen/randori/{{begegnungId}}">
-                                  <div class="listeneintrag vs {{wertungVorhanden wertungen}}">
+                                  <div class="listeneintrag vs {{wertungVorhanden alleWertungen}}">
                                       <div class="wettkaempfer name {{#optional wettkaempfer1.farbe}}{{wettkaempfer1.farbe.get}}{{/optional}}">{{wettkaempfer1.name}}</div> <div>({{wettkaempfer1.verein.name}})</div>
                                       <div class="center">vs</div>
                                       <div class="wettkaempfer name {{#optional wettkaempfer2.farbe}}{{wettkaempfer2.farbe.get}}{{/optional}}">{{wettkaempfer2.name}}</div> <div>({{wettkaempfer2.verein.name}})</div>

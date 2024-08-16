@@ -145,7 +145,8 @@ public class HelperSource {
 		if (optional == null || !optional.isPresent()) {
 			return "";
 		}
-		return optional.get();
+//		return optional.get();
+		return options.fn(optional.get());
 	}
 
 	public static String disable(Boolean isEditable, Options options) {
