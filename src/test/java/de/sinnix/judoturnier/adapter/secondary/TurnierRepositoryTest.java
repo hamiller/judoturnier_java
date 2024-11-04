@@ -127,7 +127,7 @@ class TurnierRepositoryTest {
 		List<BegegnungJpa> begegnungJpaList = new ArrayList<>();
 		begegnungJpaList.add(new BegegnungJpa(null, rundeUUID.toString(), 2, 3, 4, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, List.of(), wkgJpa.getId(), turnierUUID.toString(), 1, 1, 1));
 
-		when(wettkampfGruppeJpaRepository.findById(any())).thenReturn(Optional.of(wkgJpa));
+		when(wettkampfGruppeJpaRepository.findByIdAndTurnierUUID(any(), any())).thenReturn(Optional.of(wkgJpa));
 		when(wettkampfGruppeConverter.convertToWettkampfGruppe(any())).thenReturn(wkg);
 		when(begegnungConverter.convertFromBegegnung(begegnungList.get(0))).thenReturn(begegnungJpaList.get(0));
 
@@ -154,7 +154,7 @@ class TurnierRepositoryTest {
 		BegegnungJpa begegnungJpa1 = new BegegnungJpa(null, runde1UUID.toString(), 5, 3, 4, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, List.of(), wkgJpa.getId(), turnierUUID.toString(), 1, 1, 1);
 		BegegnungJpa begegnungJpa2 = new BegegnungJpa(null, runde2UUID.toString(), 5, 3, 4, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, List.of(), wkgJpa.getId(), turnierUUID.toString(), 1, 1, 1);
 
-		when(wettkampfGruppeJpaRepository.findById(any())).thenReturn(Optional.of(wkgJpa));
+		when(wettkampfGruppeJpaRepository.findByIdAndTurnierUUID(any(), any())).thenReturn(Optional.of(wkgJpa));
 		when(wettkampfGruppeConverter.convertToWettkampfGruppe(any())).thenReturn(wkg);
 		when(begegnungConverter.convertFromBegegnung(begegnung1)).thenReturn(begegnungJpa1);
 		when(begegnungConverter.convertFromBegegnung(begegnung2)).thenReturn(begegnungJpa2);
@@ -182,7 +182,7 @@ class TurnierRepositoryTest {
 		BegegnungJpa begegnungJpa1 = new BegegnungJpa(null, runde1UUID.toString(), 5, 3, 4, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, List.of(), wkgJpa.getId(), turnierUUID.toString(), 1, 1, 1);
 		BegegnungJpa begegnungJpa2 = new BegegnungJpa(null, runde2UUID.toString(), 5, 3, 4, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, List.of(), wkgJpa.getId(), turnierUUID.toString(), 1, 1, 1);
 
-		when(wettkampfGruppeJpaRepository.findById(any())).thenReturn(Optional.empty(), Optional.of(wkgJpa));
+		when(wettkampfGruppeJpaRepository.findByIdAndTurnierUUID(any(), any())).thenReturn(Optional.empty(), Optional.of(wkgJpa));
 		when(wettkampfGruppeJpaRepository.save(any())).thenReturn(wkgJpa);
 		when(wettkampfGruppeConverter.convertToWettkampfGruppe(any())).thenReturn(wkg);
 		when(begegnungConverter.convertFromBegegnung(begegnung1)).thenReturn(begegnungJpa1);
