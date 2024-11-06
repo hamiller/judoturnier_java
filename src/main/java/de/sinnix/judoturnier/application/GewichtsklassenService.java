@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Stack;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -85,10 +86,13 @@ public class GewichtsklassenService {
 
 			// erstelle random Namen für die Gruppen
 			var gruppenNamen = RandoriGruppenName.alleGruppenNamen();
+			Stack<RandoriGruppenName> aktuelleGruppenNamen = new Stack<>();
+			aktuelleGruppenNamen.addAll(gruppenNamen);
+			// entferne schon genutzte Namen
+			gewichtsklassenRepository.findAll(turnierUUID).stream().forEach(gwg -> gwg.name().map(n -> aktuelleGruppenNamen.removeElement(n)));
 
 			for (List<Wettkaempfer> wks : wettkaempferNachAlter) {
 				int numGroups = (wks.size() + gruppenGroesse - 1) / gruppenGroesse;
-				List<RandoriGruppenName> aktuelleGruppenNamen = gruppenNamen.subList(0, numGroups + 1); // we need one more name for an empty group
 				gruppenNamen = gruppenNamen.subList(numGroups, gruppenNamen.size());
 				result.addAll(erstelleGewichtsklassenGruppenRandori(wks, aktuelleGruppenNamen, gruppenGroesse, turnierUUID));
 			}
@@ -245,7 +249,7 @@ public class GewichtsklassenService {
 		return gewichtsklassenGruppen;
 	}
 
-	private List<GewichtsklassenGruppe> erstelleGewichtsklassenGruppenRandori(List<Wettkaempfer> kaempferListe, List<RandoriGruppenName> gruppenNamen, Integer gruppengroesse, UUID turnierUUID) {
+	private List<GewichtsklassenGruppe> erstelleGewichtsklassenGruppenRandori(List<Wettkaempfer> kaempferListe, Stack<RandoriGruppenName> gruppenNamen, Integer gruppengroesse, UUID turnierUUID) {
 		List<GewichtsklassenGruppe> gewichtsklassenGruppen = new ArrayList<>();
 		int anzahlRandoriGruppen = (kaempferListe.size() + gruppengroesse - 1) / gruppengroesse;
 		logger.info("erstelle " + anzahlRandoriGruppen + " Gruppen...");
@@ -255,13 +259,13 @@ public class GewichtsklassenService {
 		for (int current = 0; current < anzahlRandoriGruppen; current++) {
 			List<Wettkaempfer> gruppe = wettkaempferGruppen.get(current);
 			Altersklasse altersKlasse = gruppe.get(0).altersklasse();
-			RandoriGruppenName randoriGruppe = gruppenNamen.get(current);
+			RandoriGruppenName randoriGruppe = gruppenNamen.pop();
 			double maxGewicht = gruppe.stream().mapToDouble(Wettkaempfer::gewicht).max().orElse(0);
 			double minGewicht = gruppe.stream().mapToDouble(Wettkaempfer::gewicht).min().orElse(0);
 			gewichtsklassenGruppen.add(new GewichtsklassenGruppe(null, altersKlasse, Optional.empty(), gruppe, Optional.of(randoriGruppe), minGewicht, maxGewicht, turnierUUID));
 		}
 
-		RandoriGruppenName randoriGruppe = gruppenNamen.get(anzahlRandoriGruppen);
+		RandoriGruppenName randoriGruppe = gruppenNamen.pop();
 		// füge leere Gewichtsklassengruppe hinzu um Wettkaempfer besser zuordnen zu können
 		gewichtsklassenGruppen.add(new GewichtsklassenGruppe(null, wettkaempferGruppen.get(0).get(0).altersklasse(), Optional.empty(), new ArrayList<>(), Optional.of(randoriGruppe), DEFAULT_MIN_GEWICHT, DEFAULT_MAX_GEWICHT, turnierUUID));
 
