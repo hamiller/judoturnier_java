@@ -145,7 +145,16 @@ public class HelperSource {
 		if (optional == null || !optional.isPresent()) {
 			return "";
 		}
-//		return optional.get();
+		logger.trace("return " + optional.get());
+		return optional.get();
+	}
+
+	public static Object optionalFn(Optional<?> optional, Options options) throws IOException {
+		logger.trace("Checking for optional... {}", optional);
+		if (optional == null || !optional.isPresent()) {
+			return "";
+		}
+		logger.trace("return " + optional.get());
 		return options.fn(optional.get());
 	}
 
