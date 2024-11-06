@@ -148,7 +148,7 @@
           const currentElement = event.target;
           const droppableElement = currentElement.closest('[droppable=true]');
           droppableElement.appendChild(draggedElement);
-          document.getElementById("input_" + id).value = event.target.id + "_" + id;
+          document.getElementById("input_" + id).value = droppableElement.id + "_" + id;
       };
 
       const renewGewichtsklassen = async () => {
