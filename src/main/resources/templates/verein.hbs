@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  {{> header}}
+</head>
+<body>
+  {{> title }}
+  {{> nav }}
+
+  <div>
+    <div class="bodyheader">
+        <h2>{{#if neuerEintrag}}Neuer Verein{{else}}Editiere Verein{{/if}}</h2>
+    </div>
+  </div>
+
+  {{#if prevsuccess}}
+    <div class="infomsg">Der vorheriger Verein wurde erfolgreich angelegt. Kennung {{prevsuccess}}</div>
+  {{/if}}
+  {{#if preverror}}
+    <div class="errormsg">Der vorheriger Verein konnte nicht angelegt werden: {{preverror}}</div>
+  {{/if}}
+
+  <div class="generalcontent">
+    <form action="/turnier/{{turnierid}}/vereine" method="POST">
+      <input type="hidden" name="id" value="{{vereinid}}"/>
+      
+      <div class="settingsrow"><label>Name</label><md-filled-text-field type="string" name="name" value="{{name}}"/></div>
+
+      <input type="hidden" value="{{neuerEintrag}}" name="neuereintrag">
+
+      <md-filled-button>Verein eintragen</md-filled-button>
+    </form>
+  </div>
+
+  {{> footer}}
+  <script type="text/javascript">
+  </script>
+</body>
+
+</html>

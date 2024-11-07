@@ -13,11 +13,11 @@
     </div>
 
     <form id="gewichtsklassenzuordnungformular" action="/turnier/{{turnierid}}/gewichtsklassen" method="POST">
-      <div class="navbar navbar_fixed">
-          <ul class="nav-links-sub links">
-          <li><a href="#" onclick="renewGewichtsklassen(); return false;" ><span class="material-icons md-48 centered" title="Alle Gewichtsklassen neu zuordnen">autorenew</span> Alle Gewichtsklassen neu zuordnen</a></li>
-          <li><a href="#" onclick="submitFormular(); return false;"><span class="material-icons md-48 centered" title="Gewichtsklassen-Zuordnung speichern">save</span> Zuordnungen speichern</a></li>
-          </ul>
+      <div class="navbar_fixed">
+          <span style="position: relative">
+            <md-outlined-button type="button" id="renewGewichtsklassen">Alle Gewichtsklassen neu zuordnen</md-outlined-button>
+            <md-outlined-button type="button" id="submitFormular">Zuordnungen speichern</md-outlined-button>
+          </span>
       </div>
       <div class="grid">
 
@@ -25,13 +25,15 @@
 
           <h1>Frauen</h1>
           {{#each gewichtsklassengruppenWeiblich}}
-              {{this.altersKlasse}} (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})
-              <div class="navbar navbar_fixed">
-                  <ul class="nav-links-sub links">
-                      <li><a href="#" type="button" onclick="renewGewichtsklasse( '{{this.altersKlasse}}' ); return false;" ><span class="material-icons md-48 centered" title="Einzelne Gewichtsklasse neu zuordnen">autorenew</span> Gewichtsklasse {{altersKlasse}} neu zuordnen</a></li>
-                      <li><a href="/turnier/{{turnierid}}/gewichtsklassen/turnier_printview_groups/{{this.altersKlasse}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht">print</span> Druckansicht {{altersKlasse}} Gruppen</a></li>
-                      <li><a href="/turnier/{{turnierid}}/qrcodes/{{this.altersKlasse}}" target="_blank" class=""><span class="material-icons md-48 centered" title="QRCode">print</span> QR-Codes {{altersKlasse}}</a></li>
-                  </ul>
+              <div class="navbar_fixed">
+                  <span style="position: relative">
+                      <md-outlined-button id="theming-anchor-w-{{this.altersKlasse}}" class="theming-anchors" altersklasse="{{this.altersKlasse}}" geschlecht="w">{{this.altersKlasse}} (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})</md-outlined-button>
+                      <md-menu id="theming-menu-w-{{this.altersKlasse}}" anchor="theming-anchor-w-{{this.altersKlasse}}">
+                          <md-menu-item type="button" id="renewGewichtsklasse_{{this.altersKlasse}}" class="renewGewichtsklasse" altersklasse="{{this.altersKlasse}}" geschlecht="w">Gewichtsklasse {{altersKlasse}} neu zuordnen</md-menu-item>
+                          <md-menu-item href="/turnier/{{turnierid}}/gewichtsklassen/turnier_printview_groups/w/{{this.altersKlasse}}" target="_blank">Druckansicht {{altersKlasse}} Gruppen</md-menu-item>
+                          <md-menu-item href="/turnier/{{turnierid}}/qrcodes/{{this.altersKlasse}}" target="_blank">QR-Codes {{altersKlasse}}</md-menu-item>
+                      </md-menu>
+                  </span>
               </div>
 
               <div class="gewichtsklassen">
@@ -56,13 +58,15 @@
 
           <h1>Männer</h1>
           {{#each gewichtsklassengruppenMaennlich}}
-              {{this.altersKlasse}} (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})
-              <div class="navbar navbar_fixed">
-                  <ul class="nav-links-sub links">
-                      <li><a href="#" type="button" onclick="renewGewichtsklasse( '{{this.altersKlasse}}' ); return false;" ><span class="material-icons md-48 centered" title="Einzelne Gewichtsklasse neu zuordnen">autorenew</span> Gewichtsklasse {{altersKlasse}} neu zuordnen</a></li>
-                      <li><a href="/turnier/{{turnierid}}/gewichtsklassen/turnier_printview_groups/{{this.altersKlasse}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht">print</span> Druckansicht {{altersKlasse}} Gruppen</a></li>
-                      <li><a href="/turnier/{{turnierid}}/qrcodes/{{this.altersKlasse}}" target="_blank" class=""><span class="material-icons md-48 centered" title="QRCode">print</span> QR-Codes {{altersKlasse}}</a></li>
-                  </ul>
+              <div class="navbar_fixed">
+                  <span style="position: relative">
+                      <md-outlined-button id="theming-anchor-m-{{this.altersKlasse}}" class="theming-anchors" altersklasse="{{this.altersKlasse}}" geschlecht="m">{{this.altersKlasse}} (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})</md-outlined-button>
+                      <md-menu id="theming-menu-m-{{this.altersKlasse}}" anchor="theming-anchor-m-{{this.altersKlasse}}">
+                          <md-menu-item type="button" id="renewGewichtsklasse_{{this.altersKlasse}}" class="renewGewichtsklasse" altersklasse="{{this.altersKlasse}}" geschlecht="m">Gewichtsklasse {{altersKlasse}} neu zuordnen</md-menu-item>
+                          <md-menu-item href="/turnier/{{turnierid}}/gewichtsklassen/turnier_printview_groups/m/{{this.altersKlasse}}" target="_blank">Druckansicht {{altersKlasse}} Gruppen</md-menu-item>
+                          <md-menu-item href="/turnier/{{turnierid}}/qrcodes/{{this.altersKlasse}}" target="_blank">QR-Codes {{altersKlasse}}</md-menu-item>
+                      </md-menu>
+                  </span>
               </div>
 
               <div class="gewichtsklassen">
@@ -90,13 +94,15 @@
 
           <h1>Mädchen und Jungs</h1>
           {{#each gewichtsklassengruppenAlter}}
-            {{this.altersKlasse}} (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})
-            <div class="navbar navbar_fixed">
-                <ul class="nav-links-sub links">
-                    <li><a href="#" type="button" onclick="renewGewichtsklasse( '{{this.altersKlasse}}' ); return false;" ><span class="material-icons md-48 centered" title="Einzelne Gewichtsklasse neu zuordnen">autorenew</span> Gewichtsklasse {{altersKlasse}} neu zuordnen</a></li>
-                    <li><a href="/turnier/{{turnierid}}/gewichtsklassen/randori_printview_groups/{{this.altersKlasse}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht">print</span> Druckansicht {{altersKlasse}} Gruppen</a></li>
-                    <li><a href="/turnier/{{turnierid}}/qrcodes/{{this.altersKlasse}}" target="_blank" class=""><span class="material-icons md-48 centered" title="QRCode">print</span> QR-Codes {{altersKlasse}}</a></li>
-                </ul>
+            <div class="navbar_fixed">
+                <span style="position: relative">
+                    <md-outlined-button id="theming-anchor-{{this.altersKlasse}}" class="theming-anchors" altersklasse="{{this.altersKlasse}}">{{this.altersKlasse}} (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})</md-outlined-button>
+                    <md-menu id="theming-menu-{{this.altersKlasse}}" anchor="theming-anchor-{{this.altersKlasse}}">
+                        <md-menu-item type="button" id="renewGewichtsklasse_{{this.altersKlasse}}" class="renewGewichtsklasse" altersklasse="{{this.altersKlasse}}">Gewichtsklasse {{altersKlasse}} neu zuordnen</md-menu-item>
+                        <md-menu-item href="/turnier/{{turnierid}}/gewichtsklassen/randori_printview_groups/{{this.altersKlasse}}" target="_blank">Druckansicht {{altersKlasse}} Gruppen</md-menu-item>
+                        <md-menu-item href="/turnier/{{turnierid}}/qrcodes/{{this.altersKlasse}}" target="_blank">QR-Codes {{altersKlasse}}</md-menu-item>
+                    </md-menu>
+                </span>
             </div>
 
             <div class="gewichtsklassen">
@@ -151,27 +157,6 @@
           document.getElementById("input_" + id).value = droppableElement.id + "_" + id;
       };
 
-      const renewGewichtsklassen = async () => {
-          var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Gewichtsklassen und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
-          if (sicher) {
-              fetch('/turnier/{{turnierid}}/gewichtsklassen-renew', {method: 'POST'})
-                      .then(() => window.location.href = 'gewichtsklassen')
-          }
-      };
-
-      const renewGewichtsklasse = async (data) => {
-          console.log(data);
-          var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in dieser Gewichtsklasse und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
-          if (sicher) {
-              fetch('/turnier/{{turnierid}}/gewichtsklasse-renew', {method: 'POST', body: data})
-                      .then(() => window.location.href = 'gewichtsklassen')
-          }
-      };
-
-      const submitFormular = () => {
-          document.getElementById('gewichtsklassenzuordnungformular').submit();
-      };
-
       const draggableElements = document.querySelectorAll('[draggable=true]');
       draggableElements.forEach(draggable => {
           draggable.addEventListener('dragstart', drag);
@@ -185,6 +170,36 @@
       });
       let draggedElement = null;
 
+      document.body.querySelector("#renewGewichtsklassen").addEventListener("click", async function() {
+          var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Gewichtsklassen und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+          if (sicher) {
+              fetch('/turnier/{{turnierid}}/gewichtsklassen-renew', {method: 'POST'})
+                      .then(() => window.location.href = 'gewichtsklassen')
+          }
+      });
+
+      document.body.querySelectorAll(".renewGewichtsklasse").forEach(value => value.addEventListener("click", async function(data) {
+          var altersklasse = data.target.attributes.getNamedItem("altersklasse").value;
+          var geschlecht = data.target.attributes.getNamedItem("geschlecht") ? data.target.attributes.getNamedItem("geschlecht").value : "";
+          console.log("Altersklasse / Geschlecht ", altersklasse, geschlecht);
+          var sicher = confirm("ACHTUNG\n\nHiermit werden die Zuordnung von Wettkämpfern in der Gewichtsklasse " + altersklasse + " und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+          if (sicher) {
+              fetch('/turnier/{{turnierid}}/gewichtsklasse-renew', {method: 'POST', body: {altersklasse: altersklasse, geschlecht: geschlecht}})
+                      .then(() => window.location.href = 'gewichtsklassen')
+          }
+      }));
+
+      document.body.querySelector("#submitFormular").addEventListener("click", async function() {
+          document.getElementById('gewichtsklassenzuordnungformular').submit();
+      });
+
+      document.body.querySelectorAll(".theming-anchors").forEach(value => value.addEventListener("click", (data) => {
+          data.preventDefault();
+          var altersklasse = data.target.attributes.getNamedItem("altersklasse").value;
+          var geschlecht = data.target.attributes.getNamedItem("geschlecht") ? data.target.attributes.getNamedItem("geschlecht").value + "-" : "";
+          console.log("Altersklasse 2", altersklasse);
+          document.body.querySelector("#theming-menu-" + geschlecht + altersklasse).show();
+      }));
   </script>
 </body>
 </html>

@@ -2,10 +2,14 @@ package de.sinnix.judoturnier.application;
 
 import de.sinnix.judoturnier.adapter.secondary.EinstellungJpa;
 import de.sinnix.judoturnier.adapter.secondary.EinstellungJpaRepository;
+import de.sinnix.judoturnier.adapter.secondary.TurnierConverter;
+import de.sinnix.judoturnier.adapter.secondary.TurnierJpa;
+import de.sinnix.judoturnier.adapter.secondary.TurnierJpaRepository;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.MattenAnzahl;
 import de.sinnix.judoturnier.model.Gruppengroesse;
 import de.sinnix.judoturnier.model.SeparateAlterklassen;
+import de.sinnix.judoturnier.model.Turnier;
 import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.VariablerGewichtsteil;
 import de.sinnix.judoturnier.model.WettkampfReihenfolge;
@@ -15,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -23,6 +28,10 @@ public class EinstellungenService {
 
 	@Autowired
 	private EinstellungJpaRepository einstellungJpaRepository;
+	@Autowired
+	private TurnierJpaRepository     turnierJpaRepository;
+	@Autowired
+	private TurnierConverter         turnierConverter;
 
 	private static final TurnierTyp            DEFAULT_TURNIERTYP             = TurnierTyp.RANDORI;
 	private static final MattenAnzahl          DEFAULT_MATTENANZAHL           = new MattenAnzahl(2);
@@ -62,5 +71,10 @@ public class EinstellungenService {
 		EinstellungJpa.EinstellungId einstellungId = new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString());
 		TurnierTyp turnierTyp = einstellungJpaRepository.findById(einstellungId).map(typ -> TurnierTyp.valueOf(typ.getWert())).orElseThrow();
 		return turnierTyp == TurnierTyp.RANDORI;
+	}
+
+	public Turnier ladeTurnierDaten(UUID turnierUUID) {
+		TurnierJpa jpa = turnierJpaRepository.findById(turnierUUID.toString()).orElseThrow();
+		return turnierConverter.convertToTurnier(jpa);
 	}
 }

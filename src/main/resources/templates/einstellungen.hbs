@@ -7,44 +7,72 @@
   
   <div>
     <div class="bodyheader">
-      <h2>Einstellungen</h2>      
+      <h1>Einstellungen</h1>
     </div>
     <div class="generalcontent">
 
-      <h2>Einstellung der Systems</h2>
+      <h2>Einstellung der Turnieres '{{turniername}}' in {{turnierort}} am {{formatDatum turnierdatum}} (ID {{turnierid}})</h2>
+
       <form id="turniereinstellungenformular" action="/turnier/{{turnierid}}/einstellungen" method="POST">
-        <div class="actions">
-          <button type="submit">Turnier-Einstellung speichern<span class="material-icons md-48" title="Turniereinstellungen speichern">save</span></button>
+
+        <div class="settingsrow">
+            <div class="radio-label">
+                <md-radio id="randori-radio" name="turniertyp" value="RANDORI" {{setChecked "RANDORI" turniertyp.name}}></md-radio>
+                <label for="randori-radio">Randori-Turnier</label>
+            </div>
+            <div class="radio-label">
+                <md-radio id="turnier-radio" name="turniertyp" value="STANDARD" {{setChecked "STANDARD" turniertyp.name}}></md-radio>
+                <label for="turnier-radio">Standard-Turnier</label>
+            </div>
         </div>
 
-        <div class="listeneintrag">
-          <input type="radio" name="turniertyp" value="RANDORI" {{setChecked "RANDORI" turniertyp.name}}/><label>Randori-Turnier</label>
-          <input type="radio" name="turniertyp" value="STANDARD" {{setChecked "STANDARD" turniertyp.name}}/><label>Standard-Turnier</label>
+        <md-divider></md-divider>
+
+
+        <div class="settingsrow"><label>Anzahl der Matten </label><md-filled-text-field type="number" name="mattenanzahl" value="{{mattenanzahl.anzahl}}"/></div>
+
+        <md-divider></md-divider>
+
+
+        <div class="settingsrow"><label>Größe der Gruppen </label><md-filled-text-field type="number" name="gruppengroesse" value="{{gruppengroesse.anzahl}}"/></div>
+
+        <md-divider></md-divider>
+
+
+        <div class="settingsrow"><label>Variabler Gewichtsanteil </label><md-filled-text-field type="number" step="0.1" min=0 name="variablergewichtsteil" value="{{variablergewichtsteil.variablerTeil}}"/></div>
+
+        <md-divider></md-divider>
+
+        <div class="settingsrow">
+            <div class="radio-label">
+                <md-radio id="abwechselnd-radio" name="wettkampfreihenfolge" value="ABWECHSELND" {{setChecked "ABWECHSELND" wettkampfreihenfolge.name}}></md-radio>
+                <label for="abwechselnd-radio">Immer 2 Gruppen kämpfen abwechseln</label>
+            </div>
+            <div class="radio-label">
+                <md-radio id=alle-radio" name="wettkampfreihenfolge" value="ALLE" {{setChecked "ALLE" wettkampfreihenfolge.name}}></md-radio>
+                <label for="alle-radio">Es kämpfen je Durchgang alle Gruppen</label>
+            </div>
         </div>
 
-        <div class="listeneintrag">
-          <div class=""><label>Anzahl der Matten </label><input class="wd100" type="number" name="mattenanzahl" value="{{mattenanzahl.anzahl}}"/></div>
+        <md-divider></md-divider>
+
+        <div class="settingsrow">
+            <div class="radio-label">
+                <md-radio id="getrennt-radio" name="separatealtersklassen" value="GETRENNT" {{setChecked "GETRENNT" separatealtersklassen.name}}></md-radio>
+                <label for="getrennt-radio">Die Jahrgänge kämpfen nacheinander, immer nur ein Jahrgang gleichzeitig bis er komplett fertig ist</label>
+            </div>
+            <div class="radio-label">
+                <md-radio id="getrenntmatten-radio" name="separatealtersklassen" value="GETRENNT_NACH_MATTEN" {{setChecked "GETRENNT_NACH_MATTEN" separatealtersklassen.name}} disabled></md-radio>
+                <label for="getrenntmatten-radio">(Nicht implementiert!) Die Jahrgänge kämpfen parallel, jedoch strikt nach Matten getrennt</label>
+            </div>
+            <div class="radio-label">
+                <md-radio id="zusammen-radio" name="separatealtersklassen" value="ZUSAMMEN" {{setChecked "ZUSAMMEN" separatealtersklassen.name}}></md-radio>
+                <label for="zusammen-radio">Die Jahrgänge kämpfen gleichzeitig</label>
+            </div>
         </div>
 
-        <div class="listeneintrag">
-          <div class=""><label>Größe der Gruppen </label><input class="wd100" type="number" name="gruppengroesse" value="{{gruppengroesse.anzahl}}"/></div>
-        </div>
 
-        <div class="listeneintrag">
-          <div class=""><label>Variabler Gewichtsanteil </label><input class="wd100" type="number" step="0.1" min=0 name="variablergewichtsteil" value="{{variablergewichtsteil.variablerTeil}}"/></div>
-        </div>
-
-        <div class="listeneintrag">
-          <input type="radio" name="wettkampfreihenfolge" value="ABWECHSELND" {{setChecked "ABWECHSELND" wettkampfreihenfolge.name}}/><label>Immer 2 Gruppen kämpfen abwechseln</label>
-          <input type="radio" name="wettkampfreihenfolge" value="ALLE" {{setChecked "ALLE" wettkampfreihenfolge.name}}/><label>Es kämpfen je Durchgang alle Gruppen</label>
-        </div>
-
-        <div class="listeneintrag">
-          <input type="radio" name="separatealtersklassen" value="GETRENNT" {{setChecked "GETRENNT" separatealtersklassen.name}}/><label>Die Jahrgänge kämpfen nacheinander, immer nur ein Jahrgang gleichzeitig bis er komplett fertig ist</label>
-          <input type="radio" name="separatealtersklassen" value="GETRENNT_NACH_MATTEN" {{setChecked "GETRENNT_NACH_MATTEN" separatealtersklassen.name}} disabled/><label>(Nicht implementiert!) Die Jahrgänge kämpfen parallel, jedoch strikt nach Matten getrennt</label>
-          <input type="radio" name="separatealtersklassen" value="ZUSAMMEN" {{setChecked "ZUSAMMEN" separatealtersklassen.name}}/><label>Die Jahrgänge kämpfen gleichzeitig</label>
-        </div>
-
+        <md-filled-button>Turnier-Einstellung speichern</md-filled-button>
       </form>
     </div>
 

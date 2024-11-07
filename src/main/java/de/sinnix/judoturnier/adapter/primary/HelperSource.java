@@ -14,16 +14,21 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
 public class HelperSource {
 	private static final Logger logger = LogManager.getLogger(HelperSource.class);
+
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
 	public static boolean istGleich(Object o1, Object o2) {
 		logger.trace("istGleich {} == {}", o1, o2);
@@ -82,6 +87,19 @@ public class HelperSource {
 			numberFormat.setMinimumFractionDigits(2);
 			return numberFormat.format(number);
 		} catch (NumberFormatException e) {
+			return value.toString(); // or handle the error as you see fit
+		}
+	}
+
+	public static String formatDatum(Object value, Options options) {
+		if (value == null) {
+			return null;
+		}
+
+		try {
+			Date date = (Date) value;
+			return dateFormat.format(date);
+		} catch (Exception e) {
 			return value.toString(); // or handle the error as you see fit
 		}
 	}

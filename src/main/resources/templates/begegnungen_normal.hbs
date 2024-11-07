@@ -45,6 +45,30 @@
         </div>
 
       {{#each matten}}
+          <div class="reacket">
+              <div class="reacket-round-headers">
+                  <div class="reacket-round-header">Round 1</div>
+                  <div class="reacket-round-header">Semi-finals</div>
+                  <div class="reacket-round-headerreacket-last-round">Finals</div>
+              </div>
+
+              <div class="reacket-rounds">
+                  <div class="reacket-round">
+                      <div class="reacket-match">
+                          <div class="reacket-match-id">
+
+                          </div>
+                          <div class="reacket-players">
+                              <div class="reacket-player"></div>
+                              <div class="reacket-player"></div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      {{/each}}
+
+      {{#each matten}}
       <div class="matte tabcontent" id="{{id}}">
           <div class="listeneintrag-titel">Matte {{id}}</div>
           <div class="wettkampfgruppe">

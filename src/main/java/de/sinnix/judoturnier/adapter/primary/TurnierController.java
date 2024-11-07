@@ -236,19 +236,10 @@ public class TurnierController {
 
 	@DeleteMapping("/turnier/{turnierid}/begegnung")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ModelAndView entferneWettkampfreihenfolgen(@PathVariable String turnierid) {
+	public void entferneWettkampfreihenfolgen(@PathVariable String turnierid) {
 		logger.info("Lösche alle Begegnungen in Turnier {}", turnierid);
 		String error = "";
-		try {
-			turnierService.loescheWettkampfreihenfolge(UUID.fromString(turnierid));
-		} catch (Exception e) {
-			error = e.toString();
-		}
-		if (einstellungenService.isRandori(UUID.fromString(turnierid))) {
-			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori?error=" + error);
-		} else {
-			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/normal?error=" + error);
-		}
+		turnierService.loescheWettkampfreihenfolge(UUID.fromString(turnierid));
 	}
 
 	@PermitAll
@@ -263,6 +254,23 @@ public class TurnierController {
 		List<MatteDto> wettkampfreihenfolgeJeMatteGefiltertUndGruppiert = gruppiereNachGruppen(gefilterteMatten);
 
 		ModelAndView mav = new ModelAndView("druckansicht_begegnungen_randori");
+		mav.addObject("turnierid", turnierid);
+		mav.addObject("matten", wettkampfreihenfolgeJeMatteGefiltertUndGruppiert);
+		return mav;
+	}
+
+	@PermitAll
+	@GetMapping("/turnier/{turnierid}/begegnungen/turnier_printview_matches/{geschlecht}/{altersklasse}")
+	public ModelAndView ladeDruckAnsichtBegegnungenTurnier(@PathVariable String turnierid, @PathVariable String geschlecht, @PathVariable String altersklasse) {
+		logger.info("Lade Turnier-Druckansicht für Turnier {}, Geschlecht {} und Altersklasse {}", turnierid, geschlecht, altersklasse);
+		var turnierUUID = UUID.fromString(turnierid);
+		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID).stream()
+			.sorted(Comparator.comparingInt(Matte::id))
+			.toList();
+		List<Matte> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte);
+		List<MatteDto> wettkampfreihenfolgeJeMatteGefiltertUndGruppiert = gruppiereNachGruppen(gefilterteMatten);
+
+		ModelAndView mav = new ModelAndView("druckansicht_begegnungen_turnier");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("matten", wettkampfreihenfolgeJeMatteGefiltertUndGruppiert);
 		return mav;

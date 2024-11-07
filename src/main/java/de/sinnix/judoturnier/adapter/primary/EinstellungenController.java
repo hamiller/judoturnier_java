@@ -39,6 +39,7 @@ public class EinstellungenController {
 
 		var turnierUUID = UUID.fromString(turnierid);
 		var einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
+		var turnierdaten = einstellungenService.ladeTurnierDaten(turnierUUID);
 		var gwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 
 		ModelAndView mav = new ModelAndView("einstellungen");
@@ -51,6 +52,9 @@ public class EinstellungenController {
 		mav.addObject("gruppengroesse", einstellungen.gruppengroesse());
 		mav.addObject("variablergewichtsteil", einstellungen.variablerGewichtsteil());
 		mav.addObject("separatealtersklassen", einstellungen.separateAlterklassen());
+		mav.addObject("turniername", turnierdaten.name());
+		mav.addObject("turnierort", turnierdaten.ort());
+		mav.addObject("turnierdatum", turnierdaten.datum());
 		return mav;
 	}
 

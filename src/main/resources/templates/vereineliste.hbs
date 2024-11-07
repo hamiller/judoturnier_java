@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  {{> header}}
+</head>
+<body>
+  {{> title }}
+  {{> nav }}
+
+  <div>
+    <div class="bodyheader">
+      <h2>Gemeldete Wettkämpfer</h2>
+      <div>Anzahl der Kämpfer: {{anzahlwk}}</div>
+      
+      <div class="actions">
+          <md-outlined-button href="/turnier/{{turnierid}}/verein-neu">Weiteren Verein eintragen</md-outlined-button>
+      </div>
+    </div>
+
+      {{#if prevsuccess}}
+          <div class="infomsg">Verein {{prevsuccess}} wurde erfolgreich editiert/angelegt.</div>
+      {{/if}}
+      {{#if preverror}}
+          <div class="errormsg">Der Verein konnte nicht editiert/angelegt werden: {{preverror}}</div>
+      {{/if}}
+    
+    <ul class="vereinliste generalcontent">
+      <li class="listeneintrag ">
+          <div class="listeneintrag-titel"><a href="/turnier/{{turnierid}}/verein?sortingHeader=name">Name</a></div>
+          <div>Bearbeiten</div>
+      </li>
+      {{#vereine}}
+      <li class="listeneintrag" >
+        <div class="listeneintrag-titel">{{name}}</div>
+        <div>
+          <a href="/turnier/{{turnierid}}/vereine/{{ id }}"><span class="material-icons">edit</span></a>
+          <a href="#" onclick="deleteVerein({{ id }})"><span class="material-icons">person_remove</span></a>
+        </div>
+      </li>
+      {{/vereine}}
+    </ul>
+  </div>
+
+  {{> footer}}
+  <script type="text/javascript">
+      const deleteVerein = async (id) => {
+          var sicher = confirm("ACHTUNG\n\nHiermit wird der Verein gelöscht!\n\nSind sie sicher?");
+          if (sicher) {
+              fetch("/turnier/{{turnierid}}/vereine/" + id, {method: "DELETE", redirect: 'follow'})
+                      .then(response => {
+                          if (response.redirected) {
+                              window.location.href = response.url;
+                          } else if (response.ok) {
+                              window.location.reload();
+                          } else {
+                              console.error('Error:', response.statusText);
+                          }
+                      })
+                      .catch(error => console.error("Error deleting verein:", error));
+          }
+      };
+  </script>
+</body>
+</html>

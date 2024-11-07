@@ -107,10 +107,9 @@ public class WettkaempferController {
 
 	@DeleteMapping("/turnier/{turnierid}/wettkaempfer/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_AMDIN', 'ROLE_TRAINER')")
-	public ModelAndView loescheWettkaempfer(@PathVariable String turnierid, @PathVariable Integer id) {
+	public void loescheWettkaempfer(@PathVariable String turnierid, @PathVariable Integer id) {
 		logger.debug("lösche Wettkaempfer {}", id);
 		wiegenService.loescheKaempfer(id);
-		return new ModelAndView("redirect:/turnier/" + turnierid + "/wettkaempfer");
 	}
 
 	@GetMapping("/turnier/{turnierid}/wettkaempfer/{id}")

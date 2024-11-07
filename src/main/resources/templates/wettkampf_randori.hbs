@@ -3,214 +3,188 @@
 <head>
     {{> header}}
     <style>
-        .btn.active {
-            background-color: #007bff;
-            color: white;
+        .slider-container {
+            margin-bottom: 20px;
+        }
+        md-slider {
+            width: 100%;
         }
     </style>
 </head>
 <body>
-    {{> title}}
-    {{> nav}}
+{{> title}}
+{{> nav}}
 
-    <div>
-        Aktuelle Begegnung {{begegnungid}}
-        <form id="wertungen" action="/turnier/{{turnierid}}/begegnungen/randori/{{begegnungid}}" method="POST">
-            <div class="ergebnis">
-                <div class="ergebnis_eintrag weiss">
-                    <div class="wettkaempfer name">
-                        <label>{{begegnung.wettkaempfer1.name}}</label>
-                        <label class="{{begegnung.wettkaempfer1.farbe.get}}">{{begegnung.wettkaempfer1.farbe.get}}</label>
-                        <label class="centertext">{{begegnung.wettkaempfer1.id}}</label>
-                        <label>{{begegnung.wettkaempfer1.verein.name}}</label>
-                    </div>
-                    <span class="row">
-                <label>Vielfalt</label>
-                        {{#each wertungsOptionen}}
-                            <button type="button" class="btn wertung_btn" onclick="setInputValue('fairness1', {{this}}, this)">{{this}}</button>
-                        {{/each}}
-                        <input {{disable enableEditing}} type="hidden" name="fairness1" id="fairness1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.fairnessWettkaempfer1}}{{/optionalFn}} />
-              </span>
-                    <span class="row">
-                <label>Kampfgeist</label>
-                        {{#each wertungsOptionen}}
-                            <button type="button" class="btn wertung_btn" onclick="setInputValue('kampfgeist1', {{this}}, this)">{{this}}</button>
-                        {{/each}}
-                        <input {{disable enableEditing}} type="hidden" name="kampfgeist1" id="kampfgeist1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfgeistWettkaempfer1}}{{/optionalFn}} />
-              </span>
-                    <span class="row">
-                <label>Technik</label>
-                        {{#each wertungsOptionen}}
-                            <button type="button" class="btn wertung_btn" onclick="setInputValue('technik1', {{this}}, this)">{{this}}</button>
-                        {{/each}}
-                        <input {{disable enableEditing}} type="hidden" name="technik1" id="technik1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.technikWettkaempfer1}}{{/optionalFn}} />
-              </span>
-                    <span class="row">
-                <label>Stil</label>
-                        {{#each wertungsOptionen}}
-                            <button type="button" class="btn wertung_btn" onclick="setInputValue('stil1', {{this}}, this)">{{this}}</button>
-                        {{/each}}
-                        <input {{disable enableEditing}} type="hidden" name="stil1" id="stil1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer1}}{{/optionalFn}} />
-              </span>
-                    <div class="allewertungen">
-                        {{#each begegnung.alleWertungen}}
-                            <span class="row_small bewerterinfo">Kampfrichter {{truncate this.benutzer.id 5}}</span>
-                            <span class="row_small"><label>Vielfalt</label>{{this.fairnessWettkaempfer1}}</span>
-                            <span class="row_small"><label>Kampfgeist</label>{{this.kampfgeistWettkaempfer1}}</span>
-                            <span class="row_small"><label>Technik</label>{{this.technikWettkaempfer1}}</span>
-                            <span class="row_small"><label>Stil</label>{{this.kampfstilWettkaempfer1}}</span>
-                        {{/each}}
-                    </div>
+<div>
+    Aktuelle Begegnung {{begegnungid}}
+    <form id="wertungen" action="/turnier/{{turnierid}}/begegnungen/randori/{{begegnungid}}" method="POST">
+        <div class="ergebnis">
+            <div class="ergebnis_eintrag weiss">
+                <div class="wettkaempfer name">
+                    <label>{{begegnung.wettkaempfer1.name}}</label>
+                    <label class="{{begegnung.wettkaempfer1.farbe.get}}">{{begegnung.wettkaempfer1.farbe.get}}</label>
+                    <label class="centertext">{{begegnung.wettkaempfer1.id}}</label>
+                    <label>{{begegnung.wettkaempfer1.verein.name}}</label>
                 </div>
-
-                <div class="ergebnis_eintrag rot">
-                    <div class="wettkaempfer name">
-                        <label>{{begegnung.wettkaempfer2.name}}</label>
-                        <label class="{{begegnung.wettkaempfer2.farbe.get}}">{{begegnung.wettkaempfer2.farbe.get}}</label>
-                        <label class="centertext">{{begegnung.wettkaempfer2.id}}</label>
-                        <label>{{begegnung.wettkaempfer2.verein.name}}</label>
-                    </div>
-                    <span class="row">
-                <label>Vielfalt</label>
-                        {{#each wertungsOptionen}}
-                            <button type="button" class="btn wertung_btn" onclick="setInputValue('fairness2', {{this}}, this)">{{this}}</button>
-                        {{/each}}
-                        <input {{disable enableEditing}} type="hidden" name="fairness2" id="fairness2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.fairnessWettkaempfer2}}{{/optionalFn}} />
-              </span>
-                    <span class="row">
-                <label>Kampfgeist</label>
-                        {{#each wertungsOptionen}}
-                            <button type="button" class="btn wertung_btn" onclick="setInputValue('kampfgeist2', {{this}}, this)">{{this}}</button>
-                        {{/each}}
-                        <input {{disable enableEditing}} type="hidden" name="kampfgeist2" id="kampfgeist2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfgeistWettkaempfer2}}{{/optionalFn}} />
-              </span>
-                    <span class="row">
-                <label>Technik</label>
-                        {{#each wertungsOptionen}}
-                            <button type="button" class="btn wertung_btn" onclick="setInputValue('technik2', {{this}}, this)">{{this}}</button>
-                        {{/each}}
-                        <input {{disable enableEditing}} type="hidden" name="technik2" id="technik2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.technikWettkaempfer2}}{{/optionalFn}} />
-              </span>
-                    <span class="row">
-                <label>Stil</label>
-                        {{#each wertungsOptionen}}
-                            <button type="button" class="btn wertung_btn" onclick="setInputValue('stil2', {{this}}, this)">{{this}}</button>
-                        {{/each}}
-                        <input {{disable enableEditing}} type="hidden" name="stil2" id="stil2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer2}}{{/optionalFn}} />
-              </span>
-                    <div class="allewertungen">
-                        {{#each begegnung.alleWertungen}}
-                            <span class="row_small bewerterinfo">Kampfrichter {{truncate this.benutzer.id 5}}</span>
-                            <span class="row_small"><label>Vielfalt</label>{{this.fairnessWettkaempfer2}}</span>
-                            <span class="row_small"><label>Kampfgeist</label>{{this.kampfgeistWettkaempfer2}}</span>
-                            <span class="row_small"><label>Technik</label>{{this.technikWettkaempfer2}}</span>
-                            <span class="row_small"><label>Stil</label>{{this.kampfstilWettkaempfer2}}</span>
-                        {{/each}}
-                    </div>
+                <div class="slider-container">
+                    <label>Vielfalt</label>
+                    <md-slider step="1" ticks min="1" max="6" id="fairness1-slider" oninput="updateInputValue('fairness1', this.value)"></md-slider>
+                    <input {{disable enableEditing}} type="hidden" name="fairness1" id="fairness1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.fairnessWettkaempfer1}}{{/optionalFn}} />
+                </div>
+                <div class="slider-container">
+                    <label>Kampfgeist</label>
+                    <md-slider step="1" ticks min="1" max="6" id="kampfgeist1-slider" oninput="updateInputValue('kampfgeist1', this.value)"></md-slider>
+                    <input {{disable enableEditing}} type="hidden" name="kampfgeist1" id="kampfgeist1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfgeistWettkaempfer1}}{{/optionalFn}} />
+                </div>
+                <div class="slider-container">
+                    <label>Technik</label>
+                    <md-slider step="1" ticks min="1" max="6" id="technik1-slider" oninput="updateInputValue('technik1', this.value)"></md-slider>
+                    <input {{disable enableEditing}} type="hidden" name="technik1" id="technik1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.technikWettkaempfer1}}{{/optionalFn}} />
+                </div>
+                <div class="slider-container">
+                    <label>Stil</label>
+                    <md-slider step="1" ticks min="1" max="6" id="stil1-slider" oninput="updateInputValue('stil1', this.value)"></md-slider>
+                    <input {{disable enableEditing}} type="hidden" name="stil1" id="stil1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer1}}{{/optionalFn}} />
+                </div>
+                <div class="allewertungen">
+                    {{#each begegnung.alleWertungen}}
+                        <span class="row_small bewerterinfo">Kampfrichter {{truncate this.benutzer.id 5}}</span>
+                        <span class="row_small"><label>Vielfalt</label>{{this.fairnessWettkaempfer1}}</span>
+                        <span class="row_small"><label>Kampfgeist</label>{{this.kampfgeistWettkaempfer1}}</span>
+                        <span class="row_small"><label>Technik</label>{{this.technikWettkaempfer1}}</span>
+                        <span class="row_small"><label>Stil</label>{{this.kampfstilWettkaempfer1}}</span>
+                    {{/each}}
                 </div>
             </div>
-        </form>
-    </div>
-    <div class="nav_btn-container">
-        {{#if begegnung.vorherigeBegegnungId}}
-            <div class="left-btn">
-            <a href="#" type="button" class="nav_btn" onclick="navigate({{begegnung.vorherigeBegegnungId}});"><span class="material-icons md-48 centered" title="chevron_left">chevron_left</span><span class="btn_text"> Vorheriger Kampf</span></a>
+
+            <div class="ergebnis_eintrag rot">
+                <div class="wettkaempfer name">
+                    <label>{{begegnung.wettkaempfer2.name}}</label>
+                    <label class="{{begegnung.wettkaempfer2.farbe.get}}">{{begegnung.wettkaempfer2.farbe.get}}</label>
+                    <label class="centertext">{{begegnung.wettkaempfer2.id}}</label>
+                    <label>{{begegnung.wettkaempfer2.verein.name}}</label>
+                </div>
+                <div class="slider-container">
+                    <label>Vielfalt</label>
+                    <md-slider step="1" ticks min="1" max="6" id="fairness2-slider" oninput="updateInputValue('fairness2', this.value)"></md-slider>
+                    <input {{disable enableEditing}} type="hidden" name="fairness2" id="fairness2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.fairnessWettkaempfer2}}{{/optionalFn}} />
+                </div>
+                <div class="slider-container">
+                    <label>Kampfgeist</label>
+                    <md-slider step="1" ticks min="1" max="6" id="kampfgeist2-slider" oninput="updateInputValue('kampfgeist2', this.value)"></md-slider>
+                    <input {{disable enableEditing}} type="hidden" name="kampfgeist2" id="kampfgeist2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfgeistWettkaempfer2}}{{/optionalFn}} />
+                </div>
+                <div class="slider-container">
+                    <label>Technik</label>
+                    <md-slider step="1" ticks min="1" max="6" id="technik2-slider" oninput="updateInputValue('technik2', this.value)"></md-slider>
+                    <input {{disable enableEditing}} type="hidden" name="technik2" id="technik2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.technikWettkaempfer2}}{{/optionalFn}} />
+                </div>
+                <div class="slider-container">
+                    <label>Stil</label>
+                    <md-slider step="1" ticks min="1" max="6" id="stil2-slider" oninput="updateInputValue('stil2', this.value)"></md-slider>
+                    <input {{disable enableEditing}} type="hidden" name="stil2" id="stil2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer2}}{{/optionalFn}} />
+                </div>
+                <div class="allewertungen">
+                    {{#each begegnung.alleWertungen}}
+                        <span class="row_small bewerterinfo">Kampfrichter {{truncate this.benutzer.id 5}}</span>
+                        <span class="row_small"><label>Vielfalt</label>{{this.fairnessWettkaempfer2}}</span>
+                        <span class="row_small"><label>Kampfgeist</label>{{this.kampfgeistWettkaempfer2}}</span>
+                        <span class="row_small"><label>Technik</label>{{this.technikWettkaempfer2}}</span>
+                        <span class="row_small"><label>Stil</label>{{this.kampfstilWettkaempfer2}}</span>
+                    {{/each}}
+                </div>
             </div>
-        {{/if}}
-        <div class="center-btn">
-        <a href="#" type="button" class="nav_btn" onclick="navigate(); return false;"><span class="material-icons md-48 centered" title="cancel">cancel</span> Zurück</a>
         </div>
-        {{#if enableEditing}}
-            <a href="#" type="button" class="submit_btn" onclick="save(event); return false;"><span class="material-icons md-48 centered" title="speichern">save</span> Ergebnis speichern</a>
-        {{/if}}
-        {{#if begegnung.nachfolgerBegegnungId}}
-            <div class="right-btn">
-            <a href="#" type="button" class="nav_btn" onclick="navigate({{begegnung.nachfolgerBegegnungId}});"><span class="material-icons md-48 centered" title="chevron_right">chevron_right</span> <span class="btn_text">Nächster Kampf</span></a>
-            </div>
-        {{/if}}
+    </form>
+</div>
+<div class="nav_btn-container">
+    {{#if begegnung.vorherigeBegegnungId}}
+        <div class="left-btn">
+            <a href="#" type="button" class="nav_btn" onclick="navigate({{begegnung.vorherigeBegegnungId}});"><span class="material-icons md-48 centered" title="chevron_left">chevron_left</span><span class="btn_text"> Vorheriger Kampf</span></a>
+        </div>
+    {{/if}}
+    <div class="center-btn">
+        <a href="#" type="button" class="nav_btn" onclick="navigate(); return false;"><span class="material-icons md-48 centered" title="cancel">cancel</span> Zurück</a>
     </div>
+    {{#if enableEditing}}
+        <a href="#" type="button" class="submit_btn" onclick="save(event); return false;"><span class="material-icons md-48 centered" title="speichern">save</span> Ergebnis speichern</a>
+    {{/if}}
+    {{#if begegnung.nachfolgerBegegnungId}}
+        <div class="right-btn">
+            <a href="#" type="button" class="nav_btn" onclick="navigate({{begegnung.nachfolgerBegegnungId}});"><span class="material-icons md-48 centered" title="chevron_right">chevron_right</span> <span class="btn_text">Nächster Kampf</span></a>
+        </div>
+    {{/if}}
+</div>
 
-    {{> footer}}
+{{> footer}}
 
-    <script>
-        const navigate = async (begegnungid) => {
-            var uriEnd = "";
-            if (begegnungid) {
-                console.log("lade Begegnung " + begegnungid);
-                uriEnd = "/" + begegnungid;
-            }
-            fetch('/turnier/{{turnierid}}/begegnungen/randori' + uriEnd, {method: 'GET', redirect: 'follow'})
-                    .then(response => {
-                        if (response.redirected) {
-                            window.location.href = response.url;
-                        } else if (response.ok) {
-                            window.location.href = response.url;
-                        } else {
-                            console.error('Error:', response.statusText);
-                        }
-                    })
-        };
-
-        const save = async (event) => {
-            var form = document.getElementById("wertungen");
-            var isValid = validateForm(event);
-            if (isValid) {
-                form.submit();
-                return;
-            }
-
-            alert("Bitte alle Wertungen angeben.");
-            event.preventDefault();
-        };
-
-        const next = async () => {
-
-        };
-
-        const setInputValue = (name, value, btn) => {
-            var input = document.getElementById(name);
-            input.value = value;
-            var buttons = btn.parentElement.querySelectorAll('.btn');
-            buttons.forEach(button => button.classList.remove('active'));
-            btn.classList.add('active');
-        };
-
-        const setActiveButton = (inputId) => {
-            var input = document.getElementById(inputId);
-            var value = input.value;
-            if (value) {
-                var buttons = document.querySelectorAll('button[onclick*="' + inputId + '"]');
-                buttons.forEach(button => {
-                    if (button.textContent == value) {
-                        button.classList.add('active');
+<script>
+    const navigate = async (begegnungid) => {
+        var uriEnd = "";
+        if (begegnungid) {
+            console.log("lade Begegnung " + begegnungid);
+            uriEnd = "/" + begegnungid;
+        }
+        fetch('/turnier/{{turnierid}}/begegnungen/randori' + uriEnd, {method: 'GET', redirect: 'follow'})
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else if (response.ok) {
+                        window.location.href = response.url;
+                    } else {
+                        console.error('Error:', response.statusText);
                     }
-                });
-            }
-        };
+                })
+    };
 
-        const validateForm = (event) => {
-            var a1 = document.getElementById("fairness1").value;
-            var a2 = document.getElementById("kampfgeist1").value;
-            var a3 = document.getElementById("technik1").value;
-            var a4 = document.getElementById("stil1").value;
-            var b1 = document.getElementById("fairness2").value;
-            var b2 = document.getElementById("kampfgeist2").value;
-            var b3 = document.getElementById("technik2").value;
-            var b4 = document.getElementById("stil2").value;
-            return (a1 != "/" && a2 != "/" && a3 != "/" && a4 != "/" && b1 != "/" && b2 != "/" && b3 != "/" && b4 != "/");
+    const save = async (event) => {
+        var form = document.getElementById("wertungen");
+        var isValid = validateForm(event);
+        if (isValid) {
+            form.submit();
+            return;
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            setActiveButton('fairness1');
-            setActiveButton('kampfgeist1');
-            setActiveButton('technik1');
-            setActiveButton('stil1');
-            setActiveButton('fairness2');
-            setActiveButton('kampfgeist2');
-            setActiveButton('technik2');
-            setActiveButton('stil2');
-        });
+        alert("Bitte alle Wertungen angeben.");
+        event.preventDefault();
+    };
 
-    </script>
+    const updateInputValue = (name, value) => {
+        var input = document.getElementById(name);
+        input.value = value;
+    };
+
+    const validateForm = (event) => {
+        var a1 = document.getElementById("fairness1").value;
+        var a2 = document.getElementById("kampfgeist1").value;
+        var a3 = document.getElementById("technik1").value;
+        var a4 = document.getElementById("stil1").value;
+        var b1 = document.getElementById("fairness2").value;
+        var b2 = document.getElementById("kampfgeist2").value;
+        var b3 = document.getElementById("technik2").value;
+        var b4 = document.getElementById("stil2").value;
+        return (a1 != "/" && a2 != "/" && a3 != "/" && a4 != "/" && b1 != "/" && b2 != "/" && b3 != "/" && b4 != "/");
+    }
+
+    const setActiveButton = (inputId) => {
+        const element = document.getElementById(inputId);
+        var value = element.value;
+        console.log("set active", inputId, value)
+        value = value == "/" ? 1 : value;
+        element.value = value;
+        document.querySelector('#' + inputId + '-slider').value = value;
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        setActiveButton('fairness1');
+        setActiveButton('kampfgeist1');
+        setActiveButton('technik1');
+        setActiveButton('stil1');
+        setActiveButton('fairness2');
+        setActiveButton('kampfgeist2');
+        setActiveButton('technik2');
+        setActiveButton('stil2');
+    });
+</script>
 </body>
 </html>

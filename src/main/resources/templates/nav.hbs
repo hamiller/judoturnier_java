@@ -1,12 +1,41 @@
-<nav class="navbar no-print">
-  <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
-  <ul class="nav-links rechts">
-    <li><a href="/turnier">Turniere</a></li>
-    <li><a href="/turnier/{{turnierid}}">Turnierübersicht</a></li>
-    <li><a href="/turnier/{{turnierid}}/wettkaempfer">Liste der Wettkämpfer</a></li>
-    <li><a href="/turnier/{{turnierid}}/gewichtsklassen">Liste der Gewichtsklassen</a></li>
-    <li><a href="/turnier/{{turnierid}}/begegnungen">Begegnungen des Wettkampfs</a></li>
-    <li><a href="/turnier/{{turnierid}}/einstellungen">Einstellungen</a></li>
-    <li><a href="/logout">Logout</a></li>
-  </ul>
+<nav class="">
+
+    <md-outlined-button href="/turnier">Alle Turniere</md-outlined-button>
+
+    <!--  <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>-->
+    <span style="position: relative">
+      <md-filled-button id="theming-anchor">Turnier-Menü</md-filled-button>
+      <md-menu id="theming-menu" anchor="theming-anchor">
+        <md-menu-item href="/turnier/{{turnierid}}">
+            <div slot="headline">Übersicht</div>
+        </md-menu-item>
+        <md-menu-item href="/turnier/{{turnierid}}/vereine">
+          <div slot="headline">Liste der Vereine</div>
+        </md-menu-item>
+        <md-menu-item href="/turnier/{{turnierid}}/wettkaempfer">
+          <div slot="headline">Liste der Wettkämpfer</div>
+        </md-menu-item>
+        <md-menu-item href="/turnier/{{turnierid}}/gewichtsklassen">
+            <div slot="headline">Liste der Gewichtsklassen</div>
+        </md-menu-item>
+        <md-menu-item href="/turnier/{{turnierid}}/begegnungen">
+            <div slot="headline">Begegnungen des Wettkampfs</div>
+        </md-menu-item>
+        <md-menu-item href="/turnier/{{turnierid}}/einstellungen">
+            <div slot="headline">Einstellungen</div>
+        </md-menu-item>
+        <md-menu-item href="/logout">
+            <div slot="headline">Logout</div>
+        </md-menu-item>
+      </md-menu>
+    </span>
 </nav>
+
+<script type="module">
+    const anchorEl = document.body.querySelector("#theming-anchor");
+    const menuEl = document.body.querySelector("#theming-menu");
+
+    anchorEl.addEventListener("click", () => {
+        menuEl.show();
+    });
+</script>

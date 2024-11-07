@@ -3,6 +3,7 @@ package de.sinnix.judoturnier.application;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import de.sinnix.judoturnier.adapter.secondary.VereinConverter;
+import de.sinnix.judoturnier.adapter.secondary.VereinJpa;
 import de.sinnix.judoturnier.adapter.secondary.VereinJpaRepository;
 import de.sinnix.judoturnier.model.Verein;
 import jakarta.transaction.Transactional;
@@ -36,6 +37,11 @@ public class VereinService {
 
 	public Verein holeVerein(Integer vereinsId, UUID turnierUUID) {
 		return vereinJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream().filter(jpa -> jpa.getId() == vereinsId).findFirst().map(jpa -> vereinConverter.converToVerein(jpa)).orElseThrow();
+	}
+
+	public Verein speichereVerein(Verein verein) {
+		VereinJpa jpa = vereinJpaRepository.save(vereinConverter.convertFromVerein(verein));
+		return vereinConverter.converToVerein(jpa);
 	}
 
 	@Transactional
@@ -77,5 +83,11 @@ public class VereinService {
 
 	public Optional<Verein> sucheVerein(String vereinname, UUID turnierUUID) {
 		return vereinJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream().filter(jpa -> jpa.getName().equalsIgnoreCase(vereinname)).findFirst().map(jpa -> vereinConverter.converToVerein(jpa));
+	}
+
+	public void loescheVerein(Integer id, UUID turnierUUID) {
+		logger.info("Loesche Verein {}", id);
+		vereinJpaRepository.deleteById(id);
+		logger.info("Verein gelöscht");
 	}
 }

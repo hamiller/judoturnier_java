@@ -76,12 +76,25 @@ public class GewichtsklassenController {
 
 	@PermitAll
 	@GetMapping("/turnier/{turnierid}/gewichtsklassen/randori_printview_groups/{altersklasse}")
-	public ModelAndView ladeDruckAnsichtGruppenRandori(@PathVariable String turnierid, @PathVariable("altersklasse") String altersklasse) {
+	public ModelAndView ladeDruckAnsichtGruppenRandori(@PathVariable String turnierid, @PathVariable String altersklasse) {
 		logger.info("lade Druckansicht Randori-Gruppen für " + altersklasse);
 		var turnierUUID = UUID.fromString(turnierid);
 		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 
 		ModelAndView mav = new ModelAndView("druckansicht_gruppen_randori");
+		mav.addObject("turnierid", turnierid);
+		mav.addObject("gruppen", currentGwks.stream().filter(gwk -> gwk.altersKlasse().name().equalsIgnoreCase(altersklasse)).toList());
+		return mav;
+	}
+
+	@PermitAll
+	@GetMapping("/turnier/{turnierid}/gewichtsklassen/turnier_printview_groups/{geschlecht}/{altersklasse}")
+	public ModelAndView ladeDruckAnsichtGruppenTurnier(@PathVariable String turnierid, @PathVariable String geschlecht, @PathVariable String altersklasse) {
+		logger.info("Lade Druckansicht für Turnier-Gruppen {}, Geschlecht {} und Altersklasse {}", turnierid, geschlecht, altersklasse);
+		var turnierUUID = UUID.fromString(turnierid);
+		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
+
+		ModelAndView mav = new ModelAndView("druckansicht_gruppen_turnier");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("gruppen", currentGwks.stream().filter(gwk -> gwk.altersKlasse().name().equalsIgnoreCase(altersklasse)).toList());
 		return mav;
@@ -100,16 +113,18 @@ public class GewichtsklassenController {
 
 	@PostMapping("/turnier/{turnierid}/gewichtsklasse-renew")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ModelAndView erstelleGewichtsklasseNeu(@PathVariable String turnierid, @RequestBody String altersklasseString) {
-		logger.info("erneuere Gewichtsklasse für Altersklasse {}", altersklasseString);
-		if (altersklasseString == null || altersklasseString.isBlank()) {
+	public ModelAndView erstelleGewichtsklasseNeu(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
+		logger.info("erneuere Gewichtsklasse für Altersklasse und Geschlecht {}", formData);
+		if (formData == null || formData.isEmpty()) {
 			throw new IllegalArgumentException();
 		}
 
 		var turnierUUID = UUID.fromString(turnierid);
-		var altersklasse = Altersklasse.valueOf(altersklasseString);
+		var altersklasse = Altersklasse.valueOf(formData.getFirst("altersklasse"));
+		var geschlecht = (formData.keySet().contains("geschlecht") && formData.getFirst("geschlecht") != "") ? Geschlecht.valueOf(formData.getFirst("geschlecht")) : null;
 		var wk = (wettkaempferService.alleKaempfer(UUID.fromString(turnierid))).stream()
 			.filter(kaempfer -> kaempfer.altersklasse() == altersklasse)
+			.filter(kaempfer -> geschlecht != null ? kaempfer.geschlecht() == geschlecht : true)
 			.collect(Collectors.toList());
 		var gwks = gewichtsklassenService.teileInGewichtsklassen(wk, UUID.fromString(turnierid));
 

@@ -7,47 +7,52 @@
   
   <div>
     <div class="bodyheader no-print">
-      <div class="navbar navbar_fixed">
-          <ul class="nav-links-sub links">
-            <li><a href="#" onclick="renewBegegnungen(); return false;"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen neu erstellen">create_new_folder</span> Alle Wettkampfgruppen neu erstellen</a></li>
-            <li><a href="#" onclick="deleteBegegnungen(); return false;"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen löschen">autorenew</span> Alle Wettkampfgruppen löschen</a></li>
-          </ul>
+      <div class="navbar_fixed">
+          <span style="position: relative">
+            <md-outlined-button type="button" id="renewBegegnungen">Alle Wettkampfgruppen neu erstellen</md-outlined-button>
+            <md-outlined-button type="button" id="deleteBegegnungen">Alle Wettkampfgruppen löschen</md-outlined-button>
+          </span>
         {{#each altersklassen}}
-            <ul class="nav-links-sub links">
-                <li><a href="#" type="button" onclick="renewBegegnung( '{{this}}' ); return false;" ><span class="material-icons md-48 centered" title="Einzelne Wettkampfgruppen neu zuordnen">autorenew</span> Wettkampfgruppen {{this}} neu zuordnen</a></li>
-                <li><a href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches/{{this}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht Begegnungen">print</span> Druckansicht {{this}} Begegnungen</a></li>
-                <li><a href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches_inserting_data/{{this}}" target="_blank" class=""><span class="material-icons md-48 centered" title="Druckansicht Begegnungen-Eintragen">print</span> Druckansicht {{this}} Wertungen-Eintragen</a></li>
-                <li><a href="/turnier/{{turnierid}}/qrcodes/{{this}}" target="_blank" class=""><span class="material-icons md-48 centered" title="QRCode">print</span> QR-Codes {{this}}</a></li>
-            </ul>
+            <span style="position: relative">
+                <md-outlined-button id="theming-anchor-{{this}}" class="theming-anchors" altersklasse="{{this}}">{{this}}</md-outlined-button>
+                <md-menu id="theming-menu-{{this}}" anchor="theming-anchor-{{this}}">
+                    <md-menu-item type="button" class="renewBegegnung" id="renewBegegnung_{{this}}" altersklasse="{{this}}">Wettkampfgruppen {{this}} neu zuordnen</md-menu-item>
+                    <md-menu-item href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches/{{this}}" target="_blank" class="">Druckansicht {{this}} Begegnungen</md-menu-item>
+                    <md-menu-item href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches_inserting_data/{{this}}" target="_blank" class="">Druckansicht {{this}} Wertungen-Eintragen</md-menu-item>
+                    <md-menu-item href="/turnier/{{turnierid}}/qrcodes/{{this}}" target="_blank" class="">QR-Codes {{this}}</md-menu-item>
+                </md-menu>
+            </span>
         {{/each}}
       </div>
     </div>
 
     {{#if preverror}}
-      <div class="errormsg">Der vorheriger Wettkämpfer konnte nicht angelegt werden: {{preverror}}</div>
+      <div class="errormsg">Der vorherige Wettkampf konnte nicht gespeichert werden: {{preverror}}</div>
     {{/if}}
     
+<!--      {{#if separatealtersklassen.name "GETRENNT"}}-->
+<!--        <div class="filter_dropdown">-->
+<!--            <span>Filter nach Alterklasse</span>-->
+<!--            <div class="filter_dropdown-content">-->
+<!--                <a href="/turnier/{{turnierid}}/begegnungen/randori">Alle Alterklassen</a>-->
+<!--                {{#each altersklassen}}-->
+<!--                    <a href="/turnier/{{turnierid}}/begegnungen/randori?altersklasse={{this}}">Alterklasse {{this}}</a>-->
+<!--                {{/each}}-->
+<!--            </div>-->
+<!--        </div>-->
+<!--      {{/if}}-->
+
+    <div class="">
+        <md-tabs activeTabIndex="0">
+            {{#each matten}}
+                <md-primary-tab id="matten-tab-{{id}}" class="matten-tabs" mattenid="{{id}}">Matte {{id}}</md-primary-tab>
+            {{/each}}
+        </md-tabs>
+    </div>
+
     <div class="generalcontent">
-      {{#if separatealtersklassen.name "GETRENNT"}}
-        <div class="filter_dropdown">
-            <span>Filter nach Alterklasse</span>
-            <div class="filter_dropdown-content">
-                <a href="/turnier/{{turnierid}}/begegnungen/randori">Alle Alterklassen</a>
-                {{#each altersklassen}}
-                    <a href="/turnier/{{turnierid}}/begegnungen/randori?altersklasse={{this}}">Alterklasse {{this}}</a>
-                {{/each}}
-            </div>
-        </div>
-      {{/if}}
-
-      <div class="tab">
-        {{#each matten}}
-        <button class="tablinks matten_btn" onclick="openMatte(event, '{{id}}')">Matte {{id}}</button>
-        {{/each}}
-      </div>
-
       {{#each matten}}
-        <div class="matte tabcontent" id="{{id}}">
+        <div class="matte tabcontent" id="matten-panel-{{id}}">
           <div class="listeneintrag-titel">Matte {{id}}</div>
           <div class="wettkampfgruppe">
 
@@ -82,13 +87,19 @@
         </div>
       {{/each}}
     </div>
-
   </div>
+
+
   {{> footer}}
 
   <script type="text/javascript">
+      document.body.querySelectorAll(".theming-anchors").forEach(value => value.addEventListener("click", (data) => {
+          var altersklasse = data.target.attributes.getNamedItem("altersklasse").value;
+          console.log("Altersklasse", altersklasse);
+          document.body.querySelector("#theming-menu-" + altersklasse).show();
+      }));
 
-      const renewBegegnungen = async () => {
+      document.body.querySelector("#renewBegegnungen").addEventListener("click", async function() {
           var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
           if (sicher) {
               console.log("Erstelle alle Begegnungen neu");
@@ -103,13 +114,16 @@
                           }
                       })
           }
-      };
+      });
 
-      const renewBegegnung = async (data) => {
-          var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in der Altersklasse\n\t" + data + "\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+
+      document.body.querySelectorAll(".renewBegegnung").forEach(value => value.addEventListener("click", async function(data) {
+          var altersklasse = data.target.attributes.getNamedItem("altersklasse").value;
+          console.log("Altersklasse", altersklasse);
+          var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in der Altersklasse\n\t" + altersklasse + "\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
           if (sicher) {
-              console.log("Erstelle die Begegnungen neu", data);
-              fetch('/turnier/{{turnierid}}/begegnung', {method: 'POST', body: data, redirect: 'follow'})
+              console.log("Erstelle die Begegnungen neu", altersklasse);
+              fetch('/turnier/{{turnierid}}/begegnung', {method: 'POST', body: altersklasse, redirect: 'follow'})
                       .then(response => {
                           if (response.redirected) {
                               window.location.href = response.url;
@@ -120,9 +134,9 @@
                           }
                       })
           }
-      };
+      }));
 
-      const deleteBegegnungen = async (altersklasse) => {
+      document.body.querySelector("#deleteBegegnungen").addEventListener("click", async function() {
           var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern aller Altersklassen\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
           if (sicher) {
               fetch('/turnier/{{turnierid}}/begegnung', {method: 'DELETE', redirect: 'follow'})
@@ -136,28 +150,24 @@
                           }
                       })
           }
-      };
+      });
 
-      const openMatte = (evt, id) => {
-          // Declare all variables
-          var i, tabcontent, tablinks;
+      document.body.querySelectorAll("md-tabs").forEach(tabs => tabs.addEventListener('change', function(data) {
+          var mattenid = data.target.activeTab.attributes.getNamedItem("mattenid").value;
+          console.log("Tab geändert zu MattenID " + mattenid);
 
           // Get all elements with class="tabcontent" and hide them
-          tabcontent = document.getElementsByClassName("tabcontent");
-          for (i = 0; i < tabcontent.length; i++) {
-              tabcontent[i].style.display = "none";
-          }
-
-          // Get all elements with class="tablinks" and remove the class "active"
-          tablinks = document.getElementsByClassName("tablinks");
-          for (i = 0; i < tablinks.length; i++) {
-              tablinks[i].className = tablinks[i].className.replace(" active", "");
-          }
+          document.querySelectorAll(".tabcontent").forEach(tab => {tab.style.display = "none"});
 
           // Show the current tab, and add an "active" class to the button that opened the tab
-          document.getElementById(id).style.display = "block";
-          evt.currentTarget.className += " active";
-      };
+          document.getElementById("matten-panel-" + mattenid).style.display = "block";
+      }));
+
+      // Show 1st Matte
+      document.addEventListener('DOMContentLoaded', function () {
+          document.querySelector(".tabcontent").style.display = "block";
+      });
+
   </script>
 </body>
 
