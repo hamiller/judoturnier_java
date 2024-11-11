@@ -71,7 +71,7 @@ public class WertungController {
 		return mav;
 	}
 
-	@PostMapping("/turnier/{turnierid}/begegnungen/randori/{begegnungId}")
+	@PostMapping("/turnier/{turnierid}/begegnungen/randori/{id}")
 	@PreAuthorize("hasRole('ROLE_KAMPFRICHTER')")
 	public ModelAndView speichereBegegnungRandori(@PathVariable String turnierid, @PathVariable String id, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("Speichere Wertung für Begegnung {}: {}", id, formData);
@@ -92,7 +92,7 @@ public class WertungController {
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori");
 	}
 
-	@PostMapping("/turnier/{turnierid}/begegnungen/normal/{begegnungId}")
+	@PostMapping("/turnier/{turnierid}/begegnungen/normal/{id}")
 	@PreAuthorize("hasRole('ROLE_KAMPFRICHTER')")
 	public ModelAndView speichereBegegnungTurnier(@PathVariable String turnierid, @PathVariable String id, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("Speichere Wertung für Begegnung {}: {}", id, formData);

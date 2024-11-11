@@ -47,7 +47,7 @@ public class BegegnungConverter {
 		jpa.setRunde(begegnung.getBegegnungId().getRunde());
 		jpa.setRundenTyp(begegnung.getBegegnungId().getRundenTyp().getValue());
 		jpa.setPaarung(begegnung.getBegegnungId().getAkuellePaarung());
-		if (begegnung.getRundeId() != null) jpa.setRundeUUID(begegnung.getRundeId().toString());
+		jpa.setRundeUUID(fromUUID(begegnung.getRundeId()));
 		jpa.setMatteId(begegnung.getMatteId());
 		jpa.setMattenRunde(begegnung.getMattenRunde());
 		jpa.setGruppenRunde(begegnung.getGruppenRunde());
@@ -61,4 +61,11 @@ public class BegegnungConverter {
 		return jpa;
 	}
 
+	private String fromUUID(UUID uuid) {
+		if (uuid != null) {
+			return uuid.toString();
+		}
+
+		return UUID.randomUUID().toString();
+	}
 }
