@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class DtosConverter {
@@ -19,8 +20,8 @@ public class DtosConverter {
 		int gruppenRundenNummer = 0;
 
 		for (int i = 0; i < mat.runden().size(); i++) {
-			Integer aktuelleGruppe = mat.runden().get(i).gruppe().id();
-			Integer vorherigeGruppe = i > 0 ? mat.runden().get(i - 1).gruppe().id() : aktuelleGruppe;
+			UUID aktuelleGruppe = mat.runden().get(i).gruppe().id();
+			UUID vorherigeGruppe = i > 0 ? mat.runden().get(i - 1).gruppe().id() : aktuelleGruppe;
 
 			if (!aktuelleGruppe.equals(vorherigeGruppe)) {
 				gruppenRunden.add(new GruppenRundeDto(new ArrayList<>()));
@@ -33,7 +34,7 @@ public class DtosConverter {
 		return new MatteDto(mat.id(), gruppenRunden);
 	}
 
-	public static BegegnungDto convertFromBegegnung(Begegnung begegnung, String userid, Optional<Integer> vorherigeBegegnungId, Optional<Integer> nachfolgendeBegegnungId) {
+	public static BegegnungDto convertFromBegegnung(Begegnung begegnung, String userid, Optional<UUID> vorherigeBegegnungId, Optional<UUID> nachfolgendeBegegnungId) {
 		var begegnungId = begegnung.getId();
 		var	wettkaempfer1 = begegnung.getWettkaempfer1().orElseGet(() -> Wettkaempfer.Freilos());
 		var	wettkaempfer2 = begegnung.getWettkaempfer2().orElseGet(() -> Wettkaempfer.Freilos());
@@ -54,14 +55,14 @@ public class DtosConverter {
 			w.getBewerter()));
 		var vorher = vorherigeBegegnungId.map(id -> String.valueOf(id)).orElseGet(() -> "");
 		var nachher = nachfolgendeBegegnungId.map(id -> String.valueOf(id)).orElseGet(() -> "");
-		return new BegegnungDto(begegnungId, begegnung.getBegegnungId().getRundenTyp(), begegnung.getBegegnungId().runde, begegnung.getBegegnungId().akuellePaarung, wettkaempfer1, wettkaempfer2, kampfrichterWertung, begegnung.getWertungen(), vorher, nachher);
+		return new BegegnungDto(begegnungId.toString(), begegnung.getBegegnungId().getRundenTyp(), begegnung.getBegegnungId().runde, begegnung.getBegegnungId().akuellePaarung, wettkaempfer1, wettkaempfer2, kampfrichterWertung, begegnung.getWertungen(), vorher, nachher);
 	}
 
 	public static BegegnungDto convertFromBegegnung(Begegnung begegnung) {
 		var begegnungId = begegnung.getId();
 		var	wettkaempfer1 = begegnung.getWettkaempfer1().orElseGet(() -> Wettkaempfer.Freilos());
 		var	wettkaempfer2 = begegnung.getWettkaempfer2().orElseGet(() -> Wettkaempfer.Freilos());
-		return new BegegnungDto(begegnungId, begegnung.getBegegnungId().getRundenTyp(), begegnung.getBegegnungId().runde, begegnung.getBegegnungId().akuellePaarung, wettkaempfer1, wettkaempfer2, null, begegnung.getWertungen(), null, null);
+		return new BegegnungDto(begegnungId.toString(), begegnung.getBegegnungId().getRundenTyp(), begegnung.getBegegnungId().runde, begegnung.getBegegnungId().akuellePaarung, wettkaempfer1, wettkaempfer2, null, begegnung.getWertungen(), null, null);
 	}
 
 	public static String formatDuration(Duration duration) {

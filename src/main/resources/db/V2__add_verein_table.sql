@@ -1,7 +1,7 @@
 CREATE TABLE verein
 (
-    id           SERIAL,
+    uuid         VARCHAR(255),
     "name"       VARCHAR(255),
     turnier_uuid VARCHAR(255),
-    PRIMARY KEY (id, turnier_uuid)
+    PRIMARY KEY (uuid)
 );

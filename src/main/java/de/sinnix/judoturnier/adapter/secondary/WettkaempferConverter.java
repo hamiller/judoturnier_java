@@ -27,7 +27,7 @@ public class WettkaempferConverter {
 			return null;
 		}
 		WettkaempferJpa jpa = new WettkaempferJpa();
-		if (wettkaempfer.id() != null) jpa.setId(wettkaempfer.id());
+		if (wettkaempfer.id() != null) jpa.setUuid(wettkaempfer.id().toString());
 		jpa.setName(wettkaempfer.name());
 		if (wettkaempfer.geschlecht() != null) jpa.setGeschlecht(wettkaempfer.geschlecht().name());
 		if (wettkaempfer.altersklasse() != null) jpa.setAltersklasse(wettkaempfer.altersklasse().name());
@@ -46,7 +46,7 @@ public class WettkaempferConverter {
 			return null;
 		}
 		Wettkaempfer wettkaempfer = new Wettkaempfer(
-			jpa.getId(),
+			UUID.fromString(jpa.getUuid()),
 			jpa.getName(),
 			getGeschlecht(jpa.getGeschlecht()),
 			getAltersklasse(jpa.getAltersklasse()),

@@ -46,8 +46,8 @@ public class TurnierRepository {
 	@Autowired
 	private TurnierConverter     turnierConverter;
 
-	public Begegnung ladeBegegnung(Integer begegnungId) {
-		BegegnungJpa begegnungJpa = begegnungJpaRepository.findById(begegnungId).orElseThrow();
+	public Begegnung ladeBegegnung(UUID begegnungId) {
+		BegegnungJpa begegnungJpa = begegnungJpaRepository.findById(begegnungId.toString()).orElseThrow();
 		List<WettkampfGruppeJpa> wettkampfGruppeJpaList = wettkampfGruppeJpaRepository.findAll();
 
 		return begegnungConverter.convertToBegegnung(begegnungJpa, wettkampfGruppeJpaList);
@@ -115,8 +115,8 @@ public class TurnierRepository {
 		for (Runde runde : matte.runden()) {
 			logger.debug("Speichere Runde {} für Matte {}", runde, runde.matteId());
 
-			Integer wettkamfpGruppeID = runde.gruppe().id();
-			Optional<WettkampfGruppeJpa> optionalWettkampfGruppeJpa = wettkampfGruppeJpaRepository.findByIdAndTurnierUUID(wettkamfpGruppeID, runde.gruppe().turnierUUID().toString());
+			UUID wettkamfpGruppeID = runde.gruppe().id();
+			Optional<WettkampfGruppeJpa> optionalWettkampfGruppeJpa = wettkampfGruppeJpaRepository.findById(wettkamfpGruppeID.toString());
 			if (optionalWettkampfGruppeJpa.isEmpty()) {
 				logger.info("Erstelle neue Wettkampfgruppe {} {}", runde.gruppe().name(), wettkamfpGruppeID);
 				WettkampfGruppeJpa wettkampfGruppeJpa = wettkampfGruppeConverter.convertFromWettkampfGruppe(runde.gruppe());
@@ -171,7 +171,7 @@ public class TurnierRepository {
 		logger.info("loesche Wettkaempfe mit Altersklasse {}", altersklasse);
 		begegnungJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream()
 			.filter(begegnungJpa -> begegnungJpa.getWettkaempfer1().getAltersklasse().equals(altersklasse.name()))
-			.forEach(begegnungJpa -> begegnungJpaRepository.deleteById(begegnungJpa.getId()));
+			.forEach(begegnungJpa -> begegnungJpaRepository.deleteById(begegnungJpa.getUuid()));
 	}
 
 	public void speichereBegegnung(Begegnung begegnung) {

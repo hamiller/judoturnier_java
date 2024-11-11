@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @RestController
 public class GewichtsklassenController {
 	private static final Logger logger = LogManager.getLogger(GewichtsklassenController.class);
-	private static final String REGEX  = "\\d+";
+	private static final String REGEX  = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
 
 	@Autowired
 	private WettkaempferService    wettkaempferService;
@@ -139,21 +139,21 @@ public class GewichtsklassenController {
 	public ModelAndView speichereGewichtsklassen(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("speichere Gewichtsklassen {}", formData);
 
-		var gruppenTeilnehmer = new HashMap<Integer, List<Integer>>();
+		var gruppenTeilnehmer = new HashMap<UUID, List<UUID>>();
 		for (String w : formData.get("gruppen_teilnehmer")) {
-			int[] numbers = Pattern.compile(REGEX)
+			String[] ids = Pattern.compile(REGEX)
 				.matcher(w)
 				.results()
-				.mapToInt(match -> Integer.parseInt(match.group(), 10))
-				.toArray();
+				.map(r -> r.group())
+				.toArray(String[]::new);
 
-			var gruppeNummer = numbers[0];
-			var teilnehmerNummer = numbers[1];
+			var gruppeId = UUID.fromString(ids[0]);
+			var teilnehmerId = UUID.fromString(ids[1]);
 
-			if (!gruppenTeilnehmer.containsKey(gruppeNummer)) {
-				gruppenTeilnehmer.put(gruppeNummer, new ArrayList());
+			if (!gruppenTeilnehmer.containsKey(gruppeId)) {
+				gruppenTeilnehmer.put(gruppeId, new ArrayList());
 			}
-			gruppenTeilnehmer.get(gruppeNummer).add(teilnehmerNummer);
+			gruppenTeilnehmer.get(gruppeId).add(teilnehmerId);
 		}
 
 		gewichtsklassenService.aktualisiere(gruppenTeilnehmer, UUID.fromString(turnierid));

@@ -44,7 +44,7 @@ public class VereinController {
 	public ModelAndView verein(@PathVariable String turnierid, @PathVariable String vereinid) {
 		logger.info("Lade Verein {}", vereinid);
 		UUID turnierUUID = UUID.fromString(turnierid);
-		Integer vereinID = Integer.parseInt(vereinid);
+		UUID vereinID = UUID.fromString(vereinid);
 		var verein = vereinService.holeVerein(vereinID, turnierUUID);
 
 		ModelAndView mav = new ModelAndView("verein");
@@ -66,7 +66,7 @@ public class VereinController {
 
 		try {
 			Verein v = new Verein(
-				notEmpty(formData.getFirst("id")) ? Integer.parseInt(formData.getFirst("id")) : null,
+				notEmpty(formData.getFirst("id")) ? UUID.fromString(formData.getFirst("id")) : null,
 				name.strip(),
 				turnierUUID);
 
@@ -85,10 +85,9 @@ public class VereinController {
 
 	@DeleteMapping("/turnier/{turnierid}/vereine/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_AMDIN', 'ROLE_TRAINER')")
-	public void loescheVerein(@PathVariable String turnierid, @PathVariable Integer id) {
+	public void loescheVerein(@PathVariable String turnierid, @PathVariable String id) {
 		logger.debug("lösche Verein {} für Turnier {}", id, turnierid);
-		UUID turnierUUID = UUID.fromString(turnierid);
-		vereinService.loescheVerein(id, turnierUUID);
+		vereinService.loescheVerein(UUID.fromString(id), UUID.fromString(turnierid));
 	}
 
 	@GetMapping("/turnier/{turnierid}/verein-neu")

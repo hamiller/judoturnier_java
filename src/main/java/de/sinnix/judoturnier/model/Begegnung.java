@@ -19,7 +19,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Begegnung {
-	private Integer                id;
+	private UUID                   id;
 	private BegegnungId            begegnungId;
 	private UUID                   rundeId;
 	private Integer                matteId;
@@ -59,9 +59,11 @@ public class Begegnung {
 		RundenTyp(int value) {
 			this.value = value;
 		}
+
 		public int getValue() {
 			return value;
 		}
+
 		public static RundenTyp fromValue(int value) {
 			for (RundenTyp rundenTyp : RundenTyp.values()) {
 				if (rundenTyp.getValue() == value) {

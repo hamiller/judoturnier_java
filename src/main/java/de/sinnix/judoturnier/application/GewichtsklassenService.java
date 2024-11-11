@@ -132,7 +132,7 @@ public class GewichtsklassenService {
 		gewichtsklassenRepository.deleteAllByAltersklasse(turnierUUID, altersklasse);
 	}
 
-	public void aktualisiere(Map<Integer, List<Integer>> gruppenTeilnehmer, UUID turnierUUID) {
+	public void aktualisiere(Map<UUID, List<UUID>> gruppenTeilnehmer, UUID turnierUUID) {
 		logger.info("aktualisiere GewichtsklassenGruppen {}", gruppenTeilnehmer);
 		var gewichtsklassenGruppen = gewichtsklassenRepository.findAll(turnierUUID);
 		var wettkaempfer = wettkaempferService.alleKaempfer(turnierUUID);
@@ -177,11 +177,11 @@ public class GewichtsklassenService {
 		gewichtsklassenRepository.saveAll(updatedGewichtsklassenGruppen);
 	}
 
-	private List<Wettkaempfer> getWettkeampferListe(List<Integer> teilnehmerIds, List<Wettkaempfer> wettkaempferList) {
+	private List<Wettkaempfer> getWettkeampferListe(List<UUID> teilnehmerIds, List<Wettkaempfer> wettkaempferList) {
 		if (teilnehmerIds == null || teilnehmerIds.isEmpty()) return new ArrayList<>();
 
 		List<Wettkaempfer> newWettkaempferList = new ArrayList<>();
-		for (Integer id : teilnehmerIds) {
+		for (UUID id : teilnehmerIds) {
 			for (Wettkaempfer w : wettkaempferList) {
 				if (id.equals(w.id())) newWettkaempferList.add(w);
 			}

@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public record Wettkaempfer(
-	Integer id,
+	UUID id,
 	String name,
 	Geschlecht geschlecht,
 	Altersklasse altersklasse,
@@ -16,6 +16,6 @@ public record Wettkaempfer(
 	UUID turnierUUID) {
 
 	public static Wettkaempfer Freilos() {
-		return new Wettkaempfer(-0, null, null, null, null, null, Optional.empty(), false, false, null);
+		return new Wettkaempfer(UUID.randomUUID(), null, null, null, null, null, Optional.empty(), false, false, null);
 	}
 }

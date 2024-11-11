@@ -161,7 +161,7 @@ class JederGegenJedenTest {
 	@Test
 	public void testErstelleWettkampfGruppenFuerEinzelkaempfer() {
 		List<Wettkaempfer> teilnehmer = List.of(WettkaempferFixtures.wettkaempfer1.get());
-		GewichtsklassenGruppe gewichtsklassenGruppe = new GewichtsklassenGruppe(1, Altersklasse.U11, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Adler), 25.0, 25.0, turnierUUID);
+		GewichtsklassenGruppe gewichtsklassenGruppe = new GewichtsklassenGruppe(UUID.randomUUID(), Altersklasse.U11, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Adler), 25.0, 25.0, turnierUUID);
 
 		List<WettkampfGruppe> erstellteWettkampfgruppen = algorithmus.erstelleWettkampfGruppen(1, gewichtsklassenGruppe, 6);
 

@@ -34,7 +34,7 @@ public class WertungController {
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori/{id}")
 	public ModelAndView begegnungRandori(@PathVariable String turnierid, @PathVariable String id) {
 		logger.info("Lade Wertung für Begegnung {}", id);
-		Integer begegnungId = Integer.parseInt(id);
+		UUID begegnungId = UUID.fromString(id);
 		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
 		Begegnung begegnung = turnierService.ladeBegegnung(begegnungId);
 
@@ -54,7 +54,7 @@ public class WertungController {
 	@GetMapping("/turnier/{turnierid}/begegnungen/normal/{id}")
 	public ModelAndView begegnungTurnier(@PathVariable String turnierid, @PathVariable String id) {
 		logger.info("Lade Wertung für Begegnung {}", id);
-		Integer begegnungId = Integer.parseInt(id);
+		UUID begegnungId = UUID.fromString(id);
 		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
 		Begegnung begegnung = turnierService.ladeBegegnung(begegnungId);
 
@@ -73,10 +73,11 @@ public class WertungController {
 
 	@PostMapping("/turnier/{turnierid}/begegnungen/randori/{begegnungId}")
 	@PreAuthorize("hasRole('ROLE_KAMPFRICHTER')")
-	public ModelAndView speichereBegegnungRandori(@PathVariable String turnierid, @PathVariable String begegnungId, @RequestBody MultiValueMap<String, String> formData) {
-		logger.info("Speichere Wertung für Begegnung {}: {}", begegnungId, formData);
+	public ModelAndView speichereBegegnungRandori(@PathVariable String turnierid, @PathVariable String id, @RequestBody MultiValueMap<String, String> formData) {
+		logger.info("Speichere Wertung für Begegnung {}: {}", id, formData);
 
 		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		UUID begegnungId = UUID.fromString(id);
 
 		var kampfgeist1 = Integer.parseInt(formData.get("kampfgeist1").getFirst());
 		var technik1 = Integer.parseInt(formData.get("technik1").getFirst());
@@ -87,25 +88,26 @@ public class WertungController {
 		var stil2 = Integer.parseInt(formData.get("stil2").getFirst());
 		var fairness2 = Integer.parseInt(formData.get("fairness2").getFirst());
 
-		turnierService.speichereRandoriWertung(begegnungId, kampfgeist1, technik1, stil1, fairness1, kampfgeist2, technik2, stil2, fairness2, benutzer.id());
+		turnierService.speichereRandoriWertung(begegnungId, kampfgeist1, technik1, stil1, fairness1, kampfgeist2, technik2, stil2, fairness2, UUID.fromString(benutzer.id()));
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori");
 	}
 
 	@PostMapping("/turnier/{turnierid}/begegnungen/normal/{begegnungId}")
 	@PreAuthorize("hasRole('ROLE_KAMPFRICHTER')")
-	public ModelAndView speichereBegegnungTurnier(@PathVariable String turnierid, @PathVariable String begegnungId, @RequestBody MultiValueMap<String, String> formData) {
-		logger.info("Speichere Wertung für Begegnung {}: {}", begegnungId, formData);
+	public ModelAndView speichereBegegnungTurnier(@PathVariable String turnierid, @PathVariable String id, @RequestBody MultiValueMap<String, String> formData) {
+		logger.info("Speichere Wertung für Begegnung {}: {}", id, formData);
 
 		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		UUID begegnungId = UUID.fromString(id);
 
 		var scoreWeiss = Integer.parseInt(formData.get("score_weiss").getFirst());
 		var penaltiesWeiss = Integer.parseInt(formData.get("penalties_weiss").getFirst());
 		var scoreBlau = Integer.parseInt(formData.get("score_blau").getFirst());
 		var penaltiesBlau = Integer.parseInt(formData.get("penalties_blau").getFirst());
 		var fightTime = formData.get("fightTime").getFirst();
-		var sieger = Integer.parseInt(formData.get("sieger").getFirst());
+		var sieger = UUID.fromString(formData.get("sieger").getFirst());
 
-		turnierService.speichereTurnierWertung(begegnungId, scoreWeiss, scoreBlau, penaltiesWeiss, penaltiesBlau, fightTime, sieger, benutzer.id());
+		turnierService.speichereTurnierWertung(begegnungId, scoreWeiss, scoreBlau, penaltiesWeiss, penaltiesBlau, fightTime, sieger, UUID.fromString(benutzer.id()));
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/normal");
 	}
 }

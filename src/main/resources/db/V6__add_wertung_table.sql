@@ -6,7 +6,7 @@ CREATE TABLE wertung
     punkte_wettkaempfer1     INTEGER,
     strafen_wettkaempfer2    INTEGER,
     punkte_wettkaempfer2     INTEGER,
-    sieger_id                INTEGER,
+    sieger_uuid              VARCHAR(255),
     zeit                     BIGINT,
     kampfgeist_wettkaempfer1 INTEGER,
     technik_wettkaempfer1    INTEGER,

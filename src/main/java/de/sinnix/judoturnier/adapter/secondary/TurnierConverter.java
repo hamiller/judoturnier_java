@@ -19,18 +19,10 @@ public class TurnierConverter {
 
 	public TurnierJpa convertFromTurnier(Turnier turnier) {
 		TurnierJpa jpa = new TurnierJpa();
-		jpa.setUuid(fromUUID(turnier.uuid()));
+		if (turnier.uuid() != null) jpa.setUuid(turnier.uuid().toString());
 		jpa.setName(turnier.name());
 		jpa.setOrt(turnier.ort());
 		jpa.setDatum(new java.sql.Date(turnier.datum().getTime()));
 		return jpa;
-	}
-
-	private String fromUUID(UUID uuid) {
-		if (uuid != null) {
-			return uuid.toString();
-		}
-
-		return UUID.randomUUID().toString();
 	}
 }

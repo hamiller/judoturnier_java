@@ -37,13 +37,13 @@ public class WettkaempferService {
 		return wettkaempferRepository.findAll(turnierUUID);
 	}
 
-	public void loescheKaempfer(Integer id) {
+	public void loescheKaempfer(UUID id) {
 		logger.info("loesche Wettkaempfer");
 		wettkaempferRepository.deleteById(id);
 		logger.info("Wettkaempfer gelöscht");
 	}
 
-	public Optional<Wettkaempfer> ladeKaempfer(Integer id) {
+	public Optional<Wettkaempfer> ladeKaempfer(UUID id) {
 		logger.info("lade Wettkaempfer");
 		return wettkaempferRepository.findById(id);
 	}

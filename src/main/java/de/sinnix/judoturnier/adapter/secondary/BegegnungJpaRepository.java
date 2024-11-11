@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface BegegnungJpaRepository extends JpaRepository<BegegnungJpa, Integer> {
+public interface BegegnungJpaRepository extends JpaRepository<BegegnungJpa, String> {
 	void deleteAllByTurnierUUID(String turnierUuid);
 	List<BegegnungJpa> findAllByTurnierUUID(String turnierUuid);
 }

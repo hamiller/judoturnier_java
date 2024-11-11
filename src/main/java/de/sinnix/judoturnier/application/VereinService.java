@@ -35,8 +35,8 @@ public class VereinService {
 		return vereinJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream().map(jpa -> vereinConverter.converToVerein(jpa)).collect(Collectors.toUnmodifiableList());
 	}
 
-	public Verein holeVerein(Integer vereinsId, UUID turnierUUID) {
-		return vereinJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream().filter(jpa -> jpa.getId() == vereinsId).findFirst().map(jpa -> vereinConverter.converToVerein(jpa)).orElseThrow();
+	public Verein holeVerein(UUID vereinsId, UUID turnierUUID) {
+		return vereinJpaRepository.findById(vereinsId.toString()).map(jpa -> vereinConverter.converToVerein(jpa)).orElseThrow();
 	}
 
 	public Verein speichereVerein(Verein verein) {
@@ -85,9 +85,9 @@ public class VereinService {
 		return vereinJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream().filter(jpa -> jpa.getName().equalsIgnoreCase(vereinname)).findFirst().map(jpa -> vereinConverter.converToVerein(jpa));
 	}
 
-	public void loescheVerein(Integer id, UUID turnierUUID) {
+	public void loescheVerein(UUID id, UUID turnierUUID) {
 		logger.info("Loesche Verein {}", id);
-		vereinJpaRepository.deleteById(id);
+		vereinJpaRepository.deleteById(id.toString());
 		logger.info("Verein gelöscht");
 	}
 }

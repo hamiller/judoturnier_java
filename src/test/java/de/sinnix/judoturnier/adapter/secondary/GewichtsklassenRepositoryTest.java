@@ -48,19 +48,26 @@ public class GewichtsklassenRepositoryTest {
     @Test
     public void testFindAll() {
         // Setup mocks
+        UUID wk1Id = UUID.randomUUID();
+        UUID wk2Id = UUID.randomUUID();
+        UUID v1Id = UUID.randomUUID();
+        UUID v2Id = UUID.randomUUID();
+        UUID gwk1Id = UUID.randomUUID();
+        UUID gwk2Id = UUID.randomUUID();
+
         var teilnehmerJpa = List.of(
-                new WettkaempferJpa(1, "Melanie", "w", "Frauen", new VereinJpa(1, "Verein1", turnierUUID.toString()), 55d, null, false, false, turnierUUID.toString()),
-                new WettkaempferJpa(2, "Mira", "w", "Frauen", new VereinJpa(2, "Verein2", turnierUUID.toString()), 55d, null, false, false, turnierUUID.toString()));
-        GewichtsklassenJpa jpa1 = new GewichtsklassenJpa(1, "Frauen", "w", teilnehmerJpa, "Adler", 60d, 50d, turnierUUID.toString());
-        GewichtsklassenJpa jpa2 = new GewichtsklassenJpa(2, "Frauen", "w", teilnehmerJpa, "Bär", 60d, 50d, turnierUUID.toString());
+                new WettkaempferJpa(wk1Id.toString(), "Melanie", "w", "Frauen", new VereinJpa(v1Id.toString(), "Verein1", turnierUUID.toString()), 55d, null, false, false, turnierUUID.toString()),
+                new WettkaempferJpa(wk2Id.toString(), "Mira", "w", "Frauen", new VereinJpa(v2Id.toString(), "Verein2", turnierUUID.toString()), 55d, null, false, false, turnierUUID.toString()));
+        GewichtsklassenJpa jpa1 = new GewichtsklassenJpa(gwk1Id.toString(), "Frauen", "w", teilnehmerJpa, "Adler", 60d, 50d, turnierUUID.toString());
+        GewichtsklassenJpa jpa2 = new GewichtsklassenJpa(gwk2Id.toString(), "Frauen", "w", teilnehmerJpa, "Bär", 60d, 50d, turnierUUID.toString());
         List<GewichtsklassenJpa> jpaList = Arrays.asList(jpa1, jpa2);
         when(gewichtsklassenJpaRepository.findAllByTurnierUUID(turnierUUID.toString())).thenReturn(jpaList);
 
         var teilnehmer = List.of(
-                new Wettkaempfer(1, "Melanie", Geschlecht.w, Altersklasse.Frauen, new Verein(1, "Verein1", turnierUUID), 55d, null, false, false, turnierUUID),
-                new Wettkaempfer(2, "Mira", Geschlecht.w, Altersklasse.Frauen, new Verein(2, "Verein2", turnierUUID), 55d, null, false, false, turnierUUID));
-        GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(1, Altersklasse.Frauen, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Adler), 60d, 50d, turnierUUID);
-        GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(2, Altersklasse.Frauen, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Bär), 60d, 50d, turnierUUID);
+                new Wettkaempfer(wk1Id, "Melanie", Geschlecht.w, Altersklasse.Frauen, new Verein(v1Id, "Verein1", turnierUUID), 55d, null, false, false, turnierUUID),
+                new Wettkaempfer(wk2Id, "Mira", Geschlecht.w, Altersklasse.Frauen, new Verein(v2Id, "Verein2", turnierUUID), 55d, null, false, false, turnierUUID));
+        GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(gwk1Id, Altersklasse.Frauen, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Adler), 60d, 50d, turnierUUID);
+        GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(gwk2Id, Altersklasse.Frauen, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Bär), 60d, 50d, turnierUUID);
         when(gewichtsklassenConverter.convertToGewichtsklassen(jpa1)).thenReturn(gruppe1);
         when(gewichtsklassenConverter.convertToGewichtsklassen(jpa2)).thenReturn(gruppe2);
 
@@ -85,18 +92,25 @@ public class GewichtsklassenRepositoryTest {
     @Test
     public void testSaveAll() {
         // Setup mocks
+        UUID wk1Id = UUID.randomUUID();
+        UUID wk2Id = UUID.randomUUID();
+        UUID v1Id = UUID.randomUUID();
+        UUID v2Id = UUID.randomUUID();
+        UUID gwk1Id = UUID.randomUUID();
+        UUID gwk2Id = UUID.randomUUID();
+
         var teilnehmer = List.of(
-                new Wettkaempfer(1, "Melanie", Geschlecht.w, Altersklasse.Frauen, new Verein(1, "Verein1", turnierUUID), 55d, null, false, false, turnierUUID),
-                new Wettkaempfer(2, "Mira", Geschlecht.w, Altersklasse.Frauen, new Verein(2, "Verein2", turnierUUID), 55d, null, false, false, turnierUUID));
-        GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(1, Altersklasse.Frauen, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Adler), 60d, 50d, turnierUUID);
-        GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(2, Altersklasse.Frauen, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Bär), 60d, 50d, turnierUUID);
+                new Wettkaempfer(wk1Id, "Melanie", Geschlecht.w, Altersklasse.Frauen, new Verein(v1Id, "Verein1", turnierUUID), 55d, null, false, false, turnierUUID),
+                new Wettkaempfer(wk2Id, "Mira", Geschlecht.w, Altersklasse.Frauen, new Verein(v2Id, "Verein2", turnierUUID), 55d, null, false, false, turnierUUID));
+        GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(gwk1Id, Altersklasse.Frauen, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Adler), 60d, 50d, turnierUUID);
+        GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(gwk2Id, Altersklasse.Frauen, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Bär), 60d, 50d, turnierUUID);
         List<GewichtsklassenGruppe> gruppenList = Arrays.asList(gruppe1, gruppe2);
 
         var teilnehmerJpa = List.of(
-                new WettkaempferJpa(1, "Melanie", "w", "Frauen", new VereinJpa(1, "Verein1", turnierUUID.toString()), 55d, null, false, false, turnierUUID.toString()),
-                new WettkaempferJpa(2, "Mira", "w", "Frauen", new VereinJpa(2, "Verein2", turnierUUID.toString()), 55d, null, false, false, turnierUUID.toString()));
-        GewichtsklassenJpa jpa1 = new GewichtsklassenJpa(1, "Frauen", "w", teilnehmerJpa, "Adler", 60d, 50d, turnierUUID.toString());
-        GewichtsklassenJpa jpa2 = new GewichtsklassenJpa(2, "Frauen", "w", teilnehmerJpa, "Bär", 60d, 50d, turnierUUID.toString());
+                new WettkaempferJpa(wk1Id.toString(), "Melanie", "w", "Frauen", new VereinJpa(v1Id.toString(), "Verein1", turnierUUID.toString()), 55d, null, false, false, turnierUUID.toString()),
+                new WettkaempferJpa(wk2Id.toString(), "Mira", "w", "Frauen", new VereinJpa(v2Id.toString(), "Verein2", turnierUUID.toString()), 55d, null, false, false, turnierUUID.toString()));
+        GewichtsklassenJpa jpa1 = new GewichtsklassenJpa(gwk1Id.toString(), "Frauen", "w", teilnehmerJpa, "Adler", 60d, 50d, turnierUUID.toString());
+        GewichtsklassenJpa jpa2 = new GewichtsklassenJpa(gwk2Id.toString(), "Frauen", "w", teilnehmerJpa, "Bär", 60d, 50d, turnierUUID.toString());
 
         when(gewichtsklassenConverter.convertFromGewichtsklassen(gruppe1)).thenReturn(jpa1);
         when(gewichtsklassenConverter.convertFromGewichtsklassen(gruppe2)).thenReturn(jpa2);

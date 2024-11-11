@@ -6,6 +6,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.UUID;
+
 @Repository
 public class BenutzerRepository {
 	private static final Logger logger = LogManager.getLogger(BenutzerRepository.class);
@@ -13,7 +15,7 @@ public class BenutzerRepository {
 	@Autowired
 	private BenutzerConverter benutzerConverter;
 
-	public Benutzer findById(String bewerterUUID) {
-		return benutzerConverter.convertToBenutzer(bewerterUUID);
+	public Benutzer findById(UUID bewerterUUID) {
+		return benutzerConverter.convertToBenutzer(bewerterUUID.toString());
 	}
 }

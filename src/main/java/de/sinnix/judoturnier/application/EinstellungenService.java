@@ -68,13 +68,29 @@ public class EinstellungenService {
 	}
 
 	public boolean isRandori(UUID turnierUUID) {
+		logger.info("Prüfe Turnierart für Turnier {}", turnierUUID);
 		EinstellungJpa.EinstellungId einstellungId = new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString());
 		TurnierTyp turnierTyp = einstellungJpaRepository.findById(einstellungId).map(typ -> TurnierTyp.valueOf(typ.getWert())).orElseThrow();
 		return turnierTyp == TurnierTyp.RANDORI;
 	}
 
 	public Turnier ladeTurnierDaten(UUID turnierUUID) {
+		logger.info("Lade Turnierdaten für Turnier {}", turnierUUID);
 		TurnierJpa jpa = turnierJpaRepository.findById(turnierUUID.toString()).orElseThrow();
 		return turnierConverter.convertToTurnier(jpa);
+	}
+
+	public Einstellungen speichereDefaultEinstellungen(UUID turnierUUID) {
+		logger.info("Erstelle Default-Einstellungen für Turnier {}", turnierUUID);
+		List<EinstellungJpa> jpaList = List.of(
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString()), DEFAULT_TURNIERTYP.name()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(MattenAnzahl.TYP, turnierUUID.toString()), DEFAULT_MATTENANZAHL.anzahl().toString()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(WettkampfReihenfolge.TYP, turnierUUID.toString()), DEFAULT_WETTKAMPFREIHENFOLGE.name()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(Gruppengroesse.TYP, turnierUUID.toString()), DEFAULT_GRUPPENGROESSE.anzahl().toString()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(VariablerGewichtsteil.TYP, turnierUUID.toString()), DEFAULT_VARIABLER_GEWICHTSTEIL.variablerTeil().toString()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(SeparateAlterklassen.TYP, turnierUUID.toString()), DEFAULT_SEPARATE_ALTERKLASSEN.name())
+		);
+		einstellungJpaRepository.saveAll(jpaList);
+		return ladeEinstellungen(turnierUUID);
 	}
 }

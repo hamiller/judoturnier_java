@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public record GewichtsklassenGruppe(
-	Integer id,
+	UUID id,
 	Altersklasse altersKlasse,
 	Optional<Geschlecht> gruppenGeschlecht,
 	List<Wettkaempfer> teilnehmer,

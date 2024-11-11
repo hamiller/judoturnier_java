@@ -7,7 +7,7 @@ import de.sinnix.judoturnier.model.Wettkaempfer;
 import java.util.List;
 import java.util.Optional;
 
-public record BegegnungDto(Integer begegnungId,
+public record BegegnungDto(String begegnungId,
 						   Begegnung.RundenTyp rundenTyp,
 						   Integer runde,
 						   Integer akuellePaarung,

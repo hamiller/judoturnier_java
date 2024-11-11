@@ -32,15 +32,19 @@ public class WettkaempferConverterTest {
     private Verein verein;
     private VereinJpa vereinJpa;
     private UUID turnierUUID;
+    private UUID vereinUUID;
+    private UUID wkUUID;
 
     @BeforeEach
     void setUp() {
         turnierUUID = UUID.randomUUID();
-        verein = new Verein(1, "Verein1", turnierUUID);
-        vereinJpa = new VereinJpa(1, "Verein1", turnierUUID.toString());
+        vereinUUID = UUID.randomUUID();
+        wkUUID = UUID.randomUUID();
+        verein = new Verein(vereinUUID, "Verein1", turnierUUID);
+        vereinJpa = new VereinJpa(vereinUUID.toString(), "Verein1", turnierUUID.toString());
 
-        wettkaempfer = new Wettkaempfer(1, "Max", Geschlecht.m, Altersklasse.U18, verein, 70d, Optional.of(Farbe.BLAU), true, false, turnierUUID);
-        wettkaempferJpa = new WettkaempferJpa(1, "Max", "m", "U18", vereinJpa, 70d, "BLAU", true, false, turnierUUID.toString());
+        wettkaempfer = new Wettkaempfer(wkUUID, "Max", Geschlecht.m, Altersklasse.U18, verein, 70d, Optional.of(Farbe.BLAU), true, false, turnierUUID);
+        wettkaempferJpa = new WettkaempferJpa(wkUUID.toString(), "Max", "m", "U18", vereinJpa, 70d, "BLAU", true, false, turnierUUID.toString());
     }
 
     @Test
@@ -50,7 +54,7 @@ public class WettkaempferConverterTest {
         WettkaempferJpa result = wettkaempferConverter.convertFromWettkaempfer(wettkaempfer);
 
         assertNotNull(result);
-        assertEquals(wettkaempfer.id(), result.getId());
+        assertEquals(wettkaempfer.id().toString(), result.getUuid());
         assertEquals(wettkaempfer.name(), result.getName());
         assertEquals(wettkaempfer.geschlecht().name(), result.getGeschlecht());
         assertEquals(wettkaempfer.altersklasse().name(), result.getAltersklasse());
@@ -68,7 +72,7 @@ public class WettkaempferConverterTest {
         Wettkaempfer result = wettkaempferConverter.convertToWettkaempfer(wettkaempferJpa);
 
         assertNotNull(result);
-        assertEquals(wettkaempferJpa.getId(), result.id());
+        assertEquals(wettkaempferJpa.getUuid(), result.id().toString());
         assertEquals(wettkaempferJpa.getName(), result.name());
         assertEquals(wettkaempferJpa.getGeschlecht(), result.geschlecht().name());
         assertEquals(wettkaempferJpa.getAltersklasse(), result.altersklasse().name());
@@ -81,7 +85,7 @@ public class WettkaempferConverterTest {
 
     @Test
     void convertMissingFields() {
-        Wettkaempfer wettkaempfer = new Wettkaempfer(null, "Name", Geschlecht.m, Altersklasse.U18, verein, 0d, Optional.empty(), false, false, turnierUUID);
+        Wettkaempfer wettkaempfer = new Wettkaempfer(UUID.randomUUID(), "Name", Geschlecht.m, Altersklasse.U18, verein, 0d, Optional.empty(), false, false, turnierUUID);
 
         when(vereinConverter.converToVerein(any(VereinJpa.class))).thenReturn(verein);
         when(vereinConverter.convertFromVerein(any(Verein.class))).thenReturn(vereinJpa);
@@ -94,8 +98,8 @@ public class WettkaempferConverterTest {
 
     @Test
     void readJpaWithMissingFields() {
-        WettkaempferJpa wettkaempferJpa = new WettkaempferJpa(1, "Name", null, null, vereinJpa, 0d, "", false, false, turnierUUID.toString());
-        Wettkaempfer wettkaempfer = new Wettkaempfer(1, "Name", null, null, verein, 0d, Optional.empty(), false, false, turnierUUID);
+        WettkaempferJpa wettkaempferJpa = new WettkaempferJpa(wkUUID.toString(), "Name", null, null, vereinJpa, 0d, "", false, false, turnierUUID.toString());
+        Wettkaempfer wettkaempfer = new Wettkaempfer(wkUUID, "Name", null, null, verein, 0d, Optional.empty(), false, false, turnierUUID);
 
         when(vereinConverter.converToVerein(any(VereinJpa.class))).thenReturn(verein);
 

@@ -94,7 +94,11 @@ public class TurnierService {
 			Turnier neuesTurnier = new Turnier(UUID.randomUUID(), name, ort, parsedDate);
 
 			TurnierJpa jpa = turnierJpaRepository.save(turnierConverter.convertFromTurnier(neuesTurnier));
-			return turnierConverter.convertToTurnier(jpa);
+			Turnier turnier = turnierConverter.convertToTurnier(jpa);
+
+			einstellungenService.speichereDefaultEinstellungen(turnier.uuid());
+
+			return turnier;
 		} catch (ParseException e) {
 			logger.warn("Datum konnte nicht geparsed werden: {}", datum, e);
 			throw new IllegalArgumentException("Datum");
@@ -154,7 +158,7 @@ public class TurnierService {
 			for (BegegnungenJeRunde begegnungenJeRunde : wettkampfGruppe.alleRundenBegegnungen()) {
 				logger.debug("Runde {}", r);
 				for (Begegnung begegnung : begegnungenJeRunde.begegnungenJeRunde()) {
-					logger.debug("{} | {} - Wettkaempfer1: {}, Wettkaempfer2: {}", begegnung.getId(), begegnung.getBegegnungId(),  begegnung.getWettkaempfer1().map(Wettkaempfer::name), begegnung.getWettkaempfer2().map(Wettkaempfer::name));
+					logger.debug("{} - Wettkaempfer1: {}, Wettkaempfer2: {}", begegnung.getBegegnungId(),  begegnung.getWettkaempfer1().map(Wettkaempfer::name), begegnung.getWettkaempfer2().map(Wettkaempfer::name));
 				}
 				r++;
 			}
@@ -165,15 +169,15 @@ public class TurnierService {
 		turnierRepository.speichereMatten(matten);
 	}
 
-	public Begegnung ladeBegegnung(Integer begegnungId) {
+	public Begegnung ladeBegegnung(UUID begegnungId) {
 		logger.info("lade Begegnung {}", begegnungId);
 		return turnierRepository.ladeBegegnung(begegnungId);
 	}
 
 	@Transactional
-	public void speichereRandoriWertung(String begegnungId, int kampfgeist1, int technik1, int stil1, int fairness1, int kampfgeist2, int technik2, int stil2, int fairness2, String bewerterUUID) {
+	public void speichereRandoriWertung(UUID begegnungId, int kampfgeist1, int technik1, int stil1, int fairness1, int kampfgeist2, int technik2, int stil2, int fairness2, UUID bewerterUUID) {
 		logger.info("speichereRandoriWertung: {}", begegnungId);
-		Begegnung begegnung = ladeBegegnung(Integer.parseInt(begegnungId));
+		Begegnung begegnung = ladeBegegnung(begegnungId);
 
 		Benutzer benutzer = benutzerRepository.findById(bewerterUUID);
 		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), benutzer);
@@ -205,12 +209,12 @@ public class TurnierService {
 	}
 
 	@Transactional
-	public void speichereTurnierWertung(String begegnungId, int scoreWeiss, int scoreBlau, int penaltiesWeiss, int penaltiesBlau, String fightTime, int sieger, String bewerterUUID) {
-		logger.info("Begegnung: {}, Sieger: {}, Kampfzeit: {}s", begegnungId, sieger, fightTime);
-		Begegnung begegnung = ladeBegegnung(Integer.parseInt(begegnungId));
+	public void speichereTurnierWertung(UUID begegnungId, int scoreWeiss, int scoreBlau, int penaltiesWeiss, int penaltiesBlau, String fightTime, UUID siegerUUID, UUID bewerterUUID) {
+		logger.info("Begegnung: {}, Sieger: {}, Kampfzeit: {}s", begegnungId, siegerUUID, fightTime);
+		Begegnung begegnung = ladeBegegnung(begegnungId);
 
 		Benutzer benutzer = benutzerRepository.findById(bewerterUUID);
-		Wettkaempfer wettkaempfer = wettkaempferService.ladeKaempfer(sieger).orElseThrow();
+		Wettkaempfer wettkaempfer = wettkaempferService.ladeKaempfer(siegerUUID).orElseThrow();
 		Duration dauer = parseDuration(fightTime);
 
 		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), benutzer);
@@ -335,7 +339,7 @@ public class TurnierService {
 		return turnierJpaRepository.findById(turnierid).map(t -> turnierConverter.convertToTurnier(t)).orElseThrow();
 	}
 
-	public Metadaten ladeMetadaten(Integer id, UUID turnierUUID) {
+	public Metadaten ladeMetadaten(UUID id, UUID turnierUUID) {
 		logger.info("Lade Metadaten für Begegnung {}", id);
 		var matten = turnierRepository.ladeMatten(turnierUUID);;
 
@@ -351,8 +355,8 @@ public class TurnierService {
 
 		var alleRundeBegegnungIds = aktuelleRunde.get().begegnungen().stream().map(Begegnung::getId).collect(Collectors.toUnmodifiableList());
 
-		Integer vorgaenger = null;
-		Integer nachfolger = null;
+		UUID vorgaenger = null;
+		UUID nachfolger = null;
 		int index = alleRundeBegegnungIds.indexOf(id);
 		if (index > 0) {
 			vorgaenger = alleRundeBegegnungIds.get(index - 1);

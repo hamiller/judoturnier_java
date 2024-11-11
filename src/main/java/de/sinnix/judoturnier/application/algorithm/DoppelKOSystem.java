@@ -59,9 +59,8 @@ public class DoppelKOSystem implements Algorithmus {
 			.map(BegegnungenJeRunde::new)
 			.collect(Collectors.toList());
 
-		String id = ((gruppenid + 1) * 10) + Integer.toString(1); // ids erstellen und konkatenieren
 		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(
-			Integer.parseInt(id),
+			UUID.randomUUID(),
 			gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
 			"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
 			gewichtsklassenGruppe.altersKlasse(),

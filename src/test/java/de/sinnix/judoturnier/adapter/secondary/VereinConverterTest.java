@@ -20,12 +20,13 @@ class VereinConverterTest {
     @Test
     void testConvertToVerein() {
         UUID turnierUUID = UUID.randomUUID();
-        VereinJpa vereinJpa = new VereinJpa(1, "Verein1", turnierUUID.toString());
+        UUID vereinUUID = UUID.randomUUID();
+        VereinJpa vereinJpa = new VereinJpa(vereinUUID.toString(), "Verein1", turnierUUID.toString());
 
         Verein verein = vereinConverter.converToVerein(vereinJpa);
 
         assertNotNull(verein);
-        assertEquals(1, verein.id());
+        assertEquals(vereinUUID, verein.id());
         assertEquals("Verein1", verein.name());
         assertEquals(turnierUUID.toString(), verein.turnierUUID().toString());
     }
@@ -33,12 +34,13 @@ class VereinConverterTest {
     @Test
     void testConvertFromVerein() {
         UUID turnierUUID = UUID.randomUUID();
-        Verein verein = new Verein(1, "Verein1", turnierUUID);
+        UUID vereinUUID = UUID.randomUUID();
+        Verein verein = new Verein(vereinUUID, "Verein1", turnierUUID);
 
         VereinJpa vereinJpa = vereinConverter.convertFromVerein(verein);
 
         assertNotNull(vereinJpa);
-        assertEquals(1, vereinJpa.getId());
+        assertEquals(vereinUUID.toString(), vereinJpa.getUuid());
         assertEquals("Verein1", vereinJpa.getName());
         assertEquals(turnierUUID.toString(), vereinJpa.getTurnierUUID());
     }

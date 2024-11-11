@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface WettkampfGruppeJpaRepository extends JpaRepository<WettkampfGruppeJpa, Integer> {
+public interface WettkampfGruppeJpaRepository extends JpaRepository<WettkampfGruppeJpa, String> {
 	List<WettkampfGruppeJpa> findAllByTurnierUUID(String turnierUuid);
-	Optional<WettkampfGruppeJpa> findByIdAndTurnierUUID(Integer id, String turnierUuid);
+	Optional<WettkampfGruppeJpa> findByUuidAndTurnierUUID(String uuid, String turnierUuid);
 	void deleteAllByTurnierUUID(String turnierUuid);
 }

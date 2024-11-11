@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class BenutzerConverter {

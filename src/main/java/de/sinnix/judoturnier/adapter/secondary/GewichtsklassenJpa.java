@@ -16,25 +16,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "gewichtsklassengruppen", uniqueConstraints = {
-	@UniqueConstraint(columnNames = {"id", "turnier_uuid"})
-})
+@Table(name = "gewichtsklassengruppen")
 public class GewichtsklassenJpa {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer               id;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private String                uuid;
 	private String                altersklasse;
 	private String                gruppengeschlecht;
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 		name = "gewichtsklassengruppen_wettkaempfer",
 		joinColumns = {
-			@JoinColumn(name = "gewichtsklassengruppe_id", referencedColumnName = "id"),
+			@JoinColumn(name = "gewichtsklassengruppe_id", referencedColumnName = "uuid"),
 			@JoinColumn(name = "turnier_uuid", referencedColumnName = "turnier_uuid")
 		},
 		inverseJoinColumns = @JoinColumn(name = "wettkaempfer_id")

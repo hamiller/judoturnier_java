@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class JederGegenJeden implements Algorithmus {
 	private static final Logger logger                   = LogManager.getLogger(JederGegenJeden.class);
@@ -31,9 +32,8 @@ public class JederGegenJeden implements Algorithmus {
 
  			List<BegegnungenJeRunde> begegnungen = berechneBegegnungen(wettkaempferGruppe);
 
-			String id = ((gruppenid + 1) * 10) + Integer.toString(i); // ids erstellen und konkatenieren
 			WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(
-				Integer.parseInt(id),
+				UUID.randomUUID(),
 				gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
 				"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
 				gewichtsklassenGruppe.altersKlasse(),

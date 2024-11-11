@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -28,7 +30,7 @@ class GewichtsklassenControllerTest {
 	@Mock
 	private GewichtsklassenService gewichtsklassenService;
 	@Mock
-	private EinstellungenService einstellungenService;
+	private EinstellungenService   einstellungenService;
 
 	@InjectMocks
 	private GewichtsklassenController gewichtsklassenController;
@@ -36,17 +38,35 @@ class GewichtsklassenControllerTest {
 	@Test
 	void speichereGewichtsklassen() {
 		UUID turnierUUID = UUID.randomUUID();
+		UUID g1 = UUID.fromString("47111111-1111-1111-1111-111111111111");
+		UUID g2 = UUID.fromString("56111111-1111-1111-1111-111111111111");
+		UUID wk1 = UUID.fromString("11111111-1111-1111-1111-111111111174");
+		UUID wk2 = UUID.fromString("11111111-1111-1111-1111-111111111181");
+		UUID wk3 = UUID.fromString("11111111-1111-1111-1111-111111111188");
 		MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-		formData.add("gruppen_teilnehmer","gruppe_47_teilnehmer_74");
-		formData.add("gruppen_teilnehmer","gruppe_47_teilnehmer_81");
-		formData.add("gruppen_teilnehmer","gruppe_56_teilnehmer_88");
+		formData.add("gruppen_teilnehmer", "gruppe_" + g1.toString() + "_teilnehmer_" + wk1.toString());
+		formData.add("gruppen_teilnehmer", "gruppe_" + g1.toString() + "_teilnehmer_" + wk2.toString());
+		formData.add("gruppen_teilnehmer", "gruppe_" + g2.toString() + "_teilnehmer_" + wk3.toString());
 
-		Map<Integer, List<Integer>> gruppenTeilnehmer = new HashMap<>();
-		gruppenTeilnehmer.put(47, List.of(74, 81));
-		gruppenTeilnehmer.put(56, List.of(88));
+		Map<UUID, List<UUID>> gruppenTeilnehmer = new HashMap<>();
+		gruppenTeilnehmer.put(g1, List.of(wk1, wk2));
+		gruppenTeilnehmer.put(g2, List.of(wk3));
 
 		gewichtsklassenController.speichereGewichtsklassen(turnierUUID.toString(), formData);
 
 		verify(gewichtsklassenService, times(1)).aktualisiere(gruppenTeilnehmer, turnierUUID);
+	}
+
+	@Test
+	void testRegex() {
+		String input = "gruppe_47111111-1111-1111-1111-111111111111_teilnehmer_11111111-1111-1111-1111-111111111174";
+
+		Pattern pattern = Pattern.compile("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}");
+		Matcher matcher = pattern.matcher(input);
+
+		while (matcher.find()) {
+			System.out.println(matcher.group());
+		}
+		System.out.println("Fertig");
 	}
 }

@@ -40,14 +40,24 @@ class DoppelKOSystemTest {
 
 	@Test
 	void testErstelleWettkampfgruppen4(){
+		UUID v1Id = UUID.randomUUID();
+		UUID v2Id = UUID.randomUUID();
+		UUID v3Id = UUID.randomUUID();
+		UUID v4Id = UUID.randomUUID();
+
+		UUID wk1Id = UUID.randomUUID();
+		UUID wk2Id = UUID.randomUUID();
+		UUID wk3Id = UUID.randomUUID();
+		UUID wk4Id = UUID.randomUUID();
+
 		// Teilnehmer einer Gruppe
 		List<Wettkaempfer> teilnehmer = Arrays.asList(
-			new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 27.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 29.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 26.1, Optional.of(Farbe.GRUEN), true, true, turnierUUID)
+			new Wettkaempfer(wk1Id, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(v1Id, "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(wk2Id, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(v3Id, "Verein3", turnierUUID), 27.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(wk3Id, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(v4Id, "Verein4", turnierUUID), 29.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(wk4Id, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(v2Id, "Verein2", turnierUUID), 26.1, Optional.of(Farbe.GRUEN), true, true, turnierUUID)
 		);
-		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(1, Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 26.1, turnierUUID);
+		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(UUID.randomUUID(), Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 26.1, turnierUUID);
 
 		List<WettkampfGruppe> wettkampfGruppen = algorithmus.erstelleWettkampfGruppen(1, gewichtsklassengruppe, 0);
 		// Ausgabe des Turnierbaums
@@ -75,16 +85,16 @@ class DoppelKOSystemTest {
 	void testErstelleWettkampfgruppen6(){
 		// Teilnehmer einer Gruppe
 		List<Wettkaempfer> teilnehmer = Arrays.asList(
-			new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 27.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 29.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 26.1, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 33.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(6, "Teilnehmer F", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 35.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID)
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein3", turnierUUID), 27.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein5", turnierUUID), 29.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein2", turnierUUID), 26.1, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 33.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer F", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein1", turnierUUID), 35.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID)
 		);
 
 
-		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(1, Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 43.0, turnierUUID);
+		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(UUID.randomUUID(), Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 43.0, turnierUUID);
 
 		List<WettkampfGruppe> wettkampfGruppen = algorithmus.erstelleWettkampfGruppen(1, gewichtsklassengruppe, 0);
 
@@ -128,18 +138,18 @@ class DoppelKOSystemTest {
 	void testErstelleWettkampfgruppen8(){
 		// Teilnehmer einer Gruppe
 		List<Wettkaempfer> teilnehmer = Arrays.asList(
-			new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 27.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 29.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 26.1, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 33.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(6, "Teilnehmer F", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 35.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(7, "Teilnehmer G", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 37.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(8, "Teilnehmer H", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 39.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID)
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein3", turnierUUID), 27.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein5", turnierUUID), 29.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein2", turnierUUID), 26.1, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 33.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer F", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein1", turnierUUID), 35.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer G", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein3", turnierUUID), 37.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer H", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein5", turnierUUID), 39.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID)
 		);
 
 
-		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(1, Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 43.0, turnierUUID);
+		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(UUID.randomUUID(), Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 43.0, turnierUUID);
 
 		List<WettkampfGruppe> wettkampfGruppen = algorithmus.erstelleWettkampfGruppen(1, gewichtsklassengruppe, 0);
 
@@ -183,20 +193,20 @@ class DoppelKOSystemTest {
 	void testErstelleWettkampfgruppen10(){
 		// Teilnehmer einer Gruppe
 		List<Wettkaempfer> teilnehmer = Arrays.asList(
-			new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 27.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 29.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 26.1, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 33.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(6, "Teilnehmer F", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 35.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(7, "Teilnehmer G", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 37.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(8, "Teilnehmer H", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 39.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(9, "Teilnehmer I", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 41.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(10, "Teilnehmer J", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID)
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein3", turnierUUID), 27.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein5", turnierUUID), 29.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein2", turnierUUID), 26.1, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 33.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer F", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein1", turnierUUID), 35.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer G", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein3", turnierUUID), 37.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer H", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein5", turnierUUID), 39.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer I", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein2", turnierUUID), 41.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer J", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID)
 		);
 
 
-		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(1, Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 43.0, turnierUUID);
+		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(UUID.randomUUID(), Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 43.0, turnierUUID);
 
 		List<WettkampfGruppe> wettkampfGruppen = algorithmus.erstelleWettkampfGruppen(1, gewichtsklassengruppe, 0);
 
@@ -259,26 +269,26 @@ class DoppelKOSystemTest {
 	void testErstelleWettkampfgruppen16(){
 		// Teilnehmer einer Gruppe
 		List<Wettkaempfer> teilnehmer = Arrays.asList(
-			new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 27.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 29.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 26.1, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 33.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(6, "Teilnehmer F", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 35.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(7, "Teilnehmer G", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 37.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(8, "Teilnehmer H", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 39.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(9, "Teilnehmer I", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 41.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(10, "Teilnehmer J", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(11, "Teilnehmer K", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(12, "Teilnehmer L", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(13, "Teilnehmer M", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(14, "Teilnehmer N", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(15, "Teilnehmer O", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(16, "Teilnehmer P", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID)
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein3", turnierUUID), 27.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein5", turnierUUID), 29.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein2", turnierUUID), 26.1, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 33.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer F", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein1", turnierUUID), 35.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer G", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein3", turnierUUID), 37.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer H", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein5", turnierUUID), 39.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer I", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein2", turnierUUID), 41.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer J", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer K", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer L", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer M", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer N", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer O", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer P", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID)
 		);
 
 
-		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(1, Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 43.0, turnierUUID);
+		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(UUID.randomUUID(), Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 43.0, turnierUUID);
 
 		List<WettkampfGruppe> wettkampfGruppen = algorithmus.erstelleWettkampfGruppen(1, gewichtsklassengruppe, 0);
 
@@ -346,43 +356,43 @@ class DoppelKOSystemTest {
 	void testErstelleWettkampfgruppen32(){
 		// Teilnehmer einer Gruppe
 		List<Wettkaempfer> teilnehmer = Arrays.asList(
-			new Wettkaempfer(1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 27.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 29.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 26.1, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 33.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(6, "Teilnehmer F", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 35.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(7, "Teilnehmer G", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 37.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(8, "Teilnehmer H", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 39.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(9, "Teilnehmer I", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 41.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(10, "Teilnehmer J", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(11, "Teilnehmer K", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(12, "Teilnehmer L", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(13, "Teilnehmer M", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(14, "Teilnehmer N", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(15, "Teilnehmer O", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(16, "Teilnehmer P", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein3", turnierUUID), 27.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein5", turnierUUID), 29.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein2", turnierUUID), 26.1, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 33.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer F", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein1", turnierUUID), 35.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer G", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein3", turnierUUID), 37.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer H", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein5", turnierUUID), 39.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer I", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein2", turnierUUID), 41.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer J", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer K", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer L", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer M", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer N", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer O", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer P", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
 
-			new Wettkaempfer(17, "Teilnehmer Q", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(18, "Teilnehmer R", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 27.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(19, "Teilnehmer S", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 29.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(20, "Teilnehmer T", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 26.1, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(21, "Teilnehmer U", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 33.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(22, "Teilnehmer V", Geschlecht.m, Altersklasse.U11, new Verein(1, "Verein1", turnierUUID), 35.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(23, "Teilnehmer W", Geschlecht.m, Altersklasse.U11, new Verein(3, "Verein3", turnierUUID), 37.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(24, "Teilnehmer X", Geschlecht.m, Altersklasse.U11, new Verein(5, "Verein5", turnierUUID), 39.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(25, "Teilnehmer Y", Geschlecht.m, Altersklasse.U11, new Verein(2, "Verein2", turnierUUID), 41.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
-			new Wettkaempfer(26, "Teilnehmer Z", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(27, "Teilnehmer a", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(28, "Teilnehmer b", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(29, "Teilnehmer c", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(30, "Teilnehmer d", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(31, "Teilnehmer e", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
-			new Wettkaempfer(32, "Teilnehmer f", Geschlecht.m, Altersklasse.U11, new Verein(4, "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID)
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer Q", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer R", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein3", turnierUUID), 27.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer S", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein5", turnierUUID), 29.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer T", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein2", turnierUUID), 26.1, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer U", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 33.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer V", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein1", turnierUUID), 35.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer W", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein3", turnierUUID), 37.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer X", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein5", turnierUUID), 39.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer Y", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein2", turnierUUID), 41.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer Z", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer a", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer b", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer c", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer d", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer e", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
+			new Wettkaempfer(UUID.randomUUID(), "Teilnehmer f", Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein4", turnierUUID), 43.0, Optional.of(Farbe.GRUEN), true, true, turnierUUID)
 		);
 
 
-		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(1, Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 43.0, turnierUUID);
+		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(UUID.randomUUID(), Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 43.0, turnierUUID);
 
 		List<WettkampfGruppe> wettkampfGruppen = algorithmus.erstelleWettkampfGruppen(1, gewichtsklassengruppe, 0);
 

@@ -7,7 +7,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,15 +15,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "wettkampfgruppe", uniqueConstraints = {
-	@UniqueConstraint(columnNames = {"id", "turnier_uuid"})
-})
+@Table(name = "wettkampfgruppe")
 public class WettkampfGruppeJpa {
 	@Id
-	Integer id;
-	String name;
-	String typ;
-	String altersklasse;
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private String uuid;
+	private String name;
+	private String typ;
+	private String altersklasse;
 	@Column(name = "turnier_uuid", nullable = false)
 	private String turnierUUID;
 }

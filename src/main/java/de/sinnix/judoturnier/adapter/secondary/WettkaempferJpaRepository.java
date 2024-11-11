@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface WettkaempferJpaRepository extends JpaRepository<WettkaempferJpa, Integer> {
+public interface WettkaempferJpaRepository extends JpaRepository<WettkaempferJpa, String> {
 	List<WettkaempferJpa> findAllByTurnierUUID(String turnierUuid);
 }

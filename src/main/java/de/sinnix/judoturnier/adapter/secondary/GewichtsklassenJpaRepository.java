@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface GewichtsklassenJpaRepository extends JpaRepository<GewichtsklassenJpa, Integer> {
+public interface GewichtsklassenJpaRepository extends JpaRepository<GewichtsklassenJpa, String> {
 	List<GewichtsklassenJpa> findAllByTurnierUUID(String turnierUuid);
 	@Transactional
 	void deleteAllByTurnierUUID(String turnierUuid);

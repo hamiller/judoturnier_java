@@ -25,10 +25,10 @@ public class BegegnungConverter {
 			begegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.fromValue(jpa.getRundenTyp()), jpa.getRunde(), jpa.getPaarung());
 		}
 
-		WettkampfGruppeJpa wettkampfGruppeJpa = wettkampfGruppeJpaList.stream().filter(wkg -> wkg.getId().equals(jpa.getWettkampfGruppeId())).findFirst().orElseThrow();
-		return new Begegnung(jpa.getId(),
+		WettkampfGruppeJpa wettkampfGruppeJpa = wettkampfGruppeJpaList.stream().filter(wkg -> wkg.getUuid().equals(jpa.getWettkampfGruppeId())).findFirst().orElseThrow();
+		return new Begegnung(UUID.fromString(jpa.getUuid()),
 			begegnungId,
-			jpa.getRundeUUID() != null ? UUID.fromString(jpa.getRundeUUID()) : null,
+			UUID.fromString(jpa.getRundeUUID()),
 			jpa.getMatteId(),
 			jpa.getMattenRunde(),
 			jpa.getGruppenRunde(),
@@ -43,11 +43,11 @@ public class BegegnungConverter {
 
 	public BegegnungJpa convertFromBegegnung(Begegnung begegnung) {
 		BegegnungJpa jpa = new BegegnungJpa();
-		jpa.setId(begegnung.getId());
+		if (begegnung.getId() != null) jpa.setUuid(begegnung.getId().toString());
 		jpa.setRunde(begegnung.getBegegnungId().getRunde());
 		jpa.setRundenTyp(begegnung.getBegegnungId().getRundenTyp().getValue());
 		jpa.setPaarung(begegnung.getBegegnungId().getAkuellePaarung());
-		jpa.setRundeUUID(fromUUID(begegnung.getRundeId()));
+		if (begegnung.getRundeId() != null) jpa.setRundeUUID(begegnung.getRundeId().toString());
 		jpa.setMatteId(begegnung.getMatteId());
 		jpa.setMattenRunde(begegnung.getMattenRunde());
 		jpa.setGruppenRunde(begegnung.getGruppenRunde());
@@ -56,16 +56,9 @@ public class BegegnungConverter {
 		jpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2().orElse(null)));
 		jpa.setWertungen(begegnung.getWertungen().stream().map(wertung -> wertungConverter.convertFromWertung(wertung)).toList());
 		begegnung.getWertungen().stream().map(wertung -> wertungConverter.convertFromWertung(wertung)).toList();
-		jpa.setWettkampfGruppeId(begegnung.getWettkampfGruppe().id());
+		if (begegnung.getWettkampfGruppe().id() != null) jpa.setWettkampfGruppeId(begegnung.getWettkampfGruppe().id().toString());
 		jpa.setTurnierUUID(begegnung.getTurnierUUID().toString());
 		return jpa;
 	}
 
-	private String fromUUID(UUID uuid) {
-		if (uuid != null) {
-			return uuid.toString();
-		}
-
-		return UUID.randomUUID().toString();
-	}
 }

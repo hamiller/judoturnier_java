@@ -70,12 +70,12 @@ public class WettkaempferController {
 		UUID turnierUUID = UUID.fromString(turnierid);
 		Geschlecht geschlecht = Geschlecht.valueOf(formData.getFirst("geschlecht"));
 		Altersklasse altersklasse = Altersklasse.valueOf(formData.getFirst("altersklasse"));
-		Verein verein = vereinService.holeVerein(Integer.parseInt(formData.getFirst("vereinsid")), turnierUUID);
+		Verein verein = vereinService.holeVerein(UUID.fromString(formData.getFirst("vereinsid")), turnierUUID);
 
 		Boolean neuerEintrag = Boolean.parseBoolean(formData.getFirst("neuereintrag"));
 
 		Wettkaempfer wettkaempfer = new Wettkaempfer(
-			notEmpty(formData.getFirst("id")) ? Integer.parseInt(formData.getFirst("id")) : null,
+			notEmpty(formData.getFirst("id")) ? UUID.fromString(formData.getFirst("id")) : null,
 			formData.getFirst("name"),
 			geschlecht,
 			altersklasse,
@@ -107,16 +107,16 @@ public class WettkaempferController {
 
 	@DeleteMapping("/turnier/{turnierid}/wettkaempfer/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_AMDIN', 'ROLE_TRAINER')")
-	public void loescheWettkaempfer(@PathVariable String turnierid, @PathVariable Integer id) {
+	public void loescheWettkaempfer(@PathVariable String turnierid, @PathVariable String id) {
 		logger.debug("lösche Wettkaempfer {}", id);
-		wiegenService.loescheKaempfer(id);
+		wiegenService.loescheKaempfer(UUID.fromString(id));
 	}
 
 	@GetMapping("/turnier/{turnierid}/wettkaempfer/{id}")
-	public ModelAndView ladeWettkaempfer(@PathVariable String turnierid, @PathVariable Integer id) {
+	public ModelAndView ladeWettkaempfer(@PathVariable String turnierid, @PathVariable String id) {
 		logger.debug("Wettkaempfer-Seite angefragt " + id);
 		UUID turnierUUID = UUID.fromString(turnierid);
-		var wk = wiegenService.ladeKaempfer(id);
+		var wk = wiegenService.ladeKaempfer(UUID.fromString(id));
 		if (!wk.isPresent()) {
 			logger.warn("Wettkämper: {} nicht gefunden!");
 			throw new HttpClientErrorException(HttpStatusCode.valueOf(404));

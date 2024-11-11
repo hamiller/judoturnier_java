@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -44,7 +43,7 @@ public class WettkaempferServiceTest {
 	@BeforeEach
 	void setUp() {
 		turnierUUID = UUID.randomUUID();
-		wettkaempfer = new Wettkaempfer(1, "Max", Geschlecht.m, Altersklasse.U18, new Verein(1, "Verein1", turnierUUID), 70d, Optional.of(Farbe.BLAU), true, false, turnierUUID);
+		wettkaempfer = new Wettkaempfer(UUID.randomUUID(), "Max", Geschlecht.m, Altersklasse.U18, new Verein(UUID.randomUUID(), "Verein1", turnierUUID), 70d, Optional.of(Farbe.BLAU), true, false, turnierUUID);
 	}
 
 	@Test
@@ -59,25 +58,25 @@ public class WettkaempferServiceTest {
 
 	@Test
 	void testLoescheKaempfer() {
-		wettkaempferService.loescheKaempfer(1);
+		wettkaempferService.loescheKaempfer(wettkaempfer.id());
 
-		verify(wettkaempferRepository, times(1)).deleteById(1);
+		verify(wettkaempferRepository, times(1)).deleteById(wettkaempfer.id());
 	}
 
 	@Test
 	void testLadeKaempfer() {
-		when(wettkaempferRepository.findById(anyInt())).thenReturn(Optional.of(wettkaempfer));
+		when(wettkaempferRepository.findById(any())).thenReturn(Optional.of(wettkaempfer));
 
-		Optional<Wettkaempfer> result = wettkaempferService.ladeKaempfer(1);
+		Optional<Wettkaempfer> result = wettkaempferService.ladeKaempfer(wettkaempfer.id());
 
 		assertEquals(wettkaempfer, result.get());
 	}
 
 	@Test
 	void testLadeKaempferNotFound() {
-		when(wettkaempferRepository.findById(anyInt())).thenReturn(Optional.empty());
+		when(wettkaempferRepository.findById(any())).thenReturn(Optional.empty());
 
-		Optional<Wettkaempfer> result = wettkaempferService.ladeKaempfer(1);
+		Optional<Wettkaempfer> result = wettkaempferService.ladeKaempfer(wettkaempfer.id());
 
 		assertTrue(result.isEmpty());
 	}

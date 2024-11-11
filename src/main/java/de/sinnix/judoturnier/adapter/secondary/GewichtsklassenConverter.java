@@ -18,7 +18,7 @@ public class GewichtsklassenConverter {
 
 	public GewichtsklassenGruppe convertToGewichtsklassen(GewichtsklassenJpa jpa) {
 		return new GewichtsklassenGruppe(
-			jpa.getId(),
+			UUID.fromString(jpa.getUuid()),
 			getAltersklasse(jpa.getAltersklasse()),
 			getGeschlecht(jpa.getGruppengeschlecht()),
 			wettkaempferConverter.convertToWettkaempferList(jpa.getTeilnehmer()),
@@ -30,7 +30,7 @@ public class GewichtsklassenConverter {
 
 	public GewichtsklassenJpa convertFromGewichtsklassen(GewichtsklassenGruppe gwk) {
 		GewichtsklassenJpa jpa = new GewichtsklassenJpa();
-		if (gwk.id() != null) jpa.setId(gwk.id());
+		if (gwk.id() != null) jpa.setUuid(gwk.id().toString());
 		jpa.setName(gwk.name().map(n -> n.name()).orElse(""));
 		jpa.setAltersklasse(gwk.altersKlasse().name());
 		jpa.setMingewicht(gwk.minGewicht());

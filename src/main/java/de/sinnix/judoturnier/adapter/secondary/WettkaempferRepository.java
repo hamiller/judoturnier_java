@@ -27,23 +27,23 @@ public class WettkaempferRepository {
 		return wettkaempferJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream().map(jpa -> wettkaempferConverter.convertToWettkaempfer(jpa)).collect(Collectors.toUnmodifiableList());
 	}
 
-	public void deleteById(Integer id) {
-		var optionalWettkaempfer = wettkaempferJpaRepository.findById(id);
+	public void deleteById(UUID id) {
+		var optionalWettkaempfer = wettkaempferJpaRepository.findById(id.toString());
 		if (optionalWettkaempfer.isEmpty()) {
 			return;
 		}
 
-		wettkaempferJpaRepository.deleteById(id);
+		wettkaempferJpaRepository.deleteById(id.toString());
 	}
 
-	public Optional<Wettkaempfer> findById(Integer id) {
-		return wettkaempferJpaRepository.findById(id).map(jpa -> wettkaempferConverter.convertToWettkaempfer(jpa));
+	public Optional<Wettkaempfer> findById(UUID id) {
+		return wettkaempferJpaRepository.findById(id.toString()).map(jpa -> wettkaempferConverter.convertToWettkaempfer(jpa));
 	}
 
 	public Wettkaempfer save(Wettkaempfer wettkaempfer) {
 		logger.debug("Speichere wettkaempfer in db: {}", wettkaempfer);
 		if (wettkaempfer.id() != null) {
-			var optionalWettkaempfer = wettkaempferJpaRepository.findById(wettkaempfer.id());
+			var optionalWettkaempfer = wettkaempferJpaRepository.findById(wettkaempfer.id().toString());
 			if (optionalWettkaempfer.isPresent()) {
 				WettkaempferJpa wk = optionalWettkaempfer.get();
 				wk.setName(wettkaempfer.name());
