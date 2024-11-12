@@ -6,7 +6,6 @@ import com.opencsv.exceptions.CsvValidationException;
 import de.sinnix.judoturnier.adapter.secondary.WettkaempferRepository;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
-import de.sinnix.judoturnier.model.Farbe;
 import de.sinnix.judoturnier.model.GesamtPlatzierung;
 import de.sinnix.judoturnier.model.GesamtWertung;
 import de.sinnix.judoturnier.model.Geschlecht;
@@ -140,7 +139,7 @@ public class WettkaempferService {
 			// CSV-Daten erstellen
 			StringWriter writer = new StringWriter();
 			CSVWriter csvWriter = new CSVWriter(writer);
-			csvWriter.writeNext(new String[]{"Id", "Name", "Gewicht", "Altersklasse", "Geschlecht", "Vereinsname", "Platz", "Kampfgeist", "Technik", "Kampfstil", "Fairness"}); // Kopfzeile
+			csvWriter.writeNext(new String[]{"Id", "Name", "Gewicht", "Altersklasse", "Geschlecht", "Vereinsname", "Platz", "Kampfgeist", "Technik", "Kampfstil", "Vielfalt"}); // Kopfzeile
 
 			for (Wettkaempfer wettkaempfer : wettkaempferList) {
 				GesamtWertung gesamtWertung = gesamtWertungen.get(wettkaempfer.id());
@@ -157,7 +156,7 @@ public class WettkaempferService {
 					gesamtWertung != null ? df.format(gesamtWertung.kampfgeist()) : "",
 					gesamtWertung != null ? df.format(gesamtWertung.technik()) : "",
 					gesamtWertung != null ? df.format(gesamtWertung.kampfstil()) : "",
-					gesamtWertung != null ? df.format(gesamtWertung.fairness()) : ""
+					gesamtWertung != null ? df.format(gesamtWertung.vielfalt()) : ""
 				});
 			}
 
@@ -193,10 +192,10 @@ public class WettkaempferService {
 			List<Integer> kampfstilList = holeWertungen(begegnungList, wettkaempfer, Wertung::getKampfstilWettkaempfer1, Wertung::getKampfstilWettkaempfer2);
 			double kampfstil = kampfstilList.stream().mapToInt(Integer::intValue).average().getAsDouble();
 
-			List<Integer> fairnessList = holeWertungen(begegnungList, wettkaempfer, Wertung::getFairnessWettkaempfer1, Wertung::getFairnessWettkaempfer2);
-			double fairness = fairnessList.stream().mapToInt(Integer::intValue).average().getAsDouble();
+			List<Integer> vielfaltList = holeWertungen(begegnungList, wettkaempfer, Wertung::getVielfaltWettkaempfer1, Wertung::getVielfaltWettkaempfer2);
+			double vielfalt = vielfaltList.stream().mapToInt(Integer::intValue).average().getAsDouble();
 
-			GesamtWertung gesamtWertung = new GesamtWertung(kampfgeist, kampfgeistList, technik, technikList, kampfstil, kampfstilList, fairness, fairnessList);
+			GesamtWertung gesamtWertung = new GesamtWertung(kampfgeist, kampfgeistList, technik, technikList, kampfstil, kampfstilList, vielfalt, vielfaltList);
 			gesamtWertungen.put(wettkaempfer.id(), gesamtWertung);
 		}
 

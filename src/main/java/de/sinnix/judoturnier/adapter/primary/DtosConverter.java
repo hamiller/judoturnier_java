@@ -47,11 +47,11 @@ public class DtosConverter {
 			w.getKampfgeistWettkaempfer1(),
 			w.getTechnikWettkaempfer1(),
 			w.getKampfstilWettkaempfer1(),
-			w.getFairnessWettkaempfer1(),
+			w.getVielfaltWettkaempfer1(),
 			w.getKampfgeistWettkaempfer2(),
 			w.getTechnikWettkaempfer2(),
 			w.getKampfstilWettkaempfer2(),
-			w.getFairnessWettkaempfer2(),
+			w.getVielfaltWettkaempfer2(),
 			w.getBewerter()));
 		var vorher = vorherigeBegegnungId.map(id -> String.valueOf(id)).orElseGet(() -> "");
 		var nachher = nachfolgendeBegegnungId.map(id -> String.valueOf(id)).orElseGet(() -> "");

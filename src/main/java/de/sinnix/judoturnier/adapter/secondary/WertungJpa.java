@@ -33,12 +33,12 @@ public class WertungJpa {
 	private Integer kampfgeistWettkaempfer1;
 	private Integer technikWettkaempfer1;
 	private Integer kampfstilWettkaempfer1;
-	private Integer fairnessWettkaempfer1;
+	private Integer vielfaltWettkaempfer1;
 
 	private Integer kampfgeistWettkaempfer2;
 	private Integer technikWettkaempfer2;
 	private Integer kampfstilWettkaempfer2;
-	private Integer fairnessWettkaempfer2;
+	private Integer vielfaltWettkaempfer2;
 
 	private String bewerter;
 }

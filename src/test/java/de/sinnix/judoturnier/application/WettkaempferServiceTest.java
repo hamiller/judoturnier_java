@@ -11,7 +11,6 @@ import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.Verein;
 import de.sinnix.judoturnier.model.Wertung;
 import de.sinnix.judoturnier.model.Wettkaempfer;
-import de.sinnix.judoturnier.model.WettkampfGruppe;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -173,38 +172,38 @@ public class WettkaempferServiceTest {
 		assertEquals(3, wertungMap.get(wettkaempfer1.id()).kampfgeistListe().size());
 		assertEquals(3, wertungMap.get(wettkaempfer1.id()).technikListe().size());
 		assertEquals(3, wertungMap.get(wettkaempfer1.id()).kampfstilListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer1.id()).fairnessListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer1.id()).vielfaltListe().size());
 		assertEquals(2, wertungMap.get(wettkaempfer1.id()).kampfgeist());
 		assertEquals(2, wertungMap.get(wettkaempfer1.id()).technik());
 		assertEquals(2, wertungMap.get(wettkaempfer1.id()).kampfstil());
-		assertEquals(2, wertungMap.get(wettkaempfer1.id()).fairness());
+		assertEquals(2, wertungMap.get(wettkaempfer1.id()).vielfalt());
 
 		assertEquals(3, wertungMap.get(wettkaempfer2.id()).kampfgeistListe().size());
 		assertEquals(3, wertungMap.get(wettkaempfer2.id()).technikListe().size());
 		assertEquals(3, wertungMap.get(wettkaempfer2.id()).kampfstilListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer2.id()).fairnessListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer2.id()).vielfaltListe().size());
 		assertEquals(1, wertungMap.get(wettkaempfer2.id()).kampfgeist());
 		assertEquals(1, wertungMap.get(wettkaempfer2.id()).technik());
 		assertEquals(1, wertungMap.get(wettkaempfer2.id()).kampfstil());
-		assertEquals(1, wertungMap.get(wettkaempfer2.id()).fairness());
+		assertEquals(1, wertungMap.get(wettkaempfer2.id()).vielfalt());
 
 		assertEquals(3, wertungMap.get(wettkaempfer3.id()).kampfgeistListe().size());
 		assertEquals(3, wertungMap.get(wettkaempfer3.id()).technikListe().size());
 		assertEquals(3, wertungMap.get(wettkaempfer3.id()).kampfstilListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer3.id()).fairnessListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer3.id()).vielfaltListe().size());
 		assertEquals(3, wertungMap.get(wettkaempfer3.id()).kampfgeist());
 		assertEquals(3, wertungMap.get(wettkaempfer3.id()).technik());
 		assertEquals(3, wertungMap.get(wettkaempfer3.id()).kampfstil());
-		assertEquals(3, wertungMap.get(wettkaempfer3.id()).fairness());
+		assertEquals(3, wertungMap.get(wettkaempfer3.id()).vielfalt());
 
 		assertEquals(3, wertungMap.get(wettkaempfer4.id()).kampfgeistListe().size());
 		assertEquals(3, wertungMap.get(wettkaempfer4.id()).technikListe().size());
 		assertEquals(3, wertungMap.get(wettkaempfer4.id()).kampfstilListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer4.id()).fairnessListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer4.id()).vielfaltListe().size());
 		assertEquals(3.7, wertungMap.get(wettkaempfer4.id()).kampfgeist(), 0.1);
 		assertEquals(3.3, wertungMap.get(wettkaempfer4.id()).technik(), 0.1);
 		assertEquals(3, wertungMap.get(wettkaempfer4.id()).kampfstil());
-		assertEquals(4, wertungMap.get(wettkaempfer4.id()).fairness());
+		assertEquals(4, wertungMap.get(wettkaempfer4.id()).vielfalt());
 	}
 
 	@Test

@@ -257,11 +257,11 @@ class TurnierServiceTest {
 		assertEquals(1, result.getWertungen().get(0).getKampfgeistWettkaempfer1());
 		assertEquals(2, result.getWertungen().get(0).getTechnikWettkaempfer1());
 		assertEquals(3, result.getWertungen().get(0).getKampfstilWettkaempfer1());
-		assertEquals(4, result.getWertungen().get(0).getFairnessWettkaempfer1());
+		assertEquals(4, result.getWertungen().get(0).getVielfaltWettkaempfer1());
 		assertEquals(4, result.getWertungen().get(0).getKampfgeistWettkaempfer2());
 		assertEquals(3, result.getWertungen().get(0).getTechnikWettkaempfer2());
 		assertEquals(2, result.getWertungen().get(0).getKampfstilWettkaempfer2());
-		assertEquals(1, result.getWertungen().get(0).getFairnessWettkaempfer2());
+		assertEquals(1, result.getWertungen().get(0).getVielfaltWettkaempfer2());
 	}
 
 	@Test

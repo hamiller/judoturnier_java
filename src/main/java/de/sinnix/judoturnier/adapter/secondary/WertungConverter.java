@@ -29,11 +29,11 @@ public class WertungConverter {
 			jpa.getKampfgeistWettkaempfer1(),
 			jpa.getTechnikWettkaempfer1(),
 			jpa.getKampfstilWettkaempfer1(),
-			jpa.getFairnessWettkaempfer1(),
+			jpa.getVielfaltWettkaempfer1(),
 			jpa.getKampfgeistWettkaempfer2(),
 			jpa.getTechnikWettkaempfer2(),
 			jpa.getKampfstilWettkaempfer2(),
-			jpa.getFairnessWettkaempfer2(),
+			jpa.getVielfaltWettkaempfer2(),
 			benutzerConverter.convertToBenutzer(jpa.getBewerter()));
 	}
 
@@ -57,11 +57,11 @@ public class WertungConverter {
 		jpa.setKampfgeistWettkaempfer1(wertung.getKampfgeistWettkaempfer1());
 		jpa.setTechnikWettkaempfer1(wertung.getTechnikWettkaempfer1());
 		jpa.setKampfstilWettkaempfer1(wertung.getKampfstilWettkaempfer1());
-		jpa.setFairnessWettkaempfer1(wertung.getFairnessWettkaempfer1());
+		jpa.setVielfaltWettkaempfer1(wertung.getVielfaltWettkaempfer1());
 		jpa.setKampfgeistWettkaempfer2(wertung.getKampfgeistWettkaempfer2());
 		jpa.setTechnikWettkaempfer2(wertung.getTechnikWettkaempfer2());
 		jpa.setKampfstilWettkaempfer2(wertung.getKampfstilWettkaempfer2());
-		jpa.setFairnessWettkaempfer2(wertung.getFairnessWettkaempfer2());
+		jpa.setVielfaltWettkaempfer2(wertung.getVielfaltWettkaempfer2());
 
 		jpa.setBewerter(benutzerConverter.convertFromBenutzer(wertung.getBewerter()));
 

@@ -180,7 +180,7 @@ public class TurnierService {
 	}
 
 	@Transactional
-	public void speichereRandoriWertung(UUID begegnungId, int kampfgeist1, int technik1, int stil1, int fairness1, int kampfgeist2, int technik2, int stil2, int fairness2, UUID bewerterUUID) {
+	public void speichereRandoriWertung(UUID begegnungId, int kampfgeist1, int technik1, int stil1, int vielfalt1, int kampfgeist2, int technik2, int stil2, int vielfalt2, UUID bewerterUUID) {
 		logger.info("speichereRandoriWertung: {}", begegnungId);
 		Begegnung begegnung = ladeBegegnung(begegnungId);
 
@@ -192,11 +192,11 @@ public class TurnierService {
 			wertung.setKampfgeistWettkaempfer1(kampfgeist1);
 			wertung.setTechnikWettkaempfer1(technik1);
 			wertung.setKampfstilWettkaempfer1(stil1);
-			wertung.setFairnessWettkaempfer1(fairness1);
+			wertung.setVielfaltWettkaempfer1(vielfalt1);
 			wertung.setKampfgeistWettkaempfer2(kampfgeist2);
 			wertung.setTechnikWettkaempfer2(technik2);
 			wertung.setKampfstilWettkaempfer2(stil2);
-			wertung.setFairnessWettkaempfer2(fairness2);
+			wertung.setVielfaltWettkaempfer2(vielfalt2);
 
 			turnierRepository.speichereBegegnung(begegnung);
 			return;
@@ -205,8 +205,8 @@ public class TurnierService {
 		logger.debug("Erstelle neue Wertung");
 		UUID wertungId = UUID.randomUUID();
 		Wertung wertungNeu = new Wertung(wertungId, null, null, null, null, null, null,
-			kampfgeist1, technik1, stil1, fairness1,
-			kampfgeist2, technik2, stil2, fairness2,
+			kampfgeist1, technik1, stil1, vielfalt1,
+			kampfgeist2, technik2, stil2, vielfalt2,
 			benutzer
 		);
 		begegnung.getWertungen().add(wertungNeu);

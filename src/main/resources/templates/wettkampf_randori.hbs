@@ -28,8 +28,8 @@
                 </div>
                 <div class="slider-container">
                     <label>Vielfalt</label>
-                    <md-slider step="1" ticks min="1" max="6" id="fairness1-slider" oninput="updateInputValue('fairness1', this.value)"></md-slider>
-                    <input {{disable enableEditing}} type="hidden" name="fairness1" id="fairness1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.fairnessWettkaempfer1}}{{/optionalFn}} />
+                    <md-slider step="1" ticks min="1" max="6" id="vielfalt1-slider" oninput="updateInputValue('vielfalt1', this.value)"></md-slider>
+                    <input {{disable enableEditing}} type="hidden" name="vielfalt1" id="vielfalt1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.vielfaltWettkaempfer1}}{{/optionalFn}} />
                 </div>
                 <div class="slider-container">
                     <label>Kampfgeist</label>
@@ -49,7 +49,7 @@
                 <div class="allewertungen">
                     {{#each begegnung.alleWertungen}}
                         <span class="row_small bewerterinfo">Kampfrichter {{truncate this.benutzer.id 5}}</span>
-                        <span class="row_small"><label>Vielfalt</label>{{this.fairnessWettkaempfer1}}</span>
+                        <span class="row_small"><label>Vielfalt</label>{{this.vielfaltWettkaempfer1}}</span>
                         <span class="row_small"><label>Kampfgeist</label>{{this.kampfgeistWettkaempfer1}}</span>
                         <span class="row_small"><label>Technik</label>{{this.technikWettkaempfer1}}</span>
                         <span class="row_small"><label>Stil</label>{{this.kampfstilWettkaempfer1}}</span>
@@ -66,8 +66,8 @@
                 </div>
                 <div class="slider-container">
                     <label>Vielfalt</label>
-                    <md-slider step="1" ticks min="1" max="6" id="fairness2-slider" oninput="updateInputValue('fairness2', this.value)"></md-slider>
-                    <input {{disable enableEditing}} type="hidden" name="fairness2" id="fairness2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.fairnessWettkaempfer2}}{{/optionalFn}} />
+                    <md-slider step="1" ticks min="1" max="6" id="vielfalt2-slider" oninput="updateInputValue('vielfalt2', this.value)"></md-slider>
+                    <input {{disable enableEditing}} type="hidden" name="vielfalt2" id="vielfalt2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.vielfaltWettkaempfer2}}{{/optionalFn}} />
                 </div>
                 <div class="slider-container">
                     <label>Kampfgeist</label>
@@ -87,7 +87,7 @@
                 <div class="allewertungen">
                     {{#each begegnung.alleWertungen}}
                         <span class="row_small bewerterinfo">Kampfrichter {{truncate this.benutzer.id 5}}</span>
-                        <span class="row_small"><label>Vielfalt</label>{{this.fairnessWettkaempfer2}}</span>
+                        <span class="row_small"><label>Vielfalt</label>{{this.vielfaltWettkaempfer2}}</span>
                         <span class="row_small"><label>Kampfgeist</label>{{this.kampfgeistWettkaempfer2}}</span>
                         <span class="row_small"><label>Technik</label>{{this.technikWettkaempfer2}}</span>
                         <span class="row_small"><label>Stil</label>{{this.kampfstilWettkaempfer2}}</span>
@@ -155,11 +155,11 @@
     };
 
     const validateForm = (event) => {
-        var a1 = document.getElementById("fairness1").value;
+        var a1 = document.getElementById("vielfalt1").value;
         var a2 = document.getElementById("kampfgeist1").value;
         var a3 = document.getElementById("technik1").value;
         var a4 = document.getElementById("stil1").value;
-        var b1 = document.getElementById("fairness2").value;
+        var b1 = document.getElementById("vielfalt2").value;
         var b2 = document.getElementById("kampfgeist2").value;
         var b3 = document.getElementById("technik2").value;
         var b4 = document.getElementById("stil2").value;
@@ -176,11 +176,11 @@
     };
 
     document.addEventListener('DOMContentLoaded', function () {
-        setActiveButton('fairness1');
+        setActiveButton('vielfalt1');
         setActiveButton('kampfgeist1');
         setActiveButton('technik1');
         setActiveButton('stil1');
-        setActiveButton('fairness2');
+        setActiveButton('vielfalt2');
         setActiveButton('kampfgeist2');
         setActiveButton('technik2');
         setActiveButton('stil2');

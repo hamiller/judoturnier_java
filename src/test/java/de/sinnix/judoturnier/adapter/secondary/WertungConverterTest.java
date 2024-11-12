@@ -105,11 +105,11 @@ class WertungConverterTest {
 		jpa.setKampfgeistWettkaempfer1(1);
 		jpa.setTechnikWettkaempfer1(2);
 		jpa.setKampfstilWettkaempfer1(3);
-		jpa.setFairnessWettkaempfer1(4);
+		jpa.setVielfaltWettkaempfer1(4);
 		jpa.setKampfgeistWettkaempfer2(5);
 		jpa.setTechnikWettkaempfer2(6);
 		jpa.setKampfstilWettkaempfer2(1);
-		jpa.setFairnessWettkaempfer2(2);
+		jpa.setVielfaltWettkaempfer2(2);
 
 		Wertung wertung = wertungConverter.convertToWertung(jpa);
 
@@ -118,11 +118,11 @@ class WertungConverterTest {
 		assertEquals(wertung.getKampfgeistWettkaempfer1(), jpa.getKampfgeistWettkaempfer1());
 		assertEquals(wertung.getTechnikWettkaempfer1(), jpa.getTechnikWettkaempfer1());
 		assertEquals(wertung.getKampfstilWettkaempfer1(), jpa.getKampfstilWettkaempfer1());
-		assertEquals(wertung.getFairnessWettkaempfer1(), jpa.getFairnessWettkaempfer1());
+		assertEquals(wertung.getVielfaltWettkaempfer1(), jpa.getVielfaltWettkaempfer1());
 		assertEquals(wertung.getKampfgeistWettkaempfer2(), jpa.getKampfgeistWettkaempfer2());
 		assertEquals(wertung.getTechnikWettkaempfer2(), jpa.getTechnikWettkaempfer2());
 		assertEquals(wertung.getKampfstilWettkaempfer2(), jpa.getKampfstilWettkaempfer2());
-		assertEquals(wertung.getFairnessWettkaempfer2(), jpa.getFairnessWettkaempfer2());
+		assertEquals(wertung.getVielfaltWettkaempfer2(), jpa.getVielfaltWettkaempfer2());
 	}
 
 	@Test
@@ -142,10 +142,10 @@ class WertungConverterTest {
 		assertEquals(jpa.getKampfgeistWettkaempfer1(), wertung.getKampfgeistWettkaempfer1());
 		assertEquals(jpa.getTechnikWettkaempfer1(), wertung.getTechnikWettkaempfer1());
 		assertEquals(jpa.getKampfstilWettkaempfer1(), wertung.getKampfstilWettkaempfer1());
-		assertEquals(jpa.getFairnessWettkaempfer1(), wertung.getFairnessWettkaempfer1());
+		assertEquals(jpa.getVielfaltWettkaempfer1(), wertung.getVielfaltWettkaempfer1());
 		assertEquals(jpa.getKampfgeistWettkaempfer2(), wertung.getKampfgeistWettkaempfer2());
 		assertEquals(jpa.getTechnikWettkaempfer2(), wertung.getTechnikWettkaempfer2());
 		assertEquals(jpa.getKampfstilWettkaempfer2(), wertung.getKampfstilWettkaempfer2());
-		assertEquals(jpa.getFairnessWettkaempfer2(), wertung.getFairnessWettkaempfer2());
+		assertEquals(jpa.getVielfaltWettkaempfer2(), wertung.getVielfaltWettkaempfer2());
 	}
 }

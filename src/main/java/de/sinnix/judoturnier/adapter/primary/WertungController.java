@@ -82,13 +82,13 @@ public class WertungController {
 		var kampfgeist1 = Integer.parseInt(formData.get("kampfgeist1").getFirst());
 		var technik1 = Integer.parseInt(formData.get("technik1").getFirst());
 		var stil1 = Integer.parseInt(formData.get("stil1").getFirst());
-		var fairness1 = Integer.parseInt(formData.get("fairness1").getFirst());
+		var vielfalt1 = Integer.parseInt(formData.get("vielfalt1").getFirst());
 		var kampfgeist2 = Integer.parseInt(formData.get("kampfgeist2").getFirst());
 		var technik2 = Integer.parseInt(formData.get("technik2").getFirst());
 		var stil2 = Integer.parseInt(formData.get("stil2").getFirst());
-		var fairness2 = Integer.parseInt(formData.get("fairness2").getFirst());
+		var vielfalt2 = Integer.parseInt(formData.get("vielfalt2").getFirst());
 
-		turnierService.speichereRandoriWertung(begegnungId, kampfgeist1, technik1, stil1, fairness1, kampfgeist2, technik2, stil2, fairness2, UUID.fromString(benutzer.id()));
+		turnierService.speichereRandoriWertung(begegnungId, kampfgeist1, technik1, stil1, vielfalt1, kampfgeist2, technik2, stil2, vielfalt2, UUID.fromString(benutzer.id()));
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori");
 	}
 

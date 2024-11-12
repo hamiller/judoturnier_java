@@ -12,10 +12,10 @@ public record WertungDto(Wettkaempfer sieger,
 	 Integer kampfgeistWettkaempfer1,
 	 Integer technikWettkaempfer1,
 	 Integer kampfstilWettkaempfer1,
-	 Integer fairnessWettkaempfer1,
+	 Integer vielfaltWettkaempfer1,
 	 Integer kampfgeistWettkaempfer2,
 	 Integer technikWettkaempfer2,
 	 Integer kampfstilWettkaempfer2,
-	 Integer fairnessWettkaempfer2,
+	 Integer vielfaltWettkaempfer2,
 	 Benutzer bewerter) {
 }
