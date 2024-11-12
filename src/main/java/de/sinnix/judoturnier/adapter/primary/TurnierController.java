@@ -18,6 +18,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.MultiValueMap;
@@ -288,6 +293,20 @@ public class TurnierController {
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("matten", wettkampfreihenfolgeJeMatteGefiltertUndGruppiert);
 		return mav;
+	}
+
+	@GetMapping("/turnier/{turnierid}/export-wk")
+	public ResponseEntity<Resource> exportiereWettkaempfer(@PathVariable String turnierid) {
+		logger.info("Exportiere alle Wettkämpfer von Turnier {}", turnierid);
+		var turnierUUID = UUID.fromString(turnierid);
+
+		ByteArrayResource resource = wettkaempferService.erstelleWettkaempferCSV(turnierUUID);
+
+		return ResponseEntity.ok()
+			.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=turnier_" + turnierid + ".csv")
+			.contentType(MediaType.parseMediaType("text/csv"))
+			.contentLength(resource.contentLength())
+			.body(resource);
 	}
 
 	private List<MatteDto> gruppiereNachGruppen(List<Matte> matten) {

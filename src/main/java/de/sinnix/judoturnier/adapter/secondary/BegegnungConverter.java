@@ -1,6 +1,7 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
 import de.sinnix.judoturnier.model.Begegnung;
+import de.sinnix.judoturnier.model.WettkampfGruppe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +26,11 @@ public class BegegnungConverter {
 			begegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.fromValue(jpa.getRundenTyp()), jpa.getRunde(), jpa.getPaarung());
 		}
 
-		WettkampfGruppeJpa wettkampfGruppeJpa = wettkampfGruppeJpaList.stream().filter(wkg -> wkg.getUuid().equals(jpa.getWettkampfGruppeId())).findFirst().orElseThrow();
+		WettkampfGruppe wettkampfGruppe = null;
+		if (!wettkampfGruppeJpaList.isEmpty()) {
+			WettkampfGruppeJpa wettkampfGruppeJpa = wettkampfGruppeJpaList.stream().filter(wkg -> wkg.getUuid().equals(jpa.getWettkampfGruppeId())).findFirst().orElseThrow();
+			wettkampfGruppe = wettkampfGruppeConverter.convertToWettkampfGruppe(wettkampfGruppeJpa);
+		}
 		return new Begegnung(UUID.fromString(jpa.getUuid()),
 			begegnungId,
 			UUID.fromString(jpa.getRundeUUID()),
@@ -36,7 +41,7 @@ public class BegegnungConverter {
 			Optional.ofNullable(wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer1())),
 			Optional.ofNullable(wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer2())),
 			jpa.getWertungen().stream().map(wertung -> wertungConverter.convertToWertung(wertung)).collect(Collectors.toList()),
-			wettkampfGruppeConverter.convertToWettkampfGruppe(wettkampfGruppeJpa),
+			wettkampfGruppe,
 			UUID.fromString(jpa.getTurnierUUID())
 			);
 	}

@@ -53,6 +53,11 @@ public class TurnierRepository {
 		return begegnungConverter.convertToBegegnung(begegnungJpa, wettkampfGruppeJpaList);
 	}
 
+	public List<Begegnung> ladeAlleBegegnungen(UUID turnierId) {
+		List<BegegnungJpa> begegnungenJpa = begegnungJpaRepository.findAllByTurnierUUID(turnierId.toString());
+		return begegnungenJpa.stream().map(begegnungJpa -> begegnungConverter.convertToBegegnung(begegnungJpa, List.of())).toList();
+	}
+
 	public void speichereWertung(Wertung wertung) {
 		WertungJpa jpa = wertungConverter.convertFromWertung(wertung);
 		wertungJpaRepository.save(jpa);

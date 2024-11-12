@@ -2,11 +2,18 @@ package de.sinnix.judoturnier.application;
 
 import de.sinnix.judoturnier.adapter.secondary.WettkaempferRepository;
 import de.sinnix.judoturnier.model.Altersklasse;
+import de.sinnix.judoturnier.model.Begegnung;
+import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Farbe;
+import de.sinnix.judoturnier.model.GesamtPlatzierung;
+import de.sinnix.judoturnier.model.GesamtWertung;
 import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.Verein;
+import de.sinnix.judoturnier.model.Wertung;
 import de.sinnix.judoturnier.model.Wettkaempfer;
+import de.sinnix.judoturnier.model.WettkampfGruppe;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -15,7 +22,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,15 +43,41 @@ public class WettkaempferServiceTest {
 	private WettkaempferRepository wettkaempferRepository;
 	@Mock
 	private VereinService          vereinService;
+	@Mock
+	private TurnierService         turnierService;
+	@Mock
+	private EinstellungenService   einstellungenService;
 	@InjectMocks
 	private WettkaempferService    wettkaempferService;
 
-	private Wettkaempfer wettkaempfer;
-	private UUID         turnierUUID;
+	private        Wettkaempfer wettkaempfer;
+	private static UUID turnierUUID = UUID.fromString("7c858e76-60b9-4097-ad19-1ebe6891b9f9");
+
+	private static Benutzer kampfrichter = new Benutzer("898a7fcf-2fad-4ec9-8b4f-5513188af291", "username", "name", List.of());
+
+	public static Verein       verein1       = new Verein(UUID.fromString("61d1a191-5df1-40f5-a941-da18e06cebad"), "Kimchi Wiesbaden", turnierUUID);
+	public static Verein       verein2       = new Verein(UUID.fromString("9d4e210a-8099-4402-94d7-0b0fbaa67885"), "1. JCG", turnierUUID);
+	public static Wettkaempfer wettkaempfer1 = new Wettkaempfer(UUID.fromString("c4effdff-1990-4803-a737-5463b16da89b"), "Jameson, Jenna", Geschlecht.w, Altersklasse.U21, verein1, 60.0, Optional.of(Farbe.WEISS), false, false, turnierUUID);
+	public static Wettkaempfer wettkaempfer2 = new Wettkaempfer(UUID.fromString("db4d4ff2-8fe2-4f4e-a08c-697846fb6390"), "Fox, Sweetie", Geschlecht.w, Altersklasse.U21, verein2, 61.0, Optional.of(Farbe.BRAUN), false, false, turnierUUID);
+	public static Wettkaempfer wettkaempfer3 = new Wettkaempfer(UUID.fromString("eaa236dc-cc3e-4df0-92c7-f9877159d8dc"), "Reid, Riley", Geschlecht.w, Altersklasse.U21, verein1, 62.0, Optional.of(Farbe.GELB), false, false, turnierUUID);
+	public static Wettkaempfer wettkaempfer4 = new Wettkaempfer(UUID.fromString("1f245095-199c-4f5a-b109-cfabb09efab3"), "Belle, Lexi", Geschlecht.w, Altersklasse.U21, verein2, 63.0, Optional.of(Farbe.ORANGE), false, false, turnierUUID);
+
+	public static Wertung wertung1 = new Wertung(UUID.fromString("b1521c63-19de-4ef3-bdfa-96d5d50c604f"), null, Duration.ZERO, 0, 0, 0, 0, 2, 2, 2, 2, 1, 1, 1, 1, kampfrichter);
+	public static Wertung wertung2 = new Wertung(UUID.fromString("68a5c197-848d-48c3-ba1f-54d3d82c0bfa"), null, Duration.ZERO, 0, 0, 0, 0, 4, 4, 4, 4, 1, 1, 1, 1, kampfrichter);
+	public static Wertung wertung3 = new Wertung(UUID.fromString("16485cd0-f45a-4fbc-895b-8d13ad7e960d"), null, Duration.ZERO, 0, 0, 0, 0, 5, 5, 5, 5, 1, 1, 1, 1, kampfrichter);
+	public static Wertung wertung4 = new Wertung(UUID.fromString("9c148628-13eb-487f-91bb-2d4f2b4876f1"), null, Duration.ZERO, 0, 0, 0, 0, 6, 6, 6, 6, 1, 1, 1, 1, kampfrichter);
+	public static Wertung wertung5 = new Wertung(UUID.fromString("6c70e666-8441-4218-9df2-32a5ee191b23"), null, Duration.ZERO, 0, 0, 0, 0, 1, 1, 1, 1, 3, 3, 3, 3, kampfrichter);
+	public static Wertung wertung6 = new Wertung(UUID.fromString("5bba6c54-e8f2-4c62-b016-dc55b9f7ed44"), null, Duration.ZERO, 0, 0, 0, 0, 1, 1, 1, 1, 3, 2, 1, 4, kampfrichter);
+
+	public static Begegnung begegnung1 = new Begegnung(UUID.fromString("dc896258-6e73-45cc-8b7e-47c695957d78"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), UUID.fromString("f3002df6-5172-4048-b715-b860fffe0c66"), 1, 1, 1, 1, Optional.of(wettkaempfer4), Optional.of(wettkaempfer3), List.of(wertung1), null, turnierUUID);
+	public static Begegnung begegnung2 = new Begegnung(UUID.fromString("e6e5a7be-cae1-44de-a462-b1efbcab1d1d"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 2), UUID.fromString("f3002df6-5172-4048-b715-b860fffe0c66"), 1, 1, 1, 1, Optional.of(wettkaempfer1), Optional.of(wettkaempfer2), List.of(wertung2), null, turnierUUID);
+	public static Begegnung begegnung3 = new Begegnung(UUID.fromString("5f951bc0-7025-4bed-bb7a-488c99dc5d69"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 1), UUID.fromString("28698372-788b-4c2b-9f16-2ce1bf27543d"), 1, 2, 2, 1, Optional.of(wettkaempfer3), Optional.of(wettkaempfer2), List.of(wertung3), null, turnierUUID);
+	public static Begegnung begegnung4 = new Begegnung(UUID.fromString("5bb79609-567a-445b-ad5e-31c3f5b1fe2e"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 2), UUID.fromString("28698372-788b-4c2b-9f16-2ce1bf27543d"), 1, 2, 2, 1, Optional.of(wettkaempfer4), Optional.of(wettkaempfer1), List.of(wertung4), null, turnierUUID);
+	public static Begegnung begegnung5 = new Begegnung(UUID.fromString("06066382-5667-48db-afd6-0030151e3820"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 3, 1), UUID.fromString("2bce5622-04c8-4aab-b5e1-3dc5ef8ff391"), 1, 3, 3, 1, Optional.of(wettkaempfer1), Optional.of(wettkaempfer3), List.of(wertung5), null, turnierUUID);
+	public static Begegnung begegnung6 = new Begegnung(UUID.fromString("44be7ae3-973c-41bb-bc3f-8f773985e11e"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 3, 2), UUID.fromString("2bce5622-04c8-4aab-b5e1-3dc5ef8ff391"), 1, 3, 3, 1, Optional.of(wettkaempfer2), Optional.of(wettkaempfer4), List.of(wertung6), null, turnierUUID);
 
 	@BeforeEach
 	void setUp() {
-		turnierUUID = UUID.randomUUID();
 		wettkaempfer = new Wettkaempfer(UUID.randomUUID(), "Max", Geschlecht.m, Altersklasse.U18, new Verein(UUID.randomUUID(), "Verein1", turnierUUID), 70d, Optional.of(Farbe.BLAU), true, false, turnierUUID);
 	}
 
@@ -123,5 +158,65 @@ public class WettkaempferServiceTest {
 		assertEquals("ABC123", capturedArguments.get(0).name());
 		assertEquals(turnierUUID, capturedArguments.get(0).turnierUUID());
 		assertEquals(Altersklasse.U9, capturedArguments.get(0).altersklasse());
+	}
+
+	@Test
+	void berechneGesamtWertung() {
+		when(einstellungenService.isRandori(eq(turnierUUID))).thenReturn(true);
+		when(wettkaempferRepository.findAll(eq(turnierUUID))).thenReturn(List.of(wettkaempfer1, wettkaempfer2, wettkaempfer3, wettkaempfer4));
+		when(turnierService.ladeAlleBegegnungen(eq(turnierUUID))).thenReturn(List.of(begegnung1, begegnung2, begegnung3, begegnung4, begegnung5, begegnung6));
+
+		Map<UUID, GesamtWertung> wertungMap = wettkaempferService.berechneGesamtWertungen(turnierUUID);
+
+		System.out.println(wertungMap);
+		assertEquals(4, wertungMap.size());
+		assertEquals(3, wertungMap.get(wettkaempfer1.id()).kampfgeistListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer1.id()).technikListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer1.id()).kampfstilListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer1.id()).fairnessListe().size());
+		assertEquals(2, wertungMap.get(wettkaempfer1.id()).kampfgeist());
+		assertEquals(2, wertungMap.get(wettkaempfer1.id()).technik());
+		assertEquals(2, wertungMap.get(wettkaempfer1.id()).kampfstil());
+		assertEquals(2, wertungMap.get(wettkaempfer1.id()).fairness());
+
+		assertEquals(3, wertungMap.get(wettkaempfer2.id()).kampfgeistListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer2.id()).technikListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer2.id()).kampfstilListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer2.id()).fairnessListe().size());
+		assertEquals(1, wertungMap.get(wettkaempfer2.id()).kampfgeist());
+		assertEquals(1, wertungMap.get(wettkaempfer2.id()).technik());
+		assertEquals(1, wertungMap.get(wettkaempfer2.id()).kampfstil());
+		assertEquals(1, wertungMap.get(wettkaempfer2.id()).fairness());
+
+		assertEquals(3, wertungMap.get(wettkaempfer3.id()).kampfgeistListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer3.id()).technikListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer3.id()).kampfstilListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer3.id()).fairnessListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer3.id()).kampfgeist());
+		assertEquals(3, wertungMap.get(wettkaempfer3.id()).technik());
+		assertEquals(3, wertungMap.get(wettkaempfer3.id()).kampfstil());
+		assertEquals(3, wertungMap.get(wettkaempfer3.id()).fairness());
+
+		assertEquals(3, wertungMap.get(wettkaempfer4.id()).kampfgeistListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer4.id()).technikListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer4.id()).kampfstilListe().size());
+		assertEquals(3, wertungMap.get(wettkaempfer4.id()).fairnessListe().size());
+		assertEquals(3.7, wertungMap.get(wettkaempfer4.id()).kampfgeist(), 0.1);
+		assertEquals(3.3, wertungMap.get(wettkaempfer4.id()).technik(), 0.1);
+		assertEquals(3, wertungMap.get(wettkaempfer4.id()).kampfstil());
+		assertEquals(4, wertungMap.get(wettkaempfer4.id()).fairness());
+	}
+
+	@Test
+	@Disabled
+	void berechneGesamtPlatzierung() {
+		when(einstellungenService.isRandori(eq(turnierUUID))).thenReturn(false);
+//		when(wettkaempferRepository.findAll(eq(turnierUUID))).thenReturn(List.of(wettkaempfer1, wettkaempfer2, wettkaempfer3, wettkaempfer4));
+//		when(turnierService.ladeAlleBegegnungen(eq(turnierUUID))).thenReturn(List.of(begegnung1, begegnung2, begegnung3, begegnung4, begegnung5, begegnung6));
+
+		Map<UUID, GesamtPlatzierung> platzierungMap = wettkaempferService.berechneGesamtPlatzierungen(turnierUUID);
+
+		System.out.println(platzierungMap);
+
 	}
 }

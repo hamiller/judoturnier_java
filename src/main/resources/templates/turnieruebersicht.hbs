@@ -14,28 +14,37 @@
       <div>Turniermodus: {{turniertyp.bezeichnung}}</div>
     </div>
   </div>
-  
-  <div>
-    <h1>Software des des 1.JC-Großkrotzenburg</h1>
-  </div>
 
-    {{#if enableEditing}}
-        <div class="cvs_upload">
-        <form action="/turnier/{{turnierid}}/uploadVerein" method="post" enctype="multipart/form-data">
-            <label for="file">Wählen Sie eine CSV-Datei mit den Vereinen:</label>
-            <input type="file" id="fileVereine" name="fileVereine" required>
-            <button type="submit">Hochladen</button>
-        </form>
-        </div>
+    <div class="generalcontent">
+        <h2>Daten importieren</h2>
+        {{#if enableEditing}}
+            <form action="/turnier/{{turnierid}}/uploadVerein" method="post" enctype="multipart/form-data">
+                <div class="settingsrow">
+                    <label for="file">CSV-Datei mit den <b>Vereinen</b></label>
+                    <input type="file" id="fileVereine" name="fileVereine" required>
+                </div>
+                <span style="position: relative">
+                    <md-outlined-button type="submit">Hochladen</md-outlined-button>
+                </span>
+            </form>
+            <md-divider></md-divider>
 
-        <div class="cvs_upload">
-        <form action="/turnier/{{turnierid}}/uploadWettkaempfer" method="post" enctype="multipart/form-data">
-            <label for="file">Wählen Sie eine CSV-Datei mit den Wettkämpfern:</label>
-            <input type="file" id="fileWettkaempfer" name="fileWettkaempfer" required>
-            <button type="submit">Hochladen</button>
-        </form>
-        </div>
-    {{/if}}
+            <form action="/turnier/{{turnierid}}/uploadWettkaempfer" method="post" enctype="multipart/form-data">
+                <div class="settingsrow">
+                    <label for="file">CSV-Datei mit den <b>Wettkämpfern</b></label>
+                    <input type="file" id="fileWettkaempfer" name="fileWettkaempfer" required>
+                </div>
+                <span style="position: relative">
+                    <md-outlined-button type="submit">Hochladen</md-outlined-button>
+                </span>
+            </form>
+        {{/if}}
+    </div>
+
+    <div class="generalcontent">
+        <h2>Wettkämpfer exportieren</h2>
+        <md-filled-button type="button" id="export_wk" href="/turnier/{{turnierid}}/export-wk" target="_blank">Wettkämpfer exportieren</md-filled-button>
+    </div>
 
   {{> footer}}
   <script type="text/javascript">

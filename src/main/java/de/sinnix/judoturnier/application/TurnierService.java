@@ -174,6 +174,11 @@ public class TurnierService {
 		return turnierRepository.ladeBegegnung(begegnungId);
 	}
 
+	public List<Begegnung> ladeAlleBegegnungen(UUID turnierId) {
+		logger.info("lade alle Begegnungen {}", turnierId);
+		return turnierRepository.ladeAlleBegegnungen(turnierId);
+	}
+
 	@Transactional
 	public void speichereRandoriWertung(UUID begegnungId, int kampfgeist1, int technik1, int stil1, int fairness1, int kampfgeist2, int technik2, int stil2, int fairness2, UUID bewerterUUID) {
 		logger.info("speichereRandoriWertung: {}", begegnungId);
