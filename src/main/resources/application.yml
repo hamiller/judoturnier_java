@@ -3,6 +3,7 @@ server:
   error:
     whitelabel:
       enabled: false
+  forward-headers-strategy: native
 
 spring:
   application.name: judoturnier
