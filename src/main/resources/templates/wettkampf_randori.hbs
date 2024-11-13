@@ -2,29 +2,21 @@
 <html lang="de">
 <head>
     {{> header}}
-    <style>
-        .slider-container {
-            margin-bottom: 20px;
-        }
-        md-slider {
-            width: 100%;
-        }
-    </style>
 </head>
 <body>
 {{> title}}
 {{> nav}}
 
 <div>
-    Aktuelle Begegnung {{begegnungid}}
+    <div class="when_mobile_hide">Aktuelle Begegnung {{begegnungid}}</div>
     <form id="wertungen" action="/turnier/{{turnierid}}/begegnungen/randori/{{begegnungid}}" method="POST">
         <div class="ergebnis">
             <div class="ergebnis_eintrag weiss">
                 <div class="wettkaempfer name">
                     <label>{{begegnung.wettkaempfer1.name}}</label>
                     <label class="{{begegnung.wettkaempfer1.farbe.get}}">{{begegnung.wettkaempfer1.farbe.get}}</label>
-                    <label class="centertext">{{begegnung.wettkaempfer1.id}}</label>
-                    <label>{{begegnung.wettkaempfer1.verein.name}}</label>
+                    <label class="centertext when_mobile_hide">{{begegnung.wettkaempfer1.id}}</label>
+                    <label class="when_mobile_hide">{{begegnung.wettkaempfer1.verein.name}}</label>
                 </div>
                 <div class="slider-container">
                     <label>Vielfalt</label>
@@ -46,7 +38,7 @@
                     <md-slider step="1" ticks min="1" max="6" id="stil1-slider" oninput="updateInputValue('stil1', this.value)"></md-slider>
                     <input {{disable enableEditing}} type="hidden" name="stil1" id="stil1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer1}}{{/optionalFn}} />
                 </div>
-                <div class="allewertungen">
+                <div class="allewertungen when_mobile_toggle">
                     {{#each begegnung.alleWertungen}}
                         <span class="row_small bewerterinfo">Kampfrichter {{truncate this.benutzer.id 5}}</span>
                         <span class="row_small"><label>Vielfalt</label>{{this.vielfaltWettkaempfer1}}</span>
@@ -61,8 +53,8 @@
                 <div class="wettkaempfer name">
                     <label>{{begegnung.wettkaempfer2.name}}</label>
                     <label class="{{begegnung.wettkaempfer2.farbe.get}}">{{begegnung.wettkaempfer2.farbe.get}}</label>
-                    <label class="centertext">{{begegnung.wettkaempfer2.id}}</label>
-                    <label>{{begegnung.wettkaempfer2.verein.name}}</label>
+                    <label class="centertext when_mobile_hide">{{begegnung.wettkaempfer2.id}}</label>
+                    <label class="when_mobile_hide">{{begegnung.wettkaempfer2.verein.name}}</label>
                 </div>
                 <div class="slider-container">
                     <label>Vielfalt</label>
@@ -84,7 +76,7 @@
                     <md-slider step="1" ticks min="1" max="6" id="stil2-slider" oninput="updateInputValue('stil2', this.value)"></md-slider>
                     <input {{disable enableEditing}} type="hidden" name="stil2" id="stil2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer2}}{{/optionalFn}} />
                 </div>
-                <div class="allewertungen">
+                <div class="allewertungen when_mobile_toggle">
                     {{#each begegnung.alleWertungen}}
                         <span class="row_small bewerterinfo">Kampfrichter {{truncate this.benutzer.id 5}}</span>
                         <span class="row_small"><label>Vielfalt</label>{{this.vielfaltWettkaempfer2}}</span>
@@ -97,29 +89,45 @@
         </div>
     </form>
 </div>
-<div class="nav_btn-container">
-    {{#if begegnung.vorherigeBegegnungId}}
-        <div class="left-btn">
-            <a href="#" type="button" class="nav_btn" onclick="navigate({{begegnung.vorherigeBegegnungId}});"><span class="material-icons md-48 centered" title="chevron_left">chevron_left</span><span class="btn_text"> Vorheriger Kampf</span></a>
+<div class="">
+    <div class="nav_btn-container">
+        <div class="">
+            <md-filled-tonal-button type="button" id="nav_cancel" class="" onclick="navigate(); return false;">
+                Abbrechen
+                <svg slot="icon" height="18" viewBox="0 -960 960 960" width="18" fill="#5f6368"><path d="m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+            </md-filled-tonal-button>
         </div>
-    {{/if}}
-    <div class="center-btn">
-        <a href="#" type="button" class="nav_btn" onclick="navigate(); return false;"><span class="material-icons md-48 centered" title="cancel">cancel</span> Zurück</a>
+        <div class="">
+        {{#if enableEditing}}
+            <md-filled-button type="button" id="nav_submit" class="" onclick="save(event);">
+                Ergebnis speichern
+                <svg slot="icon" height="18" viewBox="0 -960 720 720" width="18" fill="#5f6368"><path d="m 720,-800 v 480 q 0,33 -23.5,56.5 Q 673,-240 640,-240 H 80 Q 47,-240 23.5,-263.5 0,-287 0,-320 V -880 Q 0,-913 23.5,-936.5 47,-960 80,-960 h 480 z m -80,34 -114,-114 H 80 v 560 h 560 z m -280,406 q 50,0 85,-35 35,-35 35,-85 0,-50 -35,-85 -35,-35 -85,-35 -50,0 -85,35 -35,35 -35,85 0,50 35,85 35,35 85,35 z M 120,-680 H 480 V -840 H 120 Z m -40,-86 v 446 -560 z"/></svg>
+            </md-filled-button>
+        {{/if}}
+        </div>
     </div>
-    {{#if enableEditing}}
-        <a href="#" type="button" class="submit_btn" onclick="save(event); return false;"><span class="material-icons md-48 centered" title="speichern">save</span> Ergebnis speichern</a>
-    {{/if}}
-    {{#if begegnung.nachfolgerBegegnungId}}
-        <div class="right-btn">
-            <a href="#" type="button" class="nav_btn" onclick="navigate({{begegnung.nachfolgerBegegnungId}});"><span class="material-icons md-48 centered" title="chevron_right">chevron_right</span> <span class="btn_text">Nächster Kampf</span></a>
+    <div class="nav_btn-container">
+        <div class="">
+            <md-outlined-button type="button" id="nav_back" class="" onclick="navigate('{{begegnung.vorherigeBegegnungId}}');" {{#if begegnung.vorherigeBegegnungId}}{{else}}disabled{{/if}}>
+                Vorheriger Kampf
+                <svg slot="icon" height="18" viewBox="0 -960 960 960" width="18" fill="#5f6368"><path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/></svg>
+            </md-outlined-button>
         </div>
-    {{/if}}
+
+        <div class="">
+            <md-outlined-button type="button" id="nav_next" class="" onclick="navigate('{{begegnung.nachfolgerBegegnungId}}');" trailing-icon="true" {{#if begegnung.nachfolgerBegegnungId}}{{else}}disabled{{/if}}>
+                Nächster Kampf
+                <svg slot="icon" height="18" viewBox="0 -960 960 960" width="18" fill="#5f6368"><path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/></svg>
+            </md-outlined-button>
+        </div>
+    </div>
 </div>
 
 {{> footer}}
 
-<script>
+<script type="text/javascript">
     const navigate = async (begegnungid) => {
+        console.log("navigation called", begegnungid);
         var uriEnd = "";
         if (begegnungid) {
             console.log("lade Begegnung " + begegnungid);
@@ -137,17 +145,7 @@
                 })
     };
 
-    const save = async (event) => {
-        var form = document.getElementById("wertungen");
-        var isValid = validateForm(event);
-        if (isValid) {
-            form.submit();
-            return;
-        }
 
-        alert("Bitte alle Wertungen angeben.");
-        event.preventDefault();
-    };
 
     const updateInputValue = (name, value) => {
         var input = document.getElementById(name);
@@ -185,6 +183,19 @@
         setActiveButton('technik2');
         setActiveButton('stil2');
     });
+
+    const save = async (event) => {
+        console.log("save event", event);
+        var form = document.getElementById("wertungen");
+        var isValid = validateForm(event);
+        if (isValid) {
+            form.submit();
+            return;
+        }
+
+        alert("Bitte alle Wertungen angeben.");
+        event.preventDefault();
+    };
 </script>
 </body>
 </html>

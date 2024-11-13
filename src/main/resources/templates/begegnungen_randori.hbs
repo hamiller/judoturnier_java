@@ -9,12 +9,12 @@
     <div class="bodyheader no-print">
       <div class="navbar_fixed">
           <span style="position: relative">
-            <md-outlined-button type="button" id="renewBegegnungen">Alle Wettkampfgruppen neu erstellen</md-outlined-button>
-            <md-outlined-button type="button" id="deleteBegegnungen">Alle Wettkampfgruppen löschen</md-outlined-button>
+            <md-outlined-button type="button" id="renewBegegnungen" onclick="renewBegegnungen(); return false;">Alle Wettkampfgruppen neu erstellen</md-outlined-button>
+            <md-outlined-button type="button" id="deleteBegegnungen" onclick="deleteBegegnungen(); return false;">Alle Wettkampfgruppen löschen</md-outlined-button>
           </span>
         {{#each altersklassen}}
             <span style="position: relative">
-                <md-outlined-button id="theming-anchor-{{this}}" class="theming-anchors" altersklasse="{{this}}">{{this}}</md-outlined-button>
+                <md-filled-tonal-button id="theming-anchor-{{this}}" class="theming-anchors" altersklasse="{{this}}">{{this}}</md-filled-tonal-button>
                 <md-menu id="theming-menu-{{this}}" anchor="theming-anchor-{{this}}">
                     <md-menu-item type="button" class="renewBegegnung" id="renewBegegnung_{{this}}" altersklasse="{{this}}">Wettkampfgruppen {{this}} neu zuordnen</md-menu-item>
                     <md-menu-item href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches/{{this}}" target="_blank" class="">Druckansicht {{this}} Begegnungen</md-menu-item>
@@ -99,7 +99,7 @@
           document.body.querySelector("#theming-menu-" + altersklasse).show();
       }));
 
-      document.body.querySelector("#renewBegegnungen").addEventListener("click", async function() {
+      const renewBegegnungen = async () => {
           var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
           if (sicher) {
               console.log("Erstelle alle Begegnungen neu");
@@ -114,10 +114,11 @@
                           }
                       })
           }
-      });
+          // });
+      }
 
-
-      document.body.querySelectorAll(".renewBegegnung").forEach(value => value.addEventListener("click", async function(data) {
+      const renewBegegnung = async (data) => {
+          // document.body.querySelectorAll(".renewBegegnung").forEach(value => value.addEventListener("click", async function(data) {
           var altersklasse = data.target.attributes.getNamedItem("altersklasse").value;
           console.log("Altersklasse", altersklasse);
           var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in der Altersklasse\n\t" + altersklasse + "\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
@@ -134,9 +135,11 @@
                           }
                       })
           }
-      }));
+          // }));
+      }
 
-      document.body.querySelector("#deleteBegegnungen").addEventListener("click", async function() {
+      const deleteBegegnungen = async () => {
+          // document.body.querySelector("#deleteBegegnungen").addEventListener("click", async function() {
           var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern aller Altersklassen\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
           if (sicher) {
               fetch('/turnier/{{turnierid}}/begegnung', {method: 'DELETE', redirect: 'follow'})
@@ -150,7 +153,8 @@
                           }
                       })
           }
-      });
+          // });
+      }
 
       document.body.querySelectorAll("md-tabs").forEach(tabs => tabs.addEventListener('change', function(data) {
           var mattenid = data.target.activeTab.attributes.getNamedItem("mattenid").value;
@@ -165,7 +169,8 @@
 
       // Show 1st Matte
       document.addEventListener('DOMContentLoaded', function () {
-          document.querySelector(".tabcontent").style.display = "block";
+          var tabContent = document.querySelector(".tabcontent");
+          if (tabContent) tabContent.style.display = "block";
       });
 
   </script>

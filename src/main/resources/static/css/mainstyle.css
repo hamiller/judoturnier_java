@@ -449,6 +449,10 @@ tr {
   width: 300px !important;
 }
 
+md-slider {
+  width: 100%;
+}
+
 .menu-icon {
   display: none;
 }
@@ -493,8 +497,7 @@ tr {
 .nav_btn-container {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 20px 0;
+  padding-bottom: 2em;
 }
 
 .navbar_fixed li {
@@ -579,6 +582,10 @@ tr {
   padding-bottom: 20px;
   flex-direction: column;
   display: flex;
+}
+
+.slider-container {
+  margin-bottom: 20px;
 }
 
 .tab {
@@ -760,6 +767,7 @@ tr {
     font-size: 15px;
     width: 100%;
     margin-left: 0;
+    height: 100%;
   }
 
 
@@ -780,6 +788,15 @@ tr {
     display: none;
   }
 
+  #btn_alle_turniere {
+    display: none;
+  }
+
+  #theming-anchor {
+    /*display: block;*/
+    /*content: "☰";*/
+  }
+
   .center-btn {
     left: 50%;
     transform: translateX(-50%);
@@ -787,10 +804,6 @@ tr {
 
   .ergebnis_eintrag {
     border-width: 0;
-  }
-
-  .ergebnis {
-    padding-top: 50px;
   }
 
   .listeneintrag {
@@ -873,6 +886,13 @@ tr {
     padding: 0 10px 0 0;
   }
 
+  .pagetitle {
+    padding: 0 10px 0 0;
+    margin-left: 80px;
+    position: absolute;
+    background: white;
+  }
+
   .pagetitle img {
     display: none;
   }
@@ -890,6 +910,10 @@ tr {
   .row label {
     margin-right: auto;
     font-size: 16px;
+  }
+
+  .slider-container {
+    margin-bottom: 0px;
   }
 
   .submit_btn {
@@ -915,5 +939,13 @@ tr {
     font-size: 20px;
     margin-top: 10px;
     display: block;
+  }
+
+  .when_mobile_hide {
+    display: none;
+  }
+
+  .when_mobile_toggle {
+    display: none;
   }
 }
