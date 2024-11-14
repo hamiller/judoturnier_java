@@ -34,11 +34,11 @@ public class DtosConverter {
 		return new MatteDto(mat.id(), gruppenRunden);
 	}
 
-	public static BegegnungDto convertFromBegegnung(Begegnung begegnung, String userid, Optional<UUID> vorherigeBegegnungId, Optional<UUID> nachfolgendeBegegnungId) {
+	public static BegegnungDto convertFromBegegnung(Begegnung begegnung, UUID userid, Optional<UUID> vorherigeBegegnungId, Optional<UUID> nachfolgendeBegegnungId) {
 		var begegnungId = begegnung.getId();
 		var	wettkaempfer1 = begegnung.getWettkaempfer1().orElseGet(() -> Wettkaempfer.Freilos());
 		var	wettkaempfer2 = begegnung.getWettkaempfer2().orElseGet(() -> Wettkaempfer.Freilos());
-		var kampfrichterWertung = begegnung.getWertungen().stream().filter(w -> w.getBewerter().id().equals(userid)).findFirst().map(w -> new WertungDto(w.getSieger(),
+		var kampfrichterWertung = begegnung.getWertungen().stream().filter(w -> w.getBewerter().uuid().equals(userid)).findFirst().map(w -> new WertungDto(w.getSieger(),
 			formatDuration(w.getZeit()),
 			w.getPunkteWettkaempferWeiss(),
 			w.getStrafenWettkaempferWeiss(),

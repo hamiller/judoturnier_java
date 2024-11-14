@@ -2,6 +2,7 @@ package de.sinnix.judoturnier.adapter.primary;
 
 import com.github.jknack.handlebars.Options;
 import de.sinnix.judoturnier.model.Benutzer;
+import de.sinnix.judoturnier.model.BenutzerRolle;
 import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Wertung;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
 public class HelperSource {
 	private static final Logger logger = LogManager.getLogger(HelperSource.class);
@@ -195,11 +197,12 @@ public class HelperSource {
 				AnonymousAuthenticationToken token = (AnonymousAuthenticationToken) authentication;
 				var principal = (String) token.getPrincipal();
 				Collection<? extends GrantedAuthority> authorities = token.getAuthorities();
-				List<String> rollen = new ArrayList<>();
+				List<BenutzerRolle> rollen = new ArrayList<>();
 				for (GrantedAuthority authority : authorities) {
-					rollen.add(authority.getAuthority());
+					var r = BenutzerRolle.fromString(authority.getAuthority());
+					rollen.add(r);
 				}
-				return new Benutzer(principal, "", "", rollen);
+				return new Benutzer(UUID.fromString(principal), "", "", List.of(), rollen);
 			}
 
 			if (authentication.getPrincipal() instanceof DefaultOidcUser) {
@@ -207,15 +210,20 @@ public class HelperSource {
 				var userid = principal.getUserInfo().getSubject();
 				var username = principal.getUserInfo().getPreferredUsername();
 				var fullname = principal.getUserInfo().getFullName();
-				var rollen = authentication.getAuthorities().stream().map(a -> a.getAuthority()).toList();
+				Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+				List<BenutzerRolle> rollen = new ArrayList<>();
+				for (GrantedAuthority authority : authorities) {
+					var r = BenutzerRolle.fromString(authority.getAuthority());
+					rollen.add(r);
+				}
 
-				Benutzer result = new Benutzer(userid, username, fullname, rollen);
+				Benutzer result = new Benutzer(UUID.fromString(userid), username, fullname, List.of(), rollen);
 				logger.info("Eingeloggter User {}", result);
 				return result;
 			}
 
 			logger.warn("Konnte keinen Bewerter aus dem Authentication parsen, erstelle Dummy");
-			return new Benutzer("dummy", "", "", List.of());
+			return new Benutzer(UUID.randomUUID(), "", "", List.of(), List.of());
 		}
 		catch (Exception e) {
 			logger.info("Nutzer konnte nicht geparsed werden! {}", authentication, e);

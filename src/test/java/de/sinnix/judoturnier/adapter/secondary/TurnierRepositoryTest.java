@@ -4,6 +4,7 @@ import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
+import de.sinnix.judoturnier.model.BenutzerRolle;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Wertung;
@@ -45,8 +46,6 @@ class TurnierRepositoryTest {
 	@Mock
 	private BegegnungConverter           begegnungConverter;
 	@Mock
-	private WettkaempferConverter        wettkaempferConverter;
-	@Mock
 	private WettkampfGruppeConverter     wettkampfGruppeConverter;
 	@Mock
 	private WettkampfGruppeJpaRepository wettkampfGruppeJpaRepository;
@@ -57,7 +56,7 @@ class TurnierRepositoryTest {
 
 	@BeforeEach
 	public void setUp() {
-		benutzer = new Benutzer(UUID.randomUUID().toString(), "user1", "Name, Vorname", List.of("ROLE_ZUSCHAUER"));
+		benutzer = new Benutzer(UUID.randomUUID(), "user1", "Name, Vorname", List.of(), List.of(BenutzerRolle.BEOBACHTER));
 	}
 
 	@Test
@@ -65,7 +64,7 @@ class TurnierRepositoryTest {
 		UUID turnierUUID = UUID.randomUUID();
 		UUID id = UUID.randomUUID();
 		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(id, "Gruppe1", "typ1", Altersklasse.U11, List.of(), turnierUUID);
-		Benutzer benutzer = new Benutzer(UUID.randomUUID().toString(), "user1", "Name, Vorname", List.of("ROLE_ZUSCHAUER"));
+
 		Wertung wertung = new Wertung(
 			UUID.randomUUID(),
 			WettkaempferFixtures.wettkaempfer1.get(),

@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -40,5 +42,7 @@ public class WertungJpa {
 	private Integer kampfstilWettkaempfer2;
 	private Integer vielfaltWettkaempfer2;
 
-	private String bewerter;
+	@ManyToOne
+	@JoinColumn(name = "bewerter")
+	private BenutzerJpa benutzer;
 }

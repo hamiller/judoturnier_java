@@ -4,6 +4,7 @@ import de.sinnix.judoturnier.adapter.secondary.WettkaempferRepository;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
+import de.sinnix.judoturnier.model.BenutzerRolle;
 import de.sinnix.judoturnier.model.Farbe;
 import de.sinnix.judoturnier.model.GesamtPlatzierung;
 import de.sinnix.judoturnier.model.GesamtWertung;
@@ -52,7 +53,7 @@ public class WettkaempferServiceTest {
 	private        Wettkaempfer wettkaempfer;
 	private static UUID turnierUUID = UUID.fromString("7c858e76-60b9-4097-ad19-1ebe6891b9f9");
 
-	private static Benutzer kampfrichter = new Benutzer("898a7fcf-2fad-4ec9-8b4f-5513188af291", "username", "name", List.of());
+	private static Benutzer kampfrichter = new Benutzer(UUID.fromString("898a7fcf-2fad-4ec9-8b4f-5513188af291"), "user1", "Name, Vorname", List.of(), List.of(BenutzerRolle.KAMPFRICHTER));
 
 	public static Verein       verein1       = new Verein(UUID.fromString("61d1a191-5df1-40f5-a941-da18e06cebad"), "Kimchi Wiesbaden", turnierUUID);
 	public static Verein       verein2       = new Verein(UUID.fromString("9d4e210a-8099-4402-94d7-0b0fbaa67885"), "1. JCG", turnierUUID);

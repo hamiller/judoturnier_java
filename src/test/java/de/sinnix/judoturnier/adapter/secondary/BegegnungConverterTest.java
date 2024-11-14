@@ -4,6 +4,7 @@ import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
+import de.sinnix.judoturnier.model.BenutzerRolle;
 import de.sinnix.judoturnier.model.Wertung;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +42,7 @@ class BegegnungConverterTest {
 
 	@BeforeEach
 	void setUp() {
-		bewerter = new Benutzer(UUID.randomUUID().toString(), "user1", "Name, Vorname", List.of("ROLE_ZUSCHAUER"));
+		bewerter = new Benutzer(UUID.randomUUID(), "user1", "Name, Vorname", List.of(), List.of(BenutzerRolle.BEOBACHTER));
 	}
 
 	@Test

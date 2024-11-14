@@ -2,6 +2,7 @@ package de.sinnix.judoturnier.adapter.secondary;
 
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Benutzer;
+import de.sinnix.judoturnier.model.BenutzerRolle;
 import de.sinnix.judoturnier.model.Farbe;
 import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.Verein;
@@ -43,7 +44,7 @@ class WertungConverterTest {
 
 	@BeforeEach
 	void setUp() {
-		bewerter = new Benutzer(UUID.randomUUID().toString(), "user1", "Name, Vorname", List.of("ROLE_ZUSCHAUER"));
+		bewerter = new Benutzer(UUID.randomUUID(), "user1", "Name, Vorname", List.of(), List.of(BenutzerRolle.KAMPFRICHTER));
 	}
 
 	@Test

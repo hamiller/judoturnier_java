@@ -34,7 +34,7 @@ public class WertungConverter {
 			jpa.getTechnikWettkaempfer2(),
 			jpa.getKampfstilWettkaempfer2(),
 			jpa.getVielfaltWettkaempfer2(),
-			benutzerConverter.convertToBenutzer(jpa.getBewerter()));
+			benutzerConverter.convertToBenutzer(jpa.getBenutzer()));
 	}
 
 	public WertungJpa convertFromWertung(Wertung wertung) {
@@ -63,7 +63,7 @@ public class WertungConverter {
 		jpa.setKampfstilWettkaempfer2(wertung.getKampfstilWettkaempfer2());
 		jpa.setVielfaltWettkaempfer2(wertung.getVielfaltWettkaempfer2());
 
-		jpa.setBewerter(benutzerConverter.convertFromBenutzer(wertung.getBewerter()));
+		jpa.setBenutzer(benutzerConverter.convertFromBenutzer(wertung.getBewerter()));
 
 		return jpa;
 	}

@@ -1,5 +1,6 @@
 package de.sinnix.judoturnier.application;
 
+import de.sinnix.judoturnier.adapter.secondary.BenutzerJpaRepository;
 import de.sinnix.judoturnier.adapter.secondary.BenutzerRepository;
 import de.sinnix.judoturnier.adapter.secondary.TurnierConverter;
 import de.sinnix.judoturnier.adapter.secondary.TurnierJpa;
@@ -158,7 +159,7 @@ public class TurnierService {
 			for (BegegnungenJeRunde begegnungenJeRunde : wettkampfGruppe.alleRundenBegegnungen()) {
 				logger.debug("Runde {}", r);
 				for (Begegnung begegnung : begegnungenJeRunde.begegnungenJeRunde()) {
-					logger.debug("{} - Wettkaempfer1: {}, Wettkaempfer2: {}", begegnung.getBegegnungId(),  begegnung.getWettkaempfer1().map(Wettkaempfer::name), begegnung.getWettkaempfer2().map(Wettkaempfer::name));
+					logger.debug("{} - Wettkaempfer1: {}, Wettkaempfer2: {}", begegnung.getBegegnungId(), begegnung.getWettkaempfer1().map(Wettkaempfer::name), begegnung.getWettkaempfer2().map(Wettkaempfer::name));
 				}
 				r++;
 			}
@@ -184,7 +185,7 @@ public class TurnierService {
 		logger.info("speichereRandoriWertung: {}", begegnungId);
 		Begegnung begegnung = ladeBegegnung(begegnungId);
 
-		Benutzer benutzer = benutzerRepository.findById(bewerterUUID);
+		Benutzer benutzer = benutzerRepository.getBenutzer(bewerterUUID);
 		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), benutzer);
 		if (existierendeWertung.isPresent()) {
 			logger.debug("Aktualisiere existierende Wertung");
@@ -218,7 +219,7 @@ public class TurnierService {
 		logger.info("Begegnung: {}, Sieger: {}, Kampfzeit: {}s", begegnungId, siegerUUID, fightTime);
 		Begegnung begegnung = ladeBegegnung(begegnungId);
 
-		Benutzer benutzer = benutzerRepository.findById(bewerterUUID);
+		Benutzer benutzer = benutzerRepository.getBenutzer(bewerterUUID);
 		Wettkaempfer wettkaempfer = wettkaempferService.ladeKaempfer(siegerUUID).orElseThrow();
 		Duration dauer = parseDuration(fightTime);
 
@@ -254,7 +255,7 @@ public class TurnierService {
 	}
 
 	private Optional<Wertung> wertungVonBewerter(List<Wertung> wertungen, Benutzer benutzer) {
-		return wertungen.stream().filter(w -> w.getBewerter().equals(benutzer)).findFirst();
+		return wertungen.stream().filter(w -> w.getBewerter().uuid().equals(benutzer.uuid())).findFirst();
 	}
 
 	private List<WettkampfGruppe> erstelleWettkampfgruppen(List<GewichtsklassenGruppe> gewichtsklassenGruppen, Algorithmus algorithmus, Integer maxGruppenGroesse) {
@@ -305,7 +306,6 @@ public class TurnierService {
 	}
 
 
-
 	private void checkGruppenSindValide(List<GewichtsklassenGruppe> gruppen) throws Error {
 		try {
 			for (var gruppe : gruppen) {
@@ -346,7 +346,8 @@ public class TurnierService {
 
 	public Metadaten ladeMetadaten(UUID id, UUID turnierUUID) {
 		logger.info("Lade Metadaten für Begegnung {}", id);
-		var matten = turnierRepository.ladeMatten(turnierUUID);;
+		var matten = turnierRepository.ladeMatten(turnierUUID);
+		;
 
 		var aktuelleRunde = matten.values().stream()
 			.flatMap(matte -> matte.runden().stream())

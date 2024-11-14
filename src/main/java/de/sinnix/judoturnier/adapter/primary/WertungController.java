@@ -4,7 +4,6 @@ import de.sinnix.judoturnier.application.TurnierService;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Metadaten;
-import de.sinnix.judoturnier.model.Wettkaempfer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -35,18 +32,19 @@ public class WertungController {
 	public ModelAndView begegnungRandori(@PathVariable String turnierid, @PathVariable String id) {
 		logger.info("Lade Wertung für Begegnung {}", id);
 		UUID begegnungId = UUID.fromString(id);
+		UUID turnierId = UUID.fromString(turnierid);
 		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
 		Begegnung begegnung = turnierService.ladeBegegnung(begegnungId);
 
-		Metadaten metadaten = turnierService.ladeMetadaten(begegnungId, UUID.fromString(turnierid));
-		BegegnungDto begegnungDto = DtosConverter.convertFromBegegnung(begegnung, benutzer.id(), metadaten.vorherigeBegegnungId(), metadaten.nachfolgendeBegegnungId());
+		Metadaten metadaten = turnierService.ladeMetadaten(begegnungId, turnierId);
+		BegegnungDto begegnungDto = DtosConverter.convertFromBegegnung(begegnung, benutzer.uuid(), metadaten.vorherigeBegegnungId(), metadaten.nachfolgendeBegegnungId());
 
 		ModelAndView mav = new ModelAndView("wettkampf_randori");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("begegnung", begegnungDto);
 		mav.addObject("begegnungid", id);
 		mav.addObject("bewerter", benutzer);
-		mav.addObject("enableEditing", benutzer.istKampfrichter());
+		mav.addObject("enableEditing", benutzer.istKampfrichter(turnierId));
 		mav.addObject("wertungsOptionen", List.of(1, 2, 3, 4, 5, 6));
 		return mav;
 	}
@@ -55,18 +53,19 @@ public class WertungController {
 	public ModelAndView begegnungTurnier(@PathVariable String turnierid, @PathVariable String id) {
 		logger.info("Lade Wertung für Begegnung {}", id);
 		UUID begegnungId = UUID.fromString(id);
+		UUID turnierId = UUID.fromString(turnierid);
 		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
 		Begegnung begegnung = turnierService.ladeBegegnung(begegnungId);
 
-		Metadaten metadaten = turnierService.ladeMetadaten(begegnungId, UUID.fromString(turnierid));
-		BegegnungDto begegnungDto = DtosConverter.convertFromBegegnung(begegnung, benutzer.id(), metadaten.vorherigeBegegnungId(), metadaten.nachfolgendeBegegnungId());
+		Metadaten metadaten = turnierService.ladeMetadaten(begegnungId, turnierId);
+		BegegnungDto begegnungDto = DtosConverter.convertFromBegegnung(begegnung, benutzer.uuid(), metadaten.vorherigeBegegnungId(), metadaten.nachfolgendeBegegnungId());
 
 		ModelAndView mav = new ModelAndView("wettkampf_normal");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("begegnung", begegnungDto);
 		mav.addObject("begegnungid", id);
 		mav.addObject("bewerter", benutzer);
-		mav.addObject("enableEditing", benutzer.istKampfrichter());
+		mav.addObject("enableEditing", benutzer.istKampfrichter(turnierId));
 		mav.addObject("wertungsOptionen", List.of(1, 2, 3, 4, 5, 6));
 		return mav;
 	}
@@ -88,7 +87,7 @@ public class WertungController {
 		var stil2 = Integer.parseInt(formData.get("stil2").getFirst());
 		var vielfalt2 = Integer.parseInt(formData.get("vielfalt2").getFirst());
 
-		turnierService.speichereRandoriWertung(begegnungId, kampfgeist1, technik1, stil1, vielfalt1, kampfgeist2, technik2, stil2, vielfalt2, UUID.fromString(benutzer.id()));
+		turnierService.speichereRandoriWertung(begegnungId, kampfgeist1, technik1, stil1, vielfalt1, kampfgeist2, technik2, stil2, vielfalt2, benutzer.uuid());
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori");
 	}
 
@@ -107,7 +106,7 @@ public class WertungController {
 		var fightTime = formData.get("fightTime").getFirst();
 		var sieger = UUID.fromString(formData.get("sieger").getFirst());
 
-		turnierService.speichereTurnierWertung(begegnungId, scoreWeiss, scoreBlau, penaltiesWeiss, penaltiesBlau, fightTime, sieger, UUID.fromString(benutzer.id()));
+		turnierService.speichereTurnierWertung(begegnungId, scoreWeiss, scoreBlau, penaltiesWeiss, penaltiesBlau, fightTime, sieger, benutzer.uuid());
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/normal");
 	}
 }

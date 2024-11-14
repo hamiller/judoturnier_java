@@ -8,6 +8,7 @@ import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.fixtures.WettkampfgruppeFixture;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
+import de.sinnix.judoturnier.model.BenutzerRolle;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Gruppengroesse;
@@ -65,9 +66,11 @@ class TurnierServiceTest {
 	private TurnierService turnierService;
 
 	private UUID turnierUUID = MatteFixtures.turnierUUID;
+	private Benutzer benutzer;
 
 	@BeforeEach
 	void setUp() {
+		benutzer = new Benutzer(UUID.fromString("898a7fcf-2fad-4ec9-8b4f-5513188af291"), "user1", "Name, Vorname", List.of(), List.of(BenutzerRolle.KAMPFRICHTER));
 	}
 
 	@Test
@@ -129,7 +132,6 @@ class TurnierServiceTest {
 
 	@Test
 	void testAktualisiereExistierendeRandoriWertung() {
-		Benutzer benutzer = new Benutzer(UUID.randomUUID().toString(), "username", "name", List.of("ROLE_KAMPFRICHTER"));
 		UUID turnierUUID = UUID.randomUUID();
 		UUID rundeUUID = UUID.randomUUID();
 		UUID id = UUID.randomUUID();
@@ -164,9 +166,9 @@ class TurnierServiceTest {
 
 
 		when(turnierRepository.ladeBegegnung(id)).thenReturn(begegnung);
-		when(benutzerRepository.findById(UUID.fromString(benutzer.id()))).thenReturn(benutzer);
+		when(benutzerRepository.getBenutzer(benutzer.uuid())).thenReturn(benutzer);
 
-		turnierService.speichereRandoriWertung(id, 1, 2, 3, 4, 4, 3, 2, 1, UUID.fromString(benutzer.id()));
+		turnierService.speichereRandoriWertung(id, 1, 2, 3, 4, 4, 3, 2, 1, benutzer.uuid());
 
 		ArgumentCaptor<Begegnung> argumentCaptor = ArgumentCaptor.forClass(Begegnung.class);
 		verify(turnierRepository).speichereBegegnung(argumentCaptor.capture());
@@ -176,8 +178,8 @@ class TurnierServiceTest {
 
 	@Test
 	void testWeitereRandoriWertung() {
-		Benutzer benutzerA = new Benutzer(UUID.randomUUID().toString(), "username", "name", List.of("ROLE_KAMPFRICHTER"));
-		Benutzer benutzerB = new Benutzer(UUID.randomUUID().toString(), "username", "name", List.of("ROLE_KAMPFRICHTER"));
+		Benutzer benutzerA = new Benutzer(UUID.randomUUID(), "username", "name", List.of(), List.of(BenutzerRolle.KAMPFRICHTER));
+		Benutzer benutzerB = new Benutzer(UUID.randomUUID(), "username", "name", List.of(), List.of(BenutzerRolle.KAMPFRICHTER));
 		UUID turnierUUID = UUID.randomUUID();
 		UUID rundeUUID = UUID.randomUUID();
 		UUID id = UUID.randomUUID();
@@ -217,9 +219,9 @@ class TurnierServiceTest {
 
 
 		when(turnierRepository.ladeBegegnung(id)).thenReturn(begegnung);
-		when(benutzerRepository.findById(UUID.fromString(benutzerB.id()))).thenReturn(benutzerB);
+		when(benutzerRepository.getBenutzer(benutzerB.uuid())).thenReturn(benutzerB);
 
-		turnierService.speichereRandoriWertung(id, 1, 2, 3, 4, 4, 3, 2, 1, UUID.fromString(benutzerB.id()));
+		turnierService.speichereRandoriWertung(id, 1, 2, 3, 4, 4, 3, 2, 1, benutzerB.uuid());
 
 		ArgumentCaptor<Begegnung> argumentCaptor = ArgumentCaptor.forClass(Begegnung.class);
 		verify(turnierRepository).speichereBegegnung(argumentCaptor.capture());
@@ -231,7 +233,6 @@ class TurnierServiceTest {
 
 	@Test
 	void testSpeichereNeueRandoriWertung() {
-		Benutzer benutzer = new Benutzer(UUID.randomUUID().toString(), "username", "name", List.of("ROLE_KAMPFRICHTER"));
 		UUID turnierUUID = UUID.randomUUID();
 		UUID rundeUUID = UUID.randomUUID();
 		UUID id = UUID.randomUUID();
@@ -245,9 +246,9 @@ class TurnierServiceTest {
 		);
 
 		when(turnierRepository.ladeBegegnung(id)).thenReturn(begegnung);
-		when(benutzerRepository.findById(UUID.fromString(benutzer.id()))).thenReturn(benutzer);
+		when(benutzerRepository.getBenutzer(benutzer.uuid())).thenReturn(benutzer);
 
-		turnierService.speichereRandoriWertung(id, 1, 2, 3, 4, 4, 3, 2, 1, UUID.fromString(benutzer.id()));
+		turnierService.speichereRandoriWertung(id, 1, 2, 3, 4, 4, 3, 2, 1, benutzer.uuid());
 
 		ArgumentCaptor<Begegnung> argumentCaptor = ArgumentCaptor.forClass(Begegnung.class);
 		verify(turnierRepository).speichereBegegnung(argumentCaptor.capture());
