@@ -2,6 +2,7 @@ package de.sinnix.judoturnier.adapter.secondary;
 
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.BenutzerRolle;
+import de.sinnix.judoturnier.model.TurnierRollen;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
@@ -71,6 +73,36 @@ class BenutzerConverterTest {
 
 	@Test
 	void convertFromBenutzer() {
+		UUID turnierId1 = UUID.randomUUID();
+		UUID turnierId2 = UUID.randomUUID();
+		List<TurnierRollen> turnierRollen = List.of(
+			new TurnierRollen(turnierId1, List.of(BenutzerRolle.BEOBACHTER)),
+			new TurnierRollen(turnierId2, List.of(BenutzerRolle.KAMPFRICHTER)));
+
+		Benutzer benutzer = new Benutzer(
+			null, "username", "name", turnierRollen, List.of(BenutzerRolle.ADMINISTRATOR)
+		);
+
+		BenutzerJpa result = converter.convertFromBenutzer(benutzer);
+
+		assertNotNull(result);
+		assertNull(result.getUuid());
+		assertEquals(benutzer.name(), result.getName());
+		assertEquals(benutzer.username(), result.getUsername());
+		assertEquals(1, result.getRollen().size());
+		assertEquals(benutzer.benutzerRollen().get(0), result.getRollen().get(0));
+		assertEquals(2, result.getTurnierRollen().size());
+
+		assertEquals(1, result.getTurnierRollen().get(0).getRollen().size());
+		assertEquals(benutzer.turnierRollen().get(0).rollen().get(0), result.getTurnierRollen().get(0).getRollen().get(0));
+		assertEquals(turnierId1.toString(), result.getTurnierRollen().get(0).getId().getTurnierUuid());
+		assertEquals(benutzer.uuid(), result.getTurnierRollen().get(0).getId().getBenutzerUuid());
+
+		assertEquals(1, result.getTurnierRollen().get(1).getRollen().size());
+		assertEquals(benutzer.turnierRollen().get(1).rollen().get(0), result.getTurnierRollen().get(1).getRollen().get(0));
+		assertEquals(turnierId2.toString(), result.getTurnierRollen().get(1).getId().getTurnierUuid());
+		assertEquals(benutzer.uuid(), result.getTurnierRollen().get(1).getId().getBenutzerUuid());
+
 
 	}
 }

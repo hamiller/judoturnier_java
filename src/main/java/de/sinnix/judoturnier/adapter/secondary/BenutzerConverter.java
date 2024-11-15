@@ -44,7 +44,9 @@ public class BenutzerConverter {
 		}
 		return turnierRollen.stream().map(turnierRolle -> {
 				TurnierRollenJpa jpa = new TurnierRollenJpa();
-				jpa.setId(new TurnierRollenJpa.TurnierRollenId(benutzer.uuid().toString(), turnierRolle.turnierId().toString()));
+				jpa.setId(new TurnierRollenJpa.TurnierRollenId(
+					benutzer.uuid() != null ? benutzer.uuid().toString() : null,
+					turnierRolle.turnierId().toString()));
 				jpa.setRollen(turnierRolle.rollen());
 				return jpa;
 			})
