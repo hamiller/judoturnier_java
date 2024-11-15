@@ -18,18 +18,26 @@
   </div>
 
   <div class="bodycontent">
-      <div class="">Deine Turniere:</div>
-      <ul class="generalcontent">
-        {{#turniere}}
-          <li class="listeneintrag">
-              <a href="/turnier/{{uuid}}">
-                  <div>{{name}}</div>
-                  <div>{{Ort}}</div>
-                  <div>{{Datum}}</div>
-              </a>
-          </li>
-        {{/turniere}}
-      </ul>
+      {{#if turniere}}
+          <div class="">Deine Turniere:</div>
+          <ul class="generalcontent">
+            {{#turniere}}
+              <li class="listeneintrag">
+                  <a href="/turnier/{{uuid}}">
+                      <div>{{name}}</div>
+                      <div>{{Ort}}</div>
+                      <div>{{Datum}}</div>
+                  </a>
+              </li>
+            {{/turniere}}
+          </ul>
+      {{else}}
+            <div class="">Keine Turniere vorhanden</div>
+      {{/if}}
+      <md-divider></md-divider>
+      {{#if isNotloggedin}}
+        <md-filled-tonal-button type="button" id="loginbtn" class="" href="/oauth2/authorization/keycloak">Login</md-filled-tonal-button>
+      {{/if}}
   </div>
 
   {{> footer}}

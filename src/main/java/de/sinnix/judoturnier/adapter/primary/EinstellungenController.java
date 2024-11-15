@@ -6,6 +6,7 @@ import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.Gruppengroesse;
 import de.sinnix.judoturnier.model.Kampfsystem;
 import de.sinnix.judoturnier.model.MattenAnzahl;
+import de.sinnix.judoturnier.model.OidcBenutzer;
 import de.sinnix.judoturnier.model.SeparateAlterklassen;
 import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.VariablerGewichtsteil;
@@ -13,6 +14,7 @@ import de.sinnix.judoturnier.model.WettkampfReihenfolge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +38,7 @@ public class EinstellungenController {
 	@GetMapping("/turnier/{turnierid}/einstellungen")
 	public ModelAndView ladeEinstellungen(@PathVariable String turnierid) {
 		logger.debug("Lade Einstellungen");
-
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		var turnierUUID = UUID.fromString(turnierid);
 		var einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
 		var turnierdaten = einstellungenService.ladeTurnierDaten(turnierUUID);
@@ -44,6 +46,7 @@ public class EinstellungenController {
 
 		ModelAndView mav = new ModelAndView("einstellungen");
 		mav.addObject("turnierid", turnierid);
+		mav.addObject("isadmin", oidcBenutzer.istAdmin());
 		mav.addObject("gewichtsklassengruppen", gwks);
 		mav.addObject("kampfsysteme", Kampfsystem.values());
 		mav.addObject("turniertyp", einstellungen.turnierTyp());
@@ -62,6 +65,7 @@ public class EinstellungenController {
 	public ModelAndView speichereTurnierEinstellungen(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
 		logger.debug("speichere Turnier-Einstellungen {}", formData);
 
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		var turnierTyp = TurnierTyp.valueOf(formData.getFirst(TurnierTyp.TYP));
 		var mattenAnzahl = new MattenAnzahl(Integer.parseInt(formData.getFirst(MattenAnzahl.TYP)));
 		var wettkampfReihenfolge = WettkampfReihenfolge.valueOf(formData.getFirst(WettkampfReihenfolge.TYP));
@@ -77,6 +81,7 @@ public class EinstellungenController {
 
 		ModelAndView mav = new ModelAndView("einstellungen");
 		mav.addObject("turnierid", turnierid);
+		mav.addObject("isadmin", oidcBenutzer.istAdmin());
 		mav.addObject("gewichtsklassengruppen", gwks);
 		mav.addObject("kampfsysteme", Kampfsystem.values());
 		mav.addObject("turniertyp", einstellungen.turnierTyp());

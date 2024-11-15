@@ -1,11 +1,13 @@
 package de.sinnix.judoturnier.adapter.primary;
 
 import de.sinnix.judoturnier.application.VereinService;
+import de.sinnix.judoturnier.model.OidcBenutzer;
 import de.sinnix.judoturnier.model.Verein;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,10 +32,13 @@ public class VereinController {
 	public ModelAndView ladeVereineListe(@PathVariable String turnierid, @RequestParam(name = "success", required = false) String id,
 								@RequestParam(name = "error", required = false) String error) {
 		logger.info("Lade Vereine...");
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		UUID turnierUUID = UUID.fromString(turnierid);
 		var vereine = vereinService.holeAlleVereine(turnierUUID).toArray(Verein[]::new);
 
 		ModelAndView mav = new ModelAndView("vereineliste");
+		mav.addObject("turnierid", turnierid);
+		mav.addObject("isadmin", oidcBenutzer.istAdmin());
 		mav.addObject("vereine", vereine);
 		mav.addObject("prevsuccess", id);
 		mav.addObject("preverror", error);
@@ -43,13 +48,15 @@ public class VereinController {
 	@GetMapping("/turnier/{turnierid}/vereine/{vereinid}")
 	public ModelAndView verein(@PathVariable String turnierid, @PathVariable String vereinid) {
 		logger.info("Lade Verein {}", vereinid);
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		UUID turnierUUID = UUID.fromString(turnierid);
 		UUID vereinID = UUID.fromString(vereinid);
 		var verein = vereinService.holeVerein(vereinID, turnierUUID);
 
 		ModelAndView mav = new ModelAndView("verein");
-		mav.addObject("vereinid", verein.id());
 		mav.addObject("turnierid", turnierid);
+		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("vereinid", verein.id());
 		mav.addObject("name", verein.name());
 		mav.addObject("neuerEintrag", false);
 		return mav;
@@ -93,11 +100,13 @@ public class VereinController {
 	@GetMapping("/turnier/{turnierid}/verein-neu")
 	public ModelAndView leererVerein(@PathVariable String turnierid, @RequestParam(name = "success", required = false) String id, @RequestParam(name = "error", required = false) String error) {
 		logger.debug("Verein-Seite");
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		UUID turnierUUID = UUID.fromString(turnierid);
 
 		ModelAndView mav = new ModelAndView("verein");
-		mav.addObject("vereinid", null);
 		mav.addObject("turnierid", turnierid);
+		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("vereinid", null);
 		mav.addObject("name", null);
 		mav.addObject("prevsuccess", id);
 		mav.addObject("preverror", error);

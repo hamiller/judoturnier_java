@@ -1,0 +1,1 @@
+INSERT INTO benutzer (uuid, username, name, turnier_uuid, rollen) VALUES ('c79f4203-6c72-4771-b641-17eb80e4cfaa', 'anonymous', 'Dummy User', null, 'BEOBACHTER');

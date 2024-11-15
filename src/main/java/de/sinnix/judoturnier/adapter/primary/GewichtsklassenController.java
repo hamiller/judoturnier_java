@@ -7,12 +7,14 @@ import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppen;
+import de.sinnix.judoturnier.model.OidcBenutzer;
 import de.sinnix.judoturnier.model.TurnierTyp;
 import jakarta.annotation.security.PermitAll;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,6 +47,8 @@ public class GewichtsklassenController {
 	@GetMapping("/turnier/{turnierid}/gewichtsklassen")
 	public ModelAndView ladeGewichtsklassen(@PathVariable String turnierid) {
 		logger.info("GewichtsklassenController ladeGewichtsklassen, Turnier {}", turnierid);
+
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		var turnierUUID = UUID.fromString(turnierid);
 		var wks = wettkaempferService.alleKaempfer(turnierUUID);
 		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
@@ -64,6 +68,7 @@ public class GewichtsklassenController {
 
 		ModelAndView mav = new ModelAndView("gewichtsklassen");
 		mav.addObject("turnierid", turnierid);
+		mav.addObject("isadmin", oidcBenutzer.istAdmin());
 		mav.addObject("gewichtsklassengruppenWeiblich", groupedByFemale);
 		mav.addObject("gewichtsklassengruppenMaennlich", groupedByMale);
 		mav.addObject("gewichtsklassengruppenAlter", groupedByAge);

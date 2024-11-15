@@ -5,6 +5,7 @@ import de.sinnix.judoturnier.application.WettkaempferService;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Farbe;
 import de.sinnix.judoturnier.model.Geschlecht;
+import de.sinnix.judoturnier.model.OidcBenutzer;
 import de.sinnix.judoturnier.model.Verein;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,12 +49,14 @@ public class WettkaempferController {
 											  @RequestParam(name = "error", required = false) String error) {
 		logger.debug("Alle Wettkaempfer angefragt");
 
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		List<Wettkaempfer> wettkaempferList = wiegenService.alleKaempfer(UUID.fromString(turnierid)).stream()
 			.sorted(WettkaempferSortierer.sortiere(sortingHeader))
 			.collect(Collectors.toList());
 
 		ModelAndView mav = new ModelAndView("wettkaempferliste");
 		mav.addObject("turnierid", turnierid);
+		mav.addObject("isadmin", oidcBenutzer.istAdmin());
 		mav.addObject("kaempferListe", wettkaempferList);
 		mav.addObject("anzahlwk", wettkaempferList.size());
 		mav.addObject("prevsuccess", id);
@@ -115,6 +119,7 @@ public class WettkaempferController {
 	@GetMapping("/turnier/{turnierid}/wettkaempfer/{id}")
 	public ModelAndView ladeWettkaempfer(@PathVariable String turnierid, @PathVariable String id) {
 		logger.debug("Wettkaempfer-Seite angefragt " + id);
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		UUID turnierUUID = UUID.fromString(turnierid);
 		var wk = wiegenService.ladeKaempfer(UUID.fromString(id));
 		if (!wk.isPresent()) {
@@ -128,6 +133,7 @@ public class WettkaempferController {
 
 		ModelAndView mav = new ModelAndView("wettkaempfer");
 		mav.addObject("turnierid", turnierid);
+		mav.addObject("isadmin", oidcBenutzer.istAdmin());
 		mav.addObject("kaempfer", wk.get());
 		mav.addObject("vereine", vs);
 		mav.addObject("geschlechter", Geschlecht.values());
@@ -139,11 +145,14 @@ public class WettkaempferController {
 	@GetMapping("/turnier/{turnierid}/wettkaempfer-neu")
 	public ModelAndView leererWettkaempfer(@PathVariable String turnierid, @RequestParam(name = "success", required = false) String id, @RequestParam(name = "error", required = false) String error) {
 		logger.debug("Wettkaempfer-Seite");
+
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		UUID turnierUUID = UUID.fromString(turnierid);
 		var vs = vereinService.holeAlleVereine(turnierUUID);
 
 		ModelAndView mav = new ModelAndView("wettkaempfer");
 		mav.addObject("turnierid", turnierid);
+		mav.addObject("isadmin", oidcBenutzer.istAdmin());
 		mav.addObject("kaempfer", null);
 		mav.addObject("vereine", vs);
 		mav.addObject("geschlechter", Geschlecht.values());
