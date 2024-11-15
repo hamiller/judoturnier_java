@@ -1,5 +1,6 @@
 package de.sinnix.judoturnier.adapter.primary;
 
+import de.sinnix.judoturnier.application.BenutzerService;
 import de.sinnix.judoturnier.application.EinstellungenService;
 import de.sinnix.judoturnier.application.GewichtsklassenService;
 import de.sinnix.judoturnier.application.TurnierService;
@@ -9,8 +10,8 @@ import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
-import de.sinnix.judoturnier.model.GruppenRunde;
 import de.sinnix.judoturnier.model.Matte;
+import de.sinnix.judoturnier.model.OidcBenutzer;
 import de.sinnix.judoturnier.model.Turnier;
 import jakarta.annotation.security.PermitAll;
 import org.apache.commons.lang3.StringUtils;
@@ -60,25 +61,33 @@ public class TurnierController {
 	private VereinService          vereinService;
 	@Autowired
 	private BuildProperties        buildProperties;
+	@Autowired
+	private BenutzerService        benutzerService;
 
 	@GetMapping("/")
 	public ModelAndView startPage() {
-		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
-		logger.info("Turniere-Startseite. User {}", benutzer);
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
+		logger.info("Turniere-Startseite. User {}", oidcBenutzer);
+
+		Benutzer benutzer = benutzerService.holeBenutzer(oidcBenutzer);
+		List<UUID> turnierIds = benutzer.turnierRollen().stream().map(tr -> tr.turnierId()).toList();
+		List<Turnier> turniere = turnierService.ladeTurniere(turnierIds);
+		logger.info("Zu Nutzer {} gehören folgende Turniere: {}", benutzer, turniere);
 
 		ModelAndView mav = new ModelAndView("startseite");
+		mav.addObject("turniere", turniere);
 		return mav;
 	}
 
-	@GetMapping("/turnier")
+	@GetMapping("/turniere")
 	public ModelAndView turniere() {
 		logger.debug("lade vorhandene Turniere");
-		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		OidcBenutzer benutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		logger.info("Eingeloggter User {}", benutzer);
 
 		List<Turnier> turniere = new ArrayList<>();
 		if (benutzer.istAdmin()) {
-			turniere = turnierService.ladeTurniere();
+			turniere = turnierService.ladeAlleTurniere();
 		}
 		ModelAndView mav = new ModelAndView("turniere");
 		mav.addObject("turniere", turniere);
@@ -89,11 +98,11 @@ public class TurnierController {
 		return mav;
 	}
 
-	@PostMapping("/turnier")
+	@PostMapping("/turniere")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView erstelleTurnier(@RequestBody MultiValueMap<String, String> formData) {
 		logger.debug("erstelle ein neues Turnier {}", formData);
-		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		OidcBenutzer benutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 
 		var name = formData.get("name").getFirst();
 		var ort = formData.get("ort").getFirst();
@@ -109,16 +118,20 @@ public class TurnierController {
 		logger.debug("Turnierübersicht {} angefragt, eingeloggt", turnierid);
 
 		// aktuell nur zum prüfen...
-		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
-		Turnier t = turnierService.ladeTurnier(turnierid);
+		OidcBenutzer benutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
+		UUID turnierUUID = UUID.fromString(turnierid);
+		Turnier turnierdaten = turnierService.ladeTurnier(turnierUUID);
 
-		var wks = wettkaempferService.alleKaempfer(UUID.fromString(turnierid));
-		var einstellungen = einstellungenService.ladeEinstellungen(UUID.fromString(turnierid));
+		var wks = wettkaempferService.alleKaempfer(turnierUUID);
+		var einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
 
 		ModelAndView mav = new ModelAndView("turnieruebersicht");
 		mav.addObject("anzahlwk", wks.size());
 		mav.addObject("turniertyp", einstellungen.turnierTyp());
 		mav.addObject("enableEditing", benutzer.istAdmin());
+		mav.addObject("turniername", turnierdaten.name());
+		mav.addObject("turnierort", turnierdaten.ort());
+		mav.addObject("turnierdatum", turnierdaten.datum());
 		return mav;
 	}
 
@@ -134,7 +147,7 @@ public class TurnierController {
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori")
 	public ModelAndView ladeWettkampfreihenfolgeJeMatteRandori(@PathVariable String turnierid, @RequestParam(value = "error", required = false) String error, @RequestParam(value = "altersklasse", required = false) String altersklasse) {
 		logger.info("Lade Randori-Begegnungen für Turnier {} und Altersklasse {}", turnierid, altersklasse);
-		var turnierUUID = UUID.fromString(turnierid);
+		UUID turnierUUID = UUID.fromString(turnierid);
 		List<GewichtsklassenGruppe> gwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID);
 		Set<Altersklasse> altersklassen = gwks.stream()
@@ -160,7 +173,7 @@ public class TurnierController {
 	@GetMapping("/turnier/{turnierid}/begegnungen/normal")
 	public ModelAndView ladeWettkampfreihenfolgeJeMatteNormal(@PathVariable String turnierid, @RequestParam(value = "error", required = false) String error, @RequestParam(value = "altersklasse", required = false) String altersklasse) {
 		logger.info("Lade Begegnungen für Turnier {}", turnierid);
-		var turnierUUID = UUID.fromString(turnierid);
+		UUID turnierUUID = UUID.fromString(turnierid);
 		List<GewichtsklassenGruppe> gwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID);
 		Set<Altersklasse> altersklassen = gwks.stream()
@@ -186,7 +199,7 @@ public class TurnierController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView ladeCsvVereinHoch(@PathVariable String turnierid, @RequestParam("fileVereine") MultipartFile file) {
 		logger.info("Hochgeladene CSV-Datei für Vereine {}", file.getName());
-		var turnierUUID = UUID.fromString(turnierid);
+		UUID turnierUUID = UUID.fromString(turnierid);
 		vereinService.speichereCSV(turnierUUID, file);
 
 		return new ModelAndView("redirect:/turnier/" + turnierid);
@@ -196,7 +209,7 @@ public class TurnierController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView ladeCsvWettkaempferHoch(@PathVariable String turnierid, @RequestParam("fileWettkaempfer") MultipartFile file) {
 		logger.info("Hochgeladene CSV-Datei für Wettkaempfer {}", file.getName());
-		var turnierUUID = UUID.fromString(turnierid);
+		UUID turnierUUID = UUID.fromString(turnierid);
 		wettkaempferService.speichereCSV(turnierUUID, file);
 
 		return new ModelAndView("redirect:/turnier/" + turnierid);
@@ -208,8 +221,9 @@ public class TurnierController {
 		logger.info("Erstelle Begegnungen für Turnier {}", turnierid);
 		String error = "";
 		try {
-			turnierService.loescheWettkampfreihenfolge(UUID.fromString(turnierid));
-			turnierService.erstelleWettkampfreihenfolge(UUID.fromString(turnierid));
+			UUID turnierUUID = UUID.fromString(turnierid);
+			turnierService.loescheWettkampfreihenfolge(turnierUUID);
+			turnierService.erstelleWettkampfreihenfolge(turnierUUID);
 		} catch (Exception e) {
 			logger.error("Ein unerwarteter Fehler ist aufgetreten", e);
 			error = e.toString();
@@ -226,13 +240,14 @@ public class TurnierController {
 	public ModelAndView erneuerWettkampfreihenfolgeFuerAltersklasse(@PathVariable String turnierid, @RequestBody String altersklasse) {
 		logger.info("Erneuere Begegnungen für Turnier {} und Altersklasse {}", turnierid, altersklasse);
 		String error = "";
+		UUID turnierUUID = UUID.fromString(turnierid);
 		try {
-			turnierService.loescheWettkampfreihenfolgeAltersklasse(Altersklasse.valueOf(altersklasse), UUID.fromString(turnierid));
-			turnierService.erstelleWettkampfreihenfolgeAltersklasse(Optional.of(Altersklasse.valueOf(altersklasse)), UUID.fromString(turnierid));
+			turnierService.loescheWettkampfreihenfolgeAltersklasse(Altersklasse.valueOf(altersklasse), turnierUUID);
+			turnierService.erstelleWettkampfreihenfolgeAltersklasse(Optional.of(Altersklasse.valueOf(altersklasse)), turnierUUID);
 		} catch (Exception e) {
 			error = e.toString();
 		}
-		if (einstellungenService.isRandori(UUID.fromString(turnierid))) {
+		if (einstellungenService.isRandori(turnierUUID)) {
 			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori?error=" + error);
 		} else {
 			return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/normal?error=" + error);
@@ -251,7 +266,7 @@ public class TurnierController {
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori_printview_matches/{altersklasse}")
 	public ModelAndView ladeDruckAnsichtBegegnungenRandori(@PathVariable String turnierid, @PathVariable String altersklasse) {
 		logger.info("Lade Randori-Druckansicht für Turnier {} und Altersklasse {}", turnierid, altersklasse);
-		var turnierUUID = UUID.fromString(turnierid);
+		UUID turnierUUID = UUID.fromString(turnierid);
 		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID).stream()
 			.sorted(Comparator.comparingInt(Matte::id))
 			.toList();
@@ -268,7 +283,7 @@ public class TurnierController {
 	@GetMapping("/turnier/{turnierid}/begegnungen/turnier_printview_matches/{geschlecht}/{altersklasse}")
 	public ModelAndView ladeDruckAnsichtBegegnungenTurnier(@PathVariable String turnierid, @PathVariable String geschlecht, @PathVariable String altersklasse) {
 		logger.info("Lade Turnier-Druckansicht für Turnier {}, Geschlecht {} und Altersklasse {}", turnierid, geschlecht, altersklasse);
-		var turnierUUID = UUID.fromString(turnierid);
+		UUID turnierUUID = UUID.fromString(turnierid);
 		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID).stream()
 			.sorted(Comparator.comparingInt(Matte::id))
 			.toList();
@@ -284,7 +299,7 @@ public class TurnierController {
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori_printview_matches_inserting_data/{altersklasse}")
 	public ModelAndView ladeDruckAnsichtBegegnungenRandoriDateneintrag(@PathVariable String turnierid, @PathVariable String altersklasse) {
 		logger.info("Lade Wertungs-Eintrag 'Randori' für Turnier {} und Altersklasse {}", turnierid, altersklasse);
-		var turnierUUID = UUID.fromString(turnierid);
+		UUID turnierUUID = UUID.fromString(turnierid);
 		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(turnierUUID);
 		List<Matte> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte);
 		List<MatteDto> wettkampfreihenfolgeJeMatteGefiltertUndGruppiert = gruppiereNachGruppen(gefilterteMatten);
@@ -298,7 +313,7 @@ public class TurnierController {
 	@GetMapping("/turnier/{turnierid}/export-wk")
 	public ResponseEntity<Resource> exportiereWettkaempfer(@PathVariable String turnierid) {
 		logger.info("Exportiere alle Wettkämpfer von Turnier {}", turnierid);
-		var turnierUUID = UUID.fromString(turnierid);
+		UUID turnierUUID = UUID.fromString(turnierid);
 
 		ByteArrayResource resource = wettkaempferService.erstelleWettkaempferCSV(turnierUUID);
 

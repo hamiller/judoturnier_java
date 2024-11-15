@@ -166,7 +166,7 @@ class TurnierServiceTest {
 
 
 		when(turnierRepository.ladeBegegnung(id)).thenReturn(begegnung);
-		when(benutzerRepository.getBenutzer(benutzer.uuid())).thenReturn(benutzer);
+		when(benutzerRepository.findBenutzer(benutzer.uuid())).thenReturn(Optional.of(benutzer));
 
 		turnierService.speichereRandoriWertung(id, 1, 2, 3, 4, 4, 3, 2, 1, benutzer.uuid());
 
@@ -219,7 +219,7 @@ class TurnierServiceTest {
 
 
 		when(turnierRepository.ladeBegegnung(id)).thenReturn(begegnung);
-		when(benutzerRepository.getBenutzer(benutzerB.uuid())).thenReturn(benutzerB);
+		when(benutzerRepository.findBenutzer(benutzerB.uuid())).thenReturn(Optional.of(benutzerB));
 
 		turnierService.speichereRandoriWertung(id, 1, 2, 3, 4, 4, 3, 2, 1, benutzerB.uuid());
 
@@ -246,7 +246,7 @@ class TurnierServiceTest {
 		);
 
 		when(turnierRepository.ladeBegegnung(id)).thenReturn(begegnung);
-		when(benutzerRepository.getBenutzer(benutzer.uuid())).thenReturn(benutzer);
+		when(benutzerRepository.findBenutzer(benutzer.uuid())).thenReturn(Optional.of(benutzer));
 
 		turnierService.speichereRandoriWertung(id, 1, 2, 3, 4, 4, 3, 2, 1, benutzer.uuid());
 

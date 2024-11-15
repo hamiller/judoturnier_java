@@ -28,23 +28,21 @@ public class TurnierRepository {
 	private static final Logger logger = LogManager.getLogger(TurnierRepository.class);
 
 	@Autowired
-	private WertungJpaRepository wertungJpaRepository;
+	private WertungJpaRepository         wertungJpaRepository;
 	@Autowired
-	private BegegnungJpaRepository begegnungJpaRepository;
+	private BegegnungJpaRepository       begegnungJpaRepository;
 	@Autowired
 	private WettkampfGruppeJpaRepository wettkampfGruppeJpaRepository;
 	@Autowired
-	private WertungConverter wertungConverter;
+	private WertungConverter             wertungConverter;
 	@Autowired
-	private WettkaempferConverter wettkaempferConverter;
+	private BegegnungConverter           begegnungConverter;
 	@Autowired
-	private BegegnungConverter begegnungConverter;
+	private WettkampfGruppeConverter     wettkampfGruppeConverter;
 	@Autowired
-	private WettkampfGruppeConverter wettkampfGruppeConverter;
+	private TurnierJpaRepository         turnierJpaRepository;
 	@Autowired
-	private TurnierJpaRepository turnierJpaRepository;
-	@Autowired
-	private TurnierConverter     turnierConverter;
+	private TurnierConverter             turnierConverter;
 
 	public Begegnung ladeBegegnung(UUID begegnungId) {
 		BegegnungJpa begegnungJpa = begegnungJpaRepository.findById(begegnungId.toString()).orElseThrow();
@@ -93,7 +91,7 @@ public class TurnierRepository {
 			Integer gruppenRunde = ersteBegegnung.getGruppenRunde();
 			Integer rundeGesamt = ersteBegegnung.getGesamtRunde();
 			Integer matteId = ersteBegegnung.getMatteId();
-			Altersklasse altersklasse = ersteBegegnung.getWettkaempfer1().isPresent() ? ersteBegegnung.getWettkaempfer1().get().altersklasse(): Altersklasse.PAUSE;
+			Altersklasse altersklasse = ersteBegegnung.getWettkaempfer1().isPresent() ? ersteBegegnung.getWettkaempfer1().get().altersklasse() : Altersklasse.PAUSE;
 			WettkampfGruppe gruppe = ersteBegegnung.getWettkampfGruppe();
 
 			// Erstelle eine neue Runde
@@ -128,8 +126,7 @@ public class TurnierRepository {
 				wettkampfGruppeJpa = wettkampfGruppeJpaRepository.save(wettkampfGruppeJpa);
 
 				optionalWettkampfGruppeJpa = Optional.of(wettkampfGruppeJpa);
-			}
-			else {
+			} else {
 				logger.debug("Es existiert schon eine Wettkampfgruppe {}", wettkamfpGruppeID);
 			}
 
@@ -166,7 +163,7 @@ public class TurnierRepository {
 		try {
 			begegnungJpaRepository.deleteAllByTurnierUUID(turnierUUID.toString());
 			wettkampfGruppeJpaRepository.deleteAllByTurnierUUID(turnierUUID.toString());
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("Fehler", e);
 		}
 	}
@@ -185,5 +182,17 @@ public class TurnierRepository {
 
 	public List<Turnier> ladeAlleTurniere() {
 		return turnierJpaRepository.findAll().stream().map(jpa -> turnierConverter.convertToTurnier(jpa)).toList();
+	}
+
+	public Turnier speichereTurnier(Turnier neuesTurnier) {
+		TurnierJpa jpa = turnierJpaRepository.save(turnierConverter.convertFromTurnier(neuesTurnier));
+		return turnierConverter.convertToTurnier(jpa);
+	}
+
+	public Turnier ladeTurnier(UUID turnierid) {
+		return turnierJpaRepository
+			.findById(turnierid.toString())
+			.map(t -> turnierConverter.convertToTurnier(t))
+			.orElseThrow();
 	}
 }

@@ -18,7 +18,8 @@ public class VereinConverter {
 		if (verein == null) {
 			return null;
 		}
-		return new VereinJpa(
+
+		return new VereinJpa (
 			verein.id() != null ? verein.id().toString() : null,
 			verein.name(),
 			verein.turnierUUID().toString());

@@ -1,6 +1,5 @@
 package de.sinnix.judoturnier.application;
 
-import de.sinnix.judoturnier.adapter.secondary.BenutzerJpaRepository;
 import de.sinnix.judoturnier.adapter.secondary.BenutzerRepository;
 import de.sinnix.judoturnier.adapter.secondary.TurnierConverter;
 import de.sinnix.judoturnier.adapter.secondary.TurnierJpa;
@@ -58,23 +57,30 @@ public class TurnierService {
 	@Autowired
 	private GewichtsklassenService gewichtsklassenService;
 	@Autowired
-	private TurnierConverter       turnierConverter;
-	@Autowired
 	private TurnierRepository      turnierRepository;
 	@Autowired
-	private TurnierJpaRepository turnierJpaRepository;
+	private BenutzerRepository     benutzerRepository;
 	@Autowired
-	private BenutzerRepository   benutzerRepository;
-	@Autowired
-	private Helpers              helpers;
+	private Helpers                helpers;
 	@Autowired
 	private WettkaempferService    wettkaempferService;
 
 	private volatile Integer totaleRundenAnzahl;
 
-	public List<Turnier> ladeTurniere() {
+	public List<Turnier> ladeAlleTurniere() {
 		logger.info("ladeTurniere");
 		return turnierRepository.ladeAlleTurniere();
+	}
+
+	public List<Turnier> ladeTurniere(List<UUID> turnierUUIDs) {
+		logger.info("lade alle Turniere {}", turnierUUIDs);
+
+//		turnierUUIDs.stream().forEach(uuid -> {
+//			turnierRepository..ladeTurnier().stream().filter(t -> t.uuid().e)
+//		});
+//
+//		return turnierRepository.ladeTurniere(benutzer.uuid());
+		return List.of();
 	}
 
 	public List<Matte> ladeWettkampfreihenfolge(UUID turnierUUID) {
@@ -93,9 +99,9 @@ public class TurnierService {
 			// Parsen des Strings in ein java.util.Date
 			Date parsedDate = dateFormat.parse(datum);
 			Turnier neuesTurnier = new Turnier(UUID.randomUUID(), name, ort, parsedDate);
+			Turnier turnier = turnierRepository.speichereTurnier(neuesTurnier);
 
-			TurnierJpa jpa = turnierJpaRepository.save(turnierConverter.convertFromTurnier(neuesTurnier));
-			Turnier turnier = turnierConverter.convertToTurnier(jpa);
+
 
 			einstellungenService.speichereDefaultEinstellungen(turnier.uuid());
 
@@ -185,7 +191,7 @@ public class TurnierService {
 		logger.info("speichereRandoriWertung: {}", begegnungId);
 		Begegnung begegnung = ladeBegegnung(begegnungId);
 
-		Benutzer benutzer = benutzerRepository.getBenutzer(bewerterUUID);
+		Benutzer benutzer = benutzerRepository.findBenutzer(bewerterUUID).get();
 		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), benutzer);
 		if (existierendeWertung.isPresent()) {
 			logger.debug("Aktualisiere existierende Wertung");
@@ -219,7 +225,7 @@ public class TurnierService {
 		logger.info("Begegnung: {}, Sieger: {}, Kampfzeit: {}s", begegnungId, siegerUUID, fightTime);
 		Begegnung begegnung = ladeBegegnung(begegnungId);
 
-		Benutzer benutzer = benutzerRepository.getBenutzer(bewerterUUID);
+		Benutzer benutzer = benutzerRepository.findBenutzer(bewerterUUID).get();
 		Wettkaempfer wettkaempfer = wettkaempferService.ladeKaempfer(siegerUUID).orElseThrow();
 		Duration dauer = parseDuration(fightTime);
 
@@ -340,8 +346,8 @@ public class TurnierService {
 		}
 	}
 
-	public Turnier ladeTurnier(String turnierid) {
-		return turnierJpaRepository.findById(turnierid).map(t -> turnierConverter.convertToTurnier(t)).orElseThrow();
+	public Turnier ladeTurnier(UUID turnierid) {
+		return turnierRepository.ladeTurnier(turnierid);
 	}
 
 	public Metadaten ladeMetadaten(UUID id, UUID turnierUUID) {

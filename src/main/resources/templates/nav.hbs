@@ -2,6 +2,7 @@
     <span style="position: relative">
       <md-filled-button id="theming-anchor">☰</md-filled-button>
       <md-menu id="theming-menu" anchor="theming-anchor">
+        {{#if turnierid}}
         <md-menu-item href="/turnier/{{turnierid}}">
             <div slot="headline">Übersicht</div>
         </md-menu-item>
@@ -23,10 +24,10 @@
         <md-menu-item href="/logout">
             <div slot="headline">Logout</div>
         </md-menu-item>
+        {{/if}}
       </md-menu>
     </span>
-
-    <md-outlined-button id="btn_alle_turniere" href="/turnier">Alle Turniere</md-outlined-button>
+    <md-outlined-button id="btn_alle_turniere" href="/turniere">Turniere-/Nutzer-Verwaltung</md-outlined-button>
 </nav>
 
 <script type="text/javascript">

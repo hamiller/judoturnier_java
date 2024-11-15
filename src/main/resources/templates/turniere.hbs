@@ -32,18 +32,24 @@
 
   <div id="dialogOverlay"></div>
 
-  <div id="createTurnierDialog">
-      <form id="createturnierformular" action="/turnier" method="POST">
-          <h2>Neues Turnier</h2>
-          <label for="name">Name:</label>
-          <input type="text" id="new_name" name="name"><br><br>
-          <label for="ort">Ort:</label>
-          <input type="text" id="new_ort" name="ort"><br><br>
-          <label for="datum">Datum:</label>
-          <input type="date" id="new_datum" name="datum"><br><br>
-          <button id="dialogOk">Erstellen</button>
-          <button id="dialogCancel">Abbrechen</button>
-      </form>
+  <div id="">
+      <md-dialog id="dialog1">
+          <div slot="headline">
+              Neues Turnier
+          </div>
+          <form slot="content" id="createturnierformular" action="/turniere" method="POST">
+              <label for="id-name">Name:</label>
+              <md-filled-text-field type="text" id="id-name" name="name"></md-filled-text-field>
+              <label for="id-ort">Ort:</label>
+              <md-filled-text-field type="text" id="id-ort" name="ort" ></md-filled-text-field>
+              <label for="id-datum">Datum:</label>
+              <input type="date" id="id-datum" name="datum" >
+          </form>
+          <div slot="actions">
+              <md-text-button form="createturnierformular" id="dialogCancel">Abbrechen</md-text-button>
+              <md-text-button form="createturnierformular" id="dialogOk">Erstellen</md-text-button>
+          </div>
+      </md-dialog>
   </div>
 
   <div>
@@ -53,13 +59,11 @@
   {{> footer}}
   <script type="text/javascript">
       const closeDialog = () => {
-          document.getElementById('dialogOverlay').style.display = 'none';
-          document.getElementById('createTurnierDialog').style.display = 'none';
+          document.getElementById("dialog1").close()
       };
 
       document.getElementById('openCreateTurnierDialog').addEventListener('click', function () {
-          document.getElementById('dialogOverlay').style.display = 'block';
-          document.getElementById('createTurnierDialog').style.display = 'block';
+          document.getElementById("dialog1").show()
       });
 
       document.getElementById('dialogOk').addEventListener('click', function () {

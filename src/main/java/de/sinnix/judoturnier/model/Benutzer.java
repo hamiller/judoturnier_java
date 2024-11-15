@@ -5,6 +5,8 @@ import java.util.UUID;
 
 public record Benutzer(UUID uuid, String username, String name, List<TurnierRollen> turnierRollen, List<BenutzerRolle> benutzerRollen) {
 
+	public static final String ANONYMOUS_USERNAME = "anonymous";
+
 	public boolean istKampfrichter(UUID turnierId) {
 		return turnierRollen.stream()
 			.filter(t -> t.turnierId().equals(turnierId))
@@ -14,5 +16,9 @@ public record Benutzer(UUID uuid, String username, String name, List<TurnierRoll
 
 	public boolean istAdmin() {
 		return benutzerRollen.contains(BenutzerRolle.ADMINISTRATOR);
+	}
+
+	public boolean istAnonym() {
+		return username.equals(ANONYMOUS_USERNAME);
 	}
 }

@@ -3,19 +3,17 @@ package de.sinnix.judoturnier.adapter.primary;
 import com.github.jknack.handlebars.Options;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.BenutzerRolle;
-import de.sinnix.judoturnier.model.Runde;
+import de.sinnix.judoturnier.model.OidcBenutzer;
 import de.sinnix.judoturnier.model.Wertung;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -191,20 +189,8 @@ public class HelperSource {
 		return text.substring(0, size);
 	}
 
-	public static Benutzer extractBewerter(Authentication authentication) {
+	public static OidcBenutzer extractOidcBenutzer(Authentication authentication) {
 		try {
-			if (authentication instanceof AnonymousAuthenticationToken) {
-				AnonymousAuthenticationToken token = (AnonymousAuthenticationToken) authentication;
-				var principal = (String) token.getPrincipal();
-				Collection<? extends GrantedAuthority> authorities = token.getAuthorities();
-				List<BenutzerRolle> rollen = new ArrayList<>();
-				for (GrantedAuthority authority : authorities) {
-					var r = BenutzerRolle.fromString(authority.getAuthority());
-					rollen.add(r);
-				}
-				return new Benutzer(UUID.fromString(principal), "", "", List.of(), rollen);
-			}
-
 			if (authentication.getPrincipal() instanceof DefaultOidcUser) {
 				var principal = (DefaultOidcUser) authentication.getPrincipal();
 				var userid = principal.getUserInfo().getSubject();
@@ -214,20 +200,29 @@ public class HelperSource {
 				List<BenutzerRolle> rollen = new ArrayList<>();
 				for (GrantedAuthority authority : authorities) {
 					var r = BenutzerRolle.fromString(authority.getAuthority());
-					rollen.add(r);
+					if (r != null) rollen.add(r);
 				}
 
-				Benutzer result = new Benutzer(UUID.fromString(userid), username, fullname, List.of(), rollen);
+				OidcBenutzer result = new OidcBenutzer(UUID.fromString(userid), username, fullname, rollen);
 				logger.info("Eingeloggter User {}", result);
 				return result;
 			}
 
-			logger.warn("Konnte keinen Bewerter aus dem Authentication parsen, erstelle Dummy");
-			return new Benutzer(UUID.randomUUID(), "", "", List.of(), List.of());
+			logger.warn("Konnte keinen Nutzer aus dem Authentication parsen, erstelle Dummy");
+			return new OidcBenutzer(UUID.randomUUID(), Benutzer.ANONYMOUS_USERNAME, "", List.of(BenutzerRolle.BEOBACHTER));
 		}
 		catch (Exception e) {
 			logger.info("Nutzer konnte nicht geparsed werden! {}", authentication, e);
 			throw e;
+		}
+	}
+
+	public static boolean isValidUUID(String str) {
+		try {
+			UUID.fromString(str);
+			return true; // Wenn kein Fehler, ist es eine gültige UUID
+		} catch (IllegalArgumentException e) {
+			return false; // Wenn ein Fehler auftritt, ist es keine UUID
 		}
 	}
 }

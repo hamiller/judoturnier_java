@@ -1,9 +1,11 @@
 package de.sinnix.judoturnier.adapter.primary;
 
+import de.sinnix.judoturnier.application.BenutzerService;
 import de.sinnix.judoturnier.application.TurnierService;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Metadaten;
+import de.sinnix.judoturnier.model.OidcBenutzer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +28,17 @@ public class WertungController {
 	private static final Logger logger = LogManager.getLogger(WertungController.class);
 
 	@Autowired
-	private TurnierService turnierService;
+	private TurnierService  turnierService;
+	@Autowired
+	private BenutzerService benutzerService;
 
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori/{id}")
 	public ModelAndView begegnungRandori(@PathVariable String turnierid, @PathVariable String id) {
 		logger.info("Lade Wertung für Begegnung {}", id);
 		UUID begegnungId = UUID.fromString(id);
 		UUID turnierId = UUID.fromString(turnierid);
-		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
+		Benutzer benutzer = benutzerService.holeBenutzer(oidcBenutzer);
 		Begegnung begegnung = turnierService.ladeBegegnung(begegnungId);
 
 		Metadaten metadaten = turnierService.ladeMetadaten(begegnungId, turnierId);
@@ -54,7 +59,8 @@ public class WertungController {
 		logger.info("Lade Wertung für Begegnung {}", id);
 		UUID begegnungId = UUID.fromString(id);
 		UUID turnierId = UUID.fromString(turnierid);
-		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
+		Benutzer benutzer = benutzerService.holeBenutzer(oidcBenutzer);
 		Begegnung begegnung = turnierService.ladeBegegnung(begegnungId);
 
 		Metadaten metadaten = turnierService.ladeMetadaten(begegnungId, turnierId);
@@ -75,7 +81,7 @@ public class WertungController {
 	public ModelAndView speichereBegegnungRandori(@PathVariable String turnierid, @PathVariable String id, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("Speichere Wertung für Begegnung {}: {}", id, formData);
 
-		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		OidcBenutzer benutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		UUID begegnungId = UUID.fromString(id);
 
 		var kampfgeist1 = Integer.parseInt(formData.get("kampfgeist1").getFirst());
@@ -96,7 +102,7 @@ public class WertungController {
 	public ModelAndView speichereBegegnungTurnier(@PathVariable String turnierid, @PathVariable String id, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("Speichere Wertung für Begegnung {}: {}", id, formData);
 
-		Benutzer benutzer = HelperSource.extractBewerter(SecurityContextHolder.getContext().getAuthentication());
+		OidcBenutzer benutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		UUID begegnungId = UUID.fromString(id);
 
 		var scoreWeiss = Integer.parseInt(formData.get("score_weiss").getFirst());

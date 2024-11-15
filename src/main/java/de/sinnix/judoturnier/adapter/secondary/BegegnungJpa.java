@@ -4,30 +4,25 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
-import java.util.UUID;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @Entity
 @Table(name = "begegnungen")
-public class BegegnungJpa {
-	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	private String           uuid;
+public class BegegnungJpa extends AbstractEntity {
 	@Column(name = "runde_uuid")
 	private String           rundeUUID;
 	private Integer          matteId;
@@ -56,4 +51,21 @@ public class BegegnungJpa {
 	private Integer          runde;
 	private Integer          rundenTyp;
 	private Integer          paarung;
+
+	public BegegnungJpa(String uuid, String rundeUUID, Integer matteId, Integer mattenRunde, Integer gruppenRunde, Integer gesamtRunde, WettkaempferJpa wettkaempfer1, WettkaempferJpa wettkaempfer2, List<WertungJpa> wertungen, String wettkampfGruppeId, String turnierUUID, Integer runde, Integer rundenTyp, Integer paarung) {
+		super(uuid);
+		this.rundeUUID = rundeUUID;
+		this.matteId = matteId;
+		this.mattenRunde = mattenRunde;
+		this.gruppenRunde = gruppenRunde;
+		this.gesamtRunde = gesamtRunde;
+		this.wettkaempfer1 = wettkaempfer1;
+		this.wettkaempfer2 = wettkaempfer2;
+		this.wertungen = wertungen;
+		this.wettkampfGruppeId = wettkampfGruppeId;
+		this.turnierUUID = turnierUUID;
+		this.runde = runde;
+		this.rundenTyp = rundenTyp;
+		this.paarung = paarung;
+	}
 }

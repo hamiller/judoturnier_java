@@ -31,6 +31,7 @@ public class BenutzerConverter {
 
 	public BenutzerJpa convertFromBenutzer(Benutzer benutzer) {
 		BenutzerJpa jpa = new BenutzerJpa();
+		if (benutzer.uuid() != null) jpa.setUuid(benutzer.uuid().toString());
 		jpa.setUsername(benutzer.username());
 		jpa.setName(benutzer.name());
 		jpa.setTurnierRollen(convertFromTurnierRollen(benutzer.turnierRollen(), benutzer));

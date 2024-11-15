@@ -9,10 +9,24 @@
 
   <div>
     <div class="bodyheader">
-      <h2>Turnierübersicht</h2>
-      <div>Anzahl der Kämpfer: {{anzahlwk}}</div>
-      <div>Turniermodus: {{turniertyp.bezeichnung}}</div>
+      <h2>Übersicht</h2>
     </div>
+  </div>
+
+  <div class="generalcontent">
+      <h1>Turnierdaten</h1>
+      <md-list>
+          <md-list-item>
+              {{turniername}}
+          </md-list-item>
+          <md-list-item>
+              in {{turnierort}}, am {{formatDatum turnierdatum}}
+          </md-list-item>
+          <md-divider></md-divider>
+          <md-list-item>
+              Anzahl der Kämpfer: {{anzahlwk}}, Turniermodus: {{turniertyp.bezeichnung}}
+          </md-list-item>
+      </md-list>
   </div>
 
     <div class="generalcontent">

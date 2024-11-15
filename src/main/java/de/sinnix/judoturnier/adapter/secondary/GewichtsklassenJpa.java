@@ -3,30 +3,24 @@ package de.sinnix.judoturnier.adapter.secondary;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
-import java.util.UUID;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @Entity
 @Table(name = "gewichtsklassengruppen")
-public class GewichtsklassenJpa {
-	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	private String                uuid;
+public class GewichtsklassenJpa extends AbstractEntity {
 	private String                altersklasse;
 	private String                gruppengeschlecht;
 	@OneToMany(fetch = FetchType.EAGER)
@@ -44,4 +38,15 @@ public class GewichtsklassenJpa {
 	private Double                maxgewicht;
 	@Column(name = "turnier_uuid", nullable = false)
 	private String                turnierUUID;
+
+	public GewichtsklassenJpa(String uuid, String altersklasse, String gruppengeschlecht, List<WettkaempferJpa> teilnehmer, String name, Double mingewicht, Double maxgewicht, String turnierUUID) {
+		super(uuid);
+		this.altersklasse = altersklasse;
+		this.gruppengeschlecht = gruppengeschlecht;
+		this.teilnehmer = teilnehmer;
+		this.name = name;
+		this.mingewicht = mingewicht;
+		this.maxgewicht = maxgewicht;
+		this.turnierUUID = turnierUUID;
+	}
 }
