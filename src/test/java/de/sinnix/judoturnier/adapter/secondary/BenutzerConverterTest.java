@@ -37,13 +37,13 @@ class BenutzerConverterTest {
 	@Test
 	void convertToBenutzer() {
 		UUID uuid = UUID.randomUUID();
+		BenutzerJpa jpa = new BenutzerJpa();
 		List<TurnierJpa> turniereJpa = List.of(
 			new TurnierJpa(UUID.randomUUID().toString(), "t1", "o1", date),
 			new TurnierJpa(UUID.randomUUID().toString(), "t2", "o2", date));
 		List<TurnierRollenJpa> turnierRollenJpa = List.of(
-			new TurnierRollenJpa(new TurnierRollenJpa.TurnierRollenId(uuid.toString(), turniereJpa.get(0).getUuid().toString()), List.of(BenutzerRolle.BEOBACHTER)),
-			new TurnierRollenJpa(new TurnierRollenJpa.TurnierRollenId(uuid.toString(), turniereJpa.get(1).getUuid().toString()), List.of(BenutzerRolle.KAMPFRICHTER)));
-		BenutzerJpa jpa = new BenutzerJpa();
+			new TurnierRollenJpa(UUID.randomUUID().toString(), jpa, List.of(BenutzerRolle.BEOBACHTER), turniereJpa.get(0).getUuid().toString()),
+			new TurnierRollenJpa(UUID.randomUUID().toString(), jpa, List.of(BenutzerRolle.KAMPFRICHTER), turniereJpa.get(1).getUuid().toString()));
 		jpa.setUuid(uuid.toString());
 		jpa.setUsername("username");
 		jpa.setName("name");
@@ -76,8 +76,8 @@ class BenutzerConverterTest {
 		UUID turnierId1 = UUID.randomUUID();
 		UUID turnierId2 = UUID.randomUUID();
 		List<TurnierRollen> turnierRollen = List.of(
-			new TurnierRollen(turnierId1, List.of(BenutzerRolle.BEOBACHTER)),
-			new TurnierRollen(turnierId2, List.of(BenutzerRolle.KAMPFRICHTER)));
+			new TurnierRollen(null, turnierId1, List.of(BenutzerRolle.BEOBACHTER)),
+			new TurnierRollen(null, turnierId2, List.of(BenutzerRolle.KAMPFRICHTER)));
 
 		Benutzer benutzer = new Benutzer(
 			null, "username", "name", turnierRollen, List.of(BenutzerRolle.ADMINISTRATOR)
@@ -95,13 +95,13 @@ class BenutzerConverterTest {
 
 		assertEquals(1, result.getTurnierRollen().get(0).getRollen().size());
 		assertEquals(benutzer.turnierRollen().get(0).rollen().get(0), result.getTurnierRollen().get(0).getRollen().get(0));
-		assertEquals(turnierId1.toString(), result.getTurnierRollen().get(0).getId().getTurnierUuid());
-		assertEquals(benutzer.uuid(), result.getTurnierRollen().get(0).getId().getBenutzerUuid());
+		assertEquals(turnierId1.toString(), result.getTurnierRollen().get(0).getTurnierUuid());
+		assertEquals(benutzer.uuid(), result.getTurnierRollen().get(0).getBenutzer().getUuid());
 
 		assertEquals(1, result.getTurnierRollen().get(1).getRollen().size());
 		assertEquals(benutzer.turnierRollen().get(1).rollen().get(0), result.getTurnierRollen().get(1).getRollen().get(0));
-		assertEquals(turnierId2.toString(), result.getTurnierRollen().get(1).getId().getTurnierUuid());
-		assertEquals(benutzer.uuid(), result.getTurnierRollen().get(1).getId().getBenutzerUuid());
+		assertEquals(turnierId2.toString(), result.getTurnierRollen().get(1).getTurnierUuid());
+		assertEquals(benutzer.uuid(), result.getTurnierRollen().get(1).getBenutzer().getUuid());
 
 
 	}

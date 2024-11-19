@@ -31,7 +31,7 @@ public class RequestLoggingFilter implements Filter {
 		if (request instanceof HttpServletRequest) {
 			HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 			String requestURL = httpServletRequest.getRequestURL().toString();
-			logger.debug("Requested URL: {}", requestURL);
+			logger.debug("Requested URL: {} {}", ((HttpServletRequest) request).getMethod(), requestURL);
 		}
 
 		chain.doFilter(request, response);

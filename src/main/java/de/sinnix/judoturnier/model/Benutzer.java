@@ -14,6 +14,19 @@ public record Benutzer(UUID uuid, String username, String name, List<TurnierRoll
 			.findFirst().isPresent();
 	}
 
+	public boolean istBeobachter(UUID turnierId) {
+		return turnierRollen.stream()
+			.filter(t -> t.turnierId().equals(turnierId))
+			.filter(r -> r.rollen().contains(BenutzerRolle.BEOBACHTER))
+			.findFirst().isPresent();
+	}
+
+	public boolean istTurnierZugeordnet(UUID turnierId) {
+		return turnierRollen.stream()
+			.filter(t -> t.turnierId().equals(turnierId))
+			.findFirst().isPresent();
+	}
+
 	public boolean istAdmin() {
 		return benutzerRollen.contains(BenutzerRolle.ADMINISTRATOR);
 	}

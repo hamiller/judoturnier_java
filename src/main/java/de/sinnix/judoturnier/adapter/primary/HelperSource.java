@@ -54,6 +54,7 @@ public class HelperSource {
 	}
 
 	public static String setChecked(Object value, Options options) {
+		logger.debug("setChecked {}", options.params);
 		if (istGleich(value, options.param(0))) {
 			return "checked";
 		}

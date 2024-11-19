@@ -9,9 +9,6 @@ import java.util.UUID;
 public class UuidGenerator implements IdentifierGenerator {
 	@Override
 	public Serializable generate(SharedSessionContractImplementor sharedSessionContractImplementor, Object object) {
-		System.out.println("----------------");
-		System.out.println(object);
-		System.out.println("/--------------/");
 		if (object instanceof AbstractEntity) {
 			System.out.println("AbstractEntity");
 			AbstractEntity entity = (AbstractEntity) object;
@@ -20,7 +17,6 @@ public class UuidGenerator implements IdentifierGenerator {
 				return UUID.randomUUID().toString();
 			}
 
-			System.out.println("Existierende uuid: " + entity.getUuid());
 			// Wenn bereits eine UUID vorhanden ist, wird diese zurückgegeben
 			return entity.getUuid();
 		}

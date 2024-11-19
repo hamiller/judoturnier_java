@@ -13,55 +13,122 @@
     </div>
   </div>
 
-  <div class="generalcontent">
+  <div>
       <h1>Turnierdaten</h1>
-      <md-list>
-          <md-list-item>
-              {{turniername}}
-          </md-list-item>
-          <md-list-item>
-              in {{turnierort}}, am {{formatDatum turnierdatum}}
-          </md-list-item>
-          <md-divider></md-divider>
-          <md-list-item>
-              Anzahl der Kämpfer: {{anzahlwk}}, Turniermodus: {{turniertyp.bezeichnung}}
-          </md-list-item>
-      </md-list>
+      <div class="generalcontent">
+          <md-list>
+              <md-list-item>
+                  {{turniername}}
+              </md-list-item>
+              <md-list-item>
+                  in {{turnierort}}, am {{formatDatum turnierdatum}}
+              </md-list-item>
+              <md-divider></md-divider>
+              <md-list-item>
+                  Anzahl der Kämpfer: {{anzahlwk}}, Turniermodus: {{turniertyp.bezeichnung}}
+              </md-list-item>
+          </md-list>
+
+
+          <div>
+              <md-filled-button type="button" id="export_wk" href="/turnier/{{turnierid}}/export-wk" target="_blank">Wettkämpfer und Wertungen exportieren</md-filled-button>
+          </div>
+      </div>
   </div>
 
+  <div>
+    <h2>Daten importieren</h2>
     <div class="generalcontent">
-        <h2>Daten importieren</h2>
-        {{#if enableEditing}}
-            <form action="/turnier/{{turnierid}}/uploadVerein" method="post" enctype="multipart/form-data">
-                <div class="settingsrow">
-                    <label for="file">CSV-Datei mit den <b>Vereinen</b></label>
-                    <input type="file" id="fileVereine" name="fileVereine" required>
-                </div>
-                <span style="position: relative">
-                    <md-outlined-button type="submit">Hochladen</md-outlined-button>
-                </span>
-            </form>
-            <md-divider></md-divider>
+    {{#if enableEditing}}
+        <form action="/turnier/{{turnierid}}/uploadVerein" method="post" enctype="multipart/form-data">
+            <div class="settingsrow">
+                <label for="file">CSV-Datei mit den <b>Vereinen</b></label>
+                <input type="file" id="fileVereine" name="fileVereine" required>
+            </div>
+            <span style="position: relative">
+                <md-outlined-button type="submit">Hochladen</md-outlined-button>
+            </span>
+        </form>
+        <md-divider></md-divider>
 
-            <form action="/turnier/{{turnierid}}/uploadWettkaempfer" method="post" enctype="multipart/form-data">
-                <div class="settingsrow">
-                    <label for="file">CSV-Datei mit den <b>Wettkämpfern</b></label>
-                    <input type="file" id="fileWettkaempfer" name="fileWettkaempfer" required>
-                </div>
-                <span style="position: relative">
-                    <md-outlined-button type="submit">Hochladen</md-outlined-button>
-                </span>
-            </form>
-        {{/if}}
+        <form action="/turnier/{{turnierid}}/uploadWettkaempfer" method="post" enctype="multipart/form-data">
+            <div class="settingsrow">
+                <label for="file">CSV-Datei mit den <b>Wettkämpfern</b></label>
+                <input type="file" id="fileWettkaempfer" name="fileWettkaempfer" required>
+            </div>
+            <span style="position: relative">
+                <md-outlined-button type="submit">Hochladen</md-outlined-button>
+            </span>
+        </form>
+    {{/if}}
     </div>
+  </div>
 
-    <div class="generalcontent">
-        <h2>Wettkämpfer exportieren</h2>
-        <md-filled-button type="button" id="export_wk" href="/turnier/{{turnierid}}/export-wk" target="_blank">Wettkämpfer exportieren</md-filled-button>
-    </div>
+
+  <div class="">
+      <h2>Nutzer verwalten</h2>
+      {{#if enableEditing}}
+          <div class="generalcontent">
+              <form id="userForm" action="/turniere/{{turnierid}}/benutzer" method="post">
+                  <ul class="wettkaempferliste generalcontent">
+                      <li class="wettkaempferliste-wettkaempfer listeneintrag ">
+                          <div class="listeneintrag-titel">Username</div>
+                          <div>Name</div>
+                          <div>Administrator</div>
+                          <div>Kampfrichter</div>
+                          <div>Zuschauer</div>
+                          <div>anonym</div>
+                          <div class="listeneintrag-titel">Turnier zugordnet</div>
+                      </li>
+                      {{#users}}
+                        <li class="wettkaempferliste-wettkaempfer listeneintrag">
+                            <div class="listeneintrag-titel">{{username}}</div>
+                            <div>{{name}}</div>
+                            <div><input type="checkbox" disabled {{setChecked true istAdmin}}></div>
+                            <div><input type="checkbox" disabled {{setChecked true istKampfrichter }}></div>
+                            <div><input type="checkbox" disabled {{setChecked true istBeobachter }}></div>
+                            <div><input type="checkbox" disabled {{setChecked true istAnonym}}></div>
+                            <input type="hidden" name="[{{userid}}][userid]" value="{{userid}}">
+                            <div><input type="checkbox" name="[{{userid}}][zugeordnetZuTurnier]" value="true" {{setChecked true turnierZugeordnet}}></div>
+                        </li>
+                      {{/users}}
+                </ul>
+                  <span style="position: relative">
+                    <md-outlined-button type="button" onclick="submitForm()">Speichern</md-outlined-button>
+                </span>
+              </form>
+          </div>
+      {{/if}}
+  </div>
 
   {{> footer}}
   <script type="text/javascript">
+      function submitForm() {
+          const form = document.getElementById('userForm');
+          const formData = new FormData(form);
+          const jsonObject = {};
+
+          formData.forEach((value, key) => {
+              const keys = key.match(/[^[\]]+/g); // Erzeugt ein Array der Schlüssel
+              console.log("Keys:", keys)
+              keys.reduce((acc, cur, idx) => {
+                  acc[cur] = idx === keys.length - 1 ? value : acc[cur] || {};
+                  return acc[cur];
+              }, jsonObject);
+          });
+
+          const json = JSON.stringify(jsonObject);
+          fetch(form.getAttribute("action"), {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: json
+          }).
+          catch(error => {
+              console.error('Error:', error)
+          });
+      }
   </script>
 </body>
 </html>

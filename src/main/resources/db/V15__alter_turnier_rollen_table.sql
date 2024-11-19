@@ -1,0 +1,1 @@
+ALTER TABLE turnier_rollen ADD COLUMN uuid varchar(255);

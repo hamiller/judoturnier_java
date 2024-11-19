@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,7 +25,11 @@ public class BenutzerConverter {
 			jpa.getUsername(),
 			jpa.getName(),
 			jpa.getTurnierRollen().stream()
-				.map(turnierRolle -> new TurnierRollen(UUID.fromString(turnierRolle.getId().getTurnierUuid()), turnierRolle.getRollen()))
+				.map(turnierRolle -> {
+					return new TurnierRollen(UUID.fromString(turnierRolle.getUuid()),
+						UUID.fromString(turnierRolle.getTurnierUuid()),
+						turnierRolle.getRollen());
+				})
 				.collect(Collectors.toList()),
 			jpa.getRollen().stream().collect(Collectors.toList()));
 	}
@@ -34,23 +39,23 @@ public class BenutzerConverter {
 		if (benutzer.uuid() != null) jpa.setUuid(benutzer.uuid().toString());
 		jpa.setUsername(benutzer.username());
 		jpa.setName(benutzer.name());
-		jpa.setTurnierRollen(convertFromTurnierRollen(benutzer.turnierRollen(), benutzer));
+		jpa.setTurnierRollen(convertFromTurnierRollen(benutzer.turnierRollen(), jpa));
 		jpa.setRollen(benutzer.benutzerRollen());
 		return jpa;
 	}
 
-	private List<TurnierRollenJpa> convertFromTurnierRollen(List<TurnierRollen> turnierRollen, Benutzer benutzer) {
+	private List<TurnierRollenJpa> convertFromTurnierRollen(List<TurnierRollen> turnierRollen, BenutzerJpa benutzer) {
 		if (turnierRollen == null) {
-			return List.of();
+			return new ArrayList<>();
 		}
 		return turnierRollen.stream().map(turnierRolle -> {
 				TurnierRollenJpa jpa = new TurnierRollenJpa();
-				jpa.setId(new TurnierRollenJpa.TurnierRollenId(
-					benutzer.uuid() != null ? benutzer.uuid().toString() : null,
-					turnierRolle.turnierId().toString()));
+				jpa.setUuid(turnierRolle.uuid() != null ? turnierRolle.uuid().toString() : null);
+				jpa.setBenutzer(benutzer);
+				jpa.setTurnierUuid(turnierRolle.turnierId() != null ? turnierRolle.turnierId().toString() : null);
 				jpa.setRollen(turnierRolle.rollen());
 				return jpa;
 			})
-			.toList();
+			.collect(Collectors.toList());
 	}
 }

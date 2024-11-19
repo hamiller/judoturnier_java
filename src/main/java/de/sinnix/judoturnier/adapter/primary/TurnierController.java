@@ -40,6 +40,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -124,6 +125,8 @@ public class TurnierController {
 		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		UUID turnierUUID = UUID.fromString(turnierid);
 		Turnier turnierdaten = turnierService.ladeTurnier(turnierUUID);
+		List<BenutzerDto> benutzerList = benutzerService.holeAlleBenutzer().stream().map(b -> DtosConverter.convertFromBenutzer(b, turnierUUID)).toList();
+		logger.info("benutzerList {}", benutzerList);
 
 		var wks = wettkaempferService.alleKaempfer(turnierUUID);
 		var einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
@@ -137,7 +140,38 @@ public class TurnierController {
 		mav.addObject("turniername", turnierdaten.name());
 		mav.addObject("turnierort", turnierdaten.ort());
 		mav.addObject("turnierdatum", turnierdaten.datum());
+		mav.addObject("users", benutzerList);
 		return mav;
+	}
+
+	@PostMapping("/turniere/{turnierid}/benutzer")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ModelAndView speichereBenutzerZuTurnier(@PathVariable String turnierid, @RequestBody Map<String, BenutzerZuordnungDto> formData) {
+		logger.debug("Speichere Benutzer zu Turnier {}: {}", turnierid, formData);
+		OidcBenutzer benutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
+		UUID turnierUUID = UUID.fromString(turnierid);
+
+		formData.forEach((userid, userData) -> {
+			logger.debug("UserID: {}, Daten: {}", userid, userData);
+		});
+
+		if (!benutzer.istAdmin()) {
+			return new ModelAndView("redirect:/turnier/" + turnierid + "?error=Unerlaubter_Vorgang");
+		}
+
+		List<UUID> benutzerDesTurniers = formData.values().stream()
+			.filter(bz -> bz.zugeordnetZuTurnier())
+			.map(bz -> UUID.fromString(bz.userid()))
+			.collect(Collectors.toList());
+		benutzerService.ordneBenutzerZuTurnier(benutzerDesTurniers, turnierUUID);
+
+		List<UUID> keineBenutzer = formData.values().stream()
+			.filter(bz -> !bz.zugeordnetZuTurnier())
+			.map(bz -> UUID.fromString(bz.userid()))
+			.collect(Collectors.toList());
+		benutzerService.entferneBenutzerVonTurnier(keineBenutzer, turnierUUID);
+
+		return new ModelAndView("redirect:/turnier/" + turnierid);
 	}
 
 	@GetMapping("/turnier/{turnierid}/begegnungen")
