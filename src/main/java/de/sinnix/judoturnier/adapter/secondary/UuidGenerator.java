@@ -10,7 +10,6 @@ public class UuidGenerator implements IdentifierGenerator {
 	@Override
 	public Serializable generate(SharedSessionContractImplementor sharedSessionContractImplementor, Object object) {
 		if (object instanceof AbstractEntity) {
-			System.out.println("AbstractEntity");
 			AbstractEntity entity = (AbstractEntity) object;
 			// Wenn die UUID null ist, wird eine neue generiert
 			if (entity.getUuid() == null || entity.getUuid().isEmpty()) {

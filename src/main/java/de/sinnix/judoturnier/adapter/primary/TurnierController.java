@@ -73,7 +73,7 @@ public class TurnierController {
 		Benutzer benutzer = benutzerService.holeBenutzer(oidcBenutzer);
 		List<UUID> turnierIds = benutzer.turnierRollen().stream().map(tr -> tr.turnierId()).toList();
 		List<Turnier> turniere = turnierService.ladeTurniere(turnierIds);
-		logger.info("Zu Nutzer {} gehören folgende Turniere: {}", benutzer, turniere);
+		logger.info("Zu Nutzer {} gehören folgende Turniere: {}", benutzer.uuid(), turniere);
 
 		ModelAndView mav = new ModelAndView("startseite");
 		mav.addObject("turniere", turniere);

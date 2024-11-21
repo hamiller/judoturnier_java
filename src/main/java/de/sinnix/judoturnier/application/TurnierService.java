@@ -1,9 +1,6 @@
 package de.sinnix.judoturnier.application;
 
 import de.sinnix.judoturnier.adapter.secondary.BenutzerRepository;
-import de.sinnix.judoturnier.adapter.secondary.TurnierConverter;
-import de.sinnix.judoturnier.adapter.secondary.TurnierJpa;
-import de.sinnix.judoturnier.adapter.secondary.TurnierJpaRepository;
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
 import de.sinnix.judoturnier.application.algorithm.Algorithmus;
 import de.sinnix.judoturnier.application.algorithm.DoppelKOSystem;
@@ -74,13 +71,9 @@ public class TurnierService {
 
 	public List<Turnier> ladeTurniere(List<UUID> turnierUUIDs) {
 		logger.info("lade alle Turniere {}", turnierUUIDs);
-
-//		turnierUUIDs.stream().forEach(uuid -> {
-//			turnierRepository..ladeTurnier().stream().filter(t -> t.uuid().e)
-//		});
-//
-//		return turnierRepository.ladeTurniere(benutzer.uuid());
-		return List.of();
+		return turnierUUIDs.stream()
+			.map(uuid -> turnierRepository.ladeTurnier(uuid))
+			.toList();
 	}
 
 	public List<Matte> ladeWettkampfreihenfolge(UUID turnierUUID) {
