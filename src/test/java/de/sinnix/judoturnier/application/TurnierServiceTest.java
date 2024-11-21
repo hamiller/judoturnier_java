@@ -24,6 +24,7 @@ import de.sinnix.judoturnier.model.WettkampfReihenfolge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -369,5 +370,12 @@ class TurnierServiceTest {
 				}
 			}
 		}
+	}
+
+	@Test
+	@Disabled
+	void speichereTurnierWertung() {
+		logger.error("Implement test!!");
+//		turnierService.speichereTurnierWertung();
 	}
 }

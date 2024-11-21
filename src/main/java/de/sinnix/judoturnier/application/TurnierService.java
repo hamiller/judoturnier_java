@@ -322,7 +322,7 @@ public class TurnierService {
 		}
 	}
 
-	public static Duration parseDuration(String input) {
+	private static Duration parseDuration(String input) {
 		// Regex für das Parsen von "mm:ss.SS"
 		Pattern pattern = Pattern.compile("(\\d{2}):(\\d{2})\\.(\\d{2})");
 		Matcher matcher = pattern.matcher(input);
