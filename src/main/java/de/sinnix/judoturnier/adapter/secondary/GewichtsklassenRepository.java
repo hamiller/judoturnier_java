@@ -2,7 +2,6 @@ package de.sinnix.judoturnier.adapter.secondary;
 
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
-import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,6 @@ public class GewichtsklassenRepository {
 		gewichtsklassenJpaRepository.saveAll(gewichtsklassenJpaList);
 	}
 
-	@Transactional
 	public void deleteAllByAltersklasse(UUID turnierUUID, Altersklasse altersklasse) {
 		gewichtsklassenJpaRepository.deleteAllByAltersklasseAndTurnierUUID(altersklasse.name(), turnierUUID.toString());
 	}

@@ -11,6 +11,7 @@ import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.RandoriGruppenName;
 import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.Wettkaempfer;
+import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import java.util.Stack;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class GewichtsklassenService {
 

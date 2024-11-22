@@ -42,6 +42,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class TurnierService {
 	private static final Logger           logger     = LogManager.getLogger(TurnierService.class);
@@ -179,7 +180,6 @@ public class TurnierService {
 		return turnierRepository.ladeAlleBegegnungen(turnierId);
 	}
 
-	@Transactional
 	public void speichereRandoriWertung(UUID begegnungId, int kampfgeist1, int technik1, int stil1, int vielfalt1, int kampfgeist2, int technik2, int stil2, int vielfalt2, UUID bewerterUUID) {
 		logger.info("speichereRandoriWertung: {}", begegnungId);
 		Begegnung begegnung = ladeBegegnung(begegnungId);
@@ -213,7 +213,6 @@ public class TurnierService {
 		turnierRepository.speichereBegegnung(begegnung);
 	}
 
-	@Transactional
 	public void speichereTurnierWertung(UUID begegnungId, int scoreWeiss, int scoreBlau, int penaltiesWeiss, int penaltiesBlau, String fightTime, UUID siegerUUID, UUID bewerterUUID) {
 		logger.info("Begegnung: {}, Sieger: {}, Kampfzeit: {}s", begegnungId, siegerUUID, fightTime);
 		Begegnung begegnung = ladeBegegnung(begegnungId);

@@ -1,7 +1,6 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
 import de.sinnix.judoturnier.model.Benutzer;
-import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,19 +19,16 @@ public class BenutzerRepository {
 	@Autowired
 	private              BenutzerConverter     benutzerConverter;
 
-	@Transactional
 	public Optional<Benutzer> findBenutzer(UUID benutzerId) {
 		return benutzerJpaRepository.findById(benutzerId.toString())
 			.map(jpa -> benutzerConverter.convertToBenutzer(jpa));
 	}
 
-	@Transactional
 	public Optional<Benutzer> findBenutzerByUsername(String username) {
 		return benutzerJpaRepository.findByUsername(username)
 			.map(jpa -> benutzerConverter.convertToBenutzer(jpa));
 	}
 
-	@Transactional
 	public Benutzer save(Benutzer benutzer) {
 		logger.info("Suche nach Benutzer mit id {}", benutzer.uuid().toString());
 		Optional<BenutzerJpa> optionalBenutzerJpa = benutzerJpaRepository.findById(benutzer.uuid().toString());
@@ -54,7 +50,6 @@ public class BenutzerRepository {
 		return benutzer;
 	}
 
-	@Transactional
 	public List<Benutzer> findAll() {
 		logger.info("Hole alle Benutzer des Systems");
 		return benutzerJpaRepository.findAll().stream()

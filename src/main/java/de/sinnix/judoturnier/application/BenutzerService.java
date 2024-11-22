@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Transactional
 @Service
 public class BenutzerService {
 	private static final Logger logger = LogManager.getLogger(BenutzerService.class);
@@ -27,12 +28,14 @@ public class BenutzerService {
 			return benutzerRepository.findBenutzerByUsername(Benutzer.ANONYMOUS_USERNAME).orElseThrow(() -> new RuntimeException("Dummy Nutzer ist nicht in der Datenbank hinterlegt!"));
 		}
 
-		// Falls konfiguriert, werden Benutzer automatisch im System angelegt
+		// TODO: Falls konfiguriert, werden Benutzer automatisch im System angelegt
 		// - das ist durch das vorgeschaltete Keycloak abgesichert, sodass nur (im Keycloak) existierende Nutzer angelegt werden
 		Optional<Benutzer> benutzer = benutzerRepository.findBenutzer(oidcBenutzer.uuid());
 		if (benutzer.isPresent()) {
 			return benutzer.get();
 		}
+
+		logger.warn("TODO: make configureable/ausschaltbar to auto add new users");
 
 		Benutzer neuerBenutzer = new Benutzer(
 			oidcBenutzer.uuid(),
@@ -49,7 +52,6 @@ public class BenutzerService {
 		return benutzerRepository.findAll();
 	}
 
-	@Transactional
 	public void ordneBenutzerZuTurnier(List<UUID> benutzerIds, UUID turnierUUID) {
 		logger.info("Ordne Benutzer [{}] zu Turnier {}", benutzerIds, turnierUUID);
 		for (UUID userId : benutzerIds) {
@@ -69,7 +71,6 @@ public class BenutzerService {
 		}
 	}
 
-	@Transactional
 	public void entferneBenutzerVonTurnier(List<UUID> benutzerIds, UUID turnierUUID) {
 		logger.info("Entferne Benutzer [{}] von Turnier {}", benutzerIds, turnierUUID);
 		for (UUID userId : benutzerIds) {

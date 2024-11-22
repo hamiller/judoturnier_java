@@ -12,6 +12,7 @@ import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.Verein;
 import de.sinnix.judoturnier.model.Wertung;
 import de.sinnix.judoturnier.model.Wettkaempfer;
+import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+@Transactional
 @Service
 public class WettkaempferService {
 	private static final Logger logger = LogManager.getLogger(WettkaempferService.class);

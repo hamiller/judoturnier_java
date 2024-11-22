@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class VereinService {
 	private static final Logger logger = LogManager.getLogger(VereinService.class);
@@ -44,7 +45,6 @@ public class VereinService {
 		return vereinConverter.converToVerein(jpa);
 	}
 
-	@Transactional
 	public void speichereCSV(UUID turnierUUID, MultipartFile file) {
 		logger.info("Speichere Vereine");
 		List<String[]> records = new ArrayList<>();

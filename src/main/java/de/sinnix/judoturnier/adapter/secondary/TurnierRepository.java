@@ -7,7 +7,6 @@ import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Turnier;
 import de.sinnix.judoturnier.model.Wertung;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
-import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,7 +111,6 @@ public class TurnierRepository {
 		}
 	}
 
-	@Transactional
 	public void speichereMatte(Matte matte) {
 		List<BegegnungJpa> begegnungJpaList = new ArrayList<>();
 		for (Runde runde : matte.runden()) {
@@ -157,7 +155,6 @@ public class TurnierRepository {
 		begegnungJpaRepository.saveAll(begegnungJpaList);
 	}
 
-	@Transactional
 	public void loescheAlleMatten(UUID turnierUUID) {
 		logger.info("Lösche alle Matten für Turnier {}", turnierUUID);
 		try {
@@ -168,7 +165,6 @@ public class TurnierRepository {
 		}
 	}
 
-	@Transactional
 	public void loescheWettkaempfeMitAltersklasse(Altersklasse altersklasse, UUID turnierUUID) {
 		logger.info("loesche Wettkaempfe mit Altersklasse {}", altersklasse);
 		begegnungJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream()
