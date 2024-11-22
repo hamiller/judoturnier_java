@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,12 +42,16 @@ class SortiererTest {
 		assertEquals(1, wettkampfGruppeList.size());
 		assertEquals(N, wettkampfGruppeList.get(0).alleRundenBegegnungen().stream().mapToInt(g -> g.begegnungenJeRunde().size()).sum());
 
-		Sortierer sortierer = new Sortierer(1);
+		Sortierer sortierer = new Sortierer(1, 1);
 		List<Runde> runden = sortierer.erstelleReihenfolgeMitAllenGruppenJeDurchgang(wettkampfGruppeList, 1).getRight();
 
 		assertEquals(3, runden.size());
 		var sortierteBegegnungen = runden.stream().mapToInt(r -> r.begegnungen().size()).sum();
 		assertEquals(N, sortierteBegegnungen);
+		assertTrue(runden.get(0).gruppenRunde() != runden.get(1).gruppenRunde());
+		// Die MattenRunde wird immer erhöht
+		assertTrue(IntStream.range(1, runden.size())
+			.allMatch(i -> runden.get(i - 1).mattenRunde() < runden.get(i).mattenRunde()));
 	}
 
 	@Test
@@ -57,12 +62,16 @@ class SortiererTest {
 		assertEquals(1, wettkampfGruppeList.size());
 		assertEquals(N, wettkampfGruppeList.get(0).alleRundenBegegnungen().stream().mapToInt(g -> g.begegnungenJeRunde().size()).sum());
 
-		Sortierer sortierer = new Sortierer(1);
+		Sortierer sortierer = new Sortierer(1, 1);
 		List<Runde> runden = sortierer.erstelleReihenfolgeMitAbwechselndenGruppen(wettkampfGruppeList, 1).getRight();
 
 		assertEquals(3, runden.size());
 		var sortierteBegegnungen = runden.stream().mapToInt(r -> r.begegnungen().size()).sum();
 		assertEquals(N, sortierteBegegnungen);
+		assertTrue(runden.get(0).gruppenRunde() != runden.get(1).gruppenRunde());
+		// Die MattenRunde wird immer erhöht
+		assertTrue(IntStream.range(1, runden.size())
+			.allMatch(i -> runden.get(i - 1).mattenRunde() < runden.get(i).mattenRunde()));
 	}
 
 	@Test
@@ -71,12 +80,16 @@ class SortiererTest {
 		assertEquals(4, wettkampfGruppeList.size());
 		assertEquals(51, wettkampfGruppeList.stream().mapToInt(wg -> wg.alleRundenBegegnungen().stream().mapToInt(g -> g.begegnungenJeRunde().size()).sum()).sum());
 
-		Sortierer sortierer = new Sortierer(1);
+		Sortierer sortierer = new Sortierer(1, 1);
 		List<Runde> runden = sortierer.erstelleReihenfolgeMitAllenGruppenJeDurchgang(wettkampfGruppeList, 1).getRight();
 
 		assertEquals(18, runden.size());
 		var sortierteBegegnungen = runden.stream().mapToInt(r -> r.begegnungen().size()).sum();
 		assertEquals(51, sortierteBegegnungen);
+		assertTrue(runden.get(0).gruppenRunde() != runden.get(1).gruppenRunde());
+		// Die MattenRunde wird immer erhöht
+		assertTrue(IntStream.range(1, runden.size())
+			.allMatch(i -> runden.get(i - 1).mattenRunde() < runden.get(i).mattenRunde()));
 	}
 
 	@Test
@@ -130,7 +143,7 @@ class SortiererTest {
 			)), turnierUUID)
 		);
 
-		Sortierer sortierer = new Sortierer(1);
+		Sortierer sortierer = new Sortierer(1, 1);
 		List<Runde> runden = sortierer.erstelleReihenfolgeMitAbwechselndenGruppen(wettkampfGruppeList, 1).getRight();
 
 

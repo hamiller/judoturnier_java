@@ -10,4 +10,15 @@ public record WettkampfGruppe(
 	Altersklasse altersklasse,
 	List<BegegnungenJeRunde> alleRundenBegegnungen,
 	UUID turnierUUID) {
+	@Override
+	public String toString() {
+		return "WettkampfGruppe{" +
+			"id=" + id +
+			", name='" + name + '\'' +
+			", typ='" + typ + '\'' +
+			", altersklasse=" + altersklasse +
+			", alleRundenBegegnungen(size)=" + alleRundenBegegnungen.size() +
+			", turnierUUID=" + turnierUUID +
+			'}';
+	}
 }

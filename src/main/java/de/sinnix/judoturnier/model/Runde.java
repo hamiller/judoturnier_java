@@ -12,4 +12,17 @@ public record Runde(
 	Altersklasse altersklasse,
 	WettkampfGruppe gruppe,
 	List<Begegnung> begegnungen) {
+	@Override
+	public String toString() {
+		return "Runde{" +
+			"rundeId=" + rundeId +
+			", mattenRunde=" + mattenRunde +
+			", gruppenRunde=" + gruppenRunde +
+			", rundeGesamt=" + rundeGesamt +
+			", matteId=" + matteId +
+			", altersklasse=" + altersklasse +
+			", gruppe=" + gruppe +
+			", begegnungen(size)=" + begegnungen.size() +
+			'}';
+	}
 }

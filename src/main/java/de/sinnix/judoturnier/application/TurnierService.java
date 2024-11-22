@@ -34,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -41,6 +42,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Transactional
 @Service
@@ -64,6 +66,7 @@ public class TurnierService {
 	private WettkaempferService    wettkaempferService;
 
 	private volatile Integer totaleRundenAnzahl;
+	private volatile Map<Integer, Integer> rundenAnzahlMatte;
 
 	public List<Turnier> ladeAlleTurniere() {
 		logger.info("ladeTurniere");
@@ -121,6 +124,12 @@ public class TurnierService {
 
 		Einstellungen einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
 		List<GewichtsklassenGruppe> gwks = altersklasse.isPresent() ? gewichtsklassenService.ladeGewichtsklassenGruppe(altersklasse.get(), turnierUUID) : gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
+
+		// reset global counters
+		totaleRundenAnzahl = 1;
+		rundenAnzahlMatte = new HashMap<>();
+		IntStream.rangeClosed(1, einstellungen.mattenAnzahl().anzahl()).forEach(i -> rundenAnzahlMatte.put(i, 1));
+
 		if (einstellungen.separateAlterklassen().equals(SeparateAlterklassen.GETRENNT)) {
 			logger.info("Trenne nach Altersklassen...");
 
@@ -128,20 +137,17 @@ public class TurnierService {
 			Map<Altersklasse, List<GewichtsklassenGruppe>> groupedByAltersklasse = gwks.stream()
 				.collect(Collectors.groupingBy(GewichtsklassenGruppe::altersKlasse));
 
-			// reset der Gesamtzahl aller Runden
-			totaleRundenAnzahl = 1;
-			groupedByAltersklasse.values().stream().forEach(groupedGwks -> erstelleMatten(groupedGwks, einstellungen));
+			groupedByAltersklasse.values().forEach(groupedGwks -> erstelleMatten(groupedGwks, einstellungen));
 			return;
 		}
 
 		if (einstellungen.separateAlterklassen().equals(SeparateAlterklassen.ZUSAMMEN)) {
 			logger.info("Alle Altersklassen zusammen...");
-			totaleRundenAnzahl = 1;
 			erstelleMatten(gwks, einstellungen);
 			return;
 		}
 
-		logger.warn("Wettkampfreihenfolge {} nicht implementiert!", einstellungen.separateAlterklassen());
+		logger.error("Wettkampfreihenfolge {} nicht implementiert!", einstellungen.separateAlterklassen());
 	}
 
 	private void erstelleMatten(List<GewichtsklassenGruppe> gwks, Einstellungen einstellungen) {
@@ -154,20 +160,24 @@ public class TurnierService {
 
 		List<WettkampfGruppe> wettkampfGruppen = erstelleWettkampfgruppen(gwks, algorithmus, einstellungen.gruppengroesse().anzahl());
 
+		//loggWettkampfgruppen(wettkampfGruppen);
+
+		List<Matte> matten = erstelleGruppenReihenfolge(wettkampfGruppen, einstellungen.mattenAnzahl().anzahl(), einstellungen.wettkampfReihenfolge());
+
+		turnierRepository.speichereMatten(matten);
+	}
+
+	private static void loggWettkampfgruppen(List<WettkampfGruppe> wettkampfGruppen) {
 		for (WettkampfGruppe wettkampfGruppe : wettkampfGruppen) {
 			int r = 1;
 			for (BegegnungenJeRunde begegnungenJeRunde : wettkampfGruppe.alleRundenBegegnungen()) {
-				logger.debug("Runde {}", r);
+				logger.debug("WettkampfGruppe {} Runde {}", wettkampfGruppe.name(), r);
 				for (Begegnung begegnung : begegnungenJeRunde.begegnungenJeRunde()) {
 					logger.debug("{} - Wettkaempfer1: {}, Wettkaempfer2: {}", begegnung.getBegegnungId(), begegnung.getWettkaempfer1().map(Wettkaempfer::name), begegnung.getWettkaempfer2().map(Wettkaempfer::name));
 				}
 				r++;
 			}
 		}
-
-		List<Matte> matten = erstelleGruppenReihenfolge(wettkampfGruppen, einstellungen.mattenAnzahl().anzahl(), einstellungen.wettkampfReihenfolge());
-
-		turnierRepository.speichereMatten(matten);
 	}
 
 	public Begegnung ladeBegegnung(UUID begegnungId) {
@@ -184,7 +194,7 @@ public class TurnierService {
 		logger.info("speichereRandoriWertung: {}", begegnungId);
 		Begegnung begegnung = ladeBegegnung(begegnungId);
 
-		Benutzer benutzer = benutzerRepository.findBenutzer(bewerterUUID).get();
+		Benutzer benutzer = benutzerRepository.findBenutzer(bewerterUUID).orElseThrow(() -> new RuntimeException("Nutzer " + bewerterUUID + " konnte nicht gefunden werden"));
 		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), benutzer);
 		if (existierendeWertung.isPresent()) {
 			logger.debug("Aktualisiere existierende Wertung");
@@ -217,7 +227,7 @@ public class TurnierService {
 		logger.info("Begegnung: {}, Sieger: {}, Kampfzeit: {}s", begegnungId, siegerUUID, fightTime);
 		Begegnung begegnung = ladeBegegnung(begegnungId);
 
-		Benutzer benutzer = benutzerRepository.findBenutzer(bewerterUUID).get();
+		Benutzer benutzer = benutzerRepository.findBenutzer(bewerterUUID).orElseThrow(() -> new RuntimeException("Nutzer " + bewerterUUID + " konnte nicht gefunden werden"));
 		Wettkaempfer wettkaempfer = wettkaempferService.ladeKaempfer(siegerUUID).orElseThrow();
 		Duration dauer = parseDuration(fightTime);
 
@@ -277,10 +287,10 @@ public class TurnierService {
 		List<List<WettkampfGruppe>> wettkampfGruppenJeMatten = helpers.splitArrayToParts(wettkampfGruppen, anzahlMatten);
 
 		for (int m = 0; m < anzahlMatten; m++) {
-			Sortierer sortierer = new Sortierer(totaleRundenAnzahl);
 			var gruppen = wettkampfGruppenJeMatten.get(m);
 			List<Runde> runden = new ArrayList<>();
 			Integer matteId = m + 1;
+			Sortierer sortierer = new Sortierer(totaleRundenAnzahl, rundenAnzahlMatte.get(matteId));
 			Pair<Integer, List<Runde>> result = null;
 			switch (reihenfolge) {
 				case WettkampfReihenfolge.ABWECHSELND:
@@ -288,16 +298,18 @@ public class TurnierService {
 					totaleRundenAnzahl = result.getLeft();
 					runden = result.getRight();
 					matten.add(new Matte(matteId, runden));
+					rundenAnzahlMatte.put(matteId, rundenAnzahlMatte.get(matteId) + runden.size());
 					break;
 				case WettkampfReihenfolge.ALLE:
 					result = sortierer.erstelleReihenfolgeMitAllenGruppenJeDurchgang(gruppen, matteId);
 					totaleRundenAnzahl = result.getLeft();
 					runden = result.getRight();
 					matten.add(new Matte(matteId, runden));
+					rundenAnzahlMatte.put(matteId, rundenAnzahlMatte.get(matteId) + runden.size());
 					break;
 			}
 
-			logger.debug("Aktuelle totaleRundenAnzahl {}", totaleRundenAnzahl);
+			logger.debug("Aktuelle totaleRundenAnzahl {}, {}", totaleRundenAnzahl, rundenAnzahlMatte);
 		}
 		logger.trace("Matten {}", matten);
 		return matten;
@@ -331,7 +343,7 @@ public class TurnierService {
 			int seconds = Integer.parseInt(matcher.group(2));
 			int millis = Integer.parseInt(matcher.group(3)) * 10; // 36 bedeutet 360 Millisekunden
 
-			long totalMillis = minutes * 60 * 1000 + seconds * 1000 + millis;
+			long totalMillis = (long) minutes * 60 * 1000 + seconds * 1000 + millis;
 			return Duration.ofMillis(totalMillis);
 		} else {
 			throw new IllegalArgumentException("Invalid duration format: " + input);
@@ -345,7 +357,6 @@ public class TurnierService {
 	public Metadaten ladeMetadaten(UUID id, UUID turnierUUID) {
 		logger.info("Lade Metadaten für Begegnung {}", id);
 		var matten = turnierRepository.ladeMatten(turnierUUID);
-		;
 
 		var aktuelleRunde = matten.values().stream()
 			.flatMap(matte -> matte.runden().stream())
@@ -357,7 +368,7 @@ public class TurnierService {
 			throw new IllegalArgumentException("Es konnten keine Daten zu dieser Begegnung gefunden werden.");
 		}
 
-		var alleRundeBegegnungIds = aktuelleRunde.get().begegnungen().stream().map(Begegnung::getId).collect(Collectors.toUnmodifiableList());
+		var alleRundeBegegnungIds = aktuelleRunde.get().begegnungen().stream().map(Begegnung::getId).toList();
 
 		UUID vorgaenger = null;
 		UUID nachfolger = null;

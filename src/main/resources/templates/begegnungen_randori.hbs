@@ -114,11 +114,9 @@
                           }
                       })
           }
-          // });
       }
 
       const renewBegegnung = async (data) => {
-          // document.body.querySelectorAll(".renewBegegnung").forEach(value => value.addEventListener("click", async function(data) {
           var altersklasse = data.target.attributes.getNamedItem("altersklasse").value;
           console.log("Altersklasse", altersklasse);
           var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in der Altersklasse\n\t" + altersklasse + "\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
@@ -135,11 +133,9 @@
                           }
                       })
           }
-          // }));
       }
 
       const deleteBegegnungen = async () => {
-          // document.body.querySelector("#deleteBegegnungen").addEventListener("click", async function() {
           var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern aller Altersklassen\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
           if (sicher) {
               fetch('/turnier/{{turnierid}}/begegnung', {method: 'DELETE', redirect: 'follow'})
@@ -153,7 +149,6 @@
                           }
                       })
           }
-          // });
       }
 
       document.body.querySelectorAll("md-tabs").forEach(tabs => tabs.addEventListener('change', function(data) {

@@ -29,11 +29,11 @@ public class Sortierer {
 	private int gruppe3Runde;
 	private int rundeGesamt;
 
-	public Sortierer(Integer rundeGesamt) {
-		this.mattenRunde = 1;
+	public Sortierer(Integer rundeGesamt, Integer mattenRunde) {
 		this.gruppe1Runde = 1;
 		this.gruppe2Runde = 1;
 		this.gruppe3Runde = 1;
+		this.mattenRunde = mattenRunde;
 		this.rundeGesamt = rundeGesamt;
 	}
 
@@ -56,15 +56,13 @@ public class Sortierer {
 				// hole Altersklasse aus der ersten Begegnung
 				Altersklasse altersKlasse = gruppe.alleRundenBegegnungen().get(rundenNummer).begegnungenJeRunde().get(0).getWettkaempfer1().get().altersklasse();
 
+				logger.debug("Gruppe: {}", gruppe.name());
 				Runde runde = new Runde(null, mattenRunde, gruppenRunde, rundeGesamt, matteId, altersKlasse, gruppe, gruppe.alleRundenBegegnungen().get(rundenNummer).begegnungenJeRunde());
-				if (runde != null) {
-					// die Gruppe hat eine entsprechende Runde
-					runden.add(runde);
-					rundeGesamt++;
-					mattenRunde++;
-				}
+				runden.add(runde);
+				rundeGesamt++;
+				mattenRunde++;
+				gruppenRunde++;
 			}
-			gruppenRunde++;
 		}
 		return new ImmutablePair(rundeGesamt, runden);
 	}
@@ -99,12 +97,14 @@ public class Sortierer {
 			} else {
 				logger.info("Es existiert nur eine Gruppe, daher fügen wir diese komplett hinzu");
 				WettkampfGruppe gruppeZuletzt = gruppen.get(gruppen.size() - 1);
+				int gruppenRunde = 1;
 				for (BegegnungenJeRunde begegnungen : gruppeZuletzt.alleRundenBegegnungen()) {
 					Altersklasse altersKlasseZuletzt = begegnungen.begegnungenJeRunde().get(0).getWettkaempfer1().get().altersklasse();
-					Runde rundeZuletzt = new Runde(null, mattenRunde, 1, rundeGesamt, matteId, altersKlasseZuletzt, gruppeZuletzt, begegnungen.begegnungenJeRunde());
+					Runde rundeZuletzt = new Runde(null, mattenRunde, gruppenRunde, rundeGesamt, matteId, altersKlasseZuletzt, gruppeZuletzt, begegnungen.begegnungenJeRunde());
 					runden.add(rundeZuletzt);
 					rundeGesamt++;
 					mattenRunde++;
+					gruppenRunde++;
 				}
 			}
 		}

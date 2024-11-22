@@ -37,9 +37,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -59,7 +61,7 @@ class TurnierServiceTest {
 	private BenutzerRepository     benutzerRepository;
 
 	@Spy
-	private Sortierer sortierer = new Sortierer(1);
+	private Sortierer sortierer = new Sortierer(1, 1);
 	@Spy
 	private Helpers   helpers   = new Helpers();
 
@@ -129,6 +131,12 @@ class TurnierServiceTest {
 			berechneteBegegnungen += N;
 		}
 		assertEquals(berechneteBegegnungen, anzahlBegegnungen);
+
+		// Die MattenRunde wird immer erhöht
+		assertTrue(IntStream.range(1, matten.get(0).runden().size())
+			.allMatch(i -> matten.get(0).runden().get(i - 1).mattenRunde() < matten.get(0).runden().get(i).mattenRunde()));
+		assertTrue(IntStream.range(1, matten.get(1).runden().size())
+			.allMatch(i -> matten.get(1).runden().get(i - 1).mattenRunde() < matten.get(1).runden().get(i).mattenRunde()));
 	}
 
 	@Test
@@ -370,6 +378,35 @@ class TurnierServiceTest {
 				}
 			}
 		}
+
+		// Die MattenRunde wird immer erhöht
+		assertTrue(IntStream.range(1, matten.get(0).runden().size())
+			.allMatch(i -> matten.get(0).runden().get(i - 1).mattenRunde() < matten.get(0).runden().get(i).mattenRunde()));
+		assertTrue(IntStream.range(1, matten.get(1).runden().size())
+			.allMatch(i -> matten.get(1).runden().get(i - 1).mattenRunde() < matten.get(1).runden().get(i).mattenRunde()));
+	}
+
+	@Test
+	void testMattenRundeIstKorrekt() {
+		List<GewichtsklassenGruppe> gewichtsklassenGruppen = GewichtsklassenGruppeFixture.gewichtsklassenGruppenZweiAltersklassen;
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroesse(6), new VariablerGewichtsteil(0.2), SeparateAlterklassen.GETRENNT, turnierUUID);
+
+		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
+		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);
+
+		turnierService.erstelleWettkampfreihenfolgeAltersklasse(Optional.empty(), turnierUUID);
+
+
+		ArgumentCaptor<List<Matte>> argumentCaptor = ArgumentCaptor.forClass(List.class);
+		verify(turnierRepository, times(2)).speichereMatten(argumentCaptor.capture());
+		List<List<Matte>> mattenListe = argumentCaptor.getAllValues();
+		System.out.println(mattenListe);
+
+		Integer erwarteteRundeGesamt = 21;
+
+		assertEquals(2, mattenListe.size());
+		assertEquals(erwarteteRundeGesamt, mattenListe.stream().mapToInt(matten -> matten.stream().mapToInt(matte -> matte.runden().size()).sum()).sum());
+		assertEquals(erwarteteRundeGesamt, mattenListe.getLast().getLast().runden().getLast().rundeGesamt());
 	}
 
 	@Test
