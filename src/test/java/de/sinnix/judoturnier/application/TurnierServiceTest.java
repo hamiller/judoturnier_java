@@ -42,6 +42,7 @@ import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -414,5 +415,20 @@ class TurnierServiceTest {
 	void speichereTurnierWertung() {
 		logger.error("Implement test!!");
 //		turnierService.speichereTurnierWertung();
+	}
+
+	@Test
+	void ladeMattenRunde() {
+
+		when(turnierRepository.ladeAlleBegegnungen(any())).thenReturn(List.of(
+			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), UUID.randomUUID(), 1, 1, 1, 1, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(), WettkampfgruppeFixture.gruppe1, turnierUUID),
+			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), UUID.randomUUID(), 2, 1, 1, 1, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(), WettkampfgruppeFixture.gruppe1, turnierUUID),
+			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), UUID.randomUUID(), 1, 2, 1, 2, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(), WettkampfgruppeFixture.gruppe1, turnierUUID),
+			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), UUID.randomUUID(), 1, 2, 1, 2, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(), WettkampfgruppeFixture.gruppe1, turnierUUID)
+		));
+
+		List<Begegnung> begegnungList = turnierService.ladeMattenRunde(turnierUUID, 1, 2);
+
+		assertEquals(2, begegnungList.size());
 	}
 }

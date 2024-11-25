@@ -6,31 +6,55 @@
     <link rel="stylesheet" href="/css/mainstyle.css">
 </head>
 <body>
-<h1>Matte {{matte}} - Wettkampf {{wettkampfnummer}}</h1>
-<h1>Stoppuhr</h1>
-<div id="time">00:00:00</div>
-
+<h1>Matte {{matte}} - Runde {{mattenrunde}}</h1>
+<div id="timer-container">
+    <h1 id="timer-display" class="centered-horizontal">03:00</h1>
+</div>
+<div>
+{{#each begegnungen}}
+    <div class="listeneintrag vs" > {{akuellePaarung}}
+        <div class="wettkaempfer name">
+            <label class="{{wettkaempfer1.farbe.get}}">{{wettkaempfer1.name}}</label>
+        </div>
+        <div class="center">vs</div>
+        <div class="wettkaempfer name">
+            <label class="{{wettkaempfer2.farbe.get}}">{{wettkaempfer2.name}}</label>
+        </div>
+    </div>
+{{/each}}
+</div>
 <script>
-    let seconds = 0;
-    let interval = null;
+    const COUNTDOWN = 80000; // Millisekunden
 
-    function formatTime(secs) {
-        const hrs = Math.floor(secs / 3600).toString().padStart(2, '0');
-        const mins = Math.floor((secs % 3600) / 60).toString().padStart(2, '0');
-        const secsLeft = (secs % 60).toString().padStart(2, '0');
-        return `${hrs}:${mins}:${secsLeft}`;
+    let countdownTime = COUNTDOWN;
+    let totalTime = 0;
+    let interval = null;
+    let timerDisplay = document.getElementById('timer-display');
+
+    const formatTime = (milliseconds) => {
+        const totalSeconds = Math.floor(Math.abs(milliseconds) / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        const ms = Math.abs(milliseconds % 1000) / 10;
+        return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}.${ms < 10 ? '0' : ''}${Math.floor(ms)}`;
     }
 
-    function updateDisplay() {
-        document.getElementById("time").innerText = formatTime(seconds);
+    const updateTimer = () => {
+        let time = formatTime(countdownTime);
+        console.log("Schreibe ", time);
+        if (countdownTime >= 0) {
+            timerDisplay.textContent = time;
+        } else {
+            timerDisplay.textContent = time;
+            timerDisplay.classList.add('negative');
+        }
+        countdownTime -= 10;
+        totalTime += 10;
     }
 
     function start() {
         if (!interval) {
-            interval = setInterval(() => {
-                seconds++;
-                updateDisplay();
-            }, 1000);
+            interval = setInterval(updateTimer, 10);
         }
     }
 
@@ -41,8 +65,9 @@
 
     function reset() {
         stop();
-        seconds = 0;
-        updateDisplay();
+        totalTime = 0;
+        countdownTime = COUNTDOWN;
+        updateTimer();
     }
 
     const socket = new WebSocket("/mattenanzeigews?matte="+{{matte}});

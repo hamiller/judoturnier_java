@@ -382,4 +382,13 @@ public class TurnierService {
 
 		return new Metadaten(alleRundeBegegnungIds, Optional.ofNullable(vorgaenger), Optional.ofNullable(nachfolger), aktuelleRunde.get().rundeId());
 	}
+
+	public List<Begegnung> ladeMattenRunde(UUID turnierUUID, Integer matte, Integer mattenrunde) {
+		logger.info("Lade Matten Runde");
+
+		return turnierRepository.ladeAlleBegegnungen(turnierUUID).stream()
+			.filter(b -> b.getMatteId().equals(matte))
+			.filter(b -> b.getMattenRunde().equals(mattenrunde))
+			.toList();
+	}
 }

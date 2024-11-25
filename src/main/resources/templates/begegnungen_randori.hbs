@@ -118,6 +118,11 @@
       const sendCommand = (command, matte) => {
           console.log("Sende Command für Matte", command, matte)
 
+          if (command == 'reset') {
+              var sicher = confirm("ACHTUNG\n\nHiermit wird die Wettkampfzeit zurückgesetzt! \n\nSind sie sicher?");
+              if (!sicher) return;
+          }
+
           if (socket && socket[matte] && socket[matte].readyState === WebSocket.OPEN) {
               socket[matte].send(command);
           } else {
@@ -125,11 +130,11 @@
           }
       }
 
-      const openTimerWindow = (matte, wettkampfnummer) => {
+      const openTimerWindow = (matte, mattenRunde) => {
           // create new window
-          console.log("Öffne Wertungsbildschirm für Matte und Wettkampf", matte, wettkampfnummer)
+          console.log("Öffne Wertungsbildschirm für Matte und Runde", matte, mattenRunde)
           controlledWindow = window.open(
-                  '/turnier/{{turnierid}}/mattenanzeige/' + matte + '/' + wettkampfnummer,
+                  '/turnier/{{turnierid}}/mattenanzeige/' + matte + '/' + mattenRunde,
                   'Matte ' +matte,
                   'width=800,height=600,left=2000,top=0' // Passen Sie die Werte an Ihren zweiten Monitor an
           );
@@ -153,13 +158,13 @@
               socket[matte] = null;
           };
 
-          updateWindowStatus(matte, wettkampfnummer); // UI aktualisieren
+          updateWindowStatus(matte, mattenRunde); // UI aktualisieren
       };
 
-      const updateWindowStatus = (matte, wettkampfnummer) => {
+      const updateWindowStatus = (matte, mattenRunde) => {
           const statusElement = document.getElementById("windowStatus");
           if (controlledWindow && !controlledWindow.closed) {
-              statusElement.innerText = "Geöffneter Wertungsbildschirm: Matte " + matte + ", Wettkampf " + wettkampfnummer;
+              statusElement.innerText = "Geöffneter Wertungsbildschirm: Matte " + matte + ", Runde " + mattenRunde;
           } else {
               statusElement.innerText = "Kein Fenster geöffnet.";
           }

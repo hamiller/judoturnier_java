@@ -646,7 +646,7 @@ md-slider {
   margin-bottom: 20px;
 }
 
-#timer-display.negative {
+.negative {
   color: red;
 }
 
