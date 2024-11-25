@@ -8,7 +8,7 @@
 <body>
 <h1>Matte {{matte}} - Runde {{mattenrunde}}</h1>
 <div id="timer-container">
-    <h1 id="timer-display" class="centered-horizontal">03:00</h1>
+    <h1 id="timer-display" class="centered-horizontal"></h1>
 </div>
 <div>
 {{#each begegnungen}}
@@ -24,7 +24,7 @@
 {{/each}}
 </div>
 <script>
-    const COUNTDOWN = 80000; // Millisekunden
+    const COUNTDOWN = {{kampfzeit}} * 1000; // Millisekunden
 
     let countdownTime = COUNTDOWN;
     let totalTime = 0;
@@ -78,6 +78,8 @@
         if (command === "stop") stop();
         if (command === "reset") reset();
     };
+
+    updateTimer();
 </script>
 </body>
 </html>

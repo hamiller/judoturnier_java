@@ -9,5 +9,6 @@ public record Einstellungen(
 	Gruppengroesse gruppengroesse,
 	VariablerGewichtsteil variablerGewichtsteil,
 	SeparateAlterklassen separateAlterklassen,
+	Wettkampfzeiten wettkampfzeiten,
 	UUID turnierUUID) {
 }

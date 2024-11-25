@@ -1,5 +1,8 @@
 package de.sinnix.judoturnier.model;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 public enum Altersklasse {
 
 	U9("U9", 1),
@@ -19,6 +22,12 @@ public enum Altersklasse {
 	Altersklasse(String bezeichnung, int reihenfolge) {
 		this.bezeichnung = bezeichnung;
 		this.reihenfolge = reihenfolge;
+	}
+
+	public static Optional<Altersklasse> fromString(String name) {
+		return Arrays.stream(values())
+			.filter(ak -> ak.bezeichnung.equalsIgnoreCase(name))
+			.findFirst();
 	}
 
 	public String getBezeichnung() {

@@ -2,6 +2,7 @@ package de.sinnix.judoturnier.adapter.primary;
 
 import de.sinnix.judoturnier.application.EinstellungenService;
 import de.sinnix.judoturnier.application.GewichtsklassenService;
+import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.Gruppengroesse;
 import de.sinnix.judoturnier.model.Kampfsystem;
@@ -11,6 +12,7 @@ import de.sinnix.judoturnier.model.SeparateAlterklassen;
 import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.VariablerGewichtsteil;
 import de.sinnix.judoturnier.model.WettkampfReihenfolge;
+import de.sinnix.judoturnier.model.Wettkampfzeiten;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 public class EinstellungenController {
@@ -44,6 +52,12 @@ public class EinstellungenController {
 		var turnierdaten = einstellungenService.ladeTurnierDaten(turnierUUID);
 		var gwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 
+		List<Map.Entry<Altersklasse, Integer>> mapAsList = einstellungen.wettkampfzeiten().altersklasseKampfzeitSekunden().entrySet().stream()
+			.sorted(Comparator.comparing(entry -> entry.getKey().ordinal()))
+			.toList();
+
+		logger.debug("Wettkampfzeiten: {}", mapAsList);
+
 		ModelAndView mav = new ModelAndView("einstellungen");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
@@ -55,6 +69,7 @@ public class EinstellungenController {
 		mav.addObject("gruppengroesse", einstellungen.gruppengroesse());
 		mav.addObject("variablergewichtsteil", einstellungen.variablerGewichtsteil());
 		mav.addObject("separatealtersklassen", einstellungen.separateAlterklassen());
+		mav.addObject("wettkampfzeiten", mapAsList);
 		mav.addObject("turniername", turnierdaten.name());
 		mav.addObject("turnierort", turnierdaten.ort());
 		mav.addObject("turnierdatum", turnierdaten.datum());
@@ -74,22 +89,23 @@ public class EinstellungenController {
 		var separateAltersklassen = SeparateAlterklassen.valueOf(formData.getFirst(SeparateAlterklassen.TYP));
 		var turnierUUID = UUID.fromString(turnierid);
 
-		var einstellungen = new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge, gruppengroesse, variablerGewichtsteil, separateAltersklassen, turnierUUID);
+		var wkz = formData.entrySet().stream()
+			.filter(key -> key.getKey().startsWith(Wettkampfzeiten.TYP))
+			.flatMap(entry -> entry.getValue().stream()
+				.map(value -> new AbstractMap.SimpleEntry<>(
+					Altersklasse.fromString(entry.getKey().replaceAll(Wettkampfzeiten.TYP + "\\[|\\]", "")).orElse(null),
+					Integer.parseInt(value.replaceAll("[\\[\\]]", ""))
+				))
+			)
+			.filter(entry -> entry.getKey() != null) // Filter ungültige Altersklassen
+			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-		einstellungen = einstellungenService.speichereTurnierEinstellungen(einstellungen);
-		var gwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
+		var wettkampfzeiten = new Wettkampfzeiten(wkz);
+		logger.debug("wettkampfzeiten: {}", wettkampfzeiten);
+		var einstellungen = new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge, gruppengroesse, variablerGewichtsteil, separateAltersklassen, wettkampfzeiten, turnierUUID);
 
-		ModelAndView mav = new ModelAndView("einstellungen");
-		mav.addObject("turnierid", turnierid);
-		mav.addObject("isadmin", oidcBenutzer.istAdmin());
-		mav.addObject("gewichtsklassengruppen", gwks);
-		mav.addObject("kampfsysteme", Kampfsystem.values());
-		mav.addObject("turniertyp", einstellungen.turnierTyp());
-		mav.addObject("mattenanzahl", einstellungen.mattenAnzahl());
-		mav.addObject("wettkampfreihenfolge", einstellungen.wettkampfReihenfolge());
-		mav.addObject("gruppengroesse", einstellungen.gruppengroesse());
-		mav.addObject("variablergewichtsteil", einstellungen.variablerGewichtsteil());
-		mav.addObject("separatealtersklassen", einstellungen.separateAlterklassen());
-		return mav;
+		einstellungenService.speichereTurnierEinstellungen(einstellungen);
+
+		return new ModelAndView("redirect:/turnier/{turnierid}/einstellungen");
 	}
 }

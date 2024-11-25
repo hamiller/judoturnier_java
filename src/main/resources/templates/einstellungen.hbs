@@ -71,6 +71,19 @@
             </div>
         </div>
 
+        <md-divider></md-divider>
+
+        <div class="settingsrow">
+            <label>Kampfzeiten (in Sekunden)</label>
+            <ul>
+                {{#each wettkampfzeiten}}
+                    <li>
+                        <md-filled-text-field label="{{this.key}}" type="number" name="wettkampfzeit[{{this.key}}]" value="{{this.value}}"/>
+                    </li>
+                {{/each}}
+            </ul>
+        </div>
+
 
         <md-filled-button>Turnier-Einstellung speichern</md-filled-button>
       </form>
