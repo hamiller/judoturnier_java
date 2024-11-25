@@ -51,9 +51,19 @@
     </div>
 
     <div class="generalcontent">
-      {{#each matten}}
+
+        <div id="windowStatus">Kein Fenster geöffnet.</div>
+
+        {{#each matten}}
         <div class="matte tabcontent" id="matten-panel-{{id}}">
           <div class="listeneintrag-titel">Matte {{id}}</div>
+
+          <div>
+              <md-filled-button type="button"  class="" onclick="sendCommand('start', {{id}})">Starte Zeit</md-filled-button>
+              <md-filled-button type="button" class="" onclick="sendCommand('stop', {{id}})">Stoppe Zeit</md-filled-button>
+              <md-filled-button type="button" class="" onclick="sendCommand('reset', {{id}})">Zeit zurücksetzen</md-filled-button>
+          </div>
+
           <div class="wettkampfgruppe">
 
               {{#each gruppenRunden}}
@@ -81,6 +91,8 @@
                               </a>
                           {{/if}}
                       {{/each}}
+                      <md-divider inset></md-divider>
+                      <md-filled-tonal-button type="button" class="" onclick="openTimerWindow({{../id}}, {{mattenRunde}})">Wertungsbildschirm öffnen</md-filled-tonal-button>
                   {{/each}}
               {{/each}}
           </div>
@@ -93,11 +105,65 @@
   {{> footer}}
 
   <script type="text/javascript">
+      let controlledWindow = null;
+      let socket = []; // WebSocket-Instanz
+
+
       document.body.querySelectorAll(".theming-anchors").forEach(value => value.addEventListener("click", (data) => {
           var altersklasse = data.target.attributes.getNamedItem("altersklasse").value;
           console.log("Altersklasse", altersklasse);
           document.body.querySelector("#theming-menu-" + altersklasse).show();
       }));
+
+      const sendCommand = (command, matte) => {
+          console.log("Sende Command für Matte", command, matte)
+
+          if (socket && socket[matte] && socket[matte].readyState === WebSocket.OPEN) {
+              socket[matte].send(command);
+          } else {
+              alert("WebSocket ist nicht verbunden.");
+          }
+      }
+
+      const openTimerWindow = (matte, wettkampfnummer) => {
+          // create new window
+          console.log("Öffne Wertungsbildschirm für Matte und Wettkampf", matte, wettkampfnummer)
+          controlledWindow = window.open(
+                  '/turnier/{{turnierid}}/mattenanzeige/' + matte + '/' + wettkampfnummer,
+                  'Matte ' +matte,
+                  'width=800,height=600,left=2000,top=0' // Passen Sie die Werte an Ihren zweiten Monitor an
+          );
+          controlledWindow.onbeforeunload = () => {
+              controlledWindow = null;
+          };
+
+          // establish websocket
+          const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+          const host = window.location.host; // z. B. "localhost:8080" oder "example.com"
+          const path = "/mattenanzeigews?matte=" + matte; // Ihr WebSocket-Pfad
+          const socketUrl = `${protocol}://${host}${path}`;
+          socket[matte] = new WebSocket(socketUrl);
+
+          socket[matte].onopen = function () {
+              console.log("Verbunden mit WebSocket, Matte ", matte);
+          };
+
+          socket[matte].onclose = function () {
+              console.log("WebSocket-Verbindung geschlossen, Matte ", matte);
+              socket[matte] = null;
+          };
+
+          updateWindowStatus(matte, wettkampfnummer); // UI aktualisieren
+      };
+
+      const updateWindowStatus = (matte, wettkampfnummer) => {
+          const statusElement = document.getElementById("windowStatus");
+          if (controlledWindow && !controlledWindow.closed) {
+              statusElement.innerText = "Geöffneter Wertungsbildschirm: Matte " + matte + ", Wettkampf " + wettkampfnummer;
+          } else {
+              statusElement.innerText = "Kein Fenster geöffnet.";
+          }
+      }
 
       const renewBegegnungen = async () => {
           var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Judo-Turniersoftware</title>
+    <link rel="stylesheet" href="/css/interface.css">
+    <link rel="stylesheet" href="/css/mainstyle.css">
+</head>
+<body>
+<h1>Matte {{matte}} - Wettkampf {{wettkampfnummer}}</h1>
+<h1>Stoppuhr</h1>
+<div id="time">00:00:00</div>
+
+<script>
+    let seconds = 0;
+    let interval = null;
+
+    function formatTime(secs) {
+        const hrs = Math.floor(secs / 3600).toString().padStart(2, '0');
+        const mins = Math.floor((secs % 3600) / 60).toString().padStart(2, '0');
+        const secsLeft = (secs % 60).toString().padStart(2, '0');
+        return `${hrs}:${mins}:${secsLeft}`;
+    }
+
+    function updateDisplay() {
+        document.getElementById("time").innerText = formatTime(seconds);
+    }
+
+    function start() {
+        if (!interval) {
+            interval = setInterval(() => {
+                seconds++;
+                updateDisplay();
+            }, 1000);
+        }
+    }
+
+    function stop() {
+        clearInterval(interval);
+        interval = null;
+    }
+
+    function reset() {
+        stop();
+        seconds = 0;
+        updateDisplay();
+    }
+
+    const socket = new WebSocket("/mattenanzeigews?matte="+{{matte}});
+
+    socket.onmessage = function (event) {
+        const command = event.data;
+        if (command === "start") start();
+        if (command === "stop") stop();
+        if (command === "reset") reset();
+    };
+</script>
+</body>
+</html>

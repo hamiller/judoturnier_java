@@ -13,6 +13,10 @@
 {{> title}}
 {{> nav}}
 
+<md-filled-tonal-button type="button" id="open_timer" class="" onclick="openTimerWindow(); return false;">
+    Wertungsbildschirm öffnen
+</md-filled-tonal-button>
+
 <div>
     Aktuelle Begegnung {{begegnungid}}
     <form action="/turnier/{{turnierid}}/begegnungen/normal/{{begegnungid}}" method="POST">
@@ -97,6 +101,10 @@
         countdownTime -= 10;
         totalTime += 10;
     }
+
+    const openTimerWindow = () => {
+        console.log("Öffne Wertungsbildschirm")
+    };
 
     let countdownTime = COUNTDOWN; // 3min in Millisekunden
     let timerDisplay = document.getElementById('timer-display');
