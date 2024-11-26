@@ -11,6 +11,7 @@ import de.sinnix.judoturnier.model.BegegnungenJeRunde;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
+import de.sinnix.judoturnier.model.Gruppengroessen;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Metadaten;
 import de.sinnix.judoturnier.model.Runde;
@@ -158,7 +159,7 @@ public class TurnierService {
 		// check gruppe auf vorhandene Daten
 		checkGruppenSindValide(gwks);
 
-		List<WettkampfGruppe> wettkampfGruppen = erstelleWettkampfgruppen(gwks, algorithmus, einstellungen.gruppengroesse().anzahl());
+		List<WettkampfGruppe> wettkampfGruppen = erstelleWettkampfgruppen(gwks, algorithmus, einstellungen.gruppengroessen());
 
 		//loggWettkampfgruppen(wettkampfGruppen);
 
@@ -266,12 +267,13 @@ public class TurnierService {
 		return wertungen.stream().filter(w -> w.getBewerter().uuid().equals(benutzer.uuid())).findFirst();
 	}
 
-	private List<WettkampfGruppe> erstelleWettkampfgruppen(List<GewichtsklassenGruppe> gewichtsklassenGruppen, Algorithmus algorithmus, Integer maxGruppenGroesse) {
+	private List<WettkampfGruppe> erstelleWettkampfgruppen(List<GewichtsklassenGruppe> gewichtsklassenGruppen, Algorithmus algorithmus, Gruppengroessen gruppenGroessen) {
 		logger.debug("erstelle Wettkampfgruppen aus den Gewichtsklassengruppen");
 		// erstelle alle Begegnungen in jeder Gruppe
 		List<WettkampfGruppe> wettkampfGruppen = new ArrayList<>();
 		for (int i = 0; i < gewichtsklassenGruppen.size(); i++) {
 			var gruppe = gewichtsklassenGruppen.get(i);
+			var maxGruppenGroesse = gruppenGroessen.altersklasseGruppengroesse().get(gruppe.altersKlasse());
 			var wkg = algorithmus.erstelleWettkampfGruppen(i, gruppe, maxGruppenGroesse);
 			wettkampfGruppen.addAll(wkg);
 		}

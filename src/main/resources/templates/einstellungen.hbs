@@ -71,7 +71,13 @@
 
       <div class="settingsrow">
         <label>Maximale Gruppengröße</label>
-        <md-filled-text-field type="number" name="gruppengroesse" value="{{gruppengroesse.anzahl}}"/>
+        <ul>
+          {{#each gruppengroessen}}
+            <li>
+              <md-filled-text-field label="{{this.key}}" type="number" name="gruppengroesse[{{this.key}}]" value="{{this.value}}"/>
+            </li>
+          {{/each}}
+        </ul>
       </div>
 
       <md-divider></md-divider>

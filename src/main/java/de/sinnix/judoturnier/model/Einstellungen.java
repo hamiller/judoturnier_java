@@ -6,7 +6,7 @@ public record Einstellungen(
 	TurnierTyp turnierTyp,
 	MattenAnzahl mattenAnzahl,
 	WettkampfReihenfolge wettkampfReihenfolge,
-	Gruppengroesse gruppengroesse,
+	Gruppengroessen gruppengroessen,
 	VariablerGewichtsteil variablerGewichtsteil,
 	SeparateAlterklassen separateAlterklassen,
 	Wettkampfzeiten wettkampfzeiten,

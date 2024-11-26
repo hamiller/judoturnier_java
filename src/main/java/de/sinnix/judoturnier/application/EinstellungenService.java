@@ -9,8 +9,8 @@ import de.sinnix.judoturnier.adapter.secondary.TurnierJpa;
 import de.sinnix.judoturnier.adapter.secondary.TurnierJpaRepository;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Einstellungen;
+import de.sinnix.judoturnier.model.Gruppengroessen;
 import de.sinnix.judoturnier.model.MattenAnzahl;
-import de.sinnix.judoturnier.model.Gruppengroesse;
 import de.sinnix.judoturnier.model.SeparateAlterklassen;
 import de.sinnix.judoturnier.model.Turnier;
 import de.sinnix.judoturnier.model.TurnierTyp;
@@ -44,7 +44,16 @@ public class EinstellungenService {
 	private static final TurnierTyp            DEFAULT_TURNIERTYP             = TurnierTyp.RANDORI;
 	private static final MattenAnzahl          DEFAULT_MATTENANZAHL           = new MattenAnzahl(2);
 	private static final WettkampfReihenfolge  DEFAULT_WETTKAMPFREIHENFOLGE   = WettkampfReihenfolge.ABWECHSELND;
-	private static final Gruppengroesse        DEFAULT_GRUPPENGROESSE         = new Gruppengroesse(6);
+	private static final Gruppengroessen       DEFAULT_GRUPPENGROESSEN        = new Gruppengroessen(Map.of(
+		Altersklasse.U9, 6,
+		Altersklasse.U11, 6,
+		Altersklasse.U12, 6,
+		Altersklasse.U13, 30,
+		Altersklasse.U15, 30,
+		Altersklasse.U18, 30,
+		Altersklasse.U21, 30,
+		Altersklasse.Frauen, 30,
+		Altersklasse.Maenner, 30));
 	private static final VariablerGewichtsteil DEFAULT_VARIABLER_GEWICHTSTEIL = new VariablerGewichtsteil(0.2);
 	private static final SeparateAlterklassen  DEFAULT_SEPARATE_ALTERKLASSEN  = SeparateAlterklassen.GETRENNT;
 	private static final Wettkampfzeiten       DEFAULT_WETTKAMPFZEITEN        = new Wettkampfzeiten(Map.of(
@@ -65,11 +74,11 @@ public class EinstellungenService {
 		TurnierTyp turnierTyp = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(TurnierTyp.TYP)).findFirst().map(t -> TurnierTyp.valueOf(t.getWert())).orElse(DEFAULT_TURNIERTYP);
 		MattenAnzahl mattenAnzahl = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(MattenAnzahl.TYP)).findFirst().map(t -> new MattenAnzahl(Integer.parseInt(t.getWert()))).orElseGet(() -> DEFAULT_MATTENANZAHL);
 		WettkampfReihenfolge wettkampfReihenfolge = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(WettkampfReihenfolge.TYP)).findFirst().map(t -> WettkampfReihenfolge.valueOf(t.getWert())).orElseGet(() -> DEFAULT_WETTKAMPFREIHENFOLGE);
-		Gruppengroesse gruppengroesse = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(Gruppengroesse.TYP)).findFirst().map(r -> new Gruppengroesse(Integer.parseInt(r.getWert()))).orElseGet(() -> DEFAULT_GRUPPENGROESSE);
+		Gruppengroessen gruppengroessen = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(Gruppengroessen.TYP)).findFirst().map(wkz -> convertToObject(wkz.getWert(), Gruppengroessen.class)).orElseGet(() -> DEFAULT_GRUPPENGROESSEN);
 		VariablerGewichtsteil variablerGewichtsteil = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(VariablerGewichtsteil.TYP)).findFirst().map(v -> new VariablerGewichtsteil(Double.parseDouble(v.getWert()))).orElseGet(() -> DEFAULT_VARIABLER_GEWICHTSTEIL);
 		SeparateAlterklassen separateAlterklassen = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(SeparateAlterklassen.TYP)).findFirst().map(t -> SeparateAlterklassen.valueOf(t.getWert())).orElse(DEFAULT_SEPARATE_ALTERKLASSEN);
-		Wettkampfzeiten wettkampfzeiten = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(Wettkampfzeiten.TYP)).findFirst().map(wkz -> convertToWettkampfzeiten(wkz.getWert())).orElseGet(() -> DEFAULT_WETTKAMPFZEITEN);
-		return new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge, gruppengroesse, variablerGewichtsteil, separateAlterklassen, wettkampfzeiten, turnierUUID);
+		Wettkampfzeiten wettkampfzeiten = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(Wettkampfzeiten.TYP)).findFirst().map(wkz -> convertToObject(wkz.getWert(), Wettkampfzeiten.class)).orElseGet(() -> DEFAULT_WETTKAMPFZEITEN);
+		return new Einstellungen(turnierTyp, mattenAnzahl, wettkampfReihenfolge, gruppengroessen, variablerGewichtsteil, separateAlterklassen, wettkampfzeiten, turnierUUID);
 	}
 
 	public Einstellungen speichereTurnierEinstellungen(Einstellungen einstellungen) {
@@ -78,11 +87,12 @@ public class EinstellungenService {
 			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.turnierTyp().TYP, einstellungen.turnierUUID().toString()), einstellungen.turnierTyp().name()),
 			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.mattenAnzahl().TYP, einstellungen.turnierUUID().toString()), einstellungen.mattenAnzahl().anzahl().toString()),
 			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.wettkampfReihenfolge().TYP, einstellungen.turnierUUID().toString()), einstellungen.wettkampfReihenfolge().name()),
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.gruppengroesse().TYP, einstellungen.turnierUUID().toString()), einstellungen.gruppengroesse().anzahl().toString()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.gruppengroessen().TYP, einstellungen.turnierUUID().toString()), convertFromObject(einstellungen.gruppengroessen())),
 			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.variablerGewichtsteil().TYP, einstellungen.turnierUUID().toString()), einstellungen.variablerGewichtsteil().variablerTeil().toString()),
 			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.separateAlterklassen().TYP, einstellungen.turnierUUID().toString()), einstellungen.separateAlterklassen().name()),
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.wettkampfzeiten().TYP, einstellungen.turnierUUID().toString()), convertFromWettkampfzeiten(einstellungen.wettkampfzeiten()))
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.wettkampfzeiten().TYP, einstellungen.turnierUUID().toString()), convertFromObject(einstellungen.wettkampfzeiten()))
 		);
+		logger.info("speichere {}", jpaList);
 		einstellungJpaRepository.saveAll(jpaList);
 		return ladeEinstellungen(einstellungen.turnierUUID());
 	}
@@ -97,7 +107,7 @@ public class EinstellungenService {
 	public Integer kampfZeit(UUID turnierUUID, Altersklasse altersklasse) {
 		logger.info("Hole Kampfzeit für Turnier {} und Altersklasse {}", turnierUUID, altersklasse);
 		EinstellungJpa.EinstellungId einstellungId = new EinstellungJpa.EinstellungId(Wettkampfzeiten.TYP, turnierUUID.toString());
-		Wettkampfzeiten wettkampfzeiten = einstellungJpaRepository.findById(einstellungId).map(jpa -> convertToWettkampfzeiten(jpa.getWert())).orElseGet(() -> DEFAULT_WETTKAMPFZEITEN);
+		Wettkampfzeiten wettkampfzeiten = einstellungJpaRepository.findById(einstellungId).map(jpa -> convertToObject(jpa.getWert(), Wettkampfzeiten.class)).orElseGet(() -> DEFAULT_WETTKAMPFZEITEN);
 		return wettkampfzeiten.altersklasseKampfzeitSekunden().get(altersklasse);
 	}
 
@@ -113,31 +123,34 @@ public class EinstellungenService {
 			new EinstellungJpa(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString()), DEFAULT_TURNIERTYP.name()),
 			new EinstellungJpa(new EinstellungJpa.EinstellungId(MattenAnzahl.TYP, turnierUUID.toString()), DEFAULT_MATTENANZAHL.anzahl().toString()),
 			new EinstellungJpa(new EinstellungJpa.EinstellungId(WettkampfReihenfolge.TYP, turnierUUID.toString()), DEFAULT_WETTKAMPFREIHENFOLGE.name()),
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(Gruppengroesse.TYP, turnierUUID.toString()), DEFAULT_GRUPPENGROESSE.anzahl().toString()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(Gruppengroessen.TYP, turnierUUID.toString()), convertFromObject(DEFAULT_GRUPPENGROESSEN)),
 			new EinstellungJpa(new EinstellungJpa.EinstellungId(VariablerGewichtsteil.TYP, turnierUUID.toString()), DEFAULT_VARIABLER_GEWICHTSTEIL.variablerTeil().toString()),
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(SeparateAlterklassen.TYP, turnierUUID.toString()), DEFAULT_SEPARATE_ALTERKLASSEN.name())
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(SeparateAlterklassen.TYP, turnierUUID.toString()), DEFAULT_SEPARATE_ALTERKLASSEN.name()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(Wettkampfzeiten.TYP, turnierUUID.toString()), convertFromObject(DEFAULT_WETTKAMPFZEITEN))
 		);
 		einstellungJpaRepository.saveAll(jpaList);
 		return ladeEinstellungen(turnierUUID);
 	}
 
-	private static String convertFromWettkampfzeiten(Wettkampfzeiten wettkampfzeiten) {
+	private static <T> String convertFromObject(T object) {
 		try {
-			if (wettkampfzeiten.altersklasseKampfzeitSekunden().isEmpty()) return OBJECT_MAPPER.writeValueAsString(DEFAULT_WETTKAMPFZEITEN.altersklasseKampfzeitSekunden());
-
-			return OBJECT_MAPPER.writeValueAsString(wettkampfzeiten.altersklasseKampfzeitSekunden());
+			if (object == null) {
+				throw new IllegalArgumentException("Das zu konvertierende Objekt darf nicht null sein.");
+			}
+			return OBJECT_MAPPER.writeValueAsString(object);
 		} catch (Exception e) {
-			throw new RuntimeException("Fehler beim Konvertieren von Wettkampfzeiten in JSON", e);
+			throw new RuntimeException("Fehler beim Konvertieren eines Objekts in JSON", e);
 		}
 	}
 
-	private static Wettkampfzeiten convertToWettkampfzeiten(String json) {
+	private static <T> T convertToObject(String json, Class<T> type) {
 		try {
-			Map<Altersklasse, Integer> map = OBJECT_MAPPER.readValue(json, new TypeReference<>() {
-			});
-			return new Wettkampfzeiten(map);
+			if (json == null || json.isEmpty()) {
+				throw new IllegalArgumentException("JSON-String darf nicht null oder leer sein.");
+			}
+			return OBJECT_MAPPER.readValue(json, type);
 		} catch (Exception e) {
-			throw new RuntimeException("Fehler beim Konvertieren von JSON in Wettkampfzeiten", e);
+			throw new RuntimeException("Fehler beim Konvertieren von JSON in Objekt", e);
 		}
 	}
 }

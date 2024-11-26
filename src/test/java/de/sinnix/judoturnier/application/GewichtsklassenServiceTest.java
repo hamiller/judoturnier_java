@@ -8,7 +8,7 @@ import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.Farbe;
 import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
-import de.sinnix.judoturnier.model.Gruppengroesse;
+import de.sinnix.judoturnier.model.Gruppengroessen;
 import de.sinnix.judoturnier.model.MattenAnzahl;
 import de.sinnix.judoturnier.model.RandoriGruppenName;
 import de.sinnix.judoturnier.model.SeparateAlterklassen;
@@ -57,7 +57,7 @@ public class GewichtsklassenServiceTest {
 	private TurnierService            turnierService;
 	@InjectMocks
 	private GewichtsklassenService    gewichtsklassenService;
-	
+
 	private UUID v1UUID = WettkaempferFixtures.v1UUID;
 	private UUID v2UUID = WettkaempferFixtures.v2UUID;
 	private UUID v3UUID = WettkaempferFixtures.v3UUID;
@@ -71,7 +71,7 @@ public class GewichtsklassenServiceTest {
 	private UUID wk7UUID = WettkaempferFixtures.w7;
 	private UUID gwkgk1UUID = UUID.randomUUID();
 	private UUID gwkgk2UUID = UUID.randomUUID();
-	
+
 	@BeforeEach
 	void setup() {
 	}
@@ -189,7 +189,7 @@ public class GewichtsklassenServiceTest {
 		wettkaempferListe.add(new Wettkaempfer(wk1UUID, "Wettkaempfer 1", Geschlecht.m, Altersklasse.U11, new Verein(v1UUID, "Verein 1", uuid), 25.0, Optional.empty(), false, false, uuid));
 		wettkaempferListe.add(new Wettkaempfer(wk2UUID, "Wettkaempfer 2", Geschlecht.w, Altersklasse.U11, new Verein(v2UUID, "Verein 2", uuid), 27.0, Optional.empty(), false, false, uuid));
 
-		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroesse(2), new VariablerGewichtsteil(5.0), SeparateAlterklassen.ZUSAMMEN, new Wettkampfzeiten(Map.of()), uuid);
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroessen(Map.of(Altersklasse.U9, 2, Altersklasse.U11, 6)), new VariablerGewichtsteil(5.0), SeparateAlterklassen.ZUSAMMEN, new Wettkampfzeiten(Map.of()), uuid);
 		when(einstellungenService.ladeEinstellungen(any())).thenReturn(einstellungen);
 
 		List<GewichtsklassenGruppe> result = gewichtsklassenService.teileInGewichtsklassen(wettkaempferListe, uuid);
@@ -205,7 +205,7 @@ public class GewichtsklassenServiceTest {
 		wettkaempferListe.add(new Wettkaempfer(wk1UUID, "Wettkaempfer 1", Geschlecht.m, Altersklasse.U11, new Verein(v1UUID, "Verein 1", uuid), 25.0, Optional.empty(), false, false, uuid));
 		wettkaempferListe.add(new Wettkaempfer(wk2UUID, "Wettkaempfer 2", Geschlecht.w, Altersklasse.U11, new Verein(v2UUID, "Verein 2", uuid), 27.0, Optional.empty(), false, false, uuid));
 
-		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ALLE, new Gruppengroesse(2), new VariablerGewichtsteil(5.0), SeparateAlterklassen.ZUSAMMEN, new Wettkampfzeiten(Map.of()), uuid);
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ALLE, new Gruppengroessen(Map.of(Altersklasse.U9, 2, Altersklasse.U11, 6)), new VariablerGewichtsteil(5.0), SeparateAlterklassen.ZUSAMMEN, new Wettkampfzeiten(Map.of()), uuid);
 		when(einstellungenService.ladeEinstellungen(any())).thenReturn(einstellungen);
 
 		List<GewichtsklassenGruppe> result = gewichtsklassenService.teileInGewichtsklassen(wettkaempferListe, uuid);
@@ -225,7 +225,7 @@ public class GewichtsklassenServiceTest {
 		wettkaempferListe.add(new Wettkaempfer(wk4UUID, "Wettkaempfer 4", Geschlecht.m, Altersklasse.U13, new Verein(v4UUID, "Verein 4", uuid), 29.0, Optional.empty(), false, false, uuid));
 		wettkaempferListe.add(new Wettkaempfer(wk5UUID, "Wettkaempfer 5", Geschlecht.m, Altersklasse.U13, new Verein(v5UUID, "Verein 5", uuid), 31.0, Optional.empty(), false, false, uuid));
 
-		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroesse(6), new VariablerGewichtsteil(0.2), SeparateAlterklassen.ZUSAMMEN, new Wettkampfzeiten(Map.of()), uuid);
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroessen(Map.of(Altersklasse.U9, 6)), new VariablerGewichtsteil(0.2), SeparateAlterklassen.ZUSAMMEN, new Wettkampfzeiten(Map.of()), uuid);
 		when(einstellungenService.ladeEinstellungen(any())).thenReturn(einstellungen);
 
 		List<GewichtsklassenGruppe> result = gewichtsklassenService.teileInGewichtsklassen(wettkaempferListe, uuid);
@@ -263,7 +263,7 @@ public class GewichtsklassenServiceTest {
 		wettkaempferListe.add(new Wettkaempfer(wk4UUID, "Wettkaempfer 4", Geschlecht.m, Altersklasse.U9, new Verein(v4UUID, "Verein 4", uuid), 29.0, Optional.empty(), false, false, uuid));
 		wettkaempferListe.add(new Wettkaempfer(wk5UUID, "Wettkaempfer 5", Geschlecht.m, Altersklasse.U9, new Verein(v5UUID, "Verein 5", uuid), 31.0, Optional.empty(), false, false, uuid));
 
-		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroesse(3), new VariablerGewichtsteil(0.2), SeparateAlterklassen.ZUSAMMEN, new Wettkampfzeiten(Map.of()), uuid);
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroessen(Map.of(Altersklasse.U9, 3)), new VariablerGewichtsteil(0.2), SeparateAlterklassen.ZUSAMMEN, new Wettkampfzeiten(Map.of()), uuid);
 		when(einstellungenService.ladeEinstellungen(any())).thenReturn(einstellungen);
 
 		List<GewichtsklassenGruppe> result = gewichtsklassenService.teileInGewichtsklassen(wettkaempferListe, uuid);

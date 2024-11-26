@@ -6,12 +6,13 @@ import de.sinnix.judoturnier.fixtures.GewichtsklassenGruppeFixture;
 import de.sinnix.judoturnier.fixtures.MatteFixtures;
 import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.fixtures.WettkampfgruppeFixture;
+import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.BenutzerRolle;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
-import de.sinnix.judoturnier.model.Gruppengroesse;
+import de.sinnix.judoturnier.model.Gruppengroessen;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.MattenAnzahl;
 import de.sinnix.judoturnier.model.Runde;
@@ -82,7 +83,7 @@ class TurnierServiceTest {
 	@Test
 	void testErstelleWettkampfreihenfolgeAltersklasseRandori() {
 		List<GewichtsklassenGruppe> gewichtsklassenGruppen = GewichtsklassenGruppeFixture.gewichtsklassenGruppen;
-		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroesse(6), new VariablerGewichtsteil(0.2), SeparateAlterklassen.ZUSAMMEN, new Wettkampfzeiten(Map.of()), turnierUUID);
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroessen(Map.of(Altersklasse.U9, 6, Altersklasse.U11, 6)), new VariablerGewichtsteil(0.2), SeparateAlterklassen.ZUSAMMEN, new Wettkampfzeiten(Map.of()), turnierUUID);
 
 		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
 		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);
@@ -329,7 +330,7 @@ class TurnierServiceTest {
 		//   Gruppe4: 4 Teilnehmer => bleibt bei 4.          3 Begegnungen
 		//   Gruppe5: 3 Teilnehmer => wird auf 4 erweitert.  3 Begegnungen
 
-		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroesse(0), new VariablerGewichtsteil(0.2), SeparateAlterklassen.GETRENNT, new Wettkampfzeiten(Map.of()), turnierUUID);
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroessen(Map.of(Altersklasse.U9, 6)), new VariablerGewichtsteil(0.2), SeparateAlterklassen.GETRENNT, new Wettkampfzeiten(Map.of()), turnierUUID);
 
 		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
 		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);
@@ -392,7 +393,7 @@ class TurnierServiceTest {
 	@Test
 	void testMattenRundeIstKorrekt() {
 		List<GewichtsklassenGruppe> gewichtsklassenGruppen = GewichtsklassenGruppeFixture.gewichtsklassenGruppenZweiAltersklassen;
-		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroesse(6), new VariablerGewichtsteil(0.2), SeparateAlterklassen.GETRENNT, new Wettkampfzeiten(Map.of()), turnierUUID);
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroessen(Map.of(Altersklasse.U9, 6, Altersklasse.U11, 6, Altersklasse.U13, 6)), new VariablerGewichtsteil(0.2), SeparateAlterklassen.GETRENNT, new Wettkampfzeiten(Map.of()), turnierUUID);
 
 		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
 		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);

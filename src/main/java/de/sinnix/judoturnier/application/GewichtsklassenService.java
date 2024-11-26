@@ -83,7 +83,6 @@ public class GewichtsklassenService {
 		if (einstellungen.turnierTyp() == TurnierTyp.RANDORI) {
 			logger.info("Randori-Turnier");
 			logger.debug("Bei einem Randori-Turnier wird nicht nach geschlecht unterschieden, es wird daher keine Einteilung vorgenommen");
-			var gruppenGroesse = einstellungen.gruppengroesse().anzahl();
 			var wettkaempferNachAlter = gruppiereNachAlterklasse(wettkaempferListe);
 
 			// erstelle random Namen für die Gruppen
@@ -94,6 +93,7 @@ public class GewichtsklassenService {
 			gewichtsklassenRepository.findAll(turnierUUID).stream().forEach(gwg -> gwg.name().map(n -> aktuelleGruppenNamen.removeElement(n)));
 
 			for (List<Wettkaempfer> wks : wettkaempferNachAlter) {
+				var gruppenGroesse = einstellungen.gruppengroessen().altersklasseGruppengroesse().get(wks.get(0).altersklasse());
 				int numGroups = (wks.size() + gruppenGroesse - 1) / gruppenGroesse;
 				gruppenNamen = gruppenNamen.subList(numGroups, gruppenNamen.size());
 				result.addAll(erstelleGewichtsklassenGruppenRandori(wks, aktuelleGruppenNamen, gruppenGroesse, turnierUUID));
@@ -103,15 +103,16 @@ public class GewichtsklassenService {
 			List<List<Wettkaempfer>> gruppenNachGeschlecht = gruppiereNachGeschlecht(wettkaempferListe);
 			List<List<List<Wettkaempfer>>> gruppenNachGeschlechtUndAlter = new ArrayList<>();
 			var variablerGewichtsTeil = einstellungen.variablerGewichtsteil().variablerTeil();
-			var gruppenGroesse = einstellungen.gruppengroesse().anzahl();
 
 			for (List<Wettkaempfer> g : gruppenNachGeschlecht) {
 				List<List<Wettkaempfer>> gruppenNachAlter = gruppiereNachAlterklasse(g);
 				gruppenNachGeschlechtUndAlter.add(gruppenNachAlter);
 			}
-
 			result = gruppenNachGeschlechtUndAlter.stream()
-				.flatMap(gs -> gs.stream().flatMap(g -> erstelleGewichtsklassenGruppen(g, variablerGewichtsTeil, gruppenGroesse, turnierUUID).stream()))
+				.flatMap(gs -> gs.stream().flatMap(g -> {
+					var gruppenGroesse = einstellungen.gruppengroessen().altersklasseGruppengroesse().get(g.get(0).altersklasse());
+					return erstelleGewichtsklassenGruppen(g, variablerGewichtsTeil, gruppenGroesse, turnierUUID).stream();
+				}))
 				.collect(Collectors.toList());
 		}
 
