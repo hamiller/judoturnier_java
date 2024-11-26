@@ -1,0 +1,23 @@
+# see http://editorconfig.org for more details
+# the java class count is IntelliJ specific unfortunately https://github.com/editorconfig/editorconfig/issues/247
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+
+[{*.java}]
+indent_style = tab
+indent_size = 4
+ij_java_class_count_to_use_import_on_demand = 9999
+ij_java_names_count_to_use_import_on_demand = 9999
+
+[{*.yml,*.yaml}]
+indent_style = tab
+indent_size = 2
+
+[{*.html,*.hbs,*.js,*.css}]
+indent_style = space
+indent_size = 2

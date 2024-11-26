@@ -1,56 +1,57 @@
 <!DOCTYPE html>
 <html lang="de">
-  <head>
+<head>
   <title>Judo-Turniersoftware</title>
   <link rel="stylesheet" href="/css/interface.css">
   <link rel="stylesheet" href="/css/mainstyle.css">
   <style type="text/css">
-      @page {
-        size: A4 portrait;
-        margin: 20mm 15mm 20mm 15mm;
-        
-        @bottom-right-corner {
-          content: "Seite " counter(page);
-        }
-      }
+    @page {
+      size: A4 portrait;
+      margin: 20mm 15mm 20mm 15mm;
 
-      tr {
-        vertical-align: middle;
+      @bottom-right-corner {
+        content: "Seite " counter(page);
       }
+    }
+
+    tr {
+      vertical-align: middle;
+    }
   </style>
 </head>
 <body>
 <!--  <script src="/js/paged.polyfill.min.js"></script>-->
 
-  <div id="content">
-    <div class="bodyheader no-print">
-    </div>
-    <div class="">
-      
-        <div class="wettkampfgruppe vertikal">
-          <div>
-            <ul>
+<div id="content">
+  <div class="bodyheader no-print">
+  </div>
+  <div class="">
+
+    <div class="wettkampfgruppe vertikal">
+      <div>
+        <ul>
           {{#each gruppen}}
             <li class="groupsrow">
               <div>{{altersKlasse}}</div>
               <div>
                 <table style="width: 100%;">
-                <tbody>
-                {{#each teilnehmer}}
-                  <tr>
-                    <td class="wettkaempfer name " style="width: 220px;">{{name}}</td><td style="width: 200px;">{{verein.name}}</td>
-                  </tr>
-                {{/each}}
-                </tbody>
+                  <tbody>
+                  {{#each teilnehmer}}
+                    <tr>
+                      <td class="wettkaempfer name " style="width: 220px;">{{name}}</td>
+                      <td style="width: 200px;">{{verein.name}}</td>
+                    </tr>
+                  {{/each}}
+                  </tbody>
                 </table>
               </div>
             </li>
           {{/each}}
-          </ul>
-          </div>
-        </div>
+        </ul>
+      </div>
     </div>
   </div>
+</div>
 </body>
 
 </html>

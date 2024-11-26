@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
-  <head>
+<head>
   <title>Judo-Turniersoftware</title>
   <link rel="stylesheet" href="/css/interface.css">
   <link rel="stylesheet" href="/css/mainstyle.css">
@@ -8,7 +8,7 @@
     @page {
       size: A4 landscape;
       margin: 20mm 15mm 20mm 15mm;
-      
+
       @bottom-right-corner {
         content: "Seite " counter(page);
       }
@@ -17,49 +17,51 @@
     tr {
       vertical-align: middle;
     }
-</style>
+  </style>
 <body>
-  <script src="/js/paged.polyfill.min.js"></script>
-  <div>
-    <div class="bodyheader no-print">
-    </div>
-    <div class="content">
-      {{#each matten}}
-        <div class="wettkampfgruppe horizontal">
-          <div class="listeneintrag-titel">Matte {{id}}</div>
-
-          {{#each gruppenRunden}}
-            <div class="table">
-              {{#each runde as |runden rundenindex|}}
-                {{#each begegnungen}}
-                  <div class="table-row">
-                    {{#if (istGleich wettkaempfer1.name null)}}
-                      <div class="gruppentitel_2">
-                        Pause<br>
-                        (Ansonsten wäre nun Gruppe {{runden.gruppe.name}} an der Reihe)
-                      </div>
-                    {{else}}
-                      <div class="table-cell column1">
-                        {{#if (istGleich @rundenindex 0)}}
-                          <div class="gruppentitel_2">
-                            Gruppe {{runden.gruppe.name}}, Runde {{runden.gruppenRunde}} (Wettkampf Nr. {{runden.mattenRunde}} auf Matte {{../../../id}}, insgesamt {{runden.rundeGesamt}})
-                          </div>
-                        {{/if}}
-                      </div>
-                    
-                      <div class="table-cell columnName wettkaempfer_name {{wettkaempfer1.farbe.get}}">{{wettkaempfer1.name}}</div><div class="table-cell columnVerein">({{wettkaempfer1.verein.name}})</div>
-                      <div class="table-cell columnVS">vs</div> 
-                      <div class="table-cell columnName wettkaempfer_name {{wettkaempfer2.farbe.get}}">{{wettkaempfer2.name}}</div><div class="table-cell columnVerein">({{wettkaempfer2.verein.name}})</div>
-                    {{/if}}
-                  </div>
-                {{/each}}
-              {{/each}}
-            </div>
-          {{/each}}
-        </div>
-      {{/each}}
-    </div>
+<script src="/js/paged.polyfill.min.js"></script>
+<div>
+  <div class="bodyheader no-print">
   </div>
+  <div class="content">
+    {{#each matten}}
+      <div class="wettkampfgruppe horizontal">
+        <div class="listeneintrag-titel">Matte {{id}}</div>
+
+        {{#each gruppenRunden}}
+          <div class="table">
+            {{#each runde as |runden rundenindex|}}
+              {{#each begegnungen}}
+                <div class="table-row">
+                  {{#if (istGleich wettkaempfer1.name null)}}
+                    <div class="gruppentitel_2">
+                      Pause<br>
+                      (Ansonsten wäre nun Gruppe {{runden.gruppe.name}} an der Reihe)
+                    </div>
+                  {{else}}
+                    <div class="table-cell column1">
+                      {{#if (istGleich @rundenindex 0)}}
+                        <div class="gruppentitel_2">
+                          Gruppe {{runden.gruppe.name}}, Runde {{runden.gruppenRunde}} (Wettkampf Nr. {{runden.mattenRunde}} auf Matte {{../../../id}}, insgesamt {{runden.rundeGesamt}})
+                        </div>
+                      {{/if}}
+                    </div>
+
+                    <div class="table-cell columnName wettkaempfer_name {{wettkaempfer1.farbe.get}}">{{wettkaempfer1.name}}</div>
+                    <div class="table-cell columnVerein">({{wettkaempfer1.verein.name}})</div>
+                    <div class="table-cell columnVS">vs</div>
+                    <div class="table-cell columnName wettkaempfer_name {{wettkaempfer2.farbe.get}}">{{wettkaempfer2.name}}</div>
+                    <div class="table-cell columnVerein">({{wettkaempfer2.verein.name}})</div>
+                  {{/if}}
+                </div>
+              {{/each}}
+            {{/each}}
+          </div>
+        {{/each}}
+      </div>
+    {{/each}}
+  </div>
+</div>
 </body>
 
 </html>

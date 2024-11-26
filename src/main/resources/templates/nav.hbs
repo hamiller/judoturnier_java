@@ -3,7 +3,7 @@
       <md-filled-button id="theming-anchor">☰</md-filled-button>
       <md-menu id="theming-menu" anchor="theming-anchor">
         {{#if turnierid}}
-        <md-menu-item href="/turnier/{{turnierid}}">
+          <md-menu-item href="/turnier/{{turnierid}}">
             <div slot="headline">Übersicht</div>
         </md-menu-item>
         <md-menu-item href="/turnier/{{turnierid}}/vereine">
@@ -27,13 +27,13 @@
         {{/if}}
       </md-menu>
     </span>
-    {{#if isadmin}}
+  {{#if isadmin}}
     <md-outlined-button id="btn_alle_turniere" href="/turniere">Turniere-/Nutzer-Verwaltung</md-outlined-button>
-    {{/if}}
+  {{/if}}
 </nav>
 
 <script type="text/javascript">
-    document.body.querySelector("#theming-anchor").addEventListener("click", () => {
-        document.body.querySelector("#theming-menu").show();
-    });
+  document.body.querySelector("#theming-anchor").addEventListener("click", () => {
+    document.body.querySelector("#theming-menu").show();
+  });
 </script>

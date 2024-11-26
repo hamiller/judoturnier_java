@@ -1,201 +1,213 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    {{> header}}
+  {{> header}}
 </head>
 <body>
 {{> title}}
 {{> nav}}
 
 <div>
-    <div class="when_mobile_hide">Aktuelle Begegnung {{begegnungid}}</div>
-    <form id="wertungen" action="/turnier/{{turnierid}}/begegnungen/randori/{{begegnungid}}" method="POST">
-        <div class="ergebnis">
-            <div class="ergebnis_eintrag weiss">
-                <div class="wettkaempfer name">
-                    <label>{{begegnung.wettkaempfer1.name}}</label>
-                    <label class="{{begegnung.wettkaempfer1.farbe.get}}">{{begegnung.wettkaempfer1.farbe.get}}</label>
-                    <label class="centertext when_mobile_hide">{{begegnung.wettkaempfer1.id}}</label>
-                    <label class="when_mobile_hide">{{begegnung.wettkaempfer1.verein.name}}</label>
-                </div>
-                <div class="slider-container">
-                    <label>Vielfalt</label>
-                    <md-slider step="1" ticks min="1" max="6" id="vielfalt1-slider" oninput="updateInputValue('vielfalt1', this.value)"></md-slider>
-                    <input {{disable enableEditing}} type="hidden" name="vielfalt1" id="vielfalt1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.vielfaltWettkaempfer1}}{{/optionalFn}} />
-                </div>
-                <div class="slider-container">
-                    <label>Kampfgeist</label>
-                    <md-slider step="1" ticks min="1" max="6" id="kampfgeist1-slider" oninput="updateInputValue('kampfgeist1', this.value)"></md-slider>
-                    <input {{disable enableEditing}} type="hidden" name="kampfgeist1" id="kampfgeist1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfgeistWettkaempfer1}}{{/optionalFn}} />
-                </div>
-                <div class="slider-container">
-                    <label>Technik</label>
-                    <md-slider step="1" ticks min="1" max="6" id="technik1-slider" oninput="updateInputValue('technik1', this.value)"></md-slider>
-                    <input {{disable enableEditing}} type="hidden" name="technik1" id="technik1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.technikWettkaempfer1}}{{/optionalFn}} />
-                </div>
-                <div class="slider-container">
-                    <label>Stil</label>
-                    <md-slider step="1" ticks min="1" max="6" id="stil1-slider" oninput="updateInputValue('stil1', this.value)"></md-slider>
-                    <input {{disable enableEditing}} type="hidden" name="stil1" id="stil1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer1}}{{/optionalFn}} />
-                </div>
-                <div class="allewertungen when_mobile_toggle">
-                    {{#each begegnung.alleWertungen}}
-                        <span class="row_small bewerterinfo">Kampfrichter {{truncate this.benutzer.id 5}}</span>
-                        <span class="row_small"><label>Vielfalt</label>{{this.vielfaltWettkaempfer1}}</span>
-                        <span class="row_small"><label>Kampfgeist</label>{{this.kampfgeistWettkaempfer1}}</span>
-                        <span class="row_small"><label>Technik</label>{{this.technikWettkaempfer1}}</span>
-                        <span class="row_small"><label>Stil</label>{{this.kampfstilWettkaempfer1}}</span>
-                    {{/each}}
-                </div>
-            </div>
-
-            <div class="ergebnis_eintrag rot">
-                <div class="wettkaempfer name">
-                    <label>{{begegnung.wettkaempfer2.name}}</label>
-                    <label class="{{begegnung.wettkaempfer2.farbe.get}}">{{begegnung.wettkaempfer2.farbe.get}}</label>
-                    <label class="centertext when_mobile_hide">{{begegnung.wettkaempfer2.id}}</label>
-                    <label class="when_mobile_hide">{{begegnung.wettkaempfer2.verein.name}}</label>
-                </div>
-                <div class="slider-container">
-                    <label>Vielfalt</label>
-                    <md-slider step="1" ticks min="1" max="6" id="vielfalt2-slider" oninput="updateInputValue('vielfalt2', this.value)"></md-slider>
-                    <input {{disable enableEditing}} type="hidden" name="vielfalt2" id="vielfalt2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.vielfaltWettkaempfer2}}{{/optionalFn}} />
-                </div>
-                <div class="slider-container">
-                    <label>Kampfgeist</label>
-                    <md-slider step="1" ticks min="1" max="6" id="kampfgeist2-slider" oninput="updateInputValue('kampfgeist2', this.value)"></md-slider>
-                    <input {{disable enableEditing}} type="hidden" name="kampfgeist2" id="kampfgeist2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfgeistWettkaempfer2}}{{/optionalFn}} />
-                </div>
-                <div class="slider-container">
-                    <label>Technik</label>
-                    <md-slider step="1" ticks min="1" max="6" id="technik2-slider" oninput="updateInputValue('technik2', this.value)"></md-slider>
-                    <input {{disable enableEditing}} type="hidden" name="technik2" id="technik2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.technikWettkaempfer2}}{{/optionalFn}} />
-                </div>
-                <div class="slider-container">
-                    <label>Stil</label>
-                    <md-slider step="1" ticks min="1" max="6" id="stil2-slider" oninput="updateInputValue('stil2', this.value)"></md-slider>
-                    <input {{disable enableEditing}} type="hidden" name="stil2" id="stil2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer2}}{{/optionalFn}} />
-                </div>
-                <div class="allewertungen when_mobile_toggle">
-                    {{#each begegnung.alleWertungen}}
-                        <span class="row_small bewerterinfo">Kampfrichter {{truncate this.benutzer.id 5}}</span>
-                        <span class="row_small"><label>Vielfalt</label>{{this.vielfaltWettkaempfer2}}</span>
-                        <span class="row_small"><label>Kampfgeist</label>{{this.kampfgeistWettkaempfer2}}</span>
-                        <span class="row_small"><label>Technik</label>{{this.technikWettkaempfer2}}</span>
-                        <span class="row_small"><label>Stil</label>{{this.kampfstilWettkaempfer2}}</span>
-                    {{/each}}
-                </div>
-            </div>
+  <div class="when_mobile_hide">Aktuelle Begegnung {{begegnungid}}</div>
+  <form id="wertungen" action="/turnier/{{turnierid}}/begegnungen/randori/{{begegnungid}}" method="POST">
+    <div class="ergebnis">
+      <div class="ergebnis_eintrag weiss">
+        <div class="wettkaempfer name">
+          <label>{{begegnung.wettkaempfer1.name}}</label>
+          <label class="{{begegnung.wettkaempfer1.farbe.get}}">{{begegnung.wettkaempfer1.farbe.get}}</label>
+          <label class="centertext when_mobile_hide">{{begegnung.wettkaempfer1.id}}</label>
+          <label class="when_mobile_hide">{{begegnung.wettkaempfer1.verein.name}}</label>
         </div>
-    </form>
+        <div class="slider-container">
+          <label>Vielfalt</label>
+          <md-slider step="1" ticks min="1" max="6" id="vielfalt1-slider" oninput="updateInputValue('vielfalt1', this.value)"></md-slider>
+          <input {{disable enableEditing}} type="hidden" name="vielfalt1" id="vielfalt1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.vielfaltWettkaempfer1}}{{/optionalFn}} />
+        </div>
+        <div class="slider-container">
+          <label>Kampfgeist</label>
+          <md-slider step="1" ticks min="1" max="6" id="kampfgeist1-slider" oninput="updateInputValue('kampfgeist1', this.value)"></md-slider>
+          <input {{disable enableEditing}} type="hidden" name="kampfgeist1" id="kampfgeist1" required value={{#optionalFn
+            begegnung.kampfrichterWertung}}{{this.kampfgeistWettkaempfer1}}{{/optionalFn}} />
+        </div>
+        <div class="slider-container">
+          <label>Technik</label>
+          <md-slider step="1" ticks min="1" max="6" id="technik1-slider" oninput="updateInputValue('technik1', this.value)"></md-slider>
+          <input {{disable enableEditing}} type="hidden" name="technik1" id="technik1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.technikWettkaempfer1}}{{/optionalFn}} />
+        </div>
+        <div class="slider-container">
+          <label>Stil</label>
+          <md-slider step="1" ticks min="1" max="6" id="stil1-slider" oninput="updateInputValue('stil1', this.value)"></md-slider>
+          <input {{disable enableEditing}} type="hidden" name="stil1" id="stil1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer1}}{{/optionalFn}} />
+        </div>
+        <div class="allewertungen when_mobile_toggle">
+          {{#each begegnung.alleWertungen}}
+            <span class="row_small bewerterinfo">Kampfrichter {{truncate this.benutzer.id 5}}</span>
+            <span class="row_small"><label>Vielfalt</label>{{this.vielfaltWettkaempfer1}}</span>
+            <span class="row_small"><label>Kampfgeist</label>{{this.kampfgeistWettkaempfer1}}</span>
+            <span class="row_small"><label>Technik</label>{{this.technikWettkaempfer1}}</span>
+            <span class="row_small"><label>Stil</label>{{this.kampfstilWettkaempfer1}}</span>
+          {{/each}}
+        </div>
+      </div>
+
+      <div class="ergebnis_eintrag rot">
+        <div class="wettkaempfer name">
+          <label>{{begegnung.wettkaempfer2.name}}</label>
+          <label class="{{begegnung.wettkaempfer2.farbe.get}}">{{begegnung.wettkaempfer2.farbe.get}}</label>
+          <label class="centertext when_mobile_hide">{{begegnung.wettkaempfer2.id}}</label>
+          <label class="when_mobile_hide">{{begegnung.wettkaempfer2.verein.name}}</label>
+        </div>
+        <div class="slider-container">
+          <label>Vielfalt</label>
+          <md-slider step="1" ticks min="1" max="6" id="vielfalt2-slider" oninput="updateInputValue('vielfalt2', this.value)"></md-slider>
+          <input {{disable enableEditing}} type="hidden" name="vielfalt2" id="vielfalt2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.vielfaltWettkaempfer2}}{{/optionalFn}} />
+        </div>
+        <div class="slider-container">
+          <label>Kampfgeist</label>
+          <md-slider step="1" ticks min="1" max="6" id="kampfgeist2-slider" oninput="updateInputValue('kampfgeist2', this.value)"></md-slider>
+          <input {{disable enableEditing}} type="hidden" name="kampfgeist2" id="kampfgeist2" required value={{#optionalFn
+            begegnung.kampfrichterWertung}}{{this.kampfgeistWettkaempfer2}}{{/optionalFn}} />
+        </div>
+        <div class="slider-container">
+          <label>Technik</label>
+          <md-slider step="1" ticks min="1" max="6" id="technik2-slider" oninput="updateInputValue('technik2', this.value)"></md-slider>
+          <input {{disable enableEditing}} type="hidden" name="technik2" id="technik2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.technikWettkaempfer2}}{{/optionalFn}} />
+        </div>
+        <div class="slider-container">
+          <label>Stil</label>
+          <md-slider step="1" ticks min="1" max="6" id="stil2-slider" oninput="updateInputValue('stil2', this.value)"></md-slider>
+          <input {{disable enableEditing}} type="hidden" name="stil2" id="stil2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer2}}{{/optionalFn}} />
+        </div>
+        <div class="allewertungen when_mobile_toggle">
+          {{#each begegnung.alleWertungen}}
+            <span class="row_small bewerterinfo">Kampfrichter {{truncate this.benutzer.id 5}}</span>
+            <span class="row_small"><label>Vielfalt</label>{{this.vielfaltWettkaempfer2}}</span>
+            <span class="row_small"><label>Kampfgeist</label>{{this.kampfgeistWettkaempfer2}}</span>
+            <span class="row_small"><label>Technik</label>{{this.technikWettkaempfer2}}</span>
+            <span class="row_small"><label>Stil</label>{{this.kampfstilWettkaempfer2}}</span>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
 <div class="">
-    <div class="nav_btn-container">
-        <div class="">
-            <md-filled-tonal-button type="button" id="nav_cancel" class="" onclick="navigate(); return false;">
-                Abbrechen
-                <svg slot="icon" height="18" viewBox="0 -960 960 960" width="18" fill="#5f6368"><path d="m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-            </md-filled-tonal-button>
-        </div>
-        <div class="">
-        {{#if enableEditing}}
-            <md-filled-button type="button" id="nav_submit" class="" onclick="save(event);">
-                Ergebnis speichern
-                <svg slot="icon" height="18" viewBox="0 -960 720 720" width="18" fill="#5f6368"><path d="m 720,-800 v 480 q 0,33 -23.5,56.5 Q 673,-240 640,-240 H 80 Q 47,-240 23.5,-263.5 0,-287 0,-320 V -880 Q 0,-913 23.5,-936.5 47,-960 80,-960 h 480 z m -80,34 -114,-114 H 80 v 560 h 560 z m -280,406 q 50,0 85,-35 35,-35 35,-85 0,-50 -35,-85 -35,-35 -85,-35 -50,0 -85,35 -35,35 -35,85 0,50 35,85 35,35 85,35 z M 120,-680 H 480 V -840 H 120 Z m -40,-86 v 446 -560 z"/></svg>
-            </md-filled-button>
-        {{/if}}
-        </div>
+  <div class="nav_btn-container">
+    <div class="">
+      <md-filled-tonal-button type="button" id="nav_cancel" class="" onclick="navigate(); return false;">
+        Abbrechen
+        <svg slot="icon" height="18" viewBox="0 -960 960 960" width="18" fill="#5f6368">
+          <path
+            d="m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
+        </svg>
+      </md-filled-tonal-button>
     </div>
-    <div class="nav_btn-container">
-        <div class="">
-            <md-outlined-button type="button" id="nav_back" class="" onclick="navigate('{{begegnung.vorherigeBegegnungId}}');" {{#if begegnung.vorherigeBegegnungId}}{{else}}disabled{{/if}}>
-                Vorheriger Kampf
-                <svg slot="icon" height="18" viewBox="0 -960 960 960" width="18" fill="#5f6368"><path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/></svg>
-            </md-outlined-button>
-        </div>
+    <div class="">
+      {{#if enableEditing}}
+        <md-filled-button type="button" id="nav_submit" class="" onclick="save(event);">
+          Ergebnis speichern
+          <svg slot="icon" height="18" viewBox="0 -960 720 720" width="18" fill="#5f6368">
+            <path
+              d="m 720,-800 v 480 q 0,33 -23.5,56.5 Q 673,-240 640,-240 H 80 Q 47,-240 23.5,-263.5 0,-287 0,-320 V -880 Q 0,-913 23.5,-936.5 47,-960 80,-960 h 480 z m -80,34 -114,-114 H 80 v 560 h 560 z m -280,406 q 50,0 85,-35 35,-35 35,-85 0,-50 -35,-85 -35,-35 -85,-35 -50,0 -85,35 -35,35 -35,85 0,50 35,85 35,35 85,35 z M 120,-680 H 480 V -840 H 120 Z m -40,-86 v 446 -560 z"/>
+          </svg>
+        </md-filled-button>
+      {{/if}}
+    </div>
+  </div>
+  <div class="nav_btn-container">
+    <div class="">
+      <md-outlined-button type="button" id="nav_back" class="" onclick="navigate('{{begegnung.vorherigeBegegnungId}}');" {{#if begegnung.vorherigeBegegnungId}}{{else}}disabled{{/if}}>
+        Vorheriger Kampf
+        <svg slot="icon" height="18" viewBox="0 -960 960 960" width="18" fill="#5f6368">
+          <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/>
+        </svg>
+      </md-outlined-button>
+    </div>
 
-        <div class="">
-            <md-outlined-button type="button" id="nav_next" class="" onclick="navigate('{{begegnung.nachfolgerBegegnungId}}');" trailing-icon="true" {{#if begegnung.nachfolgerBegegnungId}}{{else}}disabled{{/if}}>
-                Nächster Kampf
-                <svg slot="icon" height="18" viewBox="0 -960 960 960" width="18" fill="#5f6368"><path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/></svg>
-            </md-outlined-button>
-        </div>
+    <div class="">
+      <md-outlined-button type="button" id="nav_next" class="" onclick="navigate('{{begegnung.nachfolgerBegegnungId}}');" trailing-icon="true"
+                          {{#if begegnung.nachfolgerBegegnungId}}{{else}}disabled{{/if}}>
+        Nächster Kampf
+        <svg slot="icon" height="18" viewBox="0 -960 960 960" width="18" fill="#5f6368">
+          <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/>
+        </svg>
+      </md-outlined-button>
     </div>
+  </div>
 </div>
 
 {{> footer}}
 
 <script type="text/javascript">
-    const navigate = async (begegnungid) => {
-        console.log("navigation called", begegnungid);
-        var uriEnd = "";
-        if (begegnungid) {
-            console.log("lade Begegnung " + begegnungid);
-            uriEnd = "/" + begegnungid;
+  const navigate = async (begegnungid) => {
+    console.log("navigation called", begegnungid);
+    var uriEnd = "";
+    if (begegnungid) {
+      console.log("lade Begegnung " + begegnungid);
+      uriEnd = "/" + begegnungid;
+    }
+    fetch('/turnier/{{turnierid}}/begegnungen/randori' + uriEnd, {method: 'GET', redirect: 'follow'})
+      .then(response => {
+        if (response.redirected) {
+          window.location.href = response.url;
+        } else if (response.ok) {
+          window.location.href = response.url;
+        } else {
+          console.error('Error:', response.statusText);
         }
-        fetch('/turnier/{{turnierid}}/begegnungen/randori' + uriEnd, {method: 'GET', redirect: 'follow'})
-                .then(response => {
-                    if (response.redirected) {
-                        window.location.href = response.url;
-                    } else if (response.ok) {
-                        window.location.href = response.url;
-                    } else {
-                        console.error('Error:', response.statusText);
-                    }
-                })
-    };
+      })
+  };
 
 
+  const updateInputValue = (name, value) => {
+    var input = document.getElementById(name);
+    input.value = value;
+  };
 
-    const updateInputValue = (name, value) => {
-        var input = document.getElementById(name);
-        input.value = value;
-    };
+  const validateForm = (event) => {
+    var a1 = document.getElementById("vielfalt1").value;
+    var a2 = document.getElementById("kampfgeist1").value;
+    var a3 = document.getElementById("technik1").value;
+    var a4 = document.getElementById("stil1").value;
+    var b1 = document.getElementById("vielfalt2").value;
+    var b2 = document.getElementById("kampfgeist2").value;
+    var b3 = document.getElementById("technik2").value;
+    var b4 = document.getElementById("stil2").value;
+    return (a1 != "/" && a2 != "/" && a3 != "/" && a4 != "/" && b1 != "/" && b2 != "/" && b3 != "/" && b4 != "/");
+  }
 
-    const validateForm = (event) => {
-        var a1 = document.getElementById("vielfalt1").value;
-        var a2 = document.getElementById("kampfgeist1").value;
-        var a3 = document.getElementById("technik1").value;
-        var a4 = document.getElementById("stil1").value;
-        var b1 = document.getElementById("vielfalt2").value;
-        var b2 = document.getElementById("kampfgeist2").value;
-        var b3 = document.getElementById("technik2").value;
-        var b4 = document.getElementById("stil2").value;
-        return (a1 != "/" && a2 != "/" && a3 != "/" && a4 != "/" && b1 != "/" && b2 != "/" && b3 != "/" && b4 != "/");
+  const setActiveButton = (inputId) => {
+    const element = document.getElementById(inputId);
+    var value = element.value;
+    console.log("set active", inputId, value)
+    value = value == "/" ? 1 : value;
+    element.value = value;
+    document.querySelector('#' + inputId + '-slider').value = value;
+  };
+
+  document.addEventListener('DOMContentLoaded', function () {
+    setActiveButton('vielfalt1');
+    setActiveButton('kampfgeist1');
+    setActiveButton('technik1');
+    setActiveButton('stil1');
+    setActiveButton('vielfalt2');
+    setActiveButton('kampfgeist2');
+    setActiveButton('technik2');
+    setActiveButton('stil2');
+  });
+
+  const save = async (event) => {
+    console.log("save event", event);
+    var form = document.getElementById("wertungen");
+    var isValid = validateForm(event);
+    if (isValid) {
+      form.submit();
+      return;
     }
 
-    const setActiveButton = (inputId) => {
-        const element = document.getElementById(inputId);
-        var value = element.value;
-        console.log("set active", inputId, value)
-        value = value == "/" ? 1 : value;
-        element.value = value;
-        document.querySelector('#' + inputId + '-slider').value = value;
-    };
-
-    document.addEventListener('DOMContentLoaded', function () {
-        setActiveButton('vielfalt1');
-        setActiveButton('kampfgeist1');
-        setActiveButton('technik1');
-        setActiveButton('stil1');
-        setActiveButton('vielfalt2');
-        setActiveButton('kampfgeist2');
-        setActiveButton('technik2');
-        setActiveButton('stil2');
-    });
-
-    const save = async (event) => {
-        console.log("save event", event);
-        var form = document.getElementById("wertungen");
-        var isValid = validateForm(event);
-        if (isValid) {
-            form.submit();
-            return;
-        }
-
-        alert("Bitte alle Wertungen angeben.");
-        event.preventDefault();
-    };
+    alert("Bitte alle Wertungen angeben.");
+    event.preventDefault();
+  };
 </script>
 </body>
 </html>

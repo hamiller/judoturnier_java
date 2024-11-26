@@ -4,40 +4,40 @@
   {{> header}}
 </head>
 <body>
-  {{> title }}
-  {{> nav }}
+{{> title }}
+{{> nav }}
 
-  <div>
-    <div class="bodyheader">
-      <h2>Gemeldete Wettkämpfer</h2>
-      <div>Anzahl der Kämpfer: {{anzahlwk}}</div>
-      
-      <div class="actions">
-<!--        <button onclick="window.location.href='/turnier/{{turnierid}}/wettkaempfer-neu';" ><span class="material-icons md-48 centered" title="Weitere Wettkämpfer eintragen">person_add</span> Weitere Wettkämpfer eintragen</button>-->
-          <md-outlined-button href="/turnier/{{turnierid}}/wettkaempfer-neu">Weitere Wettkämpfer eintragen</md-outlined-button>
-      </div>
+<div>
+  <div class="bodyheader">
+    <h2>Gemeldete Wettkämpfer</h2>
+    <div>Anzahl der Kämpfer: {{anzahlwk}}</div>
+
+    <div class="actions">
+      <!--        <button onclick="window.location.href='/turnier/{{turnierid}}/wettkaempfer-neu';" ><span class="material-icons md-48 centered" title="Weitere Wettkämpfer eintragen">person_add</span> Weitere Wettkämpfer eintragen</button>-->
+      <md-outlined-button href="/turnier/{{turnierid}}/wettkaempfer-neu">Weitere Wettkämpfer eintragen</md-outlined-button>
     </div>
+  </div>
 
-      {{#if prevsuccess}}
-          <div class="infomsg">Wettkämpfer {{prevsuccess}} wurde erfolgreich editiert/angelegt.</div>
-      {{/if}}
-      {{#if preverror}}
-          <div class="errormsg">Der Wettkämpfer konnte nicht editiert/angelegt werden: {{preverror}}</div>
-      {{/if}}
-    
-    <ul class="wettkaempferliste generalcontent">
-      <li class="wettkaempferliste-wettkaempfer listeneintrag ">
-          <div class="listeneintrag-titel"><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=name">Name</a></div>
-          <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=verein">Verein</a></div>
-          <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=geschlecht">Geschlecht</a></div>
-          <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=altersklasse">Altersklasse</a></div>
-          <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=gewicht">Gewicht</a></div>
-          <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=geprueft">Geprüft</a></div>
-          <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=gedruckt">Gedruckt</a></div>
-          <div>Bearbeiten</div>
-      </li>
-      {{#kaempferListe}}
-      <li class="wettkaempferliste-wettkaempfer listeneintrag {{istLeer altersklasse geschlecht verein gewicht}}" >
+  {{#if prevsuccess}}
+    <div class="infomsg">Wettkämpfer {{prevsuccess}} wurde erfolgreich editiert/angelegt.</div>
+  {{/if}}
+  {{#if preverror}}
+    <div class="errormsg">Der Wettkämpfer konnte nicht editiert/angelegt werden: {{preverror}}</div>
+  {{/if}}
+
+  <ul class="wettkaempferliste generalcontent">
+    <li class="wettkaempferliste-wettkaempfer listeneintrag ">
+      <div class="listeneintrag-titel"><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=name">Name</a></div>
+      <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=verein">Verein</a></div>
+      <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=geschlecht">Geschlecht</a></div>
+      <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=altersklasse">Altersklasse</a></div>
+      <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=gewicht">Gewicht</a></div>
+      <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=geprueft">Geprüft</a></div>
+      <div><a href="/turnier/{{turnierid}}/wettkaempfer?sortingHeader=gedruckt">Gedruckt</a></div>
+      <div>Bearbeiten</div>
+    </li>
+    {{#kaempferListe}}
+      <li class="wettkaempferliste-wettkaempfer listeneintrag {{istLeer altersklasse geschlecht verein gewicht}}">
         <div class="listeneintrag-titel">{{name}}</div>
         <div>{{verein.name}}</div>
         <div>{{geschlecht}}</div>
@@ -50,28 +50,28 @@
           <a href="#" onclick="deleteWK('{{ id }}')"><span class="material-icons">person_remove</span></a>
         </div>
       </li>
-      {{/kaempferListe}}
-    </ul>
-  </div>
+    {{/kaempferListe}}
+  </ul>
+</div>
 
-  {{> footer}}
-  <script type="text/javascript">
-      const deleteWK = async (id) => {
-          var sicher = confirm("ACHTUNG\n\nHiermit wird der Wettkämpfer gelöscht!\n\nSind sie sicher?");
-          if (sicher) {
-              fetch("/turnier/{{turnierid}}/wettkaempfer/" + id, {method: "DELETE", redirect: 'follow'})
-                      .then(response => {
-                          if (response.redirected) {
-                              window.location.href = response.url;
-                          } else if (response.ok) {
-                              window.location.reload();
-                          } else {
-                              console.error('Error:', response.statusText);
-                          }
-                      })
-                      .catch(error => console.error("Error deleting user:", error));
+{{> footer}}
+<script type="text/javascript">
+  const deleteWK = async (id) => {
+    var sicher = confirm("ACHTUNG\n\nHiermit wird der Wettkämpfer gelöscht!\n\nSind sie sicher?");
+    if (sicher) {
+      fetch("/turnier/{{turnierid}}/wettkaempfer/" + id, {method: "DELETE", redirect: 'follow'})
+        .then(response => {
+          if (response.redirected) {
+            window.location.href = response.url;
+          } else if (response.ok) {
+            window.location.reload();
+          } else {
+            console.error('Error:', response.statusText);
           }
-      };
-  </script>
+        })
+        .catch(error => console.error("Error deleting user:", error));
+    }
+  };
+</script>
 </body>
 </html>

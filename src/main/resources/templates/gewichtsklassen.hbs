@@ -1,111 +1,120 @@
 <!DOCTYPE html>
 <html lang="de">
-  {{> header}}
+{{> header}}
 <body>
-  {{> title }}
-  {{> nav }}
-  
-  <div>
-    <div class="bodyheader">
-      <h2>Gewichtsklassen</h2>
-      <div class="{{istWarnung anzahlUnterschiedlich}}">Anzahl der Kämpfer insgesamt: {{anzahlwk}}</div>
-      <div class="{{istWarnung anzahlUnterschiedlich}}">Anzahl der Kämpfer in Gruppen: {{anzahlwkInGroups}}</div>
-    </div>
+{{> title }}
+{{> nav }}
 
-    <form id="gewichtsklassenzuordnungformular" action="/turnier/{{turnierid}}/gewichtsklassen" method="POST">
-      <div class="navbar_fixed">
+<div>
+  <div class="bodyheader">
+    <h2>Gewichtsklassen</h2>
+    <div class="{{istWarnung anzahlUnterschiedlich}}">Anzahl der Kämpfer insgesamt: {{anzahlwk}}</div>
+    <div class="{{istWarnung anzahlUnterschiedlich}}">Anzahl der Kämpfer in Gruppen: {{anzahlwkInGroups}}</div>
+  </div>
+
+  <form id="gewichtsklassenzuordnungformular" action="/turnier/{{turnierid}}/gewichtsklassen" method="POST">
+    <div class="navbar_fixed">
           <span style="position: relative">
             <md-outlined-button type="button" id="renewGewichtsklassen">Alle Gewichtsklassen neu zuordnen</md-outlined-button>
             <md-outlined-button type="button" id="submitFormular">Zuordnungen speichern</md-outlined-button>
           </span>
-      </div>
-      <div class="grid">
+    </div>
+    <div class="grid">
 
-        {{#if standardturnier}}
+      {{#if standardturnier}}
 
-          <h1>Frauen</h1>
-          {{#each gewichtsklassengruppenWeiblich}}
-              <div class="navbar_fixed">
+        <h1>Frauen</h1>
+        {{#each gewichtsklassengruppenWeiblich}}
+          <div class="navbar_fixed">
                   <span style="position: relative">
-                      <md-outlined-button id="theming-anchor-w-{{this.altersKlasse}}" class="theming-anchors" altersklasse="{{this.altersKlasse}}" geschlecht="w">{{this.altersKlasse}} (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})</md-outlined-button>
+                      <md-outlined-button id="theming-anchor-w-{{this.altersKlasse}}" class="theming-anchors" altersklasse="{{this.altersKlasse}}" geschlecht="w">{{this.altersKlasse}}
+                        (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})</md-outlined-button>
                       <md-menu id="theming-menu-w-{{this.altersKlasse}}" anchor="theming-anchor-w-{{this.altersKlasse}}">
-                          <md-menu-item type="button" id="renewGewichtsklasse_{{this.altersKlasse}}" class="renewGewichtsklasse" altersklasse="{{this.altersKlasse}}" geschlecht="w">Gewichtsklasse {{altersKlasse}} neu zuordnen</md-menu-item>
-                          <md-menu-item href="/turnier/{{turnierid}}/gewichtsklassen/turnier_printview_groups/w/{{this.altersKlasse}}" target="_blank">Druckansicht {{altersKlasse}} Gruppen</md-menu-item>
+                          <md-menu-item type="button" id="renewGewichtsklasse_{{this.altersKlasse}}" class="renewGewichtsklasse" altersklasse="{{this.altersKlasse}}"
+                                        geschlecht="w">Gewichtsklasse {{altersKlasse}} neu zuordnen</md-menu-item>
+                          <md-menu-item href="/turnier/{{turnierid}}/gewichtsklassen/turnier_printview_groups/w/{{this.altersKlasse}}" target="_blank">Druckansicht {{altersKlasse}}
+                            Gruppen</md-menu-item>
                           <md-menu-item href="/turnier/{{turnierid}}/qrcodes/{{this.altersKlasse}}" target="_blank">QR-Codes {{altersKlasse}}</md-menu-item>
                       </md-menu>
                   </span>
-              </div>
+          </div>
 
-              <div class="gewichtsklassen">
-              {{#each gruppen}}
-                <div class="generalcontent" id="gruppe_{{id}}" droppable=true>
-                  <div class="gewichtsklasse-meta">
-                    <div>{{altersKlasse}}</div>
-                    <div>{{formatNumber minGewicht}}kg - {{formatNumber maxGewicht}}kg</div>
-                  </div>
-                  <div class="gewichtsklasse-teilnehmer">
+          <div class="gewichtsklassen">
+            {{#each gruppen}}
+              <div class="generalcontent" id="gruppe_{{id}}" droppable=true>
+                <div class="gewichtsklasse-meta">
+                  <div>{{altersKlasse}}</div>
+                  <div>{{formatNumber minGewicht}}kg - {{formatNumber maxGewicht}}kg</div>
+                </div>
+                <div class="gewichtsklasse-teilnehmer">
                   {{#each teilnehmer}}
                     <div class="listeneintrag justifycontent" id="teilnehmer_{{id}}" draggable=true>
-                    {{name}}<div class="gewichtsklasse-teilnehmer-meta"><span>{{verein.name}}</span><span class="gewicht">{{formatNumber gewicht}}kg</span><span>{{geschlecht}}</span></div>
-                    <input type="hidden" name="gruppen_teilnehmer" id="input_teilnehmer_{{id}}" value="gruppe_{{../id}}_teilnehmer_{{id}}"/>
+                      {{name}}
+                      <div class="gewichtsklasse-teilnehmer-meta"><span>{{verein.name}}</span><span class="gewicht">{{formatNumber gewicht}}kg</span><span>{{geschlecht}}</span></div>
+                      <input type="hidden" name="gruppen_teilnehmer" id="input_teilnehmer_{{id}}" value="gruppe_{{../id}}_teilnehmer_{{id}}"/>
                     </div>
                   {{/each}}
-                  </div>
                 </div>
-              {{/each}}
               </div>
-          {{/each}}
+            {{/each}}
+          </div>
+        {{/each}}
 
-          <h1>Männer</h1>
-          {{#each gewichtsklassengruppenMaennlich}}
-              <div class="navbar_fixed">
+        <h1>Männer</h1>
+        {{#each gewichtsklassengruppenMaennlich}}
+          <div class="navbar_fixed">
                   <span style="position: relative">
-                      <md-outlined-button id="theming-anchor-m-{{this.altersKlasse}}" class="theming-anchors" altersklasse="{{this.altersKlasse}}" geschlecht="m">{{this.altersKlasse}} (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})</md-outlined-button>
+                      <md-outlined-button id="theming-anchor-m-{{this.altersKlasse}}" class="theming-anchors" altersklasse="{{this.altersKlasse}}" geschlecht="m">{{this.altersKlasse}}
+                        (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})</md-outlined-button>
                       <md-menu id="theming-menu-m-{{this.altersKlasse}}" anchor="theming-anchor-m-{{this.altersKlasse}}">
-                          <md-menu-item type="button" id="renewGewichtsklasse_{{this.altersKlasse}}" class="renewGewichtsklasse" altersklasse="{{this.altersKlasse}}" geschlecht="m">Gewichtsklasse {{altersKlasse}} neu zuordnen</md-menu-item>
-                          <md-menu-item href="/turnier/{{turnierid}}/gewichtsklassen/turnier_printview_groups/m/{{this.altersKlasse}}" target="_blank">Druckansicht {{altersKlasse}} Gruppen</md-menu-item>
+                          <md-menu-item type="button" id="renewGewichtsklasse_{{this.altersKlasse}}" class="renewGewichtsklasse" altersklasse="{{this.altersKlasse}}"
+                                        geschlecht="m">Gewichtsklasse {{altersKlasse}} neu zuordnen</md-menu-item>
+                          <md-menu-item href="/turnier/{{turnierid}}/gewichtsklassen/turnier_printview_groups/m/{{this.altersKlasse}}" target="_blank">Druckansicht {{altersKlasse}}
+                            Gruppen</md-menu-item>
                           <md-menu-item href="/turnier/{{turnierid}}/qrcodes/{{this.altersKlasse}}" target="_blank">QR-Codes {{altersKlasse}}</md-menu-item>
                       </md-menu>
                   </span>
-              </div>
+          </div>
 
-              <div class="gewichtsklassen">
-              {{#each gruppen}}
-                <div class="generalcontent" id="gruppe_{{id}}" droppable=true>
-                  <div class="gewichtsklasse-meta">
-                    <div>{{altersKlasse}}</div>
-                    <div>{{formatNumber minGewicht}}kg - {{formatNumber maxGewicht}}kg</div>
-                  </div>
+          <div class="gewichtsklassen">
+            {{#each gruppen}}
+              <div class="generalcontent" id="gruppe_{{id}}" droppable=true>
+                <div class="gewichtsklasse-meta">
+                  <div>{{altersKlasse}}</div>
+                  <div>{{formatNumber minGewicht}}kg - {{formatNumber maxGewicht}}kg</div>
+                </div>
 
-                  <div class="gewichtsklasse-teilnehmer">
+                <div class="gewichtsklasse-teilnehmer">
                   {{#each teilnehmer}}
                     <div class="listeneintrag justifycontent" id="teilnehmer_{{id}}" draggable=true>
-                    {{name}}<div class="gewichtsklasse-teilnehmer-meta"><span>{{verein.name}}</span><span class="gewicht">{{gewicht}}kg</span><span>{{geschlecht}}</span></div>
-                    <input type="hidden" name="gruppen_teilnehmer" id="input_teilnehmer_{{id}}" value="gruppe_{{../id}}_teilnehmer_{{id}}"/>
+                      {{name}}
+                      <div class="gewichtsklasse-teilnehmer-meta"><span>{{verein.name}}</span><span class="gewicht">{{gewicht}}kg</span><span>{{geschlecht}}</span></div>
+                      <input type="hidden" name="gruppen_teilnehmer" id="input_teilnehmer_{{id}}" value="gruppe_{{../id}}_teilnehmer_{{id}}"/>
                     </div>
                   {{/each}}
-                  </div>
                 </div>
-              {{/each}}
               </div>
-          {{/each}}
+            {{/each}}
+          </div>
+        {{/each}}
 
-        {{else}}
+      {{else}}
 
-          <h1>Mädchen und Jungs</h1>
-          {{#each gewichtsklassengruppenAlter}}
-            <div class="navbar_fixed">
+        <h1>Mädchen und Jungs</h1>
+        {{#each gewichtsklassengruppenAlter}}
+          <div class="navbar_fixed">
                 <span style="position: relative">
-                    <md-outlined-button id="theming-anchor-{{this.altersKlasse}}" class="theming-anchors" altersklasse="{{this.altersKlasse}}">{{this.altersKlasse}} (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})</md-outlined-button>
+                    <md-outlined-button id="theming-anchor-{{this.altersKlasse}}" class="theming-anchors" altersklasse="{{this.altersKlasse}}">{{this.altersKlasse}}
+                      (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})</md-outlined-button>
                     <md-menu id="theming-menu-{{this.altersKlasse}}" anchor="theming-anchor-{{this.altersKlasse}}">
                         <md-menu-item type="button" id="renewGewichtsklasse_{{this.altersKlasse}}" class="renewGewichtsklasse" altersklasse="{{this.altersKlasse}}">Gewichtsklasse {{altersKlasse}} neu zuordnen</md-menu-item>
                         <md-menu-item href="/turnier/{{turnierid}}/gewichtsklassen/randori_printview_groups/{{this.altersKlasse}}" target="_blank">Druckansicht {{altersKlasse}} Gruppen</md-menu-item>
                         <md-menu-item href="/turnier/{{turnierid}}/qrcodes/{{this.altersKlasse}}" target="_blank">QR-Codes {{altersKlasse}}</md-menu-item>
                     </md-menu>
                 </span>
-            </div>
+          </div>
 
-            <div class="gewichtsklassen">
+          <div class="gewichtsklassen">
             {{#each gruppen}}
               <div class="generalcontent" id="gruppe_{{id}}" droppable=true>
                 <div class="gewichtsklasse-meta">
@@ -113,93 +122,94 @@
                   <div>{{formatNumber minGewicht}}kg - {{formatNumber maxGewicht}}kg</div>
                   <div>{{gewichtsklasse.name}}</div>
                 </div>
-              
+
                 <div class="gewichtsklasse-teilnehmer">
-                {{#each teilnehmer}}
-                  <div class="listeneintrag justifycontent" id="teilnehmer_{{id}}" draggable=true>
-                  {{name}}<div class="gewichtsklasse-teilnehmer-meta"><span>{{verein.name}}</span><span class="gewicht">{{formatNumber gewicht}}kg</span><span>{{geschlecht}}</span></div>
-                  <input type="hidden" name="gruppen_teilnehmer" id="input_teilnehmer_{{id}}" value="gruppe_{{../id}}_teilnehmer_{{id}}"/>
-                  </div>
-                {{/each}}
+                  {{#each teilnehmer}}
+                    <div class="listeneintrag justifycontent" id="teilnehmer_{{id}}" draggable=true>
+                      {{name}}
+                      <div class="gewichtsklasse-teilnehmer-meta"><span>{{verein.name}}</span><span class="gewicht">{{formatNumber gewicht}}kg</span><span>{{geschlecht}}</span></div>
+                      <input type="hidden" name="gruppen_teilnehmer" id="input_teilnehmer_{{id}}" value="gruppe_{{../id}}_teilnehmer_{{id}}"/>
+                    </div>
+                  {{/each}}
                 </div>
               </div>
             {{/each}}
-            </div>
+          </div>
 
-          {{/each}}
+        {{/each}}
 
-        {{/if}}
-      </div>
-    </form>
-  </div>
+      {{/if}}
+    </div>
+  </form>
+</div>
 
-  {{> footer}}
+{{> footer}}
 
-  <script type="text/javascript">
-      const drag = (event) => {
-          const draggedElement = event.target;
-          event.dataTransfer.setData('text/plain', draggedElement.id);
-          event.dataTransfer.effectAllowed = 'move';
-      };
+<script type="text/javascript">
+  const drag = (event) => {
+    const draggedElement = event.target;
+    event.dataTransfer.setData('text/plain', draggedElement.id);
+    event.dataTransfer.effectAllowed = 'move';
+  };
 
-      const allowDrop = (event) => {
-          event.preventDefault();
-          event.dataTransfer.dropEffect = 'move';
-      };
+  const allowDrop = (event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  };
 
-      const drop = (event) => {
-          event.preventDefault();
-          const id = event.dataTransfer.getData('text/plain');
-          const draggedElement = document.getElementById(id);
-          const currentElement = event.target;
-          const droppableElement = currentElement.closest('[droppable=true]');
-          droppableElement.appendChild(draggedElement);
-          document.getElementById("input_" + id).value = droppableElement.id + "_" + id;
-      };
+  const drop = (event) => {
+    event.preventDefault();
+    const id = event.dataTransfer.getData('text/plain');
+    const draggedElement = document.getElementById(id);
+    const currentElement = event.target;
+    const droppableElement = currentElement.closest('[droppable=true]');
+    droppableElement.appendChild(draggedElement);
+    document.getElementById("input_" + id).value = droppableElement.id + "_" + id;
+  };
 
-      const draggableElements = document.querySelectorAll('[draggable=true]');
-      draggableElements.forEach(draggable => {
-          draggable.addEventListener('dragstart', drag);
-      });
+  const draggableElements = document.querySelectorAll('[draggable=true]');
+  draggableElements.forEach(draggable => {
+    draggable.addEventListener('dragstart', drag);
+  });
 
-      const droppableElements = document.querySelectorAll('[droppable=true]');
-      console.log("elements", droppableElements.length)
-      droppableElements.forEach(droppable => {
-          droppable.addEventListener('dragover', allowDrop);
-          droppable.addEventListener('drop', drop);
-      });
-      let draggedElement = null;
+  const droppableElements = document.querySelectorAll('[droppable=true]');
+  console.log("elements", droppableElements.length)
+  droppableElements.forEach(droppable => {
+    droppable.addEventListener('dragover', allowDrop);
+    droppable.addEventListener('drop', drop);
+  });
+  let draggedElement = null;
 
-      document.body.querySelector("#renewGewichtsklassen").addEventListener("click", async function() {
-          var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Gewichtsklassen und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
-          if (sicher) {
-              fetch('/turnier/{{turnierid}}/gewichtsklassen-renew', {method: 'POST'})
-                      .then(() => window.location.href = 'gewichtsklassen')
-          }
-      });
+  document.body.querySelector("#renewGewichtsklassen").addEventListener("click", async function () {
+    var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Gewichtsklassen und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+    if (sicher) {
+      fetch('/turnier/{{turnierid}}/gewichtsklassen-renew', {method: 'POST'})
+        .then(() => window.location.href = 'gewichtsklassen')
+    }
+  });
 
-      document.body.querySelectorAll(".renewGewichtsklasse").forEach(value => value.addEventListener("click", async function(data) {
-          var altersklasse = data.target.attributes.getNamedItem("altersklasse").value;
-          var geschlecht = data.target.attributes.getNamedItem("geschlecht") ? data.target.attributes.getNamedItem("geschlecht").value : "";
-          console.log("Altersklasse / Geschlecht ", altersklasse, geschlecht);
-          var sicher = confirm("ACHTUNG\n\nHiermit werden die Zuordnung von Wettkämpfern in der Gewichtsklasse " + altersklasse + " und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
-          if (sicher) {
-              fetch('/turnier/{{turnierid}}/gewichtsklasse-renew', {method: 'POST', body: {altersklasse: altersklasse, geschlecht: geschlecht}})
-                      .then(() => window.location.href = 'gewichtsklassen')
-          }
-      }));
+  document.body.querySelectorAll(".renewGewichtsklasse").forEach(value => value.addEventListener("click", async function (data) {
+    var altersklasse = data.target.attributes.getNamedItem("altersklasse").value;
+    var geschlecht = data.target.attributes.getNamedItem("geschlecht") ? data.target.attributes.getNamedItem("geschlecht").value : "";
+    console.log("Altersklasse / Geschlecht ", altersklasse, geschlecht);
+    var sicher = confirm("ACHTUNG\n\nHiermit werden die Zuordnung von Wettkämpfern in der Gewichtsklasse " + altersklasse + " und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+    if (sicher) {
+      fetch('/turnier/{{turnierid}}/gewichtsklasse-renew', {method: 'POST', body: {altersklasse: altersklasse, geschlecht: geschlecht}})
+        .then(() => window.location.href = 'gewichtsklassen')
+    }
+  }));
 
-      document.body.querySelector("#submitFormular").addEventListener("click", async function() {
-          document.getElementById('gewichtsklassenzuordnungformular').submit();
-      });
+  document.body.querySelector("#submitFormular").addEventListener("click", async function () {
+    document.getElementById('gewichtsklassenzuordnungformular').submit();
+  });
 
-      document.body.querySelectorAll(".theming-anchors").forEach(value => value.addEventListener("click", (data) => {
-          data.preventDefault();
-          var altersklasse = data.target.attributes.getNamedItem("altersklasse").value;
-          var geschlecht = data.target.attributes.getNamedItem("geschlecht") ? data.target.attributes.getNamedItem("geschlecht").value + "-" : "";
-          console.log("Altersklasse 2", altersklasse);
-          document.body.querySelector("#theming-menu-" + geschlecht + altersklasse).show();
-      }));
-  </script>
+  document.body.querySelectorAll(".theming-anchors").forEach(value => value.addEventListener("click", (data) => {
+    data.preventDefault();
+    var altersklasse = data.target.attributes.getNamedItem("altersklasse").value;
+    var geschlecht = data.target.attributes.getNamedItem("geschlecht") ? data.target.attributes.getNamedItem("geschlecht").value + "-" : "";
+    console.log("Altersklasse 2", altersklasse);
+    document.body.querySelector("#theming-menu-" + geschlecht + altersklasse).show();
+  }));
+</script>
 </body>
 </html>

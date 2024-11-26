@@ -4,65 +4,66 @@
   {{> header}}
 </head>
 <body>
-  {{> title }}
-  {{> nav }}
+{{> title }}
+{{> nav }}
 
-  <div>
-    <div class="bodyheader">
-        <h2>{{#if neuerEintrag}}Neuer Wettkämpfer{{else}}Editiere Wettkämpfer{{/if}}</h2>
-    </div>
+<div>
+  <div class="bodyheader">
+    <h2>{{#if neuerEintrag}}Neuer Wettkämpfer{{else}}Editiere Wettkämpfer{{/if}}</h2>
   </div>
+</div>
 
-  {{#if prevsuccess}}
-    <div class="infomsg">Der vorheriger Wettkämpfer wurde erfolgreich angelegt. Kennung {{prevsuccess}}</div>
-  {{/if}}
-  {{#if preverror}}
-    <div class="errormsg">Der vorheriger Wettkämpfer konnte nicht angelegt werden: {{preverror}}</div>
-  {{/if}}
+{{#if prevsuccess}}
+  <div class="infomsg">Der vorheriger Wettkämpfer wurde erfolgreich angelegt. Kennung {{prevsuccess}}</div>
+{{/if}}
+{{#if preverror}}
+  <div class="errormsg">Der vorheriger Wettkämpfer konnte nicht angelegt werden: {{preverror}}</div>
+{{/if}}
 
-  <div class="generalcontent">
-    <form action="/turnier/{{turnierid}}/wettkaempfer" method="POST">
-      <input type="hidden" name="id" value="{{kaempfer.id}}"/>
-      
-      <div class="wettkaempfer name"><label>Name, Vorname</label><input class="wd300" autofocus type="string" name="name" value="{{kaempfer.name}}"/></div>
+<div class="generalcontent">
+  <form action="/turnier/{{turnierid}}/wettkaempfer" method="POST">
+    <input type="hidden" name="id" value="{{kaempfer.id}}"/>
 
-      <div class="wettkaempfer verein">
+    <div class="wettkaempfer name"><label>Name, Vorname</label><input class="wd300" autofocus type="string" name="name" value="{{kaempfer.name}}"/></div>
+
+    <div class="wettkaempfer verein">
       <label>Verein</label>
       <select class="wd300" mode="config[mode]" name="vereinsid">
-      {{#each vereine}}
-        <option value="{{id}}" {{setSelected ../kaempfer.verein.id id}}/>{{name}}</option>
-      {{/each}}
+        {{#each vereine}}
+          <option value="{{id}}" {{setSelected ../kaempfer.verein.id id}}/>
+            {{name}}</option>
+        {{/each}}
       </select>
-      </div>
+    </div>
 
-      <div class="wettkaempfer alter">
+    <div class="wettkaempfer alter">
       <label>Altersklasse</label>
       {{#each altersklasse as |name index|}}
         <input type="radio" name="altersklasse" value="{{name}}" {{setChecked ../kaempfer.altersklasse name}}/>{{name.bezeichnung}}
       {{/each}}
-      </div>
+    </div>
 
-      <div class="wettkaempfer geschlecht">
+    <div class="wettkaempfer geschlecht">
       <label>Geschlecht</label>
       {{#each geschlechter as |name index|}}
         <input type="radio" name="geschlecht" value="{{name}}" {{setChecked ../kaempfer.geschlecht name}}/>{{name.bezeichnung}}
       {{/each}}
-      </div>
+    </div>
 
-      <div class="wettkaempfer gewicht"><label>Gewicht</label><input class="wd100" type="number" step="0.1" name="gewicht" value="{{kaempfer.gewicht}}"/></div>
-      <div class="wettkaempfer checked"><label>geprüft</label><input class="wd100" type="checkbox" name="checked" {{setChecked true  kaempfer.checked}}/></div>
+    <div class="wettkaempfer gewicht"><label>Gewicht</label><input class="wd100" type="number" step="0.1" name="gewicht" value="{{kaempfer.gewicht}}"/></div>
+    <div class="wettkaempfer checked"><label>geprüft</label><input class="wd100" type="checkbox" name="checked" {{setChecked true  kaempfer.checked}}/></div>
 
-      <div class="wettkaempfer printed"><label>gedruckt</label><input class="wd100" type="checkbox" name="printed" {{setChecked true kaempfer.printed}}/></div>
+    <div class="wettkaempfer printed"><label>gedruckt</label><input class="wd100" type="checkbox" name="printed" {{setChecked true kaempfer.printed}}/></div>
 
-      <input type="hidden" value="{{neuerEintrag}}" name="neuereintrag">
+    <input type="hidden" value="{{neuerEintrag}}" name="neuereintrag">
 
-      <button type="submit"><span class="material-icons md-48" title="Wettkämpfer eintragen">person_add</span></button>
-    </form>
-  </div>
+    <button type="submit"><span class="material-icons md-48" title="Wettkämpfer eintragen">person_add</span></button>
+  </form>
+</div>
 
-  {{> footer}}
-  <script type="text/javascript">
-  </script>
+{{> footer}}
+<script type="text/javascript">
+</script>
 </body>
 
 </html>

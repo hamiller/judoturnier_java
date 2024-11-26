@@ -1,180 +1,186 @@
 <!DOCTYPE html>
 <html lang="de">
-  {{> header}}
+{{> header}}
 <body>
-  {{> title }}
-  {{> nav }}
+{{> title }}
+{{> nav }}
 
-  <div>
-      <div class="bodyheader no-print">
-          <div class="navbar navbar_fixed">
-              <ul class="nav-links-sub links">
-                  <li><a href="#" onclick="renewBegegnungen(); return false;"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen neu erstellen">create_new_folder</span> Alle Wettkampfgruppen neu erstellen</a></li>
-                  <li><a href="#" onclick="deleteBegegnungen(); return false;"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen löschen">autorenew</span> Alle Wettkampfgruppen löschen</a></li>
-              </ul>
-              {{#each altersklassen}}
-                  <ul class="nav-links-sub links">
-                      <li><a href="#" type="button" onclick="renewBegegnung( '{{this}}' ); return false;" ><span class="material-icons md-48 centered" title="Einzelne Wettkampfgruppen neu zuordnen">autorenew</span> Wettkampfgruppen {{this}} neu zuordnen</a></li>
-                      <li><a href="/turnier/{{turnierid}}/qrcodes/{{this}}" target="_blank" class=""><span class="material-icons md-48 centered" title="QRCode">print</span> QR-Codes {{this}}</a></li>
-                  </ul>
-              {{/each}}
-          </div>
-      </div>
-
-      {{#if preverror}}
-          <div class="errormsg">Der vorheriger Wettkämpfer konnte nicht angelegt werden: {{preverror}}</div>
-      {{/if}}
-
-    <div class="generalcontent">
-        {{#if separatealtersklassen.name "GETRENNT"}}
-            <div class="filter_dropdown">
-                <span>Filter nach Alterklasse</span>
-                <div class="filter_dropdown-content">
-                    <a href="/turnier/{{turnierid}}/begegnungen/normal">Alle Alterklassen</a>
-                    {{#each altersklassen}}
-                        <a href="/turnier/{{turnierid}}/begegnungen/normal?altersklasse={{this}}">Alterklasse {{this}}</a>
-                    {{/each}}
-                </div>
-            </div>
-        {{/if}}
-
-        <div class="tab">
-            {{#each matten}}
-                <button class="tablinks matten_btn" onclick="openMatte(event, '{{id}}')">Matte {{id}}</button>
-            {{/each}}
-        </div>
-
-      {{#each matten}}
-          <div class="reacket">
-              <div class="reacket-round-headers">
-                  <div class="reacket-round-header">Round 1</div>
-                  <div class="reacket-round-header">Semi-finals</div>
-                  <div class="reacket-round-headerreacket-last-round">Finals</div>
-              </div>
-
-              <div class="reacket-rounds">
-                  <div class="reacket-round">
-                      <div class="reacket-match">
-                          <div class="reacket-match-id">
-
-                          </div>
-                          <div class="reacket-players">
-                              <div class="reacket-player"></div>
-                              <div class="reacket-player"></div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
+<div>
+  <div class="bodyheader no-print">
+    <div class="navbar navbar_fixed">
+      <ul class="nav-links-sub links">
+        <li><a href="#" onclick="renewBegegnungen(); return false;"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen neu erstellen">create_new_folder</span> Alle
+          Wettkampfgruppen neu erstellen</a></li>
+        <li><a href="#" onclick="deleteBegegnungen(); return false;"><span class="material-icons md-48 centered" title="Alle Wettkampfgruppen löschen">autorenew</span> Alle Wettkampfgruppen
+          löschen</a></li>
+      </ul>
+      {{#each altersklassen}}
+        <ul class="nav-links-sub links">
+          <li><a href="#" type="button" onclick="renewBegegnung( '{{this}}' ); return false;"><span class="material-icons md-48 centered"
+                                                                                                    title="Einzelne Wettkampfgruppen neu zuordnen">autorenew</span> Wettkampfgruppen {{this}} neu
+            zuordnen</a></li>
+          <li><a href="/turnier/{{turnierid}}/qrcodes/{{this}}" target="_blank" class=""><span class="material-icons md-48 centered" title="QRCode">print</span> QR-Codes {{this}}</a></li>
+        </ul>
       {{/each}}
-
-      {{#each matten}}
-      <div class="matte tabcontent" id="{{id}}">
-          <div class="listeneintrag-titel">Matte {{id}}</div>
-          <div class="wettkampfgruppe">
-              {{#each gruppenRunden}}
-              {{#each runde}}
-                <div class="listeneintrag-header">
-                  {{#if (istGleich altersklasse null)}}
-                      <div class="listeneintrag-titel pause">PAUSE</div>
-                  {{else}}
-                      <div class="listeneintrag-titel">Gruppe {{gruppe.id}} ({{altersklasse}})</div>
-                  {{/if}}
-                </div>
-
-                {{#each begegnungen}}
-                  <div class="">Typ {{rundenTyp}} Runde {{runde}} Paarung {{akuellePaarung}}</div>
-
-                  <a href="/turnier/{{turnierid}}/begegnungen/normal/{{begegnungId}}">
-                  <div class="listeneintrag vs {{wertungVorhanden alleWertungen}}">
-                    <div class="wettkaempfer name weiss">{{wettkaempfer1.name}}</div><div>({{wettkaempfer1.verein.name}})</div>
-                    <div class="center">vs</div>
-                    <div class="wettkaempfer name rot">{{wettkaempfer2.name}}</div><div>({{wettkaempfer2.verein.name}})</div>
-                  </div>
-                  </a>
-                {{/each}}
-              {{/each}}
-              {{/each}}
-          </div>
-      </div>
-      {{/each}}
-      </form>
     </div>
   </div>
-  {{> footer}}
 
-    <script>
-        const renewBegegnungen = async () => {
-            var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
-            if (sicher) {
-                console.log("Erstelle alle Begegnungen neu");
-                fetch('/turnier/{{turnierid}}/begegnungen', {method: 'POST', redirect: 'follow'})
-                        .then(response => {
-                            if (response.redirected) {
-                                window.location.href = response.url;
-                            } else if (response.ok) {
-                                window.location.reload();
-                            } else {
-                                console.error('Error:', response.statusText);
-                            }
-                        })
-            }
-        };
+  {{#if preverror}}
+    <div class="errormsg">Der vorheriger Wettkämpfer konnte nicht angelegt werden: {{preverror}}</div>
+  {{/if}}
 
-        const renewBegegnung = async (data) => {
-            var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in der Altersklasse\n\t" + data + "\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
-            if (sicher) {
-                console.log("Erstelle die Begegnungen neu", data);
-                fetch('/turnier/{{turnierid}}/begegnung', {method: 'POST', body: data, redirect: 'follow'})
-                        .then(response => {
-                            if (response.redirected) {
-                                window.location.href = response.url;
-                            } else if (response.ok) {
-                                window.location.reload();
-                            } else {
-                                console.error('Error:', response.statusText);
-                            }
-                        })
-            }
-        };
+  <div class="generalcontent">
+    {{#if separatealtersklassen.name "GETRENNT"}}
+      <div class="filter_dropdown">
+        <span>Filter nach Alterklasse</span>
+        <div class="filter_dropdown-content">
+          <a href="/turnier/{{turnierid}}/begegnungen/normal">Alle Alterklassen</a>
+          {{#each altersklassen}}
+            <a href="/turnier/{{turnierid}}/begegnungen/normal?altersklasse={{this}}">Alterklasse {{this}}</a>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
 
-        const deleteBegegnungen = async (altersklasse) => {
-            var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern aller Altersklassen\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
-            if (sicher) {
-                fetch('/turnier/{{turnierid}}/begegnung', {method: 'DELETE', redirect: 'follow'})
-                        .then(response => {
-                            if (response.redirected) {
-                                window.location.href = response.url;
-                            } else if (response.ok) {
-                                window.location.reload();
-                            } else {
-                                console.error('Error:', response.statusText);
-                            }
-                        })
-            }
-        };
+    <div class="tab">
+      {{#each matten}}
+        <button class="tablinks matten_btn" onclick="openMatte(event, '{{id}}')">Matte {{id}}</button>
+      {{/each}}
+    </div>
 
-        const openMatte = (evt, id) => {
-            // Declare all variables
-            var i, tabcontent, tablinks;
+    {{#each matten}}
+      <div class="reacket">
+        <div class="reacket-round-headers">
+          <div class="reacket-round-header">Round 1</div>
+          <div class="reacket-round-header">Semi-finals</div>
+          <div class="reacket-round-headerreacket-last-round">Finals</div>
+        </div>
 
-            // Get all elements with class="tabcontent" and hide them
-            tabcontent = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-            }
+        <div class="reacket-rounds">
+          <div class="reacket-round">
+            <div class="reacket-match">
+              <div class="reacket-match-id">
 
-            // Get all elements with class="tablinks" and remove the class "active"
-            tablinks = document.getElementsByClassName("tablinks");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
+              </div>
+              <div class="reacket-players">
+                <div class="reacket-player"></div>
+                <div class="reacket-player"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {{/each}}
 
-            // Show the current tab, and add an "active" class to the button that opened the tab
-            document.getElementById(id).style.display = "block";
-            evt.currentTarget.className += " active";
-        };
-    </script>
+    {{#each matten}}
+      <div class="matte tabcontent" id="{{id}}">
+        <div class="listeneintrag-titel">Matte {{id}}</div>
+        <div class="wettkampfgruppe">
+          {{#each gruppenRunden}}
+            {{#each runde}}
+              <div class="listeneintrag-header">
+                {{#if (istGleich altersklasse null)}}
+                  <div class="listeneintrag-titel pause">PAUSE</div>
+                {{else}}
+                  <div class="listeneintrag-titel">Gruppe {{gruppe.id}} ({{altersklasse}})</div>
+                {{/if}}
+              </div>
+
+              {{#each begegnungen}}
+                <div class="">Typ {{rundenTyp}} Runde {{runde}} Paarung {{akuellePaarung}}</div>
+
+                <a href="/turnier/{{turnierid}}/begegnungen/normal/{{begegnungId}}">
+                  <div class="listeneintrag vs {{wertungVorhanden alleWertungen}}">
+                    <div class="wettkaempfer name weiss">{{wettkaempfer1.name}}</div>
+                    <div>({{wettkaempfer1.verein.name}})</div>
+                    <div class="center">vs</div>
+                    <div class="wettkaempfer name rot">{{wettkaempfer2.name}}</div>
+                    <div>({{wettkaempfer2.verein.name}})</div>
+                  </div>
+                </a>
+              {{/each}}
+            {{/each}}
+          {{/each}}
+        </div>
+      </div>
+    {{/each}}
+    </form>
+  </div>
+</div>
+{{> footer}}
+
+<script>
+  const renewBegegnungen = async () => {
+    var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+    if (sicher) {
+      console.log("Erstelle alle Begegnungen neu");
+      fetch('/turnier/{{turnierid}}/begegnungen', {method: 'POST', redirect: 'follow'})
+        .then(response => {
+          if (response.redirected) {
+            window.location.href = response.url;
+          } else if (response.ok) {
+            window.location.reload();
+          } else {
+            console.error('Error:', response.statusText);
+          }
+        })
+    }
+  };
+
+  const renewBegegnung = async (data) => {
+    var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in der Altersklasse\n\t" + data + "\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+    if (sicher) {
+      console.log("Erstelle die Begegnungen neu", data);
+      fetch('/turnier/{{turnierid}}/begegnung', {method: 'POST', body: data, redirect: 'follow'})
+        .then(response => {
+          if (response.redirected) {
+            window.location.href = response.url;
+          } else if (response.ok) {
+            window.location.reload();
+          } else {
+            console.error('Error:', response.statusText);
+          }
+        })
+    }
+  };
+
+  const deleteBegegnungen = async (altersklasse) => {
+    var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern aller Altersklassen\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
+    if (sicher) {
+      fetch('/turnier/{{turnierid}}/begegnung', {method: 'DELETE', redirect: 'follow'})
+        .then(response => {
+          if (response.redirected) {
+            window.location.href = response.url;
+          } else if (response.ok) {
+            window.location.reload();
+          } else {
+            console.error('Error:', response.statusText);
+          }
+        })
+    }
+  };
+
+  const openMatte = (evt, id) => {
+    // Declare all variables
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class="tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the button that opened the tab
+    document.getElementById(id).style.display = "block";
+    evt.currentTarget.className += " active";
+  };
+</script>
 </body>
 
 </html>

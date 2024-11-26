@@ -4,88 +4,88 @@
   {{> header}}
 </head>
 <body>
-  {{> title }}
+{{> title }}
 
-  <div>
-    <div class="bodyheader">
-      <h2>Turniere</h2>
-      <div>Anzahl der Turniere: {{anzahlturniere}}</div>
-      <div>Software-Version: {{software_version}} {{software_zeit}}</div>
-    </div>
+<div>
+  <div class="bodyheader">
+    <h2>Turniere</h2>
+    <div>Anzahl der Turniere: {{anzahlturniere}}</div>
+    <div>Software-Version: {{software_version}} {{software_zeit}}</div>
   </div>
+</div>
 
-  <ul class="generalcontent">
-      {{#turniere}}
-          <li class="listeneintrag">
-              <a href="/turnier/{{uuid}}">
-                  <div>{{name}}</div>
-                  <div>{{Ort}}</div>
-                  <div>{{Datum}}</div>
-              </a>
-          </li>
-      {{/turniere}}
-  </ul>
+<ul class="generalcontent">
+  {{#turniere}}
+    <li class="listeneintrag">
+      <a href="/turnier/{{uuid}}">
+        <div>{{name}}</div>
+        <div>{{Ort}}</div>
+        <div>{{Datum}}</div>
+      </a>
+    </li>
+  {{/turniere}}
+</ul>
 
-  {{#if enableEditing}}
+{{#if enableEditing}}
   <button id="openCreateTurnierDialog"><span class="material-icons md-48" title="Turnier erstellen">person_add</span></button>
-  {{/if}}
+{{/if}}
 
-  <div id="dialogOverlay"></div>
+<div id="dialogOverlay"></div>
 
-  <div id="">
-      <md-dialog id="dialog1">
-          <div slot="headline">
-              Neues Turnier
-          </div>
-          <form slot="content" id="createturnierformular" action="/turniere" method="POST">
-              <label for="id-name">Name:</label>
-              <md-filled-text-field type="text" id="id-name" name="name"></md-filled-text-field>
-              <label for="id-ort">Ort:</label>
-              <md-filled-text-field type="text" id="id-ort" name="ort" ></md-filled-text-field>
-              <label for="id-datum">Datum:</label>
-              <input type="date" id="id-datum" name="datum" >
-          </form>
-          <div slot="actions">
-              <md-text-button form="createturnierformular" id="dialogCancel">Abbrechen</md-text-button>
-              <md-text-button form="createturnierformular" id="dialogOk">Erstellen</md-text-button>
-          </div>
-      </md-dialog>
-  </div>
+<div id="">
+  <md-dialog id="dialog1">
+    <div slot="headline">
+      Neues Turnier
+    </div>
+    <form slot="content" id="createturnierformular" action="/turniere" method="POST">
+      <label for="id-name">Name:</label>
+      <md-filled-text-field type="text" id="id-name" name="name"></md-filled-text-field>
+      <label for="id-ort">Ort:</label>
+      <md-filled-text-field type="text" id="id-ort" name="ort"></md-filled-text-field>
+      <label for="id-datum">Datum:</label>
+      <input type="date" id="id-datum" name="datum">
+    </form>
+    <div slot="actions">
+      <md-text-button form="createturnierformular" id="dialogCancel">Abbrechen</md-text-button>
+      <md-text-button form="createturnierformular" id="dialogOk">Erstellen</md-text-button>
+    </div>
+  </md-dialog>
+</div>
 
-  <div>
-    <h1>Software des des 1.JC-Großkrotzenburg</h1>
-  </div>
+<div>
+  <h1>Software des des 1.JC-Großkrotzenburg</h1>
+</div>
 
-  {{> footer}}
-  <script type="text/javascript">
-      const closeDialog = () => {
-          document.getElementById("dialog1").close()
-      };
+{{> footer}}
+<script type="text/javascript">
+  const closeDialog = () => {
+    document.getElementById("dialog1").close()
+  };
 
-      document.getElementById('openCreateTurnierDialog').addEventListener('click', function () {
-          document.getElementById("dialog1").show()
-      });
+  document.getElementById('openCreateTurnierDialog').addEventListener('click', function () {
+    document.getElementById("dialog1").show()
+  });
 
-      document.getElementById('dialogOk').addEventListener('click', function () {
-          var form = document.getElementById('createturnierformular');
-          form.submit();
-          closeDialog();
-      });
+  document.getElementById('dialogOk').addEventListener('click', function () {
+    var form = document.getElementById('createturnierformular');
+    form.submit();
+    closeDialog();
+  });
 
-      document.getElementById('dialogCancel').addEventListener('click', function () {
-          closeDialog();
-      });
+  document.getElementById('dialogCancel').addEventListener('click', function () {
+    closeDialog();
+  });
 
-  </script>
+</script>
 
 </body>
 
 <style>
-    form {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-    }
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
 </style>
 </html>

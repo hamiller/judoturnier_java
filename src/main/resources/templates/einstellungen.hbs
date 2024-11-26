@@ -1,119 +1,122 @@
 <!DOCTYPE html>
 <html lang="de">
-  {{> header}}
+{{> header}}
 <body>
-  {{> title }}
-  {{> nav }}
-  
-  <div>
-    <div class="bodyheader">
-      <h1>Einstellungen</h1>
-    </div>
+{{> title }}
+{{> nav }}
+
+<div>
+  <div class="bodyheader">
+    <h1>Einstellungen des Turnieres '{{turniername}}' in {{turnierort}} am {{formatDatum turnierdatum}} (ID {{turnierid}})</h1>
+  </div>
+
+  <form id="turniereinstellungenformular" action="/turnier/{{turnierid}}/einstellungen" method="POST">
     <div class="generalcontent">
+      <h2>Einstellung für alle Klassen</h2>
 
-      <h2>Einstellung der Turnieres '{{turniername}}' in {{turnierort}} am {{formatDatum turnierdatum}} (ID {{turnierid}})</h2>
-
-      <form id="turniereinstellungenformular" action="/turnier/{{turnierid}}/einstellungen" method="POST">
-
-        <div class="settingsrow">
-            <div class="radio-label">
-                <md-radio id="randori-radio" name="turniertyp" value="RANDORI" {{setChecked "RANDORI" turniertyp.name}}></md-radio>
-                <label for="randori-radio">Randori-Turnier</label>
-            </div>
-            <div class="radio-label">
-                <md-radio id="turnier-radio" name="turniertyp" value="STANDARD" {{setChecked "STANDARD" turniertyp.name}}></md-radio>
-                <label for="turnier-radio">Standard-Turnier</label>
-            </div>
+      <div class="settingsrow">
+        <div class="radio-label">
+          <md-radio id="randori-radio" name="turniertyp" value="RANDORI" {{setChecked "RANDORI" turniertyp.name}}></md-radio>
+          <label for="randori-radio">Randori-Turnier</label>
         </div>
-
-        <md-divider></md-divider>
-
-
-        <div class="settingsrow"><label>Anzahl der Matten </label><md-filled-text-field type="number" name="mattenanzahl" value="{{mattenanzahl.anzahl}}"/></div>
-
-        <md-divider></md-divider>
-
-
-        <div class="settingsrow"><label>Größe der Gruppen </label><md-filled-text-field type="number" name="gruppengroesse" value="{{gruppengroesse.anzahl}}"/></div>
-
-        <md-divider></md-divider>
-
-
-        <div class="settingsrow"><label>Variabler Gewichtsanteil </label><md-filled-text-field type="number" step="0.1" min=0 name="variablergewichtsteil" value="{{variablergewichtsteil.variablerTeil}}"/></div>
-
-        <md-divider></md-divider>
-
-        <div class="settingsrow">
-            <div class="radio-label">
-                <md-radio id="abwechselnd-radio" name="wettkampfreihenfolge" value="ABWECHSELND" {{setChecked "ABWECHSELND" wettkampfreihenfolge.name}}></md-radio>
-                <label for="abwechselnd-radio">Immer 2 Gruppen kämpfen abwechseln</label>
-            </div>
-            <div class="radio-label">
-                <md-radio id=alle-radio" name="wettkampfreihenfolge" value="ALLE" {{setChecked "ALLE" wettkampfreihenfolge.name}}></md-radio>
-                <label for="alle-radio">Es kämpfen je Durchgang alle Gruppen</label>
-            </div>
+        <div class="radio-label">
+          <md-radio id="turnier-radio" name="turniertyp" value="STANDARD" {{setChecked "STANDARD" turniertyp.name}}></md-radio>
+          <label for="turnier-radio">Standard-Turnier</label>
         </div>
+      </div>
 
-        <md-divider></md-divider>
+      <md-divider></md-divider>
 
-        <div class="settingsrow">
-            <div class="radio-label">
-                <md-radio id="getrennt-radio" name="separatealtersklassen" value="GETRENNT" {{setChecked "GETRENNT" separatealtersklassen.name}}></md-radio>
-                <label for="getrennt-radio">Die Jahrgänge kämpfen nacheinander, immer nur ein Jahrgang gleichzeitig bis er komplett fertig ist</label>
-            </div>
-            <div class="radio-label">
-                <md-radio id="getrenntmatten-radio" name="separatealtersklassen" value="GETRENNT_NACH_MATTEN" {{setChecked "GETRENNT_NACH_MATTEN" separatealtersklassen.name}} disabled></md-radio>
-                <label for="getrenntmatten-radio">(Nicht implementiert!) Die Jahrgänge kämpfen parallel, jedoch strikt nach Matten getrennt</label>
-            </div>
-            <div class="radio-label">
-                <md-radio id="zusammen-radio" name="separatealtersklassen" value="ZUSAMMEN" {{setChecked "ZUSAMMEN" separatealtersklassen.name}}></md-radio>
-                <label for="zusammen-radio">Die Jahrgänge kämpfen gleichzeitig</label>
-            </div>
+      <div class="settingsrow"><label>Anzahl der Matten </label>
+        <md-filled-text-field type="number" name="mattenanzahl" value="{{mattenanzahl.anzahl}}"/>
+      </div>
+
+      <md-divider></md-divider>
+
+      <div class="settingsrow"><label>Variabler Gewichtsanteil </label>
+        <md-filled-text-field type="number" step="0.1" min=0 name="variablergewichtsteil" value="{{variablergewichtsteil.variablerTeil}}"/>
+      </div>
+
+      <div class="settingsrow">
+        <div class="radio-label">
+          <md-radio id="abwechselnd-radio" name="wettkampfreihenfolge" value="ABWECHSELND" {{setChecked "ABWECHSELND" wettkampfreihenfolge.name}}></md-radio>
+          <label for="abwechselnd-radio">Immer 2 Gruppen kämpfen abwechseln</label>
         </div>
-
-        <md-divider></md-divider>
-
-        <div class="settingsrow">
-            <label>Kampfzeiten (in Sekunden)</label>
-            <ul>
-                {{#each wettkampfzeiten}}
-                    <li>
-                        <md-filled-text-field label="{{this.key}}" type="number" name="wettkampfzeit[{{this.key}}]" value="{{this.value}}"/>
-                    </li>
-                {{/each}}
-            </ul>
+        <div class="radio-label">
+          <md-radio id=alle-radio" name="wettkampfreihenfolge" value="ALLE" {{setChecked "ALLE" wettkampfreihenfolge.name}}></md-radio>
+          <label for="alle-radio">Es kämpfen je Durchgang alle Gruppen</label>
         </div>
+      </div>
 
+      <md-divider></md-divider>
 
-        <md-filled-button>Turnier-Einstellung speichern</md-filled-button>
-      </form>
+      <div class="settingsrow">
+        <div class="radio-label">
+          <md-radio id="getrennt-radio" name="separatealtersklassen" value="GETRENNT" {{setChecked "GETRENNT" separatealtersklassen.name}}></md-radio>
+          <label for="getrennt-radio">Die Jahrgänge kämpfen nacheinander, immer nur ein Jahrgang gleichzeitig bis er komplett fertig ist</label>
+        </div>
+        <div class="radio-label">
+          <md-radio id="getrenntmatten-radio" name="separatealtersklassen" value="GETRENNT_NACH_MATTEN" {{setChecked "GETRENNT_NACH_MATTEN" separatealtersklassen.name}} disabled></md-radio>
+          <label for="getrenntmatten-radio">(Nicht implementiert!) Die Jahrgänge kämpfen parallel, jedoch strikt nach Matten getrennt</label>
+        </div>
+        <div class="radio-label">
+          <md-radio id="zusammen-radio" name="separatealtersklassen" value="ZUSAMMEN" {{setChecked "ZUSAMMEN" separatealtersklassen.name}}></md-radio>
+          <label for="zusammen-radio">Die Jahrgänge kämpfen gleichzeitig</label>
+        </div>
+      </div>
     </div>
 
-    {{#if standardturnier}}
+    <div class="generalcontent">
+      <h2>Einstellung zu den einzelnen Klassen</h2>
+
+      <div class="settingsrow">
+        <label>Maximale Gruppengröße</label>
+        <md-filled-text-field type="number" name="gruppengroesse" value="{{gruppengroesse.anzahl}}"/>
+      </div>
+
+      <md-divider></md-divider>
+
+      <div class="settingsrow">
+        <label>Kampfzeiten (in Sekunden)</label>
+        <ul>
+          {{#each wettkampfzeiten}}
+            <li>
+              <md-filled-text-field label="{{this.key}}" type="number" name="wettkampfzeit[{{this.key}}]" value="{{this.value}}"/>
+            </li>
+          {{/each}}
+        </ul>
+      </div>
+
+    </div>
+
+    <md-filled-button>Einstellung speichern</md-filled-button>
+  </form>
+
+  {{#if standardturnier}}
     <div class="generalcontent">
       <h2>Einstellung der Wettkampfgruppen</h2>
       <form id="kampfklassenformular" action="/turnier/{{turnierid}}/einstellungen-wettkampf" method="POST">
-      <div class="actions">
-        <button type="submit">Wettkampfgruppen-Einstellung speichern<span class="material-icons md-48" title="Wettkampfgruppen speichern">save</span></button>
-      </div>
-
-      {{#each gewichtsklassengruppen}}
-        <div class="kampfsystemklasse listeneintrag">
-          <div class="listeneintrag-titel">{{gewichtsklasse.name}} {{altersKlasse}} {{gruppenGeschlecht}} ({{teilnehmer.length}} Teilnehmer)</div>
-          <div class="kampsystemklasse-auswahlen">
-          {{#each ../kampfsysteme as |name index|}}
-            <input type="radio" name="{{../gruppenGeschlecht}}-{{../altersKlasse}}-{{../gewichtsklasse.gewicht}}" value="{{index}}" {{setChecked "pool6" index}}/><label>{{name}}</label>
-          {{/each}}
-          </div>
+        <div class="actions">
+          <button type="submit">Wettkampfgruppen-Einstellung speichern<span class="material-icons md-48" title="Wettkampfgruppen speichern">save</span></button>
         </div>
-      {{/each}}
+
+        {{#each gewichtsklassengruppen}}
+          <div class="kampfsystemklasse listeneintrag">
+            <div class="listeneintrag-titel">{{gewichtsklasse.name}} {{altersKlasse}} {{gruppenGeschlecht}} ({{teilnehmer.length}} Teilnehmer)</div>
+            <div class="kampsystemklasse-auswahlen">
+              {{#each ../kampfsysteme as |name index|}}
+                <input type="radio" name="{{../gruppenGeschlecht}}-{{../altersKlasse}}-{{../gewichtsklasse.gewicht}}" value="{{index}}" {{setChecked "pool6" index}}/><label>{{name}}</label>
+              {{/each}}
+            </div>
+          </div>
+        {{/each}}
       </form>
     </div>
-    {{/if}}
-  </div>
-  {{> footer}}
-  <script type="text/javascript">
-  </script>
+  {{/if}}
+</div>
+{{> footer}}
+<script type="text/javascript">
+</script>
 </body>
 
 </html>

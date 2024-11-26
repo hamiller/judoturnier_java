@@ -1,131 +1,134 @@
 <!DOCTYPE html>
 <html lang="de">
-  <head>
+<head>
   <title>Judo-Turniersoftware</title>
   <link rel="stylesheet" href="/css/interface.css">
   <link rel="stylesheet" href="/css/mainstyle.css">
   <style type="text/css">
-      @page {
-        size: A4 portrait;
-        margin: 20mm 15mm 20mm 15mm;
-        
-        @bottom-right-corner {
-          content: "Seite " counter(page);
-        }
-      }
+    @page {
+      size: A4 portrait;
+      margin: 20mm 15mm 20mm 15mm;
 
-      tr {
-        vertical-align: middle;
+      @bottom-right-corner {
+        content: "Seite " counter(page);
       }
-      .printlayout_name {
-        width: 150px;
-      }
+    }
+
+    tr {
+      vertical-align: middle;
+    }
+
+    .printlayout_name {
+      width: 150px;
+    }
   </style>
 </head>
 <body>
-  <script src="/js/paged.polyfill.min.js"></script>
-  <div>
-    <div class="">
-      {{#each matten}}
-        <div class="wettkampfgruppe printing">
-          <div class="listeneintrag-titel">Matte {{id}}</div>
-          
-          {{#each gruppenRunden}}
-            <div class="flex_warp">
-              {{#each runde as |runden rundenindex|}}
-                {{#if (istGleich begegnungen.[0].wettkaempfer1.name null)}}
+<script src="/js/paged.polyfill.min.js"></script>
+<div>
+  <div class="">
+    {{#each matten}}
+      <div class="wettkampfgruppe printing">
+        <div class="listeneintrag-titel">Matte {{id}}</div>
+
+        {{#each gruppenRunden}}
+          <div class="flex_warp">
+            {{#each runde as |runden rundenindex|}}
+              {{#if (istGleich begegnungen.[0].wettkaempfer1.name null)}}
+                <div class="gruppentitel_2 box">
+                  Pause
+                </div>
+              {{else}}
+                {{#if (istGleich @rundenindex 0)}}
                   <div class="gruppentitel_2 box">
-                      Pause
-                    </div>
-                {{else}}
-                  {{#if (istGleich @rundenindex 0)}}
-                    <div class="gruppentitel_2 box">
-                      Gruppe {{runden.gruppe.name}}<br>
-                      Gruppen-Runde {{runden.gruppenRunde}}<br>
-                      Wettkampf-Nr. {{runden.mattenRunde}}
-                    </div>
-                  {{/if}}
-                
-                  <div class="box">
-                    {{#each begegnungen}}
-                      <div class="">
-                        <table>
-                          <tbody>
-                            <tr>
-                              <td class="wettkaempfer name printlayout_name">{{wettkaempfer1.name}}</td>
-                              <td></td>
-                              <td class="wettkaempfer name printlayout_name">{{wettkaempfer2.name}}</td>
-                            </tr>
-                            <tr>
-                              <td><div class="{{wettkaempfer1.farbe.get}}">{{wettkaempfer1.farbe.get}}</div></td>
-                              <td></td>
-                              <td class="{{wettkaempfer2.farbe.get}}">{{wettkaempfer2.farbe.get}}</td>
-                            </tr>
-                            <tr>
-                              <td>({{wettkaempfer1.verein.name}})</td> 
-                              <td></td>
-                              <td>({{wettkaempfer2.verein.name}})</td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <table>
-                                  <tbody>
-                                    <tr>
-                                      <td>Kampfgeist</td>
-                                      <td class="emptyTableCell"></td>
-                                    </tr>
-                                    <tr>
-                                      <td>Technik</td>
-                                      <td class="emptyTableCell"></td>
-                                    </tr>
-                                    <tr>
-                                      <td>Kampfstil</td>
-                                      <td class="emptyTableCell"></td>
-                                    </tr>
-                                    <tr>
-                                      <td>Vielfalt</td>
-                                      <td class="emptyTableCell"></td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                              </td>
-                              <td></td>
-                              <td>
-                                <table>
-                                  <tbody>
-                                    <tr>
-                                      <td>Kampfgeist</td>
-                                      <td class="emptyTableCell"></td>
-                                    </tr>
-                                    <tr>
-                                      <td>Technik</td>
-                                      <td class="emptyTableCell"></td>
-                                    </tr>
-                                    <tr>
-                                      <td>Kampfstil</td>
-                                      <td class="emptyTableCell"></td>
-                                    </tr>
-                                    <tr>
-                                      <td>Vielfalt</td>
-                                      <td class="emptyTableCell"></td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    {{/each}}
+                    Gruppe {{runden.gruppe.name}}<br>
+                    Gruppen-Runde {{runden.gruppenRunde}}<br>
+                    Wettkampf-Nr. {{runden.mattenRunde}}
                   </div>
                 {{/if}}
-              {{/each}}
-            </div>
-          {{/each}}
-        </div>
-      {{/each}}
-    </div>
+
+                <div class="box">
+                  {{#each begegnungen}}
+                    <div class="">
+                      <table>
+                        <tbody>
+                        <tr>
+                          <td class="wettkaempfer name printlayout_name">{{wettkaempfer1.name}}</td>
+                          <td></td>
+                          <td class="wettkaempfer name printlayout_name">{{wettkaempfer2.name}}</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="{{wettkaempfer1.farbe.get}}">{{wettkaempfer1.farbe.get}}</div>
+                          </td>
+                          <td></td>
+                          <td class="{{wettkaempfer2.farbe.get}}">{{wettkaempfer2.farbe.get}}</td>
+                        </tr>
+                        <tr>
+                          <td>({{wettkaempfer1.verein.name}})</td>
+                          <td></td>
+                          <td>({{wettkaempfer2.verein.name}})</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <table>
+                              <tbody>
+                              <tr>
+                                <td>Kampfgeist</td>
+                                <td class="emptyTableCell"></td>
+                              </tr>
+                              <tr>
+                                <td>Technik</td>
+                                <td class="emptyTableCell"></td>
+                              </tr>
+                              <tr>
+                                <td>Kampfstil</td>
+                                <td class="emptyTableCell"></td>
+                              </tr>
+                              <tr>
+                                <td>Vielfalt</td>
+                                <td class="emptyTableCell"></td>
+                              </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                          <td></td>
+                          <td>
+                            <table>
+                              <tbody>
+                              <tr>
+                                <td>Kampfgeist</td>
+                                <td class="emptyTableCell"></td>
+                              </tr>
+                              <tr>
+                                <td>Technik</td>
+                                <td class="emptyTableCell"></td>
+                              </tr>
+                              <tr>
+                                <td>Kampfstil</td>
+                                <td class="emptyTableCell"></td>
+                              </tr>
+                              <tr>
+                                <td>Vielfalt</td>
+                                <td class="emptyTableCell"></td>
+                              </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  {{/each}}
+                </div>
+              {{/if}}
+            {{/each}}
+          </div>
+        {{/each}}
+      </div>
+    {{/each}}
   </div>
+</div>
 </body>
 
 </html>
