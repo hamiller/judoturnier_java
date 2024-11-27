@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
-{{> header}}
+<header>
+  {{> header}}
+</header>
 <body>
 {{> title }}
 {{> nav }}
@@ -28,7 +30,7 @@
   </div>
 
   {{#if preverror}}
-    <div class="errormsg">Der vorherige Wettkampf konnte nicht gespeichert werden: {{preverror}}</div>
+    <div class="errormsg">Ein Fehler ist aufgetreten: {{preverror}}</div>
   {{/if}}
 
   <!--      {{#if separatealtersklassen.name "GETRENNT"}}-->
