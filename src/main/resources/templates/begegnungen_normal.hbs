@@ -1,24 +1,109 @@
 <!DOCTYPE html>
 <html lang="de">
 <header>
-{{> header}}
+  {{> header}}
 
   <title>Judo-Turniersoftware</title>
   <link rel="stylesheet" href="/css/interface.css">
   <link rel="stylesheet" href="/css/mainstyle.css">
   <style type="text/css">
-    @page {
-      size: A4 landscape;
-      margin: 20mm 15mm 20mm 15mm;
-
-      @bottom-right-corner {
-        content: "Seite " counter(page);
-      }
+    .tournament {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
     }
 
-    tr {
-      vertical-align: middle;
+    .group {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 20px;
     }
+
+    .rounds {
+      display: flex;
+      flex-direction: row;
+      gap: 50px;
+    }
+
+    .round {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .matches {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      position: relative;
+    }
+
+    .match {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid #aaa;
+      padding: 10px;
+      width: 200px;
+      text-align: center;
+      position: relative;
+    }
+
+    /* Standardstil für die Begegnungsart */
+    .match-type {
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    /* Spezifische Stile für die Arten */
+    .match.gewinnerrunde .match-type {
+      color: #0a7f00;
+    }
+
+    .match.trostrunde .match-type {
+      color: #c40000;
+    }
+
+    .team {
+      font-size: 14px;
+      margin: 5px 0;
+    }
+
+    .match::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -25px; /* Extend to the next round */
+      width: 50px; /* Line length */
+      height: 2px;
+      background-color: #aaa;
+      display: none;
+    }
+
+    .match::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: -25px;
+      width: 50px;
+      height: 2px;
+      background-color: #aaa;
+      display: none;
+    }
+
+    /* Show lines only for connected matches */
+    .match[data-next-id]::after {
+      display: block;
+    }
+
+    .match[data-prev-id]::before {
+      display: block;
+    }
+
+
   </style>
 </header>
 <body>
@@ -59,34 +144,55 @@
     </md-tabs>
   </div>
 
+  <div>
+
+    <div class="tournament">
+      {{#each gruppenRunden as |gruppenRunde|}}
+        <div class="group">
+          <h2>Gruppe: {{gruppenRunde.runde.[0].gruppe.name}} ({{gruppenRunde.runde.[0].gruppe.typ}})</h2>
+          <div class="rounds">
+            {{#each gruppenRunde.runde as |runde|}}
+              <div class="round">
+                <h3>Runde: {{runde.gruppenRunde}}</h3>
+                <div class="matches">
+                  {{#each runde.begegnungen as |begegnung|}}
+                    <div
+                      class="match {{lowerCase begegnung.rundenTyp.name}}"
+                      data-next-id="{{begegnung.nachfolgerBegegnungId}}"
+                      data-prev-id="{{begegnung.vorherigeBegegnungId}}">
+                      <div class="match-type">{{begegnung.rundenTyp.name}}</div>
+                      <div class="team">
+                        {{#if begegnung.wettkaempfer1.name}}
+                          {{begegnung.wettkaempfer1.name}} ({{begegnung.wettkaempfer1.gewicht}}kg) – {{begegnung.wettkaempfer1.verein.name}}
+                        {{else}}
+                          N/A
+                        {{/if}}
+                      </div>
+                      <div class="team">
+                        {{#if begegnung.wettkaempfer2.name}}
+                          {{begegnung.wettkaempfer2.name}} ({{begegnung.wettkaempfer2.gewicht}}kg) – {{begegnung.wettkaempfer2.verein.name}}
+                        {{else}}
+                          N/A
+                        {{/if}}
+                      </div>
+                    </div>
+                  {{/each}}
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        </div>
+      {{/each}}
+    </div>
+
+
+  </div>
+
   <div class="generalcontent">
 
     <div id="windowStatus">Kein Fenster geöffnet.</div>
 
     {{#each matten}}
-
-      <div class="tournament">
-        {{#each gruppe as |gruppenRunde|}}
-          {{#each gruppenRunde.runde as |runde|}}
-            <div class="round">
-              <h3>Runde: {{runde.rundeGesamt}}</h3>
-              <h4>Altersklasse: {{runde.altersklasse}}</h4>
-              <h5>Gruppe: {{runde.gruppe.name}} ({{runde.gruppe.typ}})</h5>
-              {{#each runde.begegnungen as |begegnung|}}
-                <div class="match">
-                  <div class="team">
-                    {{begegnung.wettkaempfer1.name}} ({{begegnung.wettkaempfer1.gewicht}}kg) – {{begegnung.wettkaempfer1.verein.name}}
-                  </div>
-                  <div class="team">
-                    {{begegnung.wettkaempfer2.name}} ({{begegnung.wettkaempfer2.gewicht}}kg) – {{begegnung.wettkaempfer2.verein.name}}
-                  </div>
-                </div>
-              {{/each}}
-            </div>
-          {{/each}}
-        {{/each}}
-      </div>
-
 
       <div class="matte tabcontent" id="matten-panel-{{id}}">
         <div class="listeneintrag-titel">Matte {{id}}</div>
@@ -200,6 +306,20 @@
   document.addEventListener('DOMContentLoaded', function () {
     var tabContent = document.querySelector(".tabcontent");
     if (tabContent) tabContent.style.display = "block";
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const matches = document.querySelectorAll(".match");
+
+    matches.forEach((match) => {
+      const nextId = match.getAttribute("data-next-id");
+      if (nextId) {
+        const nextMatch = document.querySelector(`.match[data-prev-id="${nextId}"]`);
+        if (nextMatch) {
+          match.style.setProperty("--line-to-next", "block");
+        }
+      }
+    });
   });
 </script>
 </body>
