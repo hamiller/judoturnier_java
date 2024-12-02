@@ -1,0 +1,78 @@
+{{#each (gruppeTypenRundenDtoListFromMatte gruppenListMitTypen id) as |gruppenListMitTypenJeMatte| }}
+  <div class="gruppenblock">
+    <div class="metainfos">
+      <h2>Gruppe: {{gruppenTyp}}</h2>
+      <h3>Gewinnerrunden</h3>
+    </div>
+
+    <div class="tournament">
+      {{#each gruppenListMitTypenJeMatte.gewinnerrundeDtoList as |runde|}}
+        <div class="runde">
+          <h3>Runde: {{runde.gruppenRunde}}</h3>
+          {{#each runde.begegnungen as |begegnung|}}
+            <div
+              class="paarung {{lowerCase begegnung.rundenTyp.name}}"
+              data-next-id="{{begegnung.nachfolgerBegegnungId}}"
+              data-prev-id="{{begegnung.vorherigeBegegnungId}}">
+
+              <ul>
+                <li class="kaempfer kaempfer-eins">
+                  {{#if begegnung.wettkaempfer1.name}}
+                    {{begegnung.wettkaempfer1.name}} ({{begegnung.wettkaempfer1.gewicht}}kg) – {{begegnung.wettkaempfer1.verein.name}}
+                  {{else}}
+                    N/A
+                  {{/if}}
+                </li>
+                <li class="kaempfer kaempfer-zwei">
+                  {{#if begegnung.wettkaempfer2.name}}
+                    {{begegnung.wettkaempfer2.name}} ({{begegnung.wettkaempfer2.gewicht}}kg) – {{begegnung.wettkaempfer2.verein.name}}
+                  {{else}}
+                    N/A
+                  {{/if}}
+                </li>
+              </ul>
+            </div>
+          {{/each}}
+        </div>
+      {{/each}}
+    </div>
+
+    <div class="metainfos">
+      <h3>Trostrunden</h3>
+    </div>
+    <div class="tournament">
+      {{#each gruppenListMitTypenJeMatte.trostrundeDtoList as |runde|}}
+        <div class="runde">
+          <h3>Runde: {{runde.gruppenRunde}}</h3>
+          {{#each runde.begegnungen as |begegnung|}}
+            <div
+              class="paarung {{lowerCase begegnung.rundenTyp.name}}"
+              data-next-id="{{begegnung.nachfolgerBegegnungId}}"
+              data-prev-id="{{begegnung.vorherigeBegegnungId}}">
+
+              <ul>
+                <li class="kaempfer kaempfer-eins">
+                  {{#if begegnung.wettkaempfer1.name}}
+                    {{begegnung.wettkaempfer1.name}} ({{begegnung.wettkaempfer1.gewicht}}kg) – {{begegnung.wettkaempfer1.verein.name}}
+                  {{else}}
+                    N/A
+                  {{/if}}
+                </li>
+                <li class="kaempfer kaempfer-zwei">
+                  {{#if begegnung.wettkaempfer2.name}}
+                    {{begegnung.wettkaempfer2.name}} ({{begegnung.wettkaempfer2.gewicht}}kg) – {{begegnung.wettkaempfer2.verein.name}}
+                  {{else}}
+                    N/A
+                  {{/if}}
+                </li>
+              </ul>
+            </div>
+          {{/each}}
+        </div>
+      {{/each}}
+
+    </div>
+
+    <md-divider></md-divider>
+  </div>
+{{/each}}

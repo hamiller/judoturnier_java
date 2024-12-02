@@ -1,6 +1,7 @@
 package de.sinnix.judoturnier.application;
 
 import de.sinnix.judoturnier.adapter.secondary.BenutzerRepository;
+import de.sinnix.judoturnier.adapter.secondary.EinstellungJpa;
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
 import de.sinnix.judoturnier.fixtures.GewichtsklassenGruppeFixture;
 import de.sinnix.judoturnier.fixtures.MatteFixtures;
@@ -35,6 +36,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +48,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -63,6 +67,8 @@ class TurnierServiceTest {
 	private GewichtsklassenService gewichtsklassenService;
 	@Mock
 	private BenutzerRepository     benutzerRepository;
+	@Mock
+	private WettkaempferService    wettkaempferService;
 
 	@Spy
 	private Sortierer sortierer = new Sortierer(1, 1);
@@ -72,7 +78,7 @@ class TurnierServiceTest {
 	@InjectMocks
 	private TurnierService turnierService;
 
-	private UUID turnierUUID = MatteFixtures.turnierUUID;
+	private UUID     turnierUUID = MatteFixtures.turnierUUID;
 	private Benutzer benutzer;
 
 	@BeforeEach
@@ -378,7 +384,7 @@ class TurnierServiceTest {
 			for (Runde runde : matte.runden()) {
 				logger.debug("Runde {}  Gruppe: {}", runde.gruppenRunde(), runde.gruppe().name());
 				for (Begegnung begegnung : runde.begegnungen()) {
-					logger.debug("{} - Wettkaempfer1: {}, Wettkaempfer2: {}", begegnung.getBegegnungId(),  begegnung.getWettkaempfer1().map(Wettkaempfer::name), begegnung.getWettkaempfer2().map(Wettkaempfer::name));
+					logger.debug("{} - Wettkaempfer1: {}, Wettkaempfer2: {}", begegnung.getBegegnungId(), begegnung.getWettkaempfer1().map(Wettkaempfer::name), begegnung.getWettkaempfer2().map(Wettkaempfer::name));
 				}
 			}
 		}
@@ -414,10 +420,141 @@ class TurnierServiceTest {
 	}
 
 	@Test
-	@Disabled
-	void speichereTurnierWertung() {
-		logger.error("Implement test!!");
-//		turnierService.speichereTurnierWertung();
+	void testErstelleWettkampfreihenfolgeAltersklasseNormal2() {
+		List<GewichtsklassenGruppe> gewichtsklassenGruppen = GewichtsklassenGruppeFixture.gewichtsklassenGruppen;
+		// 5 Gruppen
+		//   Gruppe1: 6 Teilnehmer => wird auf 8 erweitert. 11 Begegnungen
+		//   Gruppe2: 6 Teilnehmer => wird auf 8 erweitert. 11 Begegnungen
+		//   Gruppe3: 6 Teilnehmer => wird auf 8 erweitert. 11 Begegnungen
+		//   Gruppe4: 4 Teilnehmer => bleibt bei 4.          3 Begegnungen
+		//   Gruppe5: 3 Teilnehmer => wird auf 4 erweitert.  3 Begegnungen
+
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroessen(Map.of(Altersklasse.U9, 6)), new VariablerGewichtsteil(0.2), SeparateAlterklassen.GETRENNT, new Wettkampfzeiten(Map.of()), turnierUUID);
+
+		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
+		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);
+
+		turnierService.erstelleWettkampfreihenfolgeAltersklasse(Optional.empty(), turnierUUID);
+
+
+		// ArgumentCaptor verwenden
+		ArgumentCaptor<List<Matte>> argumentCaptor = ArgumentCaptor.forClass(List.class);
+		verify(turnierRepository, times(1)).speichereMatten(argumentCaptor.capture());
+		List<Matte> matten = argumentCaptor.getValue();
+		// Anzahl der Matten
+		assertEquals(2, matten.size());
+		// Anzahl der GewichtsklassenGruppen
+		assertEquals(5, gewichtsklassenGruppen.size());
+		// Anzahl Teilnehmer insgesamt
+		assertEquals(25, gewichtsklassenGruppen.stream().mapToInt(g -> g.teilnehmer().size()).sum());
+		// Anzahl aller Begegnungen
+		assertEquals(39, matten.stream().mapToInt(m -> m.runden().stream().mapToInt(r -> r.begegnungen().size()).sum()).sum());
+
+		// 1. Runde für Gruppe A, 1. Runde auf der Matte, 1. Runde ingesamt
+		assertEquals(1, matten.get(0).runden().get(0).mattenRunde());
+		assertEquals(1, matten.get(0).runden().get(0).gruppenRunde());
+		assertEquals(1, matten.get(0).runden().get(0).rundeGesamt());
+		// 1. Runde für Gruppe B, 2. Runde auf der Matte, 2. Runde ingesamt
+		assertEquals(2, matten.get(0).runden().get(1).mattenRunde());
+		assertEquals(1, matten.get(0).runden().get(1).gruppenRunde());
+		assertEquals(2, matten.get(0).runden().get(1).rundeGesamt());
+		// 1. Runde für Gruppe C, 3. Runde auf der Matte, 3. Runde ingesamt
+		assertEquals(3, matten.get(0).runden().get(2).mattenRunde());
+		assertEquals(1, matten.get(0).runden().get(2).gruppenRunde());
+		assertEquals(3, matten.get(0).runden().get(2).rundeGesamt());
+		// 2. Runde für Gruppe A, 4. Runde auf der Matte, 4. Runde ingesamt
+		assertEquals(4, matten.get(0).runden().get(3).mattenRunde());
+		assertEquals(2, matten.get(0).runden().get(3).gruppenRunde());
+		assertEquals(4, matten.get(0).runden().get(3).rundeGesamt());
+
+		// Anzahl der Begegnungen auf Matte 1
+		assertEquals(33, matten.get(0).runden().stream().mapToInt(r -> r.begegnungen().size()).sum());
+
+		// Anzahl der Begegnungen auf Matte 2
+		assertEquals(6, matten.get(1).runden().stream().mapToInt(r -> r.begegnungen().size()).sum());
+
+		for (Matte matte : matten) {
+			for (Runde runde : matte.runden()) {
+				logger.debug("Runde {}  Gruppe: {}", runde.gruppenRunde(), runde.gruppe().name());
+				for (Begegnung begegnung : runde.begegnungen()) {
+					logger.debug("{} - Wettkaempfer1: {}, Wettkaempfer2: {}", begegnung.getBegegnungId(), begegnung.getWettkaempfer1().map(Wettkaempfer::name), begegnung.getWettkaempfer2().map(Wettkaempfer::name));
+				}
+			}
+		}
+
+		// Die MattenRunde wird immer erhöht
+		assertTrue(IntStream.range(1, matten.get(0).runden().size())
+			.allMatch(i -> matten.get(0).runden().get(i - 1).mattenRunde() < matten.get(0).runden().get(i).mattenRunde()));
+		assertTrue(IntStream.range(1, matten.get(1).runden().size())
+			.allMatch(i -> matten.get(1).runden().get(i - 1).mattenRunde() < matten.get(1).runden().get(i).mattenRunde()));
+	}
+
+	@Test
+	void speichereTurnierWertungErsterKampf() {
+		int scoreWeiss = 1;
+		int scoreBlau = 0;
+		int penaltiesWeiss = 0;
+		int penaltiesBlau = 0;
+		String fighttime = "02:03.54"; // entspricht 123.540ms
+		UUID siegerUuid = WettkaempferFixtures.wettkaempfer1.get().id();
+
+		int aktuelleMattenRunde = 2;
+		int aktuellePaarung = 1;
+		int aktuelleGruppenRunde = 1;
+		int aktuelleGesamtRunde = 2;
+		Begegnung.BegegnungId begegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, aktuelleMattenRunde, aktuellePaarung);
+		Begegnung aktuelleBegegnung = new Begegnung(UUID.randomUUID(), begegnungId, UUID.randomUUID(),
+			1, aktuelleMattenRunde, aktuelleGruppenRunde, aktuelleGesamtRunde,
+			WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2,
+			new ArrayList<>(),
+			WettkampfgruppeFixture.gruppe1,
+			turnierUUID
+		);
+		Begegnung.BegegnungId begegnungNachfolgendId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, aktuelleMattenRunde +1, aktuellePaarung +1);
+		Begegnung nachfolgendeBegegnung = new Begegnung(UUID.randomUUID(), begegnungNachfolgendId, UUID.randomUUID(),
+			1, aktuelleMattenRunde+1, aktuelleGruppenRunde+1, aktuelleGesamtRunde+1,
+			Optional.empty(), Optional.empty(),
+			new ArrayList<>(),
+			WettkampfgruppeFixture.gruppe1,
+			turnierUUID
+		);
+
+		// Teil 1
+		when(turnierRepository.ladeBegegnung(any())).thenReturn(aktuelleBegegnung);
+		when(benutzerRepository.findBenutzer(eq(benutzer.uuid()))).thenReturn(Optional.of(benutzer));
+		when(wettkaempferService.ladeKaempfer(eq(siegerUuid))).thenReturn(WettkaempferFixtures.wettkaempfer1);
+
+		// Teil 2
+		when(turnierRepository.findeBegegnung(any(), anyInt(), anyInt(), any(), any()))
+			.thenReturn(Optional.of(nachfolgendeBegegnung))
+			.thenReturn(Optional.empty());
+
+
+		turnierService.speichereTurnierWertung(aktuelleBegegnung.getId(), scoreWeiss, scoreBlau, penaltiesWeiss, penaltiesBlau, fighttime, siegerUuid, benutzer.uuid());
+
+
+		// Verify Teil 1
+		ArgumentCaptor<Begegnung> argumentCaptor = ArgumentCaptor.forClass(Begegnung.class);
+		verify(turnierRepository, times(2)).speichereBegegnung(argumentCaptor.capture());
+
+		Begegnung gespeichert = argumentCaptor.getAllValues().get(0);
+		assertEquals(begegnungId, gespeichert.getBegegnungId());
+		assertEquals(1, gespeichert.getWertungen().size());
+		assertEquals(siegerUuid, gespeichert.getWertungen().get(0).getSieger().id());
+		assertEquals(scoreWeiss, gespeichert.getWertungen().get(0).getPunkteWettkaempferWeiss());
+		assertEquals(scoreBlau, gespeichert.getWertungen().get(0).getPunkteWettkaempferRot());
+		assertEquals(penaltiesWeiss, gespeichert.getWertungen().get(0).getStrafenWettkaempferWeiss());
+		assertEquals(penaltiesBlau, gespeichert.getWertungen().get(0).getStrafenWettkaempferRot());
+		assertEquals(Duration.ofMillis(123540), gespeichert.getWertungen().get(0).getZeit());
+
+		// Verify Teil 2
+		verify(turnierRepository, times(2)).findeBegegnung(any(), anyInt(), anyInt(), any(), any());
+
+		Begegnung gespeichertNext = argumentCaptor.getAllValues().get(1);
+		assertEquals(begegnungNachfolgendId, gespeichertNext.getBegegnungId());
+		assertEquals(0, gespeichertNext.getWertungen().size());
+		// TODO schreibe den Sieger in die nächste Begegnung
+		assert(false);
 	}
 
 	@Test

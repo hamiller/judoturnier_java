@@ -92,6 +92,26 @@ public class GewichtsklassenGruppeFixture {
             ), Optional.of(RandoriGruppenName.Tiger), 28.0, 28.2, turnierUUID)
     );
 
+	public static List<GewichtsklassenGruppe> gewichtsklassenGruppenFrauen3 = Arrays.asList(
+		new GewichtsklassenGruppe(gwkg1, Altersklasse.Frauen, Optional.of(Geschlecht.w), Arrays.asList(
+			WettkaempferFixtures.wettkaempferin1,
+			WettkaempferFixtures.wettkaempferin2,
+			WettkaempferFixtures.wettkaempferin3,
+			WettkaempferFixtures.wettkaempferin4,
+			WettkaempferFixtures.wettkaempferin5,
+			WettkaempferFixtures.wettkaempferin6,
+			WettkaempferFixtures.wettkaempferin7
+		), Optional.of(RandoriGruppenName.Antilope), 58.0, 62.0, turnierUUID),
+		new GewichtsklassenGruppe(gwkg2, Altersklasse.Frauen, Optional.of(Geschlecht.w), Arrays.asList(
+			WettkaempferFixtures.wettkaempferin8,
+			WettkaempferFixtures.wettkaempferin9
+		), Optional.of(RandoriGruppenName.Tiger), 47.0, 47.6, turnierUUID),
+		new GewichtsklassenGruppe(gwkg3, Altersklasse.Frauen, Optional.of(Geschlecht.w), Arrays.asList(
+			WettkaempferFixtures.wettkaempferin10,
+			WettkaempferFixtures.wettkaempferin11
+		), Optional.of(RandoriGruppenName.Katze), 53.0, 54.0, turnierUUID)
+	);
+
     public static List<GewichtsklassenGruppe> gewichtsklassenGruppenZweiAltersklassen = Arrays.asList(
         new GewichtsklassenGruppe(gwkg1, Altersklasse.U11, Optional.of(Geschlecht.m), Arrays.asList(
             new Wettkaempfer(w1, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(v1, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.BLAU), true, true, turnierUUID),

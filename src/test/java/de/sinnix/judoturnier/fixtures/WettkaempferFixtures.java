@@ -49,6 +49,20 @@ public class WettkaempferFixtures {
     public static Optional<Wettkaempfer> wettkaempfer3 = Optional.of(new Wettkaempfer(w3, "Simone S", Geschlecht.w, Altersklasse.U11, new Verein(v1UUID, "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID));
     public static Optional<Wettkaempfer> wettkaempfer4 = Optional.of(new Wettkaempfer(w4, "Beatrice X", Geschlecht.w, Altersklasse.U11, new Verein(v1UUID, "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID));
 
+	public static Wettkaempfer wettkaempferin1 = new Wettkaempfer(UUID.fromString("dae575e5-d78c-461c-89a3-0275002f317f"), "Fox, Sweetie", Geschlecht.w, Altersklasse.Frauen, new Verein(v1UUID, "Verein1", turnierUUID), 60.0, Optional.of(Farbe.WEISS), true, false, turnierUUID);
+	public static Wettkaempfer wettkaempferin2 = new Wettkaempfer(UUID.fromString("fed166f9-8ba2-482d-9ad0-ff4e35fe28dd"), "Reid, Riley", Geschlecht.w, Altersklasse.Frauen, new Verein(v1UUID, "Verein1", turnierUUID), 60.0, Optional.of(Farbe.BRAUN), true, false, turnierUUID);
+	public static Wettkaempfer wettkaempferin3 = new Wettkaempfer(UUID.fromString("ace600da-6b83-408e-8d57-790694c1ec5b"), "Jameson, Jenna", Geschlecht.w, Altersklasse.Frauen, new Verein(v1UUID, "Verein1", turnierUUID), 61.0, Optional.of(Farbe.GELB), true, false, turnierUUID);
+	public static Wettkaempfer wettkaempferin4 = new Wettkaempfer(UUID.fromString("3fa2397f-641e-48ac-873f-31f10fd6afba"), "Belle, Lexi", Geschlecht.w, Altersklasse.Frauen, new Verein(v1UUID, "Verein1", turnierUUID), 62.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID);
+	public static Wettkaempfer wettkaempferin5 = new Wettkaempfer(UUID.fromString("9c22cdb3-a102-4f87-9586-ce68e40489e0"), "Grey, Sasha", Geschlecht.w, Altersklasse.Frauen, new Verein(v1UUID, "Verein1", turnierUUID), 62.0, Optional.empty(), true, false, turnierUUID);
+	public static Wettkaempfer wettkaempferin6 = new Wettkaempfer(UUID.fromString("2ce00751-47ba-4698-a39e-2f0853bcd661"), "Crystal, Alexis", Geschlecht.w, Altersklasse.Frauen, new Verein(v1UUID, "Verein1", turnierUUID), 58.0, Optional.empty(), true, false, turnierUUID);
+	public static Wettkaempfer wettkaempferin7 = new Wettkaempfer(UUID.fromString("db2311c4-40cc-4c8a-adf0-6294c2bbc68c"), "Lore, Lexi", Geschlecht.w, Altersklasse.Frauen, new Verein(v1UUID, "Verein1", turnierUUID), 58.0, Optional.empty(), true, false, turnierUUID);
+
+	public static Wettkaempfer wettkaempferin8 = new Wettkaempfer(UUID.fromString("53f3464d-f356-4cae-b2a9-900b875da911"), "Caprice, Little", Geschlecht.w, Altersklasse.Frauen, new Verein(v1UUID, "Verein1", turnierUUID), 47.0, Optional.empty(), true, false, turnierUUID);
+	public static Wettkaempfer wettkaempferin9 = new Wettkaempfer(UUID.fromString("8572c7e7-b50b-4964-b661-e4d25e0950b4"), "Maire, Ariana", Geschlecht.w, Altersklasse.Frauen, new Verein(v1UUID, "Verein1", turnierUUID), 47.6, Optional.empty(), true, false, turnierUUID);
+
+	public static Wettkaempfer wettkaempferin10 = new Wettkaempfer(UUID.fromString("8015045a-6490-4b26-83c2-0d46b8fbd397"), "Di, Foxi", Geschlecht.w, Altersklasse.Frauen, new Verein(v1UUID, "Verein1", turnierUUID), 53.0, Optional.empty(), true, false, turnierUUID);
+	public static Wettkaempfer wettkaempferin11 = new Wettkaempfer(UUID.fromString("9aa77e17-d3d3-48e9-9fae-8ab9c0b952c5"), "Dee, Sophie", Geschlecht.w, Altersklasse.Frauen, new Verein(v1UUID, "Verein1", turnierUUID), 54.0, Optional.empty(), true, false, turnierUUID);
+
     public static List<WettkaempferJpa> wettkaempferJpaList = Arrays.asList(
             new WettkaempferJpa(w1.toString(), "Teilnehmer A", "m", "U11", new VereinJpa(v1UUID.toString(), "Verein1", turnierUUID.toString()), 25.0, "ORANGE", true, false, turnierUUID.toString()),
             new WettkaempferJpa(w2.toString(), "Teilnehmer B", "w", "U11", new VereinJpa(v2UUID.toString(), "Verein2", turnierUUID.toString()), 26.0, "BLAU", false, true, turnierUUID.toString()),

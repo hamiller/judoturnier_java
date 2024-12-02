@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -225,5 +226,15 @@ public class HelperSource {
 		} catch (IllegalArgumentException e) {
 			return false; // Wenn ein Fehler auftritt, ist es keine UUID
 		}
+	}
+
+	public static String lowerCase(String value) {
+		return value.toLowerCase();
+	}
+
+	public static List<GruppeTypenRundenDto> gruppeTypenRundenDtoListFromMatte(Map<Integer, List<GruppeTypenRundenDto>> gruppenListMitTypen, Options options) {
+		Integer matte = options.param(0);
+		var r =  gruppenListMitTypen.get(matte);
+		return r;
 	}
 }

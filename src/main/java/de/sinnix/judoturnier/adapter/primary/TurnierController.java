@@ -7,6 +7,7 @@ import de.sinnix.judoturnier.application.TurnierService;
 import de.sinnix.judoturnier.application.VereinService;
 import de.sinnix.judoturnier.application.WettkaempferService;
 import de.sinnix.judoturnier.model.Altersklasse;
+import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
@@ -39,6 +40,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -227,11 +230,20 @@ public class TurnierController {
 			.map(m -> DtosConverter.convertFromMatte(m))
 			.collect(Collectors.toList());
 
+		Map<Integer, List<GruppeTypenRundenDto>> gruppenListMitTypen = gefilterteMatten.stream()
+			.collect(Collectors.toMap(
+				matte -> matte.id(), // Key: ID aus MatteDto als String
+				matte -> reorganize(matte.gruppenRunden()) // Value: Ergebnis der reorganize-Methode
+			));
+
+		logger.info("gruppenListMitTypen: {}", gruppenListMitTypen);
+
 		ModelAndView mav = new ModelAndView("begegnungen_normal");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
 		mav.addObject("gewichtsklassenGruppe", gwks);
 		mav.addObject("matten", gefilterteMatten);
+		mav.addObject("gruppenListMitTypen", gruppenListMitTypen);
 		mav.addObject("altersklassen", altersklassen);
 		mav.addObject("preverror", error);
 		mav.addObject("separatealtersklassen", einstellungen.separateAlterklassen());
@@ -392,5 +404,55 @@ public class TurnierController {
 				.collect(Collectors.toList());
 		}
 		return wettkampfreihenfolgeJeMatte;
+	}
+
+	public static List<GruppeTypenRundenDto> reorganize(List<GruppenRundeDto> gruppen) {
+
+		Map<UUID, GruppeTypenRundenDto> map = new HashMap<>();
+		for (GruppenRundeDto gruppe : gruppen) {
+			var wkg = gruppe.runde().getFirst().gruppe();
+			UUID gruppenId = wkg.id();
+			logger.trace("Gruppe: {}", gruppenId);
+			map.putIfAbsent(gruppenId, new GruppeTypenRundenDto(gruppenId.toString(), wkg.typ(), new ArrayList<>(), new ArrayList<>()));
+
+			GruppeTypenRundenDto gtr = map.get(gruppenId);
+			Map<Integer, RundeDto> gewinnerRunden = new LinkedHashMap<>();
+			Map<Integer, RundeDto> trostRunden = new LinkedHashMap<>();
+			for (int i = 0; i < gruppe.runde().size(); i++) {
+				logger.trace("gehe durch die Runden... {}", i);
+
+				// alle ids sind hier gleich
+				for (BegegnungDto begegnung : gruppe.runde().get(i).begegnungen()) {
+					logger.trace("gehe durch die Begegnungen... {}", begegnung);
+					if (begegnung.rundenTyp().equals(Begegnung.RundenTyp.GEWINNERRUNDE)) {
+						logger.trace("Eine Gewinnerrunde!");
+						gewinnerRunden.putIfAbsent(i, newRundeDto(gruppe.runde().get(i), i));
+						gewinnerRunden.get(i).begegnungen().add(begegnung);
+					} else if (begegnung.rundenTyp().equals(Begegnung.RundenTyp.TROSTRUNDE)) {
+						logger.trace("Eine Trostrunde!");
+						trostRunden.putIfAbsent(i, newRundeDto(gruppe.runde().get(i), i));
+						trostRunden.get(i).begegnungen().add(begegnung);
+					}
+				}
+			}
+			gtr.gewinnerrundeDtoList().addAll(gewinnerRunden.values().stream().toList());
+			gtr.trostrundeDtoList().addAll(trostRunden.values().stream().toList());
+		}
+
+		return map.values().stream()
+			.collect(Collectors.toList());
+	}
+
+	private static RundeDto newRundeDto(RundeDto rundeDto, int i) {
+		return new RundeDto(
+			rundeDto.rundeId(),
+			rundeDto.mattenRunde(),
+			rundeDto.gruppenRunde(),
+			rundeDto.rundeGesamt(),
+			rundeDto.matteId(),
+			rundeDto.altersklasse(),
+			rundeDto.gruppe(),
+			new ArrayList<>()
+		);
 	}
 }

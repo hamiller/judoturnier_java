@@ -191,4 +191,15 @@ public class TurnierRepository {
 			.map(t -> turnierConverter.convertToTurnier(t))
 			.orElseThrow();
 	}
+
+	public Optional<Begegnung> findeBegegnung(Begegnung.RundenTyp rundenTyp, int runde, int paarung, UUID wettkampfGruppeUUID, UUID turnierUUID) {
+		List<WettkampfGruppeJpa> wettkampfGruppeJpaList = wettkampfGruppeJpaRepository.findAll();
+		List<BegegnungJpa> begegnungJpas = begegnungJpaRepository.findAllByTurnierUUIDAndWettkampfGruppeId(turnierUUID.toString(), wettkampfGruppeUUID.toString());
+		return begegnungJpas.stream()
+			.filter(b -> b.getRundenTyp().equals(rundenTyp.getValue()))
+			.filter(b -> b.getRunde().equals(runde))
+			.filter(b -> b.getPaarung().equals(paarung))
+			.map(b -> begegnungConverter.convertToBegegnung(b, wettkampfGruppeJpaList))
+			.findFirst();
+	}
 }

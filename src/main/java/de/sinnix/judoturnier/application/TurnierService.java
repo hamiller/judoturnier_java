@@ -229,14 +229,18 @@ public class TurnierService {
 		Begegnung begegnung = ladeBegegnung(begegnungId);
 
 		Benutzer benutzer = benutzerRepository.findBenutzer(bewerterUUID).orElseThrow(() -> new RuntimeException("Nutzer " + bewerterUUID + " konnte nicht gefunden werden"));
-		Wettkaempfer wettkaempfer = wettkaempferService.ladeKaempfer(siegerUUID).orElseThrow();
+		Wettkaempfer wettkaempferSiegerRunde = wettkaempferService.ladeKaempfer(siegerUUID).orElseThrow(() -> new RuntimeException("Wettkaempfer " + siegerUUID + " konnte nicht gefunden werden"));
 		Duration dauer = parseDuration(fightTime);
+
+		// check we actually have a correct wk
+		if ( !(begegnung.getWettkaempfer1().isPresent() && begegnung.getWettkaempfer1().get().equals(wettkaempferSiegerRunde)) &&
+			 !(begegnung.getWettkaempfer2().isPresent() && begegnung.getWettkaempfer2().get().equals(wettkaempferSiegerRunde))) throw new RuntimeException("Der Sieger " + wettkaempferSiegerRunde.name() + " ist nicht Teil der Begegnung " + begegnungId.toString() + "!");
 
 		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), benutzer);
 		if (existierendeWertung.isPresent()) {
 			logger.debug("Aktualisiere existierende Wertung");
 			var wertung = existierendeWertung.get();
-			wertung.setSieger(wettkaempfer);
+			wertung.setSieger(wettkaempferSiegerRunde);
 			wertung.setPunkteWettkaempferWeiss(scoreWeiss);
 			wertung.setStrafenWettkaempferWeiss(penaltiesWeiss);
 			wertung.setPunkteWettkaempferRot(scoreBlau);
@@ -250,7 +254,7 @@ public class TurnierService {
 		logger.debug("Erstelle neue Wertung");
 		UUID wertungId = UUID.randomUUID();
 		Wertung wertungNeu = new Wertung(wertungId,
-			wettkaempfer,
+			wettkaempferSiegerRunde,
 			dauer,
 			scoreWeiss,
 			penaltiesWeiss,
@@ -260,7 +264,35 @@ public class TurnierService {
 			benutzer
 		);
 		begegnung.getWertungen().add(wertungNeu);
+		// schreibe aktuelle Begegnung
 		turnierRepository.speichereBegegnung(begegnung);
+
+		// schreibe nachfolgende Begegnungen - falls noch welche kommen (Trostrunde und nächste Runde)
+		Begegnung.BegegnungId aktuelleBegegnungId = begegnung.getBegegnungId();
+		var aktuellerRundenTyp = aktuelleBegegnungId.getRundenTyp();
+		var aktuelleRunde = aktuelleBegegnungId.getRunde();
+		var akuellePaarung = aktuelleBegegnungId.getAkuellePaarung();
+
+		Optional<Wettkaempfer> wettkaempferTrostRunde = wettkaempferService.ladeKaempfer(siegerUUID);
+
+		logger.warn("Aktuelle Paarung: {}", aktuelleBegegnungId);
+		Optional<Begegnung> nextGewinnerRundeOptional = turnierRepository.findeBegegnung(Begegnung.RundenTyp.GEWINNERRUNDE, aktuelleRunde + 1, akuellePaarung, begegnung.getWettkampfGruppe().id(), begegnung.getTurnierUUID());
+		Optional<Begegnung> nextTrostRundeOptional = turnierRepository.findeBegegnung(Begegnung.RundenTyp.TROSTRUNDE, aktuelleRunde, akuellePaarung, begegnung.getWettkampfGruppe().id(), begegnung.getTurnierUUID());
+		if (nextGewinnerRundeOptional.isPresent()) {
+			Begegnung nextGewinnerRunde = nextGewinnerRundeOptional.get();
+			logger.warn("nächste GewinnerRunde: {}", nextGewinnerRunde);
+			if (nextGewinnerRunde.getWettkaempfer1().isEmpty()) nextGewinnerRunde.setWettkaempfer1(Optional.of(wettkaempferSiegerRunde));
+			else if (nextGewinnerRunde.getWettkaempfer2().isEmpty()) nextGewinnerRunde.setWettkaempfer2(Optional.of(wettkaempferSiegerRunde));
+			turnierRepository.speichereBegegnung(nextGewinnerRunde);
+		}
+		if (nextTrostRundeOptional.isPresent()) {
+			Begegnung nextTrostRunde = nextTrostRundeOptional.get();
+			logger.warn("nächste TrostRunde: {}", nextTrostRunde);
+			if (wettkaempferTrostRunde.isPresent()) {
+				if (nextTrostRunde.getWettkaempfer1().isEmpty()) nextTrostRunde.setWettkaempfer1(Optional.of(wettkaempferTrostRunde.get()));
+				else if (nextTrostRunde.getWettkaempfer2().isEmpty()) nextTrostRunde.setWettkaempfer2(Optional.of(wettkaempferTrostRunde.get()));
+			}
+		}
 	}
 
 	private Optional<Wertung> wertungVonBewerter(List<Wertung> wertungen, Benutzer benutzer) {
