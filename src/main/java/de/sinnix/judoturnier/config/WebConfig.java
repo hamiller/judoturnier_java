@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ViewResolver;
 
 @ComponentScan
 @Configuration
-public class WebConfiguration {
+public class WebConfig {
 
 	@Bean
 	public ViewResolver handlebarsViewResolver() {

@@ -13,82 +13,122 @@
 {{> title}}
 {{> nav}}
 
-<md-filled-tonal-button type="button" id="open_timer" class="" onclick="openTimerWindow(); return false;">
-  Wertungsbildschirm öffnen
-</md-filled-tonal-button>
-
 <div>
-  Aktuelle Begegnung {{begegnungid}}
-  <form action="/turnier/{{turnierid}}/begegnungen/normal/{{begegnungid}}" method="POST">
+  <div class="metainfos">
+    <h1>Aktuelle Begegnung {{begegnungid}}</h1>
+    <md-divider></md-divider>
+    <div id="windowStatus">Kein Fenster geöffnet.</div>
+    <md-filled-tonal-button type="button" id="open_timer" class="" onclick="openTimerWindow('{{begegnungid}}'); return false;">
+      Wertungsbildschirm öffnen
+    </md-filled-tonal-button>
+  </div>
+  <md-divider></md-divider>
+  <form id="wertungen" action="/turnier/{{turnierid}}/begegnungen/normal/{{begegnungid}}" method="POST">
     <div class="ergebnis_flex">
       <div class="ergebnis_eintrag weiss half-width">
         <div class="wettkaempfer name">
-          <label>{{begegnung.wettkaempfer1.name}}</label>
+          <label>
+            <details>
+              <summary>{{begegnung.wettkaempfer1.name}}</summary>
+              ID: {{begegnung.wettkaempfer1.id}}
+            </details>
+          </label>
           <label class="WEISS">weiss</label>
-          <label class="centertext">{{begegnung.wettkaempfer1.id}}</label>
           <label>{{begegnung.wettkaempfer1.verein.name}}</label>
         </div>
         <span class="row">
-                    <div class="weiss"><label>Wertung weiss:</label><input type="number" id="score_weiss" name="score_weiss" required value={{#optional
-                      begegnung.kampfrichterWertung}}{{this.punkteWettkaempferWeiss}}{{/optional}} /><br/></div>
-                </span>
+          <div class="weiss"><label>Wertung weiss:</label><input type="number" id="score_weiss" name="score_weiss" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.punkteWettkaempferWeiss}}{{/optionalFn}} /><br/></div>
+        </span>
         <span class="row">
-                    <div class="weiss"><label>Strafen weiss:</label><input type="number" id="penalties_weiss" name="penalties_weiss" required value={{#optional
-                      begegnung.kampfrichterWertung}}{{this.strafenWettkaempferWeiss}}{{/optional}} /></div>
-                </span>
+          <div class="weiss"><label>Strafen weiss:</label><input type="number" id="penalties_weiss" name="penalties_weiss" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.strafenWettkaempferWeiss}}{{/optionalFn}} /></div>
+        </span>
       </div>
       <div class="ergebnis_eintrag blau half-width">
         <div class="wettkaempfer name blau">
-          <label>{{begegnung.wettkaempfer2.name}}</label>
+          <label>
+            <details>
+              <summary>{{begegnung.wettkaempfer2.name}}</summary>
+              ID: {{begegnung.wettkaempfer2.id}}
+            </details>
+          </label>
           <label class="BLAU">blau</label>
-          <label class="centertext">{{begegnung.wettkaempfer2.id}}</label>
           <label>{{begegnung.wettkaempfer2.verein.name}}</label>
         </div>
         <span class="row">
-                    <div class="blau"><label>Wertung blau:</label><input type="number" id="score_blau" name="score_blau" required value={{#optional
-                      begegnung.kampfrichterWertung}}{{this.punkteWettkaempferRot}}{{/optional}} /></div>
-                </span>
+          <div class="blau"><label>Wertung blau:</label><input type="number" id="score_blau" name="score_blau" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.punkteWettkaempferRot}}{{/optionalFn}} /></div>
+        </span>
         <span class="row">
-                    <div class="blau"><label>Strafen blau:</label><input type="number" id="penalties_blau" name="penalties_blau" required value={{#optional
-                      begegnung.kampfrichterWertung}}{{this.strafenWettkaempferRot}}{{/optional}} /><br/></div>
-                </span>
+          <div class="blau"><label>Strafen blau:</label><input type="number" id="penalties_blau" name="penalties_blau" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.strafenWettkaempferRot}}{{/optionalFn}} /><br/></div>
+        </span>
       </div>
       <div class="ergebnis_eintrag full-width">
-                <span class="row-centered">
-                    <label>Sieger:</label>
-                    <div class="element">
-                    <input type="radio" id="sieger_weiss" name="sieger" value="{{begegnung.wettkaempfer1.id}}" required {{#optional begegnung.kampfrichterWertung}}{{setChecked this.sieger.id
-                                                                                                                                                                                begegnung.wettkaempfer1.id}}{{/optional}}>
-                    <label for="sieger_weiss">{{begegnung.wettkaempfer1.name}} - <span class="WEISS">weiss</span></label>
-                    </div>
-                    <div class="element">
-                    <input type="radio" id="sieger_blau" name="sieger" value="{{begegnung.wettkaempfer2.id}}" {{#optional begegnung.kampfrichterWertung}}{{setChecked this.sieger.id
-                                                                                                                                                                      begegnung.wettkaempfer2.id}}{{/optional}}>
-                    <label for="sieger_blau">{{begegnung.wettkaempfer2.name}} - <span class="BLAU">blau</span></label>
-                    </div>
-                </span>
         <span class="row-centered">
-                    <label>Kampfzeit:</label><input class="element" type="text" id="fightTime" name="fightTime" required value={{#optional
-          begegnung.kampfrichterWertung}}{{this.zeit}}{{/optional}} /><br/>
-                </span>
+          <label>Sieger:</label>
+          <div class="element">
+          <input type="radio" id="sieger_weiss" name="sieger" value="{{begegnung.wettkaempfer1.id}}" required {{#optionalFn begegnung.kampfrichterWertung}}{{setChecked this.sieger.id begegnung.wettkaempfer1.id}}{{/optionalFn}}>
+          <label for="sieger_weiss">{{begegnung.wettkaempfer1.name}} - <span class="WEISS">weiss</span></label>
+          </div>
+          <div class="element">
+          <input type="radio" id="sieger_blau" name="sieger" value="{{begegnung.wettkaempfer2.id}}" {{#optionalFn begegnung.kampfrichterWertung}}{{setChecked this.sieger.id begegnung.wettkaempfer2.id}}{{/optionalFn}}>
+          <label for="sieger_blau">{{begegnung.wettkaempfer2.name}} - <span class="BLAU">blau</span></label>
+          </div>
+        </span>
+        <input class="element" type="hidden" id="fightTime" name="fightTime" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.zeit}}{{/optionalFn}}
       </div>
       <div class="timer-container">
-        <h1 id="timer-display" class="centered-horizontal">03:00</h1>
-        <button id="start_btn" type="button" class="start_btn"><span class="material-symbols-outlined md-48 centered" title="timer_play">timer_play</span> Start</button>
-        <button id="stop_btn" type="button" class="stop_btn"><span class="material-symbols-outlined md-48 centered" title="timer_pause">timer_pause</span> Stopp</button>
-        <button id="reset_btn" type="button" class="reset_btn"><span class="material-symbols-outlined md-48 centered" title="timer_pause">alarm_off</span> Reset</button>
+        <h1 id="timer-display" class="centered-horizontal"></h1>
+
+        <div class="centered-horizontal">
+          <md-filled-button type="button" class="" onclick="sendCommand('start', {{matteid}})">Starte Zeit</md-filled-button>
+          <md-filled-button type="button" class="" onclick="sendCommand('stop', {{matteid}})">Stoppe Zeit</md-filled-button>
+          <md-filled-button type="button" class="" onclick="sendCommand('reset', {{matteid}})">Zeit zurücksetzen</md-filled-button>
+        </div>
       </div>
     </div>
-    {{#if enableEditing}}
-      <button class="submit_btn" type="submit"><span class="material-icons md-48 centered" title="speichern">save</span> Ergebnis eintragen</button>
-    {{/if}}
   </form>
+</div>
+
+<div class="">
+  <div class="nav_btn-container">
+    <div class="">
+      <md-filled-tonal-button type="button" id="nav_cancel" class="" href="/turnier/{{turnierid}}/begegnungen/normal">
+        Abbrechen
+        <svg slot="icon" height="18" viewBox="0 -960 960 960" width="18" fill="#5f6368">
+          <path
+            d="m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
+        </svg>
+      </md-filled-tonal-button>
+    </div>
+    <div class="">
+      {{#if enableEditing}}
+        <md-filled-button type="button" id="nav_submit" class="" onclick="save(event);">
+          Ergebnis speichern
+          <svg slot="icon" height="18" viewBox="0 -960 720 720" width="18" fill="#5f6368">
+            <path
+              d="m 720,-800 v 480 q 0,33 -23.5,56.5 Q 673,-240 640,-240 H 80 Q 47,-240 23.5,-263.5 0,-287 0,-320 V -880 Q 0,-913 23.5,-936.5 47,-960 80,-960 h 480 z m -80,34 -114,-114 H 80 v 560 h 560 z m -280,406 q 50,0 85,-35 35,-35 35,-85 0,-50 -35,-85 -35,-35 -85,-35 -50,0 -85,35 -35,35 -35,85 0,50 35,85 35,35 85,35 z M 120,-680 H 480 V -840 H 120 Z m -40,-86 v 446 -560 z"/>
+          </svg>
+        </md-filled-button>
+      {{/if}}
+    </div>
+  </div>
 </div>
 
 {{> footer}}
 
 <script>
-  const COUNTDOWN = 80000;
+  const COUNTDOWN = {{kampfzeit}} * 1000; // Millisekunden
+
+  let countdownTime = COUNTDOWN;
+  let zeit = {{zeit begegnung}};
+  if (zeit >= 0) {
+    console.log("ZEIT:" , zeit);
+    countdownTime = zeit;
+  }
+  let totalTime = 0;
+  let interval = null;
+  let timerDisplay = document.getElementById('timer-display');
+  let fightTime = document.getElementById('fightTime');
+  let socket = {};
 
   const formatTime = (milliseconds) => {
     const totalSeconds = Math.floor(Math.abs(milliseconds) / 1000);
@@ -99,55 +139,122 @@
   }
 
   const updateTimer = () => {
+    let time = formatTime(countdownTime);
     if (countdownTime >= 0) {
-      timerDisplay.textContent = formatTime(countdownTime);
+      timerDisplay.textContent = time;
     } else {
-      timerDisplay.textContent = formatTime(countdownTime);
+      timerDisplay.textContent = time;
       timerDisplay.classList.add('negative');
     }
+    fightTime.value = time;
     countdownTime -= 10;
     totalTime += 10;
   }
 
-  const openTimerWindow = () => {
-    console.log("Öffne Wertungsbildschirm")
-  };
-
-  let countdownTime = COUNTDOWN; // 3min in Millisekunden
-  let timerDisplay = document.getElementById('timer-display');
-  let startButton = document.getElementById('start_btn');
-  let pauseButton = document.getElementById('stop_btn');
-  let resetButton = document.getElementById('reset_btn');
-  let fightTime = document.getElementById('fightTime');
-  let interval;
-  let totalTime = 0;
-
-  startButton.addEventListener('click', () => {
-    console.log("Starte");
+  function start() {
     if (!interval) {
       interval = setInterval(updateTimer, 10);
     }
-  });
+  }
 
-  pauseButton.addEventListener('click', () => {
-    console.log("Stoppe");
+  function stop() {
     clearInterval(interval);
     interval = null;
-    fightTime.value = formatTime(totalTime);
-  });
+  }
 
-  resetButton.addEventListener('click', () => {
-    var sicher = confirm("ACHTUNG\n\nHiermit wird die Wettkampfzeit zurückgesetzt! \n\nSind sie sicher?");
-    if (sicher) {
-      clearInterval(interval);
-      interval = null;
-      totalTime = 0;
-      countdownTime = COUNTDOWN;
-      updateTimer();
-      fightTime.value = formatTime(totalTime);
+  function reset() {
+    stop();
+    totalTime = 0;
+    countdownTime = COUNTDOWN;
+    updateTimer();
+  }
+
+  const sendCommand = (command, matte) => {
+    console.log("Sende Command für Matte", command, matte)
+
+    if (command == 'reset') {
+      var sicher = confirm("ACHTUNG\n\nHiermit wird die Wettkampfzeit zurückgesetzt! \n\nSind sie sicher?");
+      if (!sicher) return;
     }
-  });
 
+    if (command === "start") start();
+    if (command === "stop") stop();
+    if (command === "reset") reset();
+
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(command);
+    } else {
+      const statusElement = document.getElementById("windowStatus");
+      statusElement.innerText = "ACHTUNG: Kein Fenster geöffnet, Wertungen werden nur hier angezeigt!";
+    }
+  }
+
+  const openTimerWindow = (begegnungid) => {
+    const matte = {{matteid}};
+    const mattenRunde = {{mattenrunde}};
+    // create new window
+    console.log("Öffne Wertungsbildschirm für Begegnung", begegnungid)
+    controlledWindow = window.open(
+      '/turnier/{{turnierid}}/mattenanzeige/normal/' + begegnungid,
+      'Matte ' + matte,
+      'width=800,height=600,left=2000,top=0' // Passen Sie die Werte an Ihren zweiten Monitor an
+    );
+    controlledWindow.onbeforeunload = () => {
+      controlledWindow = null;
+    };
+
+    // establish websocket
+    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+    const host = window.location.host; // z. B. "localhost:8080" oder "example.com"
+    const path = "/mattenanzeigews?matte=" + matte; // Ihr WebSocket-Pfad
+    const socketUrl = `${protocol}://${host}${path}`;
+    socket = new WebSocket(socketUrl);
+
+    socket.onopen = function () {
+      console.log("Verbunden mit WebSocket, Matte ", matte);
+    };
+
+    socket.onclose = function () {
+      console.log("WebSocket-Verbindung geschlossen, Matte ", matte);
+      socket = null;
+    };
+
+    updateWindowStatus(matte, mattenRunde); // UI aktualisieren
+  };
+
+  const updateWindowStatus = (matte, mattenRunde) => {
+    const statusElement = document.getElementById("windowStatus");
+    if (controlledWindow && !controlledWindow.closed) {
+      statusElement.innerText = "Geöffneter Wertungsbildschirm: Matte " + matte + ", Runde " + mattenRunde;
+    } else {
+      statusElement.innerText = "Kein Fenster geöffnet.";
+    }
+  }
+
+  const validateForm = (event) => {
+    var a1 = document.getElementById("score_weiss").value;
+    var a2 = document.getElementById("penalties_weiss").value;
+    var b1 = document.getElementById("score_blau").value;
+    var b2 = document.getElementById("penalties_blau").value;
+    var c1 = document.getElementById("fightTime").value;
+    var c2 = document.querySelector('input[name="sieger"]:checked');
+    return (a1 != "/" && a2 != "/" && b1 != "/" && b2 != "/" && c1 != "/" && c2);
+  }
+
+  const save = async (event) => {
+    console.log("save event", event);
+    var form = document.getElementById("wertungen");
+    var isValid = validateForm(event);
+    if (isValid) {
+      form.submit();
+      return;
+    }
+
+    alert("Bitte alle Wertungen angeben.");
+    event.preventDefault();
+  };
+
+  updateTimer();
 </script>
 </body>
 </html>

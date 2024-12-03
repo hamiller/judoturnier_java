@@ -13,9 +13,13 @@
     <div class="ergebnis">
       <div class="ergebnis_eintrag weiss">
         <div class="wettkaempfer name">
-          <label>{{begegnung.wettkaempfer1.name}}</label>
+          <label>
+            <details>
+              <summary>{{begegnung.wettkaempfer1.name}}</summary>
+              ID: {{begegnung.wettkaempfer1.id}}
+            </details>
+          </label>
           <label class="{{begegnung.wettkaempfer1.farbe.get}}">{{begegnung.wettkaempfer1.farbe.get}}</label>
-          <label class="centertext when_mobile_hide">{{begegnung.wettkaempfer1.id}}</label>
           <label class="when_mobile_hide">{{begegnung.wettkaempfer1.verein.name}}</label>
         </div>
         <div class="slider-container">
@@ -51,10 +55,14 @@
       </div>
 
       <div class="ergebnis_eintrag rot">
-        <div class="wettkaempfer name">
-          <label>{{begegnung.wettkaempfer2.name}}</label>
+        <label class="wettkaempfer name">
+          <label>
+            <details>
+            <summary>{{begegnung.wettkaempfer2.name}}</summary>
+            ID: {{begegnung.wettkaempfer2.id}}
+            </details>
+          </label>
           <label class="{{begegnung.wettkaempfer2.farbe.get}}">{{begegnung.wettkaempfer2.farbe.get}}</label>
-          <label class="centertext when_mobile_hide">{{begegnung.wettkaempfer2.id}}</label>
           <label class="when_mobile_hide">{{begegnung.wettkaempfer2.verein.name}}</label>
         </div>
         <div class="slider-container">

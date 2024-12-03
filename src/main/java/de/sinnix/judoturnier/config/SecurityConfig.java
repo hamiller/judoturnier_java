@@ -38,9 +38,9 @@ import java.util.stream.Collectors;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SecurityConfiguration {
+public class SecurityConfig {
 
-	private static final Logger logger = LogManager.getLogger(SecurityConfiguration.class);
+	private static final Logger logger = LogManager.getLogger(SecurityConfig.class);
 
 	@Autowired
 	private KeycloakLogoutHandler keycloakLogoutHandler;

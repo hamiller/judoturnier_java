@@ -401,6 +401,13 @@ tr {
   top: 430px;
 }
 
+.hover_field:target + .hover_info {
+  display: block;
+}
+.hover_info {
+  display: none;
+}
+
 .infomsg {
   background-color: var(--info);
   display: grid;
@@ -696,6 +703,9 @@ md-slider {
   align-items: center;
 }
 
+.wettkaempfer > label:first-child {
+  min-width: 250px;
+}
 .wettkaempfer > label {
   width: 180px;
   flex-shrink: 0;

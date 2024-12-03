@@ -66,20 +66,12 @@ public class DtosConverter {
 		return new BegegnungDto(begegnungId.toString(), begegnung.getBegegnungId().getRundenTyp(), begegnung.getBegegnungId().runde, begegnung.getBegegnungId().akuellePaarung, wettkaempfer1, wettkaempfer2, null, begegnung.getWertungen(), null, null);
 	}
 
-	public static String formatDuration(Duration duration) {
+	public static Long formatDuration(Duration duration) {
 		if (duration == null) {
-			return "";
+			return 0l;
 		}
 
-		long totalMillis = duration.toMillis();
-
-		// Extrahiere Minuten, Sekunden und Millisekunden
-		long minutes = totalMillis / (60 * 1000);
-		long seconds = (totalMillis % (60 * 1000)) / 1000;
-		long millis = (totalMillis % 1000) / 10; // Wir verwenden nur zwei Stellen für Millisekunden
-
-		// Formatiere den String als "mm:ss.SS"
-		return String.format("%02d:%02d.%02d", minutes, seconds, millis);
+		return duration.toMillis();
 	}
 
 	public static RundeDto convertFromRunde(Runde runde) {

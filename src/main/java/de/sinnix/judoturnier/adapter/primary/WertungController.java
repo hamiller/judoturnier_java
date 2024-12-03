@@ -1,6 +1,7 @@
 package de.sinnix.judoturnier.adapter.primary;
 
 import de.sinnix.judoturnier.application.BenutzerService;
+import de.sinnix.judoturnier.application.EinstellungenService;
 import de.sinnix.judoturnier.application.TurnierService;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
@@ -28,9 +29,11 @@ public class WertungController {
 	private static final Logger logger = LogManager.getLogger(WertungController.class);
 
 	@Autowired
-	private TurnierService  turnierService;
+	private TurnierService       turnierService;
 	@Autowired
-	private BenutzerService benutzerService;
+	private BenutzerService      benutzerService;
+	@Autowired
+	private EinstellungenService einstellungenService;
 
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori/{id}")
 	public ModelAndView begegnungRandori(@PathVariable String turnierid, @PathVariable String id) {
@@ -59,12 +62,15 @@ public class WertungController {
 	public ModelAndView begegnungTurnier(@PathVariable String turnierid, @PathVariable String id) {
 		logger.info("Lade Wertung für Begegnung {}", id);
 		UUID begegnungId = UUID.fromString(id);
-		UUID turnierId = UUID.fromString(turnierid);
+		UUID turnierUUID = UUID.fromString(turnierid);
 		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		Benutzer benutzer = benutzerService.holeBenutzer(oidcBenutzer);
 		Begegnung begegnung = turnierService.ladeBegegnung(begegnungId);
+		Integer kampfzeit = einstellungenService.kampfZeit(turnierUUID, begegnung.getWettkampfGruppe().altersklasse());
+		Integer matteid = begegnung.getMatteId();
+		Integer mattenrunde = begegnung.getMattenRunde();
 
-		Metadaten metadaten = turnierService.ladeMetadaten(begegnungId, turnierId);
+		Metadaten metadaten = turnierService.ladeMetadaten(begegnungId, turnierUUID);
 		BegegnungDto begegnungDto = DtosConverter.convertFromBegegnung(begegnung, benutzer.uuid(), metadaten.vorherigeBegegnungId(), metadaten.nachfolgendeBegegnungId());
 
 		ModelAndView mav = new ModelAndView("wettkampf_normal");
@@ -73,8 +79,11 @@ public class WertungController {
 		mav.addObject("begegnung", begegnungDto);
 		mav.addObject("begegnungid", id);
 		mav.addObject("bewerter", benutzer);
-		mav.addObject("enableEditing", benutzer.istKampfrichter(turnierId));
+		mav.addObject("enableEditing", benutzer.istKampfrichter(turnierUUID));
 		mav.addObject("wertungsOptionen", List.of(1, 2, 3, 4, 5, 6));
+		mav.addObject("kampfzeit", kampfzeit);
+		mav.addObject("matteid", matteid);
+		mav.addObject("mattenrunde", mattenrunde);
 		return mav;
 	}
 

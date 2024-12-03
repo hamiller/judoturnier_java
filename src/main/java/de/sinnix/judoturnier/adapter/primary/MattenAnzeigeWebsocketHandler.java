@@ -27,7 +27,7 @@ public class MattenAnzeigeWebsocketHandler extends TextWebSocketHandler {
 	public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 		String command = message.getPayload();
 		String matte = getMatteFromQuery(session);
-		logger.debug("Nachricht von Matte {}:", matte, message.getPayload());
+		logger.debug("Nachricht von Matte {}: {}", matte, command);
 		sessions.get(matte).sendMessage(new TextMessage(command));
 	}
 

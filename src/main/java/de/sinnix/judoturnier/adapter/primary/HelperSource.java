@@ -27,8 +27,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class HelperSource {
-	private static final Logger logger = LogManager.getLogger(HelperSource.class);
-
+	private static final Logger           logger     = LogManager.getLogger(HelperSource.class);
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
 	public static boolean istGleich(Object o1, Object o2) {
@@ -212,8 +211,7 @@ public class HelperSource {
 
 			logger.warn("Konnte keinen Nutzer aus dem Authentication parsen, erstelle Dummy");
 			return new OidcBenutzer(UUID.randomUUID(), Benutzer.ANONYMOUS_USERNAME, "", List.of(BenutzerRolle.BEOBACHTER));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.info("Nutzer konnte nicht geparsed werden! {}", authentication, e);
 			throw e;
 		}
@@ -232,9 +230,14 @@ public class HelperSource {
 		return value.toLowerCase();
 	}
 
+	public static Integer zeit(BegegnungDto begegnungDto) {
+		logger.info("BegegnungDto? {}", begegnungDto);
+		return begegnungDto.kampfrichterWertung().isPresent() ? begegnungDto.kampfrichterWertung().get().zeit().intValue() : -1;
+	}
+
 	public static List<GruppeTypenRundenDto> gruppeTypenRundenDtoListFromMatte(Map<Integer, List<GruppeTypenRundenDto>> gruppenListMitTypen, Options options) {
 		Integer matte = options.param(0);
-		var r =  gruppenListMitTypen.get(matte);
+		var r = gruppenListMitTypen.get(matte);
 		return r;
 	}
 }

@@ -4,7 +4,7 @@ import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 
 public record WertungDto(Wettkaempfer sieger,
-	 String zeit,
+	 Long zeit,
 	 Integer punkteWettkaempferWeiss,
 	 Integer strafenWettkaempferWeiss,
 	 Integer punkteWettkaempferRot,

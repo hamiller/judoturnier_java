@@ -1,6 +1,5 @@
 package de.sinnix.judoturnier.application;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.sinnix.judoturnier.adapter.secondary.EinstellungJpa;
 import de.sinnix.judoturnier.adapter.secondary.EinstellungJpaRepository;
@@ -38,9 +37,9 @@ public class EinstellungenService {
 	private TurnierJpaRepository     turnierJpaRepository;
 	@Autowired
 	private TurnierConverter         turnierConverter;
+	@Autowired
+	private ObjectMapper             objectMapper;
 
-
-	private static final ObjectMapper          OBJECT_MAPPER                  = new ObjectMapper();
 	private static final TurnierTyp            DEFAULT_TURNIERTYP             = TurnierTyp.RANDORI;
 	private static final MattenAnzahl          DEFAULT_MATTENANZAHL           = new MattenAnzahl(2);
 	private static final WettkampfReihenfolge  DEFAULT_WETTKAMPFREIHENFOLGE   = WettkampfReihenfolge.ABWECHSELND;
@@ -57,15 +56,15 @@ public class EinstellungenService {
 	private static final VariablerGewichtsteil DEFAULT_VARIABLER_GEWICHTSTEIL = new VariablerGewichtsteil(0.2);
 	private static final SeparateAlterklassen  DEFAULT_SEPARATE_ALTERKLASSEN  = SeparateAlterklassen.GETRENNT;
 	private static final Wettkampfzeiten       DEFAULT_WETTKAMPFZEITEN        = new Wettkampfzeiten(Map.of(
-		Altersklasse.U9, 3*60,
-		Altersklasse.U11, 3*60,
-		Altersklasse.U12, 3*60,
-		Altersklasse.U13, 3*60,
-		Altersklasse.U15, 3*60,
-		Altersklasse.U18, 3*60,
-		Altersklasse.U21, 4*60,
-		Altersklasse.Frauen, 4*60,
-		Altersklasse.Maenner, 4*60));
+		Altersklasse.U9, 3 * 60,
+		Altersklasse.U11, 3 * 60,
+		Altersklasse.U12, 3 * 60,
+		Altersklasse.U13, 3 * 60,
+		Altersklasse.U15, 3 * 60,
+		Altersklasse.U18, 3 * 60,
+		Altersklasse.U21, 4 * 60,
+		Altersklasse.Frauen, 4 * 60,
+		Altersklasse.Maenner, 4 * 60));
 
 
 	public Einstellungen ladeEinstellungen(UUID turnierUUID) {
@@ -132,23 +131,23 @@ public class EinstellungenService {
 		return ladeEinstellungen(turnierUUID);
 	}
 
-	private static <T> String convertFromObject(T object) {
+	private <T> String convertFromObject(T object) {
 		try {
 			if (object == null) {
 				throw new IllegalArgumentException("Das zu konvertierende Objekt darf nicht null sein.");
 			}
-			return OBJECT_MAPPER.writeValueAsString(object);
+			return objectMapper.writeValueAsString(object);
 		} catch (Exception e) {
 			throw new RuntimeException("Fehler beim Konvertieren eines Objekts in JSON", e);
 		}
 	}
 
-	private static <T> T convertToObject(String json, Class<T> type) {
+	private <T> T convertToObject(String json, Class<T> type) {
 		try {
 			if (json == null || json.isEmpty()) {
 				throw new IllegalArgumentException("JSON-String darf nicht null oder leer sein.");
 			}
-			return OBJECT_MAPPER.readValue(json, type);
+			return objectMapper.readValue(json, type);
 		} catch (Exception e) {
 			throw new RuntimeException("Fehler beim Konvertieren von JSON in Objekt", e);
 		}

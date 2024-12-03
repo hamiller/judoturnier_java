@@ -11,17 +11,17 @@
   <h1 id="timer-display" class="centered-horizontal"></h1>
 </div>
 <div>
-  {{#each begegnungen}}
+  {{#with begegnung}}
     <div class="listeneintrag vs"> {{akuellePaarung}}
       <div class="wettkaempfer name">
-        <label class="{{wettkaempfer1.farbe.get}}">{{wettkaempfer1.name}}</label>
+        <label class="WEISS">{{wettkaempfer1.name}}</label>
       </div>
       <div class="center">vs</div>
       <div class="wettkaempfer name">
-        <label class="{{wettkaempfer2.farbe.get}}">{{wettkaempfer2.name}}</label>
+        <label class="BLAU">{{wettkaempfer2.name}}</label>
       </div>
     </div>
-  {{/each}}
+  {{/with}}
 </div>
 <script>
   const COUNTDOWN = {{kampfzeit}} * 1000; // Millisekunden
@@ -36,7 +36,7 @@
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
     const ms = Math.abs(milliseconds % 1000) / 10;
-    return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}.${ms < 10 ? '0' : ''}${Math.floor(ms)}`;
+    return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   }
 
   const updateTimer = () => {

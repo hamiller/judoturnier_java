@@ -1,6 +1,6 @@
 package de.sinnix.judoturnier;
 
-import de.sinnix.judoturnier.config.SecurityConfiguration;
+import de.sinnix.judoturnier.config.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -14,9 +14,9 @@ class JudoturnierApplicationTests {
 
 	// prevent loading the security context
 	@MockBean
-	private SecurityConfiguration         securityConfiguration;
+	private SecurityConfig               securityConfig;
 	@MockBean
-	private ClientRegistrationRepository  clientRegistrationRepository;
+	private ClientRegistrationRepository clientRegistrationRepository;
 	@MockBean
 	private OAuth2AuthorizedClientManager authorizedClientManager;
 

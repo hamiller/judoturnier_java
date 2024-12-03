@@ -44,4 +44,28 @@ public class MattenAnzeigeController {
 		mav.addObject("kampfzeit", kampfzeit);
 		return mav;
 	}
+
+	@GetMapping("/turnier/{turnierid}/mattenanzeige/normal/{begegnungid}")
+	public ModelAndView anzeigeMattenWertungNormal(@PathVariable String turnierid, @PathVariable String begegnungid) {
+		logger.info("Öffne Anzeige der Begegnung {}", begegnungid);
+		UUID turnierUUID = UUID.fromString(turnierid);
+		UUID begegnungUUID = UUID.fromString(begegnungid);
+		Einstellungen einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
+		Begegnung begegnung = turnierService.ladeBegegnung(begegnungUUID);
+		BegegnungDto begegnungDto = DtosConverter.convertFromBegegnung(begegnung);
+		var altersklasse = begegnung.getWettkampfGruppe().altersklasse();
+		Integer kampfzeit = einstellungenService.kampfZeit(turnierUUID, altersklasse);
+		Integer matte = begegnung.getMatteId();
+		Integer mattenrunde = begegnung.getMattenRunde();
+
+		logger.debug("kampfzeit {}", kampfzeit);
+
+		ModelAndView mav = new ModelAndView("mattenanzeige_normal");
+		mav.addObject("turnierid", turnierid);
+		mav.addObject("matte", matte);
+		mav.addObject("mattenrunde", mattenrunde);
+		mav.addObject("begegnung", begegnungDto);
+		mav.addObject("kampfzeit", kampfzeit);
+		return mav;
+	}
 }
