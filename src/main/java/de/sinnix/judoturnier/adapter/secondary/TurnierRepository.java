@@ -66,8 +66,11 @@ public class TurnierRepository {
 
 		var begegnungenList = begegnungenJpaList.stream()
 			.map(jpa -> begegnungConverter.convertToBegegnung(jpa, wettkampfGruppeJpaList))
-			.sorted(Comparator.comparing(Begegnung::getGesamtRunde))
-			.sorted(Comparator.comparing(b -> b.getBegegnungId().akuellePaarung))
+			.sorted(Comparator
+				.comparing(Begegnung::getGesamtBegegnung)
+				.thenComparing(begegnung -> begegnung.getBegegnungId().rundenTyp)
+				.thenComparing(begegnung -> begegnung.getBegegnungId().akuellePaarung)
+			)
 			.toList();
 
 		// Map, um die Runden zu sammeln
@@ -89,7 +92,7 @@ public class TurnierRepository {
 			var ersteBegegnung = begegnungenInRunde.get(0);
 			Integer mattenRunde = ersteBegegnung.getMattenRunde();
 			Integer gruppenRunde = ersteBegegnung.getGruppenRunde();
-			Integer rundeGesamt = ersteBegegnung.getGesamtRunde();
+			Integer rundeGesamt = ersteBegegnung.getGesamtBegegnung();
 			Integer matteId = ersteBegegnung.getMatteId();
 			Altersklasse altersklasse = ersteBegegnung.getWettkaempfer1().isPresent() ? ersteBegegnung.getWettkaempfer1().get().altersklasse() : Altersklasse.PAUSE;
 			WettkampfGruppe gruppe = ersteBegegnung.getWettkampfGruppe();
@@ -112,8 +115,11 @@ public class TurnierRepository {
 		var begegnungenList = begegnungenJpaList.stream()
 			.filter(jpa -> jpa.getWettkampfGruppeId().equals(wettkampfgruppeUUID.toString()))
 			.map(jpa -> begegnungConverter.convertToBegegnung(jpa, wettkampfGruppeJpa))
-			.sorted(Comparator.comparing(Begegnung::getGesamtRunde))
-			.sorted(Comparator.comparing(b -> b.getBegegnungId().akuellePaarung))
+			.sorted(Comparator
+				.comparing(Begegnung::getGesamtBegegnung)
+				.thenComparing(begegnung -> begegnung.getBegegnungId().rundenTyp)
+				.thenComparing(begegnung -> begegnung.getBegegnungId().akuellePaarung)
+			)
 			.toList();
 
 		// Map, um die Runden zu sammeln
@@ -135,7 +141,7 @@ public class TurnierRepository {
 			var ersteBegegnung = begegnungenInRunde.get(0);
 			Integer mattenRunde = ersteBegegnung.getMattenRunde();
 			Integer gruppenRunde = ersteBegegnung.getGruppenRunde();
-			Integer rundeGesamt = ersteBegegnung.getGesamtRunde();
+			Integer rundeGesamt = ersteBegegnung.getGesamtBegegnung();
 			Integer matteId = ersteBegegnung.getMatteId();
 			Altersklasse altersklasse = ersteBegegnung.getWettkaempfer1().isPresent() ? ersteBegegnung.getWettkaempfer1().get().altersklasse() : Altersklasse.PAUSE;
 			WettkampfGruppe gruppe = ersteBegegnung.getWettkampfGruppe();
@@ -180,7 +186,7 @@ public class TurnierRepository {
 				newBegegnung.setMatteId(matte.id());
 				newBegegnung.setGruppenRunde(runde.gruppenRunde());
 				newBegegnung.setMattenRunde(runde.mattenRunde());
-				newBegegnung.setGesamtRunde(runde.rundeGesamt());
+				newBegegnung.setGesamtBegegnung(begegnung.getGesamtBegegnung());
 				newBegegnung.setWettkaempfer1(begegnung.getWettkaempfer1());
 				newBegegnung.setWettkaempfer2(begegnung.getWettkaempfer2());
 				newBegegnung.setWettkampfGruppe(wettkampfGruppe);

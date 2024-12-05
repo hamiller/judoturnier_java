@@ -25,7 +25,7 @@ public class Begegnung {
 	private Integer                matteId;
 	private Integer                mattenRunde;
 	private Integer                gruppenRunde;
-	private Integer                gesamtRunde;
+	private Integer                gesamtBegegnung;
 	private Optional<Wettkaempfer> wettkaempfer1;
 	private Optional<Wettkaempfer> wettkaempfer2;
 	private List<Wertung>          wertungen;

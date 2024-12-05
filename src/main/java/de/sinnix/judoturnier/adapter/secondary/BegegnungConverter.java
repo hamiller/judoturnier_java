@@ -37,7 +37,7 @@ public class BegegnungConverter {
 			jpa.getMatteId(),
 			jpa.getMattenRunde(),
 			jpa.getGruppenRunde(),
-			jpa.getGesamtRunde(),
+			jpa.getGesamtBegegnung(),
 			Optional.ofNullable(wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer1())),
 			Optional.ofNullable(wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer2())),
 			jpa.getWertungen().stream().map(wertung -> wertungConverter.convertToWertung(wertung)).collect(Collectors.toList()),
@@ -62,7 +62,7 @@ public class BegegnungConverter {
 			jpa.getMatteId(),
 			jpa.getMattenRunde(),
 			jpa.getGruppenRunde(),
-			jpa.getGesamtRunde(),
+			jpa.getGesamtBegegnung(),
 			Optional.ofNullable(wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer1())),
 			Optional.ofNullable(wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer2())),
 			jpa.getWertungen().stream().map(wertung -> wertungConverter.convertToWertung(wertung)).collect(Collectors.toList()),
@@ -81,7 +81,7 @@ public class BegegnungConverter {
 		jpa.setMatteId(begegnung.getMatteId());
 		jpa.setMattenRunde(begegnung.getMattenRunde());
 		jpa.setGruppenRunde(begegnung.getGruppenRunde());
-		jpa.setGesamtRunde(begegnung.getGesamtRunde());
+		jpa.setGesamtBegegnung(begegnung.getGesamtBegegnung());
 		jpa.setWettkaempfer1(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer1().orElse(null)));
 		jpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2().orElse(null)));
 		jpa.setWertungen(begegnung.getWertungen().stream().map(wertung -> wertungConverter.convertFromWertung(wertung)).toList());

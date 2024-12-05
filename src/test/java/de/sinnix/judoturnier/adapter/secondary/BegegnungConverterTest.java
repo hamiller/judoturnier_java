@@ -130,7 +130,7 @@ class BegegnungConverterTest {
 		begegnungJpa.setMatteId(2);
 		begegnungJpa.setMattenRunde(123);
 		begegnungJpa.setGruppenRunde(22);
-		begegnungJpa.setGesamtRunde(13);
+		begegnungJpa.setGesamtBegegnung(13);
 		begegnungJpa.setWettkaempfer1(WettkaempferFixtures.wettkaempferJpa1);
 		begegnungJpa.setWettkaempfer2(WettkaempferFixtures.wettkaempferJpa2);
 		begegnungJpa.setWettkampfGruppeId(wettkampfGruppeJpa.getUuid());

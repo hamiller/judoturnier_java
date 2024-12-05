@@ -27,11 +27,11 @@ public class BegegnungJpa extends AbstractEntity {
 	private String           rundeUUID;
 	private Integer          matteId;
 	private Integer          mattenRunde;
-	private Integer          gruppenRunde;
-	private Integer          gesamtRunde;
+	private Integer         gruppenRunde;
+	private Integer         gesamtBegegnung;
 	@OneToOne
 	@JoinColumn(name = "wettkaempfer1")
-	private WettkaempferJpa  wettkaempfer1;
+	private WettkaempferJpa wettkaempfer1;
 	@OneToOne
 	@JoinColumn(name = "wettkaempfer2")
 	private WettkaempferJpa  wettkaempfer2;
@@ -52,13 +52,13 @@ public class BegegnungJpa extends AbstractEntity {
 	private Integer          rundenTyp;
 	private Integer          paarung;
 
-	public BegegnungJpa(String uuid, String rundeUUID, Integer matteId, Integer mattenRunde, Integer gruppenRunde, Integer gesamtRunde, WettkaempferJpa wettkaempfer1, WettkaempferJpa wettkaempfer2, List<WertungJpa> wertungen, String wettkampfGruppeId, String turnierUUID, Integer runde, Integer rundenTyp, Integer paarung) {
+	public BegegnungJpa(String uuid, String rundeUUID, Integer matteId, Integer mattenRunde, Integer gruppenRunde, Integer gesamtBegegnung, WettkaempferJpa wettkaempfer1, WettkaempferJpa wettkaempfer2, List<WertungJpa> wertungen, String wettkampfGruppeId, String turnierUUID, Integer runde, Integer rundenTyp, Integer paarung) {
 		super(uuid);
 		this.rundeUUID = rundeUUID;
 		this.matteId = matteId;
 		this.mattenRunde = mattenRunde;
 		this.gruppenRunde = gruppenRunde;
-		this.gesamtRunde = gesamtRunde;
+		this.gesamtBegegnung = gesamtBegegnung;
 		this.wettkaempfer1 = wettkaempfer1;
 		this.wettkaempfer2 = wettkaempfer2;
 		this.wertungen = wertungen;
