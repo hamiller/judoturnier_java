@@ -160,8 +160,8 @@ public class TurnierService {
 		checkGruppenSindValide(gwks);
 
 		List<WettkampfGruppe> wettkampfGruppen = erstelleWettkampfgruppen(gwks, algorithmus, einstellungen.gruppengroessen());
-
-		//loggWettkampfgruppen(wettkampfGruppen);
+		logger.info("{}", wettkampfGruppen);
+		loggWettkampfgruppen(wettkampfGruppen);
 
 		List<Matte> matten = erstelleGruppenReihenfolge(wettkampfGruppen, einstellungen.mattenAnzahl().anzahl(), einstellungen.wettkampfReihenfolge());
 
@@ -269,30 +269,40 @@ public class TurnierService {
 
 		// schreibe nachfolgende Begegnungen - falls noch welche kommen (Trostrunde und nächste Runde)
 		Begegnung.BegegnungId aktuelleBegegnungId = begegnung.getBegegnungId();
-		var aktuellerRundenTyp = aktuelleBegegnungId.getRundenTyp();
-		var aktuelleRunde = aktuelleBegegnungId.getRunde();
-		var akuellePaarung = aktuelleBegegnungId.getAkuellePaarung();
+		var wettkampfGruppe = begegnung.getWettkampfGruppe();
+		var alleWettkampfgruppeRunden = turnierRepository.ladeWettkampfgruppeRunden(wettkampfGruppe.id(), begegnung.getTurnierUUID());
+		Pair<Optional<Begegnung>, Optional<Begegnung>> nachfolger = Sortierer.nachfolgeBegegnungen(aktuelleBegegnungId, wettkampfGruppe, alleWettkampfgruppeRunden);
+		Optional<Begegnung> nextGewinnerBegegnungOptional = nachfolger.getLeft();
+		Optional<Begegnung> nextTrostBegegnungOptional = nachfolger.getRight();
 
-		Optional<Wettkaempfer> wettkaempferTrostRunde = wettkaempferService.ladeKaempfer(siegerUUID);
-
-		logger.warn("Aktuelle Paarung: {}", aktuelleBegegnungId);
-		Optional<Begegnung> nextGewinnerRundeOptional = turnierRepository.findeBegegnung(Begegnung.RundenTyp.GEWINNERRUNDE, aktuelleRunde + 1, akuellePaarung, begegnung.getWettkampfGruppe().id(), begegnung.getTurnierUUID());
-		Optional<Begegnung> nextTrostRundeOptional = turnierRepository.findeBegegnung(Begegnung.RundenTyp.TROSTRUNDE, aktuelleRunde, akuellePaarung, begegnung.getWettkampfGruppe().id(), begegnung.getTurnierUUID());
-		if (nextGewinnerRundeOptional.isPresent()) {
-			Begegnung nextGewinnerRunde = nextGewinnerRundeOptional.get();
+		if (nextGewinnerBegegnungOptional.isPresent()) {
+			Begegnung nextGewinnerRunde = nextGewinnerBegegnungOptional.get();
 			logger.warn("nächste GewinnerRunde: {}", nextGewinnerRunde);
 			if (nextGewinnerRunde.getWettkaempfer1().isEmpty()) nextGewinnerRunde.setWettkaempfer1(Optional.of(wettkaempferSiegerRunde));
 			else if (nextGewinnerRunde.getWettkaempfer2().isEmpty()) nextGewinnerRunde.setWettkaempfer2(Optional.of(wettkaempferSiegerRunde));
 			turnierRepository.speichereBegegnung(nextGewinnerRunde);
 		}
-		if (nextTrostRundeOptional.isPresent()) {
-			Begegnung nextTrostRunde = nextTrostRundeOptional.get();
+		if (nextTrostBegegnungOptional.isPresent()) {
+			Begegnung nextTrostRunde = nextTrostBegegnungOptional.get();
 			logger.warn("nächste TrostRunde: {}", nextTrostRunde);
+			Optional<Wettkaempfer> wettkaempferTrostRunde = findeVerlierer(begegnung, wettkaempferSiegerRunde);
 			if (wettkaempferTrostRunde.isPresent()) {
 				if (nextTrostRunde.getWettkaempfer1().isEmpty()) nextTrostRunde.setWettkaempfer1(Optional.of(wettkaempferTrostRunde.get()));
 				else if (nextTrostRunde.getWettkaempfer2().isEmpty()) nextTrostRunde.setWettkaempfer2(Optional.of(wettkaempferTrostRunde.get()));
+				turnierRepository.speichereBegegnung(nextTrostRunde);
 			}
 		}
+	}
+
+	private Optional<Wettkaempfer> findeVerlierer(Begegnung begegnung, Wettkaempfer sieger) {
+		if (begegnung.getWettkaempfer1().isPresent() && sieger.equals(begegnung.getWettkaempfer1())) {
+			if (begegnung.getWettkaempfer2().isPresent()) {
+				return begegnung.getWettkaempfer2();
+			}
+			return Optional.empty();
+		}
+
+		return begegnung.getWettkaempfer2();
 	}
 
 	private Optional<Wertung> wertungVonBewerter(List<Wertung> wertungen, Benutzer benutzer) {

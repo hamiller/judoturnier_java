@@ -14,7 +14,7 @@
               class="paarung {{lowerCase begegnung.rundenTyp.name}}"
               data-next-id="{{begegnung.nachfolgerBegegnungId}}"
               data-prev-id="{{begegnung.vorherigeBegegnungId}}">
-
+              {{begegnung.akuellePaarung}}
               <ul>
                 <li class="kaempfer kaempfer-eins">
                   {{#if begegnung.wettkaempfer1.name}}
@@ -49,7 +49,7 @@
               class="paarung {{lowerCase begegnung.rundenTyp.name}}"
               data-next-id="{{begegnung.nachfolgerBegegnungId}}"
               data-prev-id="{{begegnung.vorherigeBegegnungId}}">
-
+              {{begegnung.akuellePaarung}}
               <ul>
                 <li class="kaempfer kaempfer-eins">
                   {{#if begegnung.wettkaempfer1.name}}

@@ -15,95 +15,95 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class WettkampfgruppeFixture {
-    private static final UUID turnierUUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
-    private static final UUID rundeUUID1  = UUID.randomUUID();
-    private static final UUID v1UUID      = UUID.randomUUID();
-    private static final UUID v2UUID      = UUID.randomUUID();
-    private static final UUID v3UUID      = UUID.randomUUID();
-    private static final UUID v4UUID      = UUID.randomUUID();
-    private static final UUID v5UUID      = UUID.randomUUID();
-    private static final UUID v6UUID      = UUID.randomUUID();
-    private static final UUID v7UUID      = UUID.randomUUID();
-    private static final UUID v8UUID      = UUID.randomUUID();
-    private static final UUID v9UUID      = UUID.randomUUID();
-    private static final UUID wk1UUID     = UUID.randomUUID();
-    private static final UUID wk2UUID     = UUID.randomUUID();
-    private static final UUID wk3UUID     = UUID.randomUUID();
-    private static final UUID wk4UUID     = UUID.randomUUID();
-    private static final UUID wk5UUID     = UUID.randomUUID();
-    private static final UUID wk6UUID     = UUID.randomUUID();
-    private static final UUID wk7UUID     = UUID.randomUUID();
-    private static final UUID wk8UUID     = UUID.randomUUID();
-    private static final UUID wk9UUID     = UUID.randomUUID();
-    private static final UUID wk10UUID     = UUID.randomUUID();
-    private static final UUID wk11UUID     = UUID.randomUUID();
-    private static final UUID wk12UUID     = UUID.randomUUID();
-    private static final UUID wk13UUID     = UUID.randomUUID();
-    private static final UUID wk14UUID     = UUID.randomUUID();
-    private static final UUID wk15UUID     = UUID.randomUUID();
-    private static final UUID wk16UUID     = UUID.randomUUID();
-    private static final UUID wk17UUID     = UUID.randomUUID();
-    private static final UUID wk18UUID     = UUID.randomUUID();
-    private static final UUID wk19UUID     = UUID.randomUUID();
-    private static final UUID wk20UUID     = UUID.randomUUID();
-    private static final UUID wk21UUID     = UUID.randomUUID();
-    private static final UUID wk22UUID     = UUID.randomUUID();
-    private static final UUID gwkgk1UUID  = UUID.randomUUID();
-    private static final UUID gwkgk2UUID  = UUID.randomUUID();
-    private static final UUID gwkgk3UUID  = UUID.randomUUID();
-    private static final UUID gwkgk4UUID  = UUID.randomUUID();
-    private static final UUID b1UUID      = UUID.randomUUID();
-    private static final UUID b2UUID      = UUID.randomUUID();
-    private static final UUID b3UUID      = UUID.randomUUID();
-    private static final UUID b4UUID      = UUID.randomUUID();
-    private static final UUID b5UUID      = UUID.randomUUID();
-    private static final UUID b6UUID      = UUID.randomUUID();
-    private static final UUID b7UUID      = UUID.randomUUID();
-    private static final UUID b8UUID      = UUID.randomUUID();
-    private static final UUID b9UUID      = UUID.randomUUID();
-    private static final UUID b10UUID      = UUID.randomUUID();
-    private static final UUID b11UUID      = UUID.randomUUID();
-    private static final UUID b12UUID      = UUID.randomUUID();
-    private static final UUID b13UUID      = UUID.randomUUID();
-    private static final UUID b14UUID      = UUID.randomUUID();
-    private static final UUID b15UUID      = UUID.randomUUID();
-    private static final UUID b16UUID = UUID.randomUUID();
-    private static final UUID b17UUID = UUID.randomUUID();
-    private static final UUID b18UUID = UUID.randomUUID();
-    private static final UUID b19UUID = UUID.randomUUID();
-    private static final UUID b20UUID = UUID.randomUUID();
-    private static final UUID b21UUID = UUID.randomUUID();
-    private static final UUID b22UUID = UUID.randomUUID();
-    private static final UUID b23UUID = UUID.randomUUID();
-    private static final UUID b24UUID = UUID.randomUUID();
-    private static final UUID b25UUID = UUID.randomUUID();
-    private static final UUID b26UUID = UUID.randomUUID();
-    private static final UUID b27UUID = UUID.randomUUID();
-    private static final UUID b28UUID = UUID.randomUUID();
-    private static final UUID b29UUID = UUID.randomUUID();
-    private static final UUID b30UUID = UUID.randomUUID();
-    private static final UUID b31UUID = UUID.randomUUID();
-    private static final UUID b32UUID = UUID.randomUUID();
-    private static final UUID b33UUID = UUID.randomUUID();
-    private static final UUID b34UUID = UUID.randomUUID();
-    private static final UUID b35UUID = UUID.randomUUID();
-    private static final UUID b36UUID = UUID.randomUUID();
-    private static final UUID b37UUID = UUID.randomUUID();
-    private static final UUID b38UUID = UUID.randomUUID();
-    private static final UUID b39UUID = UUID.randomUUID();
-    private static final UUID b40UUID = UUID.randomUUID();
-    private static final UUID b41UUID = UUID.randomUUID();
-    private static final UUID b42UUID = UUID.randomUUID();
-    private static final UUID b43UUID = UUID.randomUUID();
-    private static final UUID b44UUID = UUID.randomUUID();
-    private static final UUID b45UUID = UUID.randomUUID();
-    private static final UUID b46UUID = UUID.randomUUID();
-    private static final UUID b47UUID = UUID.randomUUID();
-    private static final UUID b48UUID = UUID.randomUUID();
-    private static final UUID b49UUID = UUID.randomUUID();
-    private static final UUID b50UUID = UUID.randomUUID();
-    private static final UUID b51UUID = UUID.randomUUID();
-    
+	private static final UUID turnierUUID = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+	private static final UUID rundeUUID1  = UUID.randomUUID();
+	private static final UUID v1UUID      = UUID.randomUUID();
+	private static final UUID v2UUID      = UUID.randomUUID();
+	private static final UUID v3UUID      = UUID.randomUUID();
+	private static final UUID v4UUID      = UUID.randomUUID();
+	private static final UUID v5UUID      = UUID.randomUUID();
+	private static final UUID v6UUID      = UUID.randomUUID();
+	private static final UUID v7UUID      = UUID.randomUUID();
+	private static final UUID v8UUID      = UUID.randomUUID();
+	private static final UUID v9UUID      = UUID.randomUUID();
+	private static final UUID wk1UUID     = UUID.randomUUID();
+	private static final UUID wk2UUID     = UUID.randomUUID();
+	private static final UUID wk3UUID     = UUID.randomUUID();
+	private static final UUID wk4UUID     = UUID.randomUUID();
+	private static final UUID wk5UUID     = UUID.randomUUID();
+	private static final UUID wk6UUID     = UUID.randomUUID();
+	private static final UUID wk7UUID     = UUID.randomUUID();
+	private static final UUID wk8UUID     = UUID.randomUUID();
+	private static final UUID wk9UUID     = UUID.randomUUID();
+	private static final UUID wk10UUID    = UUID.randomUUID();
+	private static final UUID wk11UUID    = UUID.randomUUID();
+	private static final UUID wk12UUID    = UUID.randomUUID();
+	private static final UUID wk13UUID    = UUID.randomUUID();
+	private static final UUID wk14UUID    = UUID.randomUUID();
+	private static final UUID wk15UUID    = UUID.randomUUID();
+	private static final UUID wk16UUID    = UUID.randomUUID();
+	private static final UUID wk17UUID    = UUID.randomUUID();
+	private static final UUID wk18UUID    = UUID.randomUUID();
+	private static final UUID wk19UUID    = UUID.randomUUID();
+	private static final UUID wk20UUID    = UUID.randomUUID();
+	private static final UUID wk21UUID    = UUID.randomUUID();
+	private static final UUID wk22UUID    = UUID.randomUUID();
+	private static final UUID gwkgk1UUID  = UUID.randomUUID();
+	private static final UUID gwkgk2UUID  = UUID.randomUUID();
+	private static final UUID gwkgk3UUID  = UUID.randomUUID();
+	private static final UUID gwkgk4UUID  = UUID.randomUUID();
+	public static final  UUID b1UUID      = UUID.randomUUID();
+	public static final  UUID b2UUID      = UUID.randomUUID();
+	public static final  UUID b3UUID      = UUID.randomUUID();
+	public static final  UUID b4UUID      = UUID.randomUUID();
+	public static final  UUID b5UUID      = UUID.randomUUID();
+	public static final  UUID b6UUID      = UUID.randomUUID();
+	public static final  UUID b7UUID      = UUID.randomUUID();
+	public static final  UUID b8UUID      = UUID.randomUUID();
+	public static final  UUID b9UUID      = UUID.randomUUID();
+	public static final  UUID b10UUID     = UUID.randomUUID();
+	public static final  UUID b11UUID     = UUID.randomUUID();
+	public static final  UUID b12UUID     = UUID.randomUUID();
+	public static final  UUID b13UUID     = UUID.randomUUID();
+	public static final  UUID b14UUID     = UUID.randomUUID();
+	public static final  UUID b15UUID     = UUID.randomUUID();
+	public static final  UUID b16UUID     = UUID.randomUUID();
+	public static final  UUID b17UUID     = UUID.randomUUID();
+	public static final  UUID b18UUID     = UUID.randomUUID();
+	public static final  UUID b19UUID     = UUID.randomUUID();
+	public static final  UUID b20UUID     = UUID.randomUUID();
+	public static final  UUID b21UUID     = UUID.randomUUID();
+	public static final  UUID b22UUID     = UUID.randomUUID();
+	public static final  UUID b23UUID     = UUID.randomUUID();
+	public static final  UUID b24UUID     = UUID.randomUUID();
+	public static final  UUID b25UUID     = UUID.randomUUID();
+	public static final  UUID b26UUID     = UUID.randomUUID();
+	public static final  UUID b27UUID     = UUID.randomUUID();
+	public static final  UUID b28UUID     = UUID.randomUUID();
+	public static final  UUID b29UUID     = UUID.randomUUID();
+	public static final  UUID b30UUID     = UUID.randomUUID();
+	public static final  UUID b31UUID     = UUID.randomUUID();
+	public static final  UUID b32UUID     = UUID.randomUUID();
+	public static final  UUID b33UUID     = UUID.randomUUID();
+	public static final  UUID b34UUID     = UUID.randomUUID();
+	public static final  UUID b35UUID     = UUID.randomUUID();
+	public static final  UUID b36UUID     = UUID.randomUUID();
+	public static final  UUID b37UUID     = UUID.randomUUID();
+	public static final  UUID b38UUID     = UUID.randomUUID();
+	public static final  UUID b39UUID     = UUID.randomUUID();
+	public static final  UUID b40UUID     = UUID.randomUUID();
+	public static final  UUID b41UUID     = UUID.randomUUID();
+	public static final  UUID b42UUID     = UUID.randomUUID();
+	public static final  UUID b43UUID     = UUID.randomUUID();
+	public static final  UUID b44UUID     = UUID.randomUUID();
+	public static final  UUID b45UUID     = UUID.randomUUID();
+	public static final  UUID b46UUID     = UUID.randomUUID();
+	public static final  UUID b47UUID     = UUID.randomUUID();
+	public static final  UUID b48UUID     = UUID.randomUUID();
+	public static final  UUID b49UUID     = UUID.randomUUID();
+	public static final  UUID b50UUID     = UUID.randomUUID();
+	public static final  UUID b51UUID     = UUID.randomUUID();
+
 
     public static WettkampfGruppe gruppe1 = new WettkampfGruppe(gwkgk1UUID, "Antilope", "(Gewichtskl.1 U11)", Altersklasse.U11, Arrays.asList(
         new BegegnungenJeRunde(Arrays.asList(
@@ -393,4 +393,58 @@ public class WettkampfgruppeFixture {
             )
         ), turnierUUID)
     );
+
+	public static WettkampfGruppe wettkampfGruppeFrauen = new WettkampfGruppe(UUID.randomUUID(), "Ameise", "(58.0-62.0 Frauen)", Altersklasse.Frauen, Arrays.asList(
+		new BegegnungenJeRunde(Arrays.asList(
+			new Begegnung(b1UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), null, null, null, null, null,
+				Optional.of(WettkaempferFixtures.wettkaempferin1),
+				Optional.empty(),
+				null, null, turnierUUID),
+			new Begegnung(b2UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 2),null, null, null, null, null,
+				Optional.of(WettkaempferFixtures.wettkaempferin2),
+				Optional.of(WettkaempferFixtures.wettkaempferin3),
+				null, null, turnierUUID),
+			new Begegnung(b3UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 3),null, null, null, null, null,
+				Optional.of(WettkaempferFixtures.wettkaempferin4),
+				Optional.of(WettkaempferFixtures.wettkaempferin5),
+				null, null, turnierUUID),
+			new Begegnung(b4UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 4),null, null, null, null, null,
+				Optional.of(WettkaempferFixtures.wettkaempferin6),
+				Optional.of(WettkaempferFixtures.wettkaempferin7),
+				null, null, turnierUUID),
+			new Begegnung(b5UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, 1, 1),null, null, null, null, null,
+				Optional.empty(),
+				Optional.empty(),
+				null, null, turnierUUID),
+			new Begegnung(b6UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, 1, 2),null, null, null, null, null,
+				Optional.empty(),
+				Optional.empty(),
+				null, null, turnierUUID))),
+		new BegegnungenJeRunde(Arrays.asList(
+			new Begegnung(b7UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 1), null, null, null, null, null,
+				Optional.empty(),
+				Optional.empty(),
+				null, null, turnierUUID),
+			new Begegnung(b8UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 2),null, null, null, null, null,
+				Optional.empty(),
+				Optional.empty(),
+				null, null, turnierUUID),
+			new Begegnung(b9UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, 2, 1),null, null, null, null, null,
+				Optional.empty(),
+				Optional.empty(),
+				null, null, turnierUUID),
+			new Begegnung(b10UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, 2, 2),null, null, null, null, null,
+				Optional.empty(),
+				Optional.empty(),
+				null, null, turnierUUID))
+		),
+		new BegegnungenJeRunde(Arrays.asList(
+			new Begegnung(b11UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 3, 1), null, null, null, null, null,
+				Optional.empty(),
+				Optional.empty(),
+				null, null, turnierUUID))
+		)
+	), turnierUUID);
+
+	public static List<WettkampfGruppe> wettkampfGruppenListeFrauen = Arrays.asList(wettkampfGruppeFrauen);
 }

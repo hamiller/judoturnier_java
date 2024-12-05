@@ -236,7 +236,7 @@ public class TurnierController {
 				matte -> reorganize(matte.gruppenRunden()) // Value: Ergebnis der reorganize-Methode
 			));
 
-		logger.info("gruppenListMitTypen: {}", gruppenListMitTypen);
+		logger.info("wettkampfreihenfolgeJeMatte: {}", wettkampfreihenfolgeJeMatte);
 
 		ModelAndView mav = new ModelAndView("begegnungen_normal");
 		mav.addObject("turnierid", turnierid);
@@ -419,31 +419,38 @@ public class TurnierController {
 			Map<Integer, RundeDto> gewinnerRunden = new LinkedHashMap<>();
 			Map<Integer, RundeDto> trostRunden = new LinkedHashMap<>();
 			for (int i = 0; i < gruppe.runde().size(); i++) {
+				logger.warn("Runde {}", i);
 				logger.trace("gehe durch die Runden... {}", i);
 
 				// alle ids sind hier gleich
 				for (BegegnungDto begegnung : gruppe.runde().get(i).begegnungen()) {
+					logger.warn("Runde {}, aktuelle Paarung {}" ,begegnung.runde(), begegnung.akuellePaarung());
 					logger.trace("gehe durch die Begegnungen... {}", begegnung);
 					if (begegnung.rundenTyp().equals(Begegnung.RundenTyp.GEWINNERRUNDE)) {
 						logger.trace("Eine Gewinnerrunde!");
-						gewinnerRunden.putIfAbsent(i, newRundeDto(gruppe.runde().get(i), i));
+						gewinnerRunden.putIfAbsent(i, newRundeDto(gruppe.runde().get(i)));
 						gewinnerRunden.get(i).begegnungen().add(begegnung);
 					} else if (begegnung.rundenTyp().equals(Begegnung.RundenTyp.TROSTRUNDE)) {
 						logger.trace("Eine Trostrunde!");
-						trostRunden.putIfAbsent(i, newRundeDto(gruppe.runde().get(i), i));
+						trostRunden.putIfAbsent(i, newRundeDto(gruppe.runde().get(i)));
 						trostRunden.get(i).begegnungen().add(begegnung);
 					}
+
+
 				}
 			}
 			gtr.gewinnerrundeDtoList().addAll(gewinnerRunden.values().stream().toList());
 			gtr.trostrundeDtoList().addAll(trostRunden.values().stream().toList());
+
+			logger.warn("erstellte liste: {}", gtr.gewinnerrundeDtoList());
+			logger.warn("----------");
 		}
 
 		return map.values().stream()
 			.collect(Collectors.toList());
 	}
 
-	private static RundeDto newRundeDto(RundeDto rundeDto, int i) {
+	private static RundeDto newRundeDto(RundeDto rundeDto) {
 		return new RundeDto(
 			rundeDto.rundeId(),
 			rundeDto.mattenRunde(),

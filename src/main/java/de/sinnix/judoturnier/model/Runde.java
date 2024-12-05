@@ -2,6 +2,7 @@ package de.sinnix.judoturnier.model;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public record Runde(
 	UUID rundeId,
@@ -22,7 +23,7 @@ public record Runde(
 			", matteId=" + matteId +
 			", altersklasse=" + altersklasse +
 			", gruppe=" + gruppe +
-			", begegnungen(size)=" + begegnungen.size() +
+			", begegnungen()=" + begegnungen.stream().map(b -> String.valueOf(b.getBegegnungId().akuellePaarung)).collect(Collectors.joining(",")) +
 			'}';
 	}
 }

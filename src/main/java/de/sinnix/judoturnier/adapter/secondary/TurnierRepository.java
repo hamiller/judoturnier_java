@@ -67,6 +67,7 @@ public class TurnierRepository {
 		var begegnungenList = begegnungenJpaList.stream()
 			.map(jpa -> begegnungConverter.convertToBegegnung(jpa, wettkampfGruppeJpaList))
 			.sorted(Comparator.comparing(Begegnung::getGesamtRunde))
+			.sorted(Comparator.comparing(b -> b.getBegegnungId().akuellePaarung))
 			.toList();
 
 		// Map, um die Runden zu sammeln
@@ -102,6 +103,48 @@ public class TurnierRepository {
 		}
 
 		return matteMap;
+	}
+
+	public List<Runde> ladeWettkampfgruppeRunden(UUID wettkampfgruppeUUID, UUID turnierUUID) {
+		List<BegegnungJpa> begegnungenJpaList = begegnungJpaRepository.findAllByTurnierUUID(turnierUUID.toString());
+		Optional<WettkampfGruppeJpa> wettkampfGruppeJpa = wettkampfGruppeJpaRepository.findByUuidAndTurnierUUID(wettkampfgruppeUUID.toString(), turnierUUID.toString());
+
+		var begegnungenList = begegnungenJpaList.stream()
+			.filter(jpa -> jpa.getWettkampfGruppeId().equals(wettkampfgruppeUUID.toString()))
+			.map(jpa -> begegnungConverter.convertToBegegnung(jpa, wettkampfGruppeJpa))
+			.sorted(Comparator.comparing(Begegnung::getGesamtRunde))
+			.sorted(Comparator.comparing(b -> b.getBegegnungId().akuellePaarung))
+			.toList();
+
+		// Map, um die Runden zu sammeln
+		Map<UUID, List<Begegnung>> rundenMap = new LinkedHashMap<>();
+
+		// Iteriere über die Begegnungen, um sie nach Runde zu gruppieren
+		for (Begegnung begegnung : begegnungenList) {
+			UUID rundeId = begegnung.getRundeId();
+			rundenMap.computeIfAbsent(rundeId, k -> new ArrayList<>()).add(begegnung);
+		}
+
+		List<Runde> rundenList = new ArrayList<>();
+
+		// Iteriere über die RundenMap, um Matte-Objekte zu erstellen
+		for (Map.Entry<UUID, List<Begegnung>> entry : rundenMap.entrySet()) {
+			UUID rundeId = entry.getKey();
+			List<Begegnung> begegnungenInRunde = entry.getValue();
+
+			var ersteBegegnung = begegnungenInRunde.get(0);
+			Integer mattenRunde = ersteBegegnung.getMattenRunde();
+			Integer gruppenRunde = ersteBegegnung.getGruppenRunde();
+			Integer rundeGesamt = ersteBegegnung.getGesamtRunde();
+			Integer matteId = ersteBegegnung.getMatteId();
+			Altersklasse altersklasse = ersteBegegnung.getWettkaempfer1().isPresent() ? ersteBegegnung.getWettkaempfer1().get().altersklasse() : Altersklasse.PAUSE;
+			WettkampfGruppe gruppe = ersteBegegnung.getWettkampfGruppe();
+
+			// Erstelle eine neue Runde
+			rundenList.add(new Runde(rundeId, mattenRunde, gruppenRunde, rundeGesamt, matteId, altersklasse, gruppe, begegnungenInRunde));
+		}
+
+		return rundenList;
 	}
 
 	public void speichereMatten(List<Matte> mattenList) {

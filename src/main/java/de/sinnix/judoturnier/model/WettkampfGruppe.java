@@ -17,7 +17,7 @@ public record WettkampfGruppe(
 			", name='" + name + '\'' +
 			", typ='" + typ + '\'' +
 			", altersklasse=" + altersklasse +
-			", alleRundenBegegnungen(size)=" + alleRundenBegegnungen.size() +
+			", alleRundenBegegnungen(size)=" + alleRundenBegegnungen +
 			", turnierUUID=" + turnierUUID +
 			'}';
 	}

@@ -10,6 +10,7 @@ import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Verein;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -181,4 +182,78 @@ class SortiererTest {
 		assertEquals(2, runden.get(4).begegnungen().size());
 	}
 
+	@Test
+	public void sucheNachfolger() {
+		/**
+		 .(Runde1, Siegerrunden, Paarung1)
+		 .Kämpfer1 vs Kämpfer2          ---------         (Runde2, Siegerrunde, Paarung1)
+		 .                                       |___________ Sieger1 vs Sieger2 ---------
+		 .(Runde1, Siegerrunden, Paarung2)       |                                        |
+		 .Kämpfer3 vs Kämpfer4          ---------                                         |          (Runde3, Siegerrunde, Paarung1)
+		 .                                                                                |------------ Sieger5 vs Sieger6
+		 .(Runde1, Siegerrunden, Paarung3)                                                |
+		 .Kämpfer5 vs /                 ---------         (Runde2, Siegerrunde, Paarung2) |
+		 .                                       |___________ Sieger3 vs Sieger4 ---------
+		 .(Runde1, Siegerrunden, Paarung4)       |
+		 .Kämpfer6 vs Kämpfer7          ---------
+		 */
+		List<WettkampfGruppe> wettkampfGruppenListe = WettkampfgruppeFixture.wettkampfGruppenListeFrauen;
+		assertEquals(1, wettkampfGruppenListe.size());
+		assertEquals(11, wettkampfGruppenListe.stream().mapToInt(wg -> wg.alleRundenBegegnungen().stream().mapToInt(g -> g.begegnungenJeRunde().size()).sum()).sum());
+		WettkampfGruppe wettkampfGruppe1 = wettkampfGruppenListe.get(0);
+		Sortierer sortierer = new Sortierer(1, 1);
+		List<Runde> rundenAllerWettkampfgruppen = sortierer.erstelleReihenfolgeMitAllenGruppenJeDurchgang(wettkampfGruppenListe, 1).getRight();
+		Runde runden1 = rundenAllerWettkampfgruppen.get(0);
+		assertEquals(4+2, runden1.begegnungen().size()); // 4 Begegnungen Gewinnerrunde, 2 Begegnungen in Trostrunde in Runde 1
+		Begegnung begegnung1 = runden1.begegnungen().get(0);
+		assertEquals(WettkampfgruppeFixture.b1UUID, begegnung1.getId());
+
+
+		// Sieger aus Paarung1 und Paarung2 kommen zusammen in die gleiche Paarung/Begegnung in Runde 2
+		Pair<Optional<Begegnung>,Optional<Begegnung>> begegnung = Sortierer.nachfolgeBegegnungen(begegnung1.getBegegnungId(), wettkampfGruppe1, rundenAllerWettkampfgruppen);
+
+
+		assertTrue(begegnung.getLeft().isPresent());
+		assertTrue(begegnung.getRight().isPresent());
+
+		var sieger = begegnung.getLeft().get();
+		var verlierer = begegnung.getRight().get();
+		assertEquals(WettkampfgruppeFixture.b7UUID, sieger.getId());
+		assertEquals(WettkampfgruppeFixture.b9UUID, verlierer.getId());
+	}
+
+	@Test
+	public void sucheVorgaenger() {
+		/**
+		 .(Runde1, Siegerrunden, Paarung1)
+		 .Kämpfer1 vs Kämpfer2          ---------         (Runde2, Siegerrunde, Paarung1)
+		 .                                       |___________ Sieger1 vs Sieger2 ---------
+		 .(Runde1, Siegerrunden, Paarung2)       |                                        |
+		 .Kämpfer3 vs Kämpfer4          ---------                                         |          (Runde3, Siegerrunde, Paarung1)
+		 .                                                                                |------------ Sieger5 vs Sieger6
+		 .(Runde1, Siegerrunden, Paarung3)                                                |
+		 .Kämpfer5 vs /                 ---------         (Runde2, Siegerrunde, Paarung2) |
+		 .                                       |___________ Sieger3 vs Sieger4 ---------
+		 .(Runde1, Siegerrunden, Paarung4)       |
+		 .Kämpfer6 vs Kämpfer7          ---------
+		 */
+		List<WettkampfGruppe> wettkampfGruppenListe = WettkampfgruppeFixture.wettkampfGruppenListeFrauen;
+		assertEquals(1, wettkampfGruppenListe.size());
+		assertEquals(11, wettkampfGruppenListe.stream().mapToInt(wg -> wg.alleRundenBegegnungen().stream().mapToInt(g -> g.begegnungenJeRunde().size()).sum()).sum());
+		WettkampfGruppe wettkampfGruppe1 = wettkampfGruppenListe.get(0);
+		Sortierer sortierer = new Sortierer(1, 1);
+		List<Runde> rundenAllerWettkampfgruppen = sortierer.erstelleReihenfolgeMitAllenGruppenJeDurchgang(wettkampfGruppenListe, 1).getRight();
+		Runde runden2 = rundenAllerWettkampfgruppen.get(1);
+		assertEquals(2+2, runden2.begegnungen().size()); // 2 Begegnungen Gewinnerrunde, 2 Begegnungen in Trostrunde in Runde 2
+		Begegnung begegnung7 = runden2.begegnungen().get(0);
+		assertEquals(WettkampfgruppeFixture.b7UUID, begegnung7.getId());
+
+
+		List<Begegnung> begegnungen = Sortierer.vorgaengerBegegnungen(begegnung7.getBegegnungId(), wettkampfGruppe1, rundenAllerWettkampfgruppen);
+
+
+		assertEquals(2, begegnungen.size());
+		assertEquals(WettkampfgruppeFixture.b1UUID, begegnungen.get(0).getId());
+		assertEquals(WettkampfgruppeFixture.b2UUID, begegnungen.get(1).getId());
+	}
 }
