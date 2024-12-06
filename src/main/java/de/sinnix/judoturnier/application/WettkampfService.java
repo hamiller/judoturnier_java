@@ -2,6 +2,7 @@ package de.sinnix.judoturnier.application;
 
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
 import de.sinnix.judoturnier.application.algorithm.Algorithmus;
+import de.sinnix.judoturnier.application.algorithm.BesterAusDrei;
 import de.sinnix.judoturnier.application.algorithm.DoppelKOSystem;
 import de.sinnix.judoturnier.application.algorithm.JederGegenJeden;
 import de.sinnix.judoturnier.model.Altersklasse;
@@ -108,9 +109,7 @@ public class WettkampfService {
 		checkGruppenSindValide(gwks);
 		List<WettkampfGruppe> wettkampfGruppen = new ArrayList<>();
 		for (GewichtsklassenGruppe gwk : gwks) {
-			Algorithmus algorithmus = einstellungen.turnierTyp() == TurnierTyp.RANDORI ?
-				new JederGegenJeden() :
-				new DoppelKOSystem();
+			Algorithmus algorithmus = getAlgorithmus(einstellungen, gwk);
 
 			// erstelle einzelne Gruppen, falls Gruppengröße beschränkt ist
 			var maxGruppenGroesse = einstellungen.gruppengroessen().altersklasseGruppengroesse().get(gwk.altersKlasse());
@@ -128,6 +127,19 @@ public class WettkampfService {
 		List<Matte> matten = erstelleGruppenReihenfolge(wettkampfGruppen, einstellungen.mattenAnzahl().anzahl(), einstellungen.wettkampfReihenfolge());
 
 		turnierRepository.speichereMatten(matten);
+	}
+
+	private static Algorithmus getAlgorithmus(Einstellungen einstellungen, GewichtsklassenGruppe gwk) {
+		var turnierTyp = einstellungen.turnierTyp();
+
+		if (turnierTyp == TurnierTyp.RANDORI) {
+			return new JederGegenJeden();
+		}
+
+		if (gwk.teilnehmer().size() <= 2) {
+			return new BesterAusDrei();
+		}
+		return new DoppelKOSystem();
 	}
 
 	private static void loggWettkampfgruppen(List<WettkampfGruppe> wettkampfGruppen) {
