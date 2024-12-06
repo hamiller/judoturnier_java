@@ -11,7 +11,6 @@ import de.sinnix.judoturnier.model.BegegnungenJeRunde;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
-import de.sinnix.judoturnier.model.Gruppengroessen;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Metadaten;
 import de.sinnix.judoturnier.model.Runde;
@@ -152,14 +151,24 @@ public class TurnierService {
 	}
 
 	private void erstelleMatten(List<GewichtsklassenGruppe> gwks, Einstellungen einstellungen) {
-		Algorithmus algorithmus = einstellungen.turnierTyp() == TurnierTyp.RANDORI ?
-			new JederGegenJeden() :
-			new DoppelKOSystem();
-
 		// check gruppe auf vorhandene Daten
 		checkGruppenSindValide(gwks);
+		List<WettkampfGruppe> wettkampfGruppen = new ArrayList<>();
+		for (GewichtsklassenGruppe gwk : gwks) {
+			Algorithmus algorithmus = einstellungen.turnierTyp() == TurnierTyp.RANDORI ?
+				new JederGegenJeden() :
+				new DoppelKOSystem();
 
-		List<WettkampfGruppe> wettkampfGruppen = erstelleWettkampfgruppen(gwks, algorithmus, einstellungen.gruppengroessen());
+			// erstelle einzelne Gruppen, falls Gruppengröße beschränkt ist
+			var maxGruppenGroesse = einstellungen.gruppengroessen().altersklasseGruppengroesse().get(gwk.altersKlasse());
+			logger.debug("Maximale Gruppengröße in Altersklasse {}: {}",  gwk.altersKlasse(), maxGruppenGroesse);
+			List<List<Wettkaempfer>> wettkaempferGruppen = splitArrayToChunkSize(gwk.teilnehmer(), maxGruppenGroesse);
+			for (List<Wettkaempfer> wettkaempferList : wettkaempferGruppen) {
+				var splittedGwkg = new GewichtsklassenGruppe(gwk.id(), gwk.altersKlasse(), gwk.gruppenGeschlecht(), wettkaempferList, gwk.name(), gwk.minGewicht(), gwk.maxGewicht(), gwk.turnierUUID());
+				WettkampfGruppe wettkampfGruppe = algorithmus.erstelleWettkampfGruppe(splittedGwkg);
+				wettkampfGruppen.add(wettkampfGruppe);
+			}
+		}
 		logger.info("{}", wettkampfGruppen);
 		loggWettkampfgruppen(wettkampfGruppen);
 
@@ -309,20 +318,6 @@ public class TurnierService {
 		return wertungen.stream().filter(w -> w.getBewerter().uuid().equals(benutzer.uuid())).findFirst();
 	}
 
-	private List<WettkampfGruppe> erstelleWettkampfgruppen(List<GewichtsklassenGruppe> gewichtsklassenGruppen, Algorithmus algorithmus, Gruppengroessen gruppenGroessen) {
-		logger.debug("erstelle Wettkampfgruppen aus den Gewichtsklassengruppen");
-		// erstelle alle Begegnungen in jeder Gruppe
-		List<WettkampfGruppe> wettkampfGruppen = new ArrayList<>();
-		for (int i = 0; i < gewichtsklassenGruppen.size(); i++) {
-			var gruppe = gewichtsklassenGruppen.get(i);
-			var maxGruppenGroesse = gruppenGroessen.altersklasseGruppengroesse().get(gruppe.altersKlasse());
-			var wkg = algorithmus.erstelleWettkampfGruppen(i, gruppe, maxGruppenGroesse);
-			wettkampfGruppen.addAll(wkg);
-		}
-		logger.debug("Anzahl erstellter Wettkampfgruppen: {}", wettkampfGruppen.size());
-		return wettkampfGruppen;
-	}
-
 	private List<Matte> erstelleGruppenReihenfolge(List<WettkampfGruppe> wettkampfGruppen, Integer anzahlMatten, WettkampfReihenfolge reihenfolge) {
 		logger.debug("erstelle Reihenfolge der Wettkämpfe aus den Wettkampfgruppen: {}, {}", wettkampfGruppen.size(), reihenfolge);
 		List<Matte> matten = new ArrayList<>();
@@ -434,5 +429,13 @@ public class TurnierService {
 			.filter(b -> b.getMatteId().equals(matte))
 			.filter(b -> b.getMattenRunde().equals(mattenrunde))
 			.toList();
+	}
+
+	private List<List<Wettkaempfer>> splitArrayToChunkSize(List<Wettkaempfer> arr, int chunkSize) {
+		List<List<Wettkaempfer>> result = new ArrayList<>();
+		for (int i = 0; i < arr.size(); i += chunkSize) {
+			result.add(arr.subList(i, Math.min(i + chunkSize, arr.size())));
+		}
+		return result;
 	}
 }

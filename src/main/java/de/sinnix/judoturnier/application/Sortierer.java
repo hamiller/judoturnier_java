@@ -186,9 +186,10 @@ public class Sortierer {
 			} else {
 				logger.info("Es existiert nur eine Gruppe, daher fügen wir diese komplett hinzu");
 				WettkampfGruppe gruppeZuletzt = gruppen.get(gruppen.size() - 1);
+				logger.debug("Gruppe {}", gruppeZuletzt);
 				int gruppenRunde = 1;
 				for (BegegnungenJeRunde begegnungen : gruppeZuletzt.alleRundenBegegnungen()) {
-					Altersklasse altersKlasseZuletzt = begegnungen.begegnungenJeRunde().get(0).getWettkaempfer1().get().altersklasse();
+					Altersklasse altersKlasseZuletzt = gruppeZuletzt.altersklasse();
 					Runde rundeZuletzt = new Runde(null, mattenRunde, gruppenRunde, rundeGesamt, matteId, altersKlasseZuletzt, gruppeZuletzt, begegnungen.begegnungenJeRunde());
 					runden.add(rundeZuletzt);
 					rundeGesamt++;

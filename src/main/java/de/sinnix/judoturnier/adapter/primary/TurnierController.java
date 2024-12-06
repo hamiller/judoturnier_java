@@ -419,13 +419,11 @@ public class TurnierController {
 			Map<Integer, RundeDto> gewinnerRunden = new LinkedHashMap<>();
 			Map<Integer, RundeDto> trostRunden = new LinkedHashMap<>();
 			for (int i = 0; i < gruppe.runde().size(); i++) {
-				logger.warn("Runde {}", i);
-				logger.trace("gehe durch die Runden... {}", i);
+				logger.trace("Runde {}", i);
 
 				// alle ids sind hier gleich
 				for (BegegnungDto begegnung : gruppe.runde().get(i).begegnungen()) {
-					logger.warn("Runde {}, aktuelle Paarung {}" ,begegnung.runde(), begegnung.akuellePaarung());
-					logger.trace("gehe durch die Begegnungen... {}", begegnung);
+					logger.trace("Runde {}, aktuelle Paarung {}" ,begegnung.runde(), begegnung.akuellePaarung());
 					if (begegnung.rundenTyp().equals(Begegnung.RundenTyp.GEWINNERRUNDE)) {
 						logger.trace("Eine Gewinnerrunde!");
 						gewinnerRunden.putIfAbsent(i, newRundeDto(gruppe.runde().get(i)));
@@ -442,8 +440,8 @@ public class TurnierController {
 			gtr.gewinnerrundeDtoList().addAll(gewinnerRunden.values().stream().toList());
 			gtr.trostrundeDtoList().addAll(trostRunden.values().stream().toList());
 
-			logger.warn("erstellte liste: {}", gtr.gewinnerrundeDtoList());
-			logger.warn("----------");
+			logger.trace("erstellte liste: {}", gtr.gewinnerrundeDtoList());
+			logger.trace("----------");
 		}
 
 		return map.values().stream()

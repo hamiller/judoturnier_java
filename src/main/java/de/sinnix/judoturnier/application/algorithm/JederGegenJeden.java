@@ -18,31 +18,20 @@ public class JederGegenJeden implements Algorithmus {
 	private static final Logger logger                   = LogManager.getLogger(JederGegenJeden.class);
 
 	@Override
-	public List<WettkampfGruppe> erstelleWettkampfGruppen(Integer gruppenid, GewichtsklassenGruppe gewichtsklassenGruppe, Integer maxGruppenGroesse) {
+	public WettkampfGruppe erstelleWettkampfGruppe(GewichtsklassenGruppe gewichtsklassenGruppe) {
 		logger.info("JederGegenJeden Algorithmus genutzt");
+		List<Wettkaempfer> wettkaempferGruppe = gewichtsklassenGruppe.teilnehmer();
+		List<BegegnungenJeRunde> begegnungen = berechneBegegnungen(wettkaempferGruppe);
 
-		List<WettkampfGruppe> result = new ArrayList<>();
-
-		// erstellt Gruppen mit bis zu 6 Kämpfern
-		List<List<Wettkaempfer>> wettkaempferGruppen = splitArrayToChunkSize(gewichtsklassenGruppe.teilnehmer(), maxGruppenGroesse);
-
-		// Alle möglichen Begegnungen in jeder Gruppe generieren
-		for (int i = 0; i < wettkaempferGruppen.size(); i++) {
-			List<Wettkaempfer> wettkaempferGruppe = wettkaempferGruppen.get(i);
-
- 			List<BegegnungenJeRunde> begegnungen = berechneBegegnungen(wettkaempferGruppe);
-
-			WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(
-				UUID.randomUUID(),
-				gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
-				"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
-				gewichtsklassenGruppe.altersKlasse(),
-				begegnungen,
-				gewichtsklassenGruppe.turnierUUID()
-			);
-			result.add(wettkampfGruppe);
-		}
-		return result;
+		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(
+			UUID.randomUUID(),
+			gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
+			"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
+			gewichtsklassenGruppe.altersKlasse(),
+			begegnungen,
+			gewichtsklassenGruppe.turnierUUID()
+		);
+		return wettkampfGruppe;
 	}
 
 	private List<BegegnungenJeRunde> berechneBegegnungen(List<Wettkaempfer> teilnehmer) {
@@ -153,11 +142,4 @@ public class JederGegenJeden implements Algorithmus {
 		return alleRundenBegegnungen;
 	}
 
-	private List<List<Wettkaempfer>> splitArrayToChunkSize(List<Wettkaempfer> arr, int chunkSize) {
-		List<List<Wettkaempfer>> result = new ArrayList<>();
-		for (int i = 0; i < arr.size(); i += chunkSize) {
-			result.add(arr.subList(i, Math.min(i + chunkSize, arr.size())));
-		}
-		return result;
-	}
 }

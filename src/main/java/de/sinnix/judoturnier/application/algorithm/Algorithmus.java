@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface Algorithmus {
 
-	List<WettkampfGruppe> erstelleWettkampfGruppen(Integer gruppenid, GewichtsklassenGruppe gewichtsklassenGruppe, Integer maxGruppenGroesse);
+	WettkampfGruppe erstelleWettkampfGruppe(GewichtsklassenGruppe gewichtsklassenGruppe);
 }

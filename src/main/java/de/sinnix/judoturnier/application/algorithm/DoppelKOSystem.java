@@ -41,9 +41,7 @@ public class DoppelKOSystem implements Algorithmus {
 	private static final Logger logger          = LogManager.getLogger(DoppelKOSystem.class);
 
 	@Override
-	public List<WettkampfGruppe> erstelleWettkampfGruppen(Integer gruppenid, GewichtsklassenGruppe gewichtsklassenGruppe, Integer maxGruppenGroesse) {
-		List<WettkampfGruppe> result = new ArrayList<>();
-
+	public WettkampfGruppe erstelleWettkampfGruppe(GewichtsklassenGruppe gewichtsklassenGruppe) {
 		// Teilnehmer der Gruppe
 		List<Wettkaempfer> teilnehmer = gewichtsklassenGruppe.teilnehmer();
 
@@ -67,9 +65,7 @@ public class DoppelKOSystem implements Algorithmus {
 			begegnungenJeRunde,
 			gewichtsklassenGruppe.turnierUUID()
 		);
-		result.add(wettkampfGruppe);
-		return result;
-
+		return wettkampfGruppe;
 	}
 
 	// Erstelle Begegnungen dieser Gruppe (Gewinner- und Trostrunden)

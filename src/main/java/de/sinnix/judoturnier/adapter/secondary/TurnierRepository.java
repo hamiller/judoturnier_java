@@ -66,6 +66,7 @@ public class TurnierRepository {
 
 		var begegnungenList = begegnungenJpaList.stream()
 			.map(jpa -> begegnungConverter.convertToBegegnung(jpa, wettkampfGruppeJpaList))
+			.peek(b -> logger.info("found {}", b))
 			.sorted(Comparator
 				.comparing(Begegnung::getGesamtBegegnung)
 				.thenComparing(begegnung -> begegnung.getBegegnungId().rundenTyp)
@@ -186,7 +187,7 @@ public class TurnierRepository {
 				newBegegnung.setMatteId(matte.id());
 				newBegegnung.setGruppenRunde(runde.gruppenRunde());
 				newBegegnung.setMattenRunde(runde.mattenRunde());
-				newBegegnung.setGesamtBegegnung(begegnung.getGesamtBegegnung());
+				newBegegnung.setGesamtBegegnung(runde.rundeGesamt());
 				newBegegnung.setWettkaempfer1(begegnung.getWettkaempfer1());
 				newBegegnung.setWettkaempfer2(begegnung.getWettkaempfer2());
 				newBegegnung.setWettkampfGruppe(wettkampfGruppe);
