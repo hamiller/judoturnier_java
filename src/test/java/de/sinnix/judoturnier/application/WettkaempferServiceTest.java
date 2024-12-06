@@ -44,16 +44,16 @@ public class WettkaempferServiceTest {
 	@Mock
 	private VereinService          vereinService;
 	@Mock
-	private TurnierService         turnierService;
+	private WettkampfService       wettkampfService;
 	@Mock
 	private EinstellungenService   einstellungenService;
 	@InjectMocks
 	private WettkaempferService    wettkaempferService;
 
-	private        Wettkaempfer wettkaempfer;
-	private static UUID turnierUUID = UUID.fromString("7c858e76-60b9-4097-ad19-1ebe6891b9f9");
+	private Wettkaempfer wettkaempfer;
 
-	private static Benutzer kampfrichter = new Benutzer(UUID.fromString("898a7fcf-2fad-4ec9-8b4f-5513188af291"), "user1", "Name, Vorname", List.of(), List.of(BenutzerRolle.KAMPFRICHTER));
+	private static final UUID     turnierUUID  = UUID.fromString("7c858e76-60b9-4097-ad19-1ebe6891b9f9");
+	private static final Benutzer kampfrichter = new Benutzer(UUID.fromString("898a7fcf-2fad-4ec9-8b4f-5513188af291"), "user1", "Name, Vorname", List.of(), List.of(BenutzerRolle.KAMPFRICHTER));
 
 	public static Verein       verein1       = new Verein(UUID.fromString("61d1a191-5df1-40f5-a941-da18e06cebad"), "Kimchi Wiesbaden", turnierUUID);
 	public static Verein       verein2       = new Verein(UUID.fromString("9d4e210a-8099-4402-94d7-0b0fbaa67885"), "1. JCG", turnierUUID);
@@ -88,7 +88,7 @@ public class WettkaempferServiceTest {
 		List<Wettkaempfer> wettkaempferList = wettkaempferService.alleKaempfer(turnierUUID);
 
 		assertEquals(1, wettkaempferList.size());
-		assertEquals(wettkaempfer, wettkaempferList.get(0));
+		assertEquals(wettkaempfer, wettkaempferList.getFirst());
 	}
 
 	@Test
@@ -154,17 +154,17 @@ public class WettkaempferServiceTest {
 		verify(wettkaempferRepository, times(14)).save(argumentCaptor.capture());
 		List<Wettkaempfer> capturedArguments = argumentCaptor.getAllValues();
 
-		assertEquals(null, capturedArguments.get(0).id());
-		assertEquals("ABC123", capturedArguments.get(0).name());
-		assertEquals(turnierUUID, capturedArguments.get(0).turnierUUID());
-		assertEquals(Altersklasse.U9, capturedArguments.get(0).altersklasse());
+		assertEquals(null, capturedArguments.getFirst().id());
+		assertEquals("ABC123", capturedArguments.getFirst().name());
+		assertEquals(turnierUUID, capturedArguments.getFirst().turnierUUID());
+		assertEquals(Altersklasse.U9, capturedArguments.getFirst().altersklasse());
 	}
 
 	@Test
 	void berechneGesamtWertung() {
 		when(einstellungenService.isRandori(eq(turnierUUID))).thenReturn(true);
 		when(wettkaempferRepository.findAll(eq(turnierUUID))).thenReturn(List.of(wettkaempfer1, wettkaempfer2, wettkaempfer3, wettkaempfer4));
-		when(turnierService.ladeAlleBegegnungen(eq(turnierUUID))).thenReturn(List.of(begegnung1, begegnung2, begegnung3, begegnung4, begegnung5, begegnung6));
+		when(wettkampfService.ladeAlleBegegnungen(eq(turnierUUID))).thenReturn(List.of(begegnung1, begegnung2, begegnung3, begegnung4, begegnung5, begegnung6));
 
 		Map<UUID, GesamtWertung> wertungMap = wettkaempferService.berechneGesamtWertungen(turnierUUID);
 
@@ -211,8 +211,8 @@ public class WettkaempferServiceTest {
 	@Disabled
 	void berechneGesamtPlatzierung() {
 		when(einstellungenService.isRandori(eq(turnierUUID))).thenReturn(false);
-//		when(wettkaempferRepository.findAll(eq(turnierUUID))).thenReturn(List.of(wettkaempfer1, wettkaempfer2, wettkaempfer3, wettkaempfer4));
-//		when(turnierService.ladeAlleBegegnungen(eq(turnierUUID))).thenReturn(List.of(begegnung1, begegnung2, begegnung3, begegnung4, begegnung5, begegnung6));
+		//		when(wettkaempferRepository.findAll(eq(turnierUUID))).thenReturn(List.of(wettkaempfer1, wettkaempfer2, wettkaempfer3, wettkaempfer4));
+		//		when(turnierService.ladeAlleBegegnungen(eq(turnierUUID))).thenReturn(List.of(begegnung1, begegnung2, begegnung3, begegnung4, begegnung5, begegnung6));
 
 		Map<UUID, GesamtPlatzierung> platzierungMap = wettkaempferService.berechneGesamtPlatzierungen(turnierUUID);
 

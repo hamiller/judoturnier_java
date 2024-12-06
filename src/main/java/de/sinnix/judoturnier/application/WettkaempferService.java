@@ -48,10 +48,9 @@ public class WettkaempferService {
 	private VereinService          vereinService;
 	@Lazy
 	@Autowired
-	private TurnierService         turnierService;
-	@Lazy
-	@Autowired
 	private EinstellungenService   einstellungenService;
+	@Autowired
+	private WettkampfService       wettkampfService;
 
 	public List<Wettkaempfer> alleKaempfer(UUID turnierUUID) {
 		logger.info("lade alleKaempfer");
@@ -181,10 +180,10 @@ public class WettkaempferService {
 		}
 
 		List<Wettkaempfer> wettkaempferList = wettkaempferRepository.findAll(turnierUUID);
-		List<Begegnung> begegnungList = turnierService.ladeAlleBegegnungen(turnierUUID);
+		List<Begegnung> begegnungList = wettkampfService.ladeAlleBegegnungen(turnierUUID);
 
 		Map<UUID, GesamtWertung> gesamtWertungen = new HashMap<>();
-		for (Wettkaempfer wettkaempfer: wettkaempferList) {
+		for (Wettkaempfer wettkaempfer : wettkaempferList) {
 			List<Integer> kampfgeistList = holeWertungen(begegnungList, wettkaempfer, Wertung::getKampfgeistWettkaempfer1, Wertung::getKampfgeistWettkaempfer2);
 			double kampfgeist = kampfgeistList.stream().mapToInt(Integer::intValue).average().getAsDouble();
 

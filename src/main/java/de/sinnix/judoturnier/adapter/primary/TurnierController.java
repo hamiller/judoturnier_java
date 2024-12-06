@@ -6,6 +6,7 @@ import de.sinnix.judoturnier.application.GewichtsklassenService;
 import de.sinnix.judoturnier.application.TurnierService;
 import de.sinnix.judoturnier.application.VereinService;
 import de.sinnix.judoturnier.application.WettkaempferService;
+import de.sinnix.judoturnier.application.WettkampfService;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
@@ -55,6 +56,8 @@ public class TurnierController {
 
 	@Autowired
 	private WettkaempferService    wettkaempferService;
+	@Autowired
+	private WettkampfService       wettkampfService;
 	@Autowired
 	private EinstellungenService   einstellungenService;
 	@Autowired
@@ -278,7 +281,7 @@ public class TurnierController {
 		try {
 			UUID turnierUUID = UUID.fromString(turnierid);
 			turnierService.loescheWettkampfreihenfolge(turnierUUID);
-			turnierService.erstelleWettkampfreihenfolge(turnierUUID);
+			wettkampfService.erstelleWettkampfreihenfolge(turnierUUID);
 		} catch (Exception e) {
 			logger.error("Ein unerwarteter Fehler ist aufgetreten", e);
 			error = e.toString();
@@ -297,8 +300,8 @@ public class TurnierController {
 		String error = "";
 		UUID turnierUUID = UUID.fromString(turnierid);
 		try {
-			turnierService.loescheWettkampfreihenfolgeAltersklasse(Altersklasse.valueOf(altersklasse), turnierUUID);
-			turnierService.erstelleWettkampfreihenfolgeAltersklasse(Optional.of(Altersklasse.valueOf(altersklasse)), turnierUUID);
+			wettkampfService.loescheWettkampfreihenfolgeAltersklasse(Altersklasse.valueOf(altersklasse), turnierUUID);
+			wettkampfService.erstelleWettkampfreihenfolgeAltersklasse(Optional.of(Altersklasse.valueOf(altersklasse)), turnierUUID);
 		} catch (Exception e) {
 			error = e.toString();
 		}

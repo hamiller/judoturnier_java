@@ -2,6 +2,7 @@ package de.sinnix.judoturnier.adapter.primary;
 
 import de.sinnix.judoturnier.application.EinstellungenService;
 import de.sinnix.judoturnier.application.TurnierService;
+import de.sinnix.judoturnier.application.WettkampfService;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Einstellungen;
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +24,8 @@ public class MattenAnzeigeController {
 	private TurnierService       turnierService;
 	@Autowired
 	private EinstellungenService einstellungenService;
+	@Autowired
+	private WettkampfService     wettkampfService;
 
 	@GetMapping("/turnier/{turnierid}/mattenanzeige/randori/{matte}/{mattenrunde}")
 	public ModelAndView anzeigeMattenWertungRandori(@PathVariable String turnierid, @PathVariable String matte, @PathVariable String mattenrunde) {
@@ -51,7 +54,7 @@ public class MattenAnzeigeController {
 		UUID turnierUUID = UUID.fromString(turnierid);
 		UUID begegnungUUID = UUID.fromString(begegnungid);
 		Einstellungen einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
-		Begegnung begegnung = turnierService.ladeBegegnung(begegnungUUID);
+		Begegnung begegnung = wettkampfService.ladeBegegnung(begegnungUUID);
 		BegegnungDto begegnungDto = DtosConverter.convertFromBegegnung(begegnung);
 		var altersklasse = begegnung.getWettkampfGruppe().altersklasse();
 		Integer kampfzeit = einstellungenService.kampfZeit(turnierUUID, altersklasse);
