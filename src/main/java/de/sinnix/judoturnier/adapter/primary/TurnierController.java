@@ -88,6 +88,33 @@ public class TurnierController {
 		return mav;
 	}
 
+	@GetMapping("/kontakt")
+	public ModelAndView kontaktPage() {
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
+		logger.info("Turniere-Kontaktseite. User {}", oidcBenutzer);
+		Benutzer benutzer = benutzerService.holeBenutzer(oidcBenutzer);
+
+		ModelAndView mav = new ModelAndView("kontakt");
+		mav.addObject("isNotloggedin", benutzer.istAnonym());
+		return mav;
+	}
+
+	@PostMapping("/kontakt")
+	public ResponseEntity<String> kontaktSenden(@RequestBody KontaktFormularDto kontaktFormular) {
+		// Validierung oder Logik hier
+		if (kontaktFormular.getName().isEmpty() || kontaktFormular.getEmail().isEmpty() || kontaktFormular.getMessage().isEmpty()) {
+			return ResponseEntity.badRequest().body("Alle Felder müssen ausgefüllt sein.");
+		}
+
+		logger.info("Erhalte Kontakanfrage: {}", kontaktFormular);
+		// TODO
+		// Beispiel: Nachricht speichern oder verarbeiten
+		// saveMessage(kontaktFormular);
+
+		// Erfolgsantwort zurückgeben
+		return ResponseEntity.ok("Vielen Dank für Ihre Nachricht!");
+	}
+
 	@GetMapping("/turniere")
 	public ModelAndView turniere() {
 		logger.debug("lade vorhandene Turniere");
@@ -95,16 +122,29 @@ public class TurnierController {
 		logger.info("Eingeloggter User {}", oidcBenutzer);
 
 		List<Turnier> turniere = new ArrayList<>();
+		List<Benutzer> benutzerList;
 		if (oidcBenutzer.istAdmin()) {
 			turniere = turnierService.ladeAlleTurniere();
+		 	benutzerList = benutzerService.holeAlleBenutzer();
+		} else {
+			benutzerList = new ArrayList<>();
 		}
+
+		List<TurnierDto> turnierDtoList = turniere.stream().map(turnier -> {
+			var benutzerDtoList = benutzerList.stream().map(b -> DtosConverter.convertFromBenutzer(b, turnier.uuid())).toList();
+			return DtosConverter.convertFromTurnier(turnier, benutzerDtoList);
+		}).toList();
+
+		logger.info("benutzerList {}", benutzerList);
+
 		ModelAndView mav = new ModelAndView("turniere");
-		mav.addObject("turniere", turniere);
+		mav.addObject("turniere", turnierDtoList);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
 		mav.addObject("anzahlturniere", turniere.size());
 		mav.addObject("enableEditing", oidcBenutzer.istAdmin());
 		mav.addObject("software_version", buildProperties.getVersion());
 		mav.addObject("software_zeit", buildProperties.getTime());
+
 		return mav;
 	}
 
@@ -131,22 +171,21 @@ public class TurnierController {
 		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		UUID turnierUUID = UUID.fromString(turnierid);
 		Turnier turnierdaten = turnierService.ladeTurnier(turnierUUID);
-		List<BenutzerDto> benutzerList = benutzerService.holeAlleBenutzer().stream().map(b -> DtosConverter.convertFromBenutzer(b, turnierUUID)).toList();
-		logger.info("benutzerList {}", benutzerList);
 
 		var wks = wettkaempferService.alleKaempfer(turnierUUID);
 		var einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
+		var anzahlv = wks.stream().map(wk -> wk.verein().id()).collect(Collectors.toSet()).size();
 
 		ModelAndView mav = new ModelAndView("turnieruebersicht");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
 		mav.addObject("anzahlwk", wks.size());
+		mav.addObject("anzahlv", anzahlv);
 		mav.addObject("turniertyp", einstellungen.turnierTyp());
 		mav.addObject("enableEditing", oidcBenutzer.istAdmin());
 		mav.addObject("turniername", turnierdaten.name());
 		mav.addObject("turnierort", turnierdaten.ort());
 		mav.addObject("turnierdatum", turnierdaten.datum());
-		mav.addObject("users", benutzerList);
 		return mav;
 	}
 

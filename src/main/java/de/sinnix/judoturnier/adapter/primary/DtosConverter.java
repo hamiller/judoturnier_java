@@ -4,6 +4,7 @@ import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Runde;
+import de.sinnix.judoturnier.model.Turnier;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 
 import java.time.Duration;
@@ -87,5 +88,9 @@ public class DtosConverter {
 
 	public static BenutzerDto convertFromBenutzer(Benutzer b, UUID turnierUuid) {
 		return new BenutzerDto(b.uuid().toString(), b.username(), b.name(), b.istAdmin(), b.istKampfrichter(turnierUuid), b.istBeobachter(turnierUuid), b.istAnonym(), b.istTurnierZugeordnet(turnierUuid));
+	}
+
+	public static TurnierDto convertFromTurnier(Turnier turnier, List<BenutzerDto> benutzerList) {
+		return new TurnierDto(turnier.uuid(), turnier.name(), turnier.ort(), turnier.datum(), benutzerList);
 	}
 }

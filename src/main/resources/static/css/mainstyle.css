@@ -18,7 +18,7 @@
   --box-shadow2: #091e4240;
   --error: #fa7030;
   --warn: #edc548;
-  --info: #73ffa2;
+  --info: rgb(158 239 253);
 
   --md-sys-color-primary: rgb(0 104 116);
   --md-sys-color-surface-tint: rgb(0 104 116);
@@ -282,6 +282,28 @@ tr {
   animation: hideDiv 0.5s forwards 5s;
 }
 
+.feature {
+  margin-bottom: 20px;
+}
+
+.feature h2 {
+  font-size: 1.5rem;
+}
+
+.feature ul {
+  list-style-type: disc;
+  margin: 10px 0 0 20px;
+}
+
+.feature ul li {
+  list-style-type: disc;
+  margin: 10px 0 0 20px;
+}
+
+.feature p {
+  line-height: 1.6;
+}
+
 .filter_dropdown {
   position: relative;
   display: inline-block;
@@ -417,8 +439,19 @@ tr {
   animation: hideDiv 0.2s forwards 5s;
 }
 
+ul.info_maincontent > li {
+  display: flex;
+}
+.info_title {
+  width: 250px;
+}
+
 .justifycontent {
   justify-content: space-between;
+}
+
+.kontakt_frage {
+  padding-top: 20px;
 }
 
 .leer {
@@ -454,6 +487,10 @@ tr {
   font-weight: bold;
   font-size: 1.2em;
   width: 300px !important;
+}
+
+.login_button {
+  margin: 30px;
 }
 
 md-slider {
@@ -669,8 +706,8 @@ md-slider {
   font-size: 12px;
 }
 
-.vorhanden {
-  background-color: #73ffa2;
+div .vorhanden {
+  background-color: var(--info);
 }
 
 .vs div{

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  {{> header}}
+</head>
+<body>
+{{> title }}
+{{#if not isNotloggedin}}
+  {{> nav }}
+{{/if}}
+
+<div class="generalcontent">
+  <h1>Kontaktiere mich</h1>
+  <form id="contactForm">
+    <div class="settingsrow">
+      <label for="name">Name</label>
+      <md-filled-text-field type="text" id="name" name="name" required />
+
+    </div>
+
+    <div class="settingsrow">
+      <label for="email">E-Mail</label>
+      <md-filled-text-field type="email" id="email" name="email" required />
+    </div>
+    <div class="settingsrow">
+      <label for="message">Nachricht</label><br>
+      <md-filled-text-field type="textarea" id="message" name="message" rows="5" required></md-filled-text-field>
+    </div>
+    <md-filled-button type="submit">Senden</md-filled-button>
+  </form>
+
+  <p id="responseMessage" style="color:green;"></p>
+</div>
+
+</body>
+
+<script>
+  document.getElementById('contactForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Verhindert das Standardverhalten
+
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const message = document.getElementById('message').value;
+
+    // Beispiel: Anfrage an Backend senden
+    fetch('/kontakt', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({name, email, message})
+    })
+      .then(response => {
+        if (response.ok) {
+          document.getElementById('responseMessage').innerText = 'Vielen Dank für deine Nachricht!';
+        } else {
+          document.getElementById('responseMessage').innerText = 'Es gab ein Problem, bitte versuche es erneut.';
+        }
+      })
+      .catch(error => {
+        console.error('Fehler:', error);
+        document.getElementById('responseMessage').innerText = 'Es gab ein Problem, bitte versuche es erneut.';
+      });
+  });
+</script>
+</html>

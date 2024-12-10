@@ -14,23 +14,24 @@
               class="paarung {{lowerCase begegnung.rundenTyp.name}}"
               data-next-id="{{begegnung.nachfolgerBegegnungId}}"
               data-prev-id="{{begegnung.vorherigeBegegnungId}}">
-              {{begegnung.akuellePaarung}}
-              <ul>
-                <li class="kaempfer kaempfer-eins">
-                  {{#if begegnung.wettkaempfer1.name}}
-                    {{begegnung.wettkaempfer1.name}} ({{begegnung.wettkaempfer1.gewicht}}kg) – {{begegnung.wettkaempfer1.verein.name}}
-                  {{else}}
-                    N/A
-                  {{/if}}
-                </li>
-                <li class="kaempfer kaempfer-zwei">
-                  {{#if begegnung.wettkaempfer2.name}}
-                    {{begegnung.wettkaempfer2.name}} ({{begegnung.wettkaempfer2.gewicht}}kg) – {{begegnung.wettkaempfer2.verein.name}}
-                  {{else}}
-                    N/A
-                  {{/if}}
-                </li>
-              </ul>
+              <a href="/turnier/{{turnierid}}/begegnungen/normal/{{begegnungId}}">
+                <ul class="{{wertungVorhanden alleWertungen}}">
+                  <li class="kaempfer kaempfer-eins">
+                    {{#if begegnung.wettkaempfer1.name}}
+                      {{begegnung.wettkaempfer1.name}} ({{begegnung.wettkaempfer1.gewicht}}kg) – {{begegnung.wettkaempfer1.verein.name}}
+                    {{else}}
+                      N/A
+                    {{/if}}
+                  </li>
+                  <li class="kaempfer kaempfer-zwei">
+                    {{#if begegnung.wettkaempfer2.name}}
+                      {{begegnung.wettkaempfer2.name}} ({{begegnung.wettkaempfer2.gewicht}}kg) – {{begegnung.wettkaempfer2.verein.name}}
+                    {{else}}
+                      N/A
+                    {{/if}}
+                  </li>
+                </ul>
+              </a>
             </div>
           {{/each}}
         </div>
@@ -49,23 +50,24 @@
               class="paarung {{lowerCase begegnung.rundenTyp.name}}"
               data-next-id="{{begegnung.nachfolgerBegegnungId}}"
               data-prev-id="{{begegnung.vorherigeBegegnungId}}">
-              {{begegnung.akuellePaarung}}
-              <ul>
-                <li class="kaempfer kaempfer-eins">
-                  {{#if begegnung.wettkaempfer1.name}}
-                    {{begegnung.wettkaempfer1.name}} ({{begegnung.wettkaempfer1.gewicht}}kg) – {{begegnung.wettkaempfer1.verein.name}}
-                  {{else}}
-                    N/A
-                  {{/if}}
-                </li>
-                <li class="kaempfer kaempfer-zwei">
-                  {{#if begegnung.wettkaempfer2.name}}
-                    {{begegnung.wettkaempfer2.name}} ({{begegnung.wettkaempfer2.gewicht}}kg) – {{begegnung.wettkaempfer2.verein.name}}
-                  {{else}}
-                    N/A
-                  {{/if}}
-                </li>
-              </ul>
+              <a href="/turnier/{{turnierid}}/begegnungen/normal/{{begegnungId}}">
+                <ul class="{{wertungVorhanden alleWertungen}}">
+                  <li class="kaempfer kaempfer-eins">
+                    {{#if begegnung.wettkaempfer1.name}}
+                      {{begegnung.wettkaempfer1.name}} ({{begegnung.wettkaempfer1.gewicht}}kg) – {{begegnung.wettkaempfer1.verein.name}}
+                    {{else}}
+                      N/A
+                    {{/if}}
+                  </li>
+                  <li class="kaempfer kaempfer-zwei">
+                    {{#if begegnung.wettkaempfer2.name}}
+                      {{begegnung.wettkaempfer2.name}} ({{begegnung.wettkaempfer2.gewicht}}kg) – {{begegnung.wettkaempfer2.verein.name}}
+                    {{else}}
+                      N/A
+                    {{/if}}
+                  </li>
+                </ul>
+              </a>
             </div>
           {{/each}}
         </div>

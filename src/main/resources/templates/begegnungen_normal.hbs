@@ -6,7 +6,7 @@
   <title>Judo-Turniersoftware</title>
   <link rel="stylesheet" href="/css/interface.css">
   <link rel="stylesheet" href="/css/mainstyle.css">
-  <link rel="stylesheet" href="/css/tournament.css">
+  <link rel="stylesheet" href="/css/baumansicht.css">
 </header>
 <body>
 {{> title }}
@@ -48,14 +48,14 @@
 
   <div class="generalcontent">
 
-    <div id="windowStatus">Kein Fenster geöffnet.</div>
-
     {{#each matten}}
       <div class="matte tabcontent" id="matten-panel-{{id}}">
         <div class="listeneintrag-titel">Matte {{id}}</div>
 
-        {{> baumansicht }}
-
+        <details>
+          <summary>Baumansicht</summary>
+          {{> baumansicht }}
+        </details>
         <div class="wettkampfgruppe">
           {{#each gruppenRunden}}
             {{#each runde}}

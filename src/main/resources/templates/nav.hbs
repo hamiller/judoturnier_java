@@ -2,28 +2,31 @@
     <span style="position: relative">
       <md-filled-button id="theming-anchor">☰</md-filled-button>
       <md-menu id="theming-menu" anchor="theming-anchor">
+        <md-menu-item href="/">
+          <div slot="headline">Startseite</div>
+        </md-menu-item>
         {{#if turnierid}}
           <md-menu-item href="/turnier/{{turnierid}}">
-            <div slot="headline">Übersicht</div>
-        </md-menu-item>
-        <md-menu-item href="/turnier/{{turnierid}}/vereine">
-          <div slot="headline">Liste der Vereine</div>
-        </md-menu-item>
-        <md-menu-item href="/turnier/{{turnierid}}/wettkaempfer">
-          <div slot="headline">Liste der Wettkämpfer</div>
-        </md-menu-item>
-        <md-menu-item href="/turnier/{{turnierid}}/gewichtsklassen">
-            <div slot="headline">Liste der Gewichtsklassen</div>
-        </md-menu-item>
-        <md-menu-item href="/turnier/{{turnierid}}/begegnungen">
-            <div slot="headline">Begegnungen des Wettkampfs</div>
-        </md-menu-item>
-        <md-menu-item href="/turnier/{{turnierid}}/einstellungen">
-            <div slot="headline">Einstellungen</div>
-        </md-menu-item>
-        <md-menu-item href="/logout">
-            <div slot="headline">Logout</div>
-        </md-menu-item>
+            <div slot="headline">Turnierübersicht</div>
+          </md-menu-item>
+          <md-menu-item href="/turnier/{{turnierid}}/vereine">
+            <div slot="headline">Liste der Vereine</div>
+          </md-menu-item>
+          <md-menu-item href="/turnier/{{turnierid}}/wettkaempfer">
+            <div slot="headline">Liste der Wettkämpfer</div>
+          </md-menu-item>
+          <md-menu-item href="/turnier/{{turnierid}}/gewichtsklassen">
+              <div slot="headline">Liste der Gewichtsklassen</div>
+          </md-menu-item>
+          <md-menu-item href="/turnier/{{turnierid}}/begegnungen">
+              <div slot="headline">Begegnungen des Wettkampfs</div>
+          </md-menu-item>
+          <md-menu-item href="/turnier/{{turnierid}}/einstellungen">
+              <div slot="headline">Einstellungen</div>
+          </md-menu-item>
+          <md-menu-item href="/logout">
+              <div slot="headline">Logout</div>
+          </md-menu-item>
         {{/if}}
       </md-menu>
     </span>

@@ -46,7 +46,7 @@ div.tournament > div:first-child > div + div:after {
   bottom: 35px;
 }
 
-div.tournament > div > div > ul {
+div.tournament > div > div > a > ul {
   position: relative;
   list-style: none;
   margin: 0;
@@ -55,7 +55,7 @@ div.tournament > div > div > ul {
   width: 100%;
 }
 
-div.tournament > div > div > ul:after {
+div.tournament > div > div > a > ul:after {
   content: "";
   position: absolute;
   top: 50%;
@@ -65,16 +65,20 @@ div.tournament > div > div > ul:after {
   background-color: #333;
 }
 
-div.tournament > div:first-child > div > ul:after {
+div.tournament > div:first-child > div > a > ul:after {
   left: 0;
   right: -9px;
 }
 
-div.tournament > div:last-child > div > ul:after {
+div.tournament > div:last-child > div > a > ul:after {
   right: 0;
 }
 
-div.tournament > div > div > ul > li {
+div.tournament > div > div > a {
+  width: 100%;
+}
+
+div.tournament > div > div > a > ul > li {
   font-size: 15px;
   line-height: 1em;
   position: relative;
@@ -91,4 +95,8 @@ div.metainfos h2 {
 div.gruppenblock {
   margin-left: 30px;
   margin-bottom: 50px;
+}
+
+ul.vorhanden > li {
+  background-color: var(--info) !important;
 }
