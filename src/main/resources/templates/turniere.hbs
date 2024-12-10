@@ -7,19 +7,29 @@
 {{> title }}
 
 <div>
-  <div class="bodyheader">
-    <h2>Turniere</h2>
-    <div>Anzahl der Turniere: {{anzahlturniere}}</div>
-    <div>Software-Version: {{software_version}} {{software_zeit}}</div>
-  </div>
-</div>
-
-<div>
   <h1>Software des des 1.JC-Großkrotzenburg</h1>
 </div>
 
 
 <ul class="generalcontent">
+  <div>
+    <div class="bodyheader">
+      <h2>Generelle Infos</h2>
+      <div>Anzahl der Turniere: {{anzahlturniere}}</div>
+      <div>Software-Version: {{software_version}} {{software_zeit}}</div>
+    </div>
+  </div>
+  <md-divider></md-divider>
+  {{#if enableEditing}}
+    <h2>Turniere Verwaltung</h2>
+    <div class="login_button">
+      <md-filled-tonal-button type="button" id="openCreateTurnierDialog" class="">Turnier erstellen</md-filled-tonal-button>
+    </div>
+    <md-divider></md-divider>
+  {{/if}}
+
+  <h2>Nutzer Verwaltung</h2>
+
   {{#turniere}}
     <li class="listeneintrag">
       <div>
@@ -70,10 +80,6 @@
     </li>
   {{/turniere}}
 </ul>
-
-{{#if enableEditing}}
-  <button id="openCreateTurnierDialog"><span class="material-icons md-48" title="Turnier erstellen">person_add</span></button>
-{{/if}}
 
 <div id="dialogOverlay"></div>
 
