@@ -5,6 +5,7 @@
 </head>
 <body>
 {{> title }}
+{{> nav}}
 
 <div>
   <h1>Software des des 1.JC-Großkrotzenburg</h1>
@@ -47,7 +48,7 @@
             <div class="generalcontent">
               <form id="userForm_{{uuid}}" action="/turniere/{{uuid}}/benutzer" method="post">
                 <ul class="wettkaempferliste generalcontent">
-                  <li class="wettkaempferliste-wettkaempfer listeneintrag ">
+                  <li class="einstellungliste listeneintrag listeneintrag_small">
                     <div class="listeneintrag-titel">Username</div>
                     <div>Name</div>
                     <div>Administrator</div>
@@ -57,7 +58,7 @@
                     <div class="listeneintrag-titel">Turnier zugordnet</div>
                   </li>
                   {{#benutzerDtoList}}
-                    <li class="wettkaempferliste-wettkaempfer listeneintrag">
+                    <li class="einstellungliste listeneintrag listeneintrag_small">
                       <div class="listeneintrag-titel">{{username}}</div>
                       <div>{{name}}</div>
                       <div><input type="checkbox" disabled {{setChecked true istAdmin}}></div>

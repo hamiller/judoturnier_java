@@ -237,6 +237,12 @@ tr {
   border-width: 1px;
 }
 
+.einstellungliste > div {
+  width: 100px;
+  display: flex;
+  align-items: flex-end;
+}
+
 .element {
   margin: 10px 40px 10px 40px;
 }
@@ -475,6 +481,10 @@ ul.info_maincontent > li {
   display: flex;
   font-size: 0.8em;
   min-width: 200px;
+}
+
+.listeneintrag_small {
+  min-width: 100px !important;
 }
 
 .listeneintrag-header {

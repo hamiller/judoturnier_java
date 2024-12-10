@@ -54,7 +54,7 @@ public class HelperSource {
 	}
 
 	public static String setChecked(Object value, Options options) {
-		logger.debug("setChecked {}", options.params);
+		logger.trace("setChecked {}", options.params);
 		if (istGleich(value, options.param(0))) {
 			return "checked";
 		}
@@ -231,7 +231,7 @@ public class HelperSource {
 	}
 
 	public static Integer zeit(BegegnungDto begegnungDto) {
-		logger.info("BegegnungDto? {}", begegnungDto);
+		logger.trace("BegegnungDto? {}", begegnungDto);
 		return begegnungDto.kampfrichterWertung().isPresent() ? begegnungDto.kampfrichterWertung().get().zeit().intValue() : -1;
 	}
 
