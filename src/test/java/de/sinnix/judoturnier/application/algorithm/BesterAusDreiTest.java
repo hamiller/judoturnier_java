@@ -71,5 +71,6 @@ class BesterAusDreiTest {
 		int expectedSize = 3; // 3 Begegnungen maximal
 		assertEquals(expectedSize, wettkampfGruppe.alleRundenBegegnungen().stream().mapToInt(runde -> runde.begegnungenJeRunde().size()).sum());
 		assertEquals(expectedSize, wettkampfGruppe.alleRundenBegegnungen().size()); // Begegnungen aufgeteilt in die Runden
+		assertEquals(1, wettkampfGruppe.alleRundenBegegnungen().getFirst().begegnungenJeRunde().getFirst().getBegegnungId().getRunde());
 	}
 }

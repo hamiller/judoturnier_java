@@ -77,7 +77,7 @@ public class BesterAusDrei implements Algorithmus {
 		logger.info("wk1 {}, wk2 {}", wettkaempfer1.name(), wettkaempfer2.name());
 
 		// Drei Begegnungen für das Best-of-3
-		for (int k = 0; k < 3; k++) {
+		for (int k = 1; k <= 3; k++) {
 			logger.info("Teilnehmer Runde k {}", k);
 			var begegnung = new Begegnung();
 			begegnung.setTurnierUUID(turnierUUID);
