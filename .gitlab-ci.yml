@@ -1,9 +1,25 @@
+image: python:3.9  # Basis-Image mit Python für Ansible
+
 stages:
   - build
+  - deploy
 
-job1:
+before_script:
+  - pip install ansible  # Installiere Ansible für CI/CD
+
+build-app:
   stage: build
   script:
-    - echo "Running on tagged runner"
+    - ansible-playbook -i localhost, -c local deployment/playbook.yml --tags "build"
+  tags:
+    - default-runner
+  artifacts:
+    paths:
+      - /tmp/springboot-app.tar  # Docker-Image für Deploy sichern
+
+deploy-app:
+  stage: deploy
+  script:
+    - ansible-playbook -i deployment/inventory.yml deployment/playbook.yml --tags "deploy"
   tags:
     - default-runner

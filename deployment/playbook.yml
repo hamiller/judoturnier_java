@@ -7,7 +7,7 @@
     app_source_dir: ..
     docker_image_file: springboot-app.tar
     docker_image_local_dir: /tmp
-
+  tags: build
   tasks:
     - name: Test Spring Boot application with Gradle
       shell: ./gradlew test
@@ -33,6 +33,7 @@
     docker_image_file: springboot-app.tar
     docker_image_local_dir: /tmp
     docker_image_remote_dir: /tmp
+  tags: deploy
   tasks:
     - name: Copy Docker image to remote server
       copy:
