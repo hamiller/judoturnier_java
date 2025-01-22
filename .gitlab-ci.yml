@@ -1,0 +1,9 @@
+stages:
+  - build
+
+job1:
+  stage: build
+  script:
+    - echo "Running on tagged runner"
+  tags:
+    - default-runner
