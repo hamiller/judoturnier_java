@@ -2,12 +2,8 @@
 - name: Build Spring Boot application locally
   hosts: localhost
   vars:
-    springboot_war_file: ../build/libs/judoturnier-0.0.1-SNAPSHOT.war
-    app_name: turnier-service
     app_source_dir: ..
-    docker_image_file: springboot-app.tar
-    docker_image_local_dir: /tmp
-
+  tags: build
   tasks:
     - name: Test Spring Boot application with Gradle
       shell: ./gradlew test
@@ -19,6 +15,21 @@
       args:
         chdir: "{{ app_source_dir }}"
 
+
+- name: Create docker image locally
+  hosts: localhost
+  vars:
+    app_name: judoturnier_java
+    docker_image_file: judoturnier_java.tar
+    docker_image_local_dir: "{{ playbook_dir | dirname }}/build/docker_artifacts"
+  tags: create_image
+  tasks:
+    - name: Creating artifacts directory
+      file:
+        path: "{{ docker_image_local_dir }}"
+        state: directory
+        mode: '0755'
+
     - name: Build Docker image
       shell: "docker build -t {{ app_name }}:latest .."
 
@@ -26,13 +37,15 @@
       shell: "docker save -o {{ docker_image_local_dir }}/{{ docker_image_file }} {{ app_name }}:latest"
 
 
+
 - name: Deploy application to all hosts
   hosts: servers
   vars:
     app_target_dir: /opt/springboot-app
-    docker_image_file: springboot-app.tar
-    docker_image_local_dir: /tmp
+    docker_image_file: judoturnier_java.tar
+    docker_image_local_dir: "{{ playbook_dir | dirname }}/build/docker_artifacts"
     docker_image_remote_dir: /tmp
+  tags: deploy
   tasks:
     - name: Copy Docker image to remote server
       copy:

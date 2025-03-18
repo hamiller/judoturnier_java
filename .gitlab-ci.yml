@@ -1,0 +1,87 @@
+stages:
+  - build
+  - create_image
+  - deploy
+
+variables:
+  APP_NAME: "judoturnier_java"
+  DOCKER_IMAGE_NAME: "$APP_NAME:latest"
+  DOCKER_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
+  DOCKER_IMAGE_LOCAL_DIR: "$CI_PROJECT_DIR/build/docker_artifacts"
+  DOCKER_IMAGE_REMOTE_DIR: "/tmp"
+  APP_TARGET_DIR: "/opt/springboot-app"
+
+build-app:
+  stage: build
+  image: gradle:latest
+  script:
+    - ./gradlew clean test bootJar
+  tags:
+    - default-docker-runner
+  artifacts:
+    paths:
+      - build/libs/  # Docker-Image für Deploy sichern
+
+create-image:
+  stage: create_image
+  image: docker:latest
+  services:
+    - name: docker:dind
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - echo "Login to GitLab Container Registry..."
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
+    - docker build -t "$DOCKER_REGISTRY_IMAGE" .
+    - docker tag "$DOCKER_REGISTRY_IMAGE" "$DOCKER_IMAGE_NAME"
+    - docker push "$DOCKER_REGISTRY_IMAGE"
+  only:
+    - master
+  tags:
+    - default-docker-runner
+  needs:
+    - job: build-app
+      artifacts: true
+
+deploy-app:
+  stage: deploy
+  image: docker:latest
+  when: manual
+  services:
+    - name: docker:dind
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+    LOCAL_IMAGE_PATH: "/tmp/$APP_NAME.tar"
+  before_script:
+    - echo "Login to GitLab Container Registry..."
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
+    - echo "Pulling image from registry..."
+    - docker pull "$DOCKER_REGISTRY_IMAGE"
+    - docker tag "$DOCKER_REGISTRY_IMAGE" "$DOCKER_IMAGE_NAME"
+    - docker save -o "$LOCAL_IMAGE_PATH" "$DOCKER_IMAGE_NAME"
+    - echo "Prepare ssh for copy commands..."
+    - 'command -v ssh-agent >/dev/null || ( apk add --no-cache openssh )'
+    - eval $(ssh-agent -s)
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - ssh-add "$SSH_PRIVATE_KEY"
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -H "$REMOTE_HOST" >> ~/.ssh/known_hosts
+    - chmod 600 ~/.ssh/known_hosts
+  script:
+    - echo "Transferring image to remote server..."
+    - scp "$LOCAL_IMAGE_PATH" $REMOTE_USER@$REMOTE_HOST:"$DOCKER_IMAGE_REMOTE_DIR/"
+    - ssh $REMOTE_USER@$REMOTE_HOST "docker load -i $DOCKER_IMAGE_REMOTE_DIR/$APP_NAME.tar"
+    - echo "Transferring rest of the files..."
+    - scp "$ENV_FILE" $REMOTE_USER@$REMOTE_HOST:"$APP_TARGET_DIR/.env"
+    - scp ./docker-compose.yml $REMOTE_USER@$REMOTE_HOST:"$APP_TARGET_DIR/docker-compose.yml"
+    - ssh $REMOTE_USER@$REMOTE_HOST "mkdir -p $APP_TARGET_DIR/init-db"
+    - scp ./init-db/init.sql $REMOTE_USER@$REMOTE_HOST:"$APP_TARGET_DIR/init-db/init.sql"
+    - echo "Starting application..."
+    - ssh $REMOTE_USER@$REMOTE_HOST "cd $APP_TARGET_DIR && docker compose up -d"
+  only:
+    - master
+  tags:
+    - default-docker-runner
+  needs:
+    - job: create-image
