@@ -5,8 +5,6 @@ import de.sinnix.judoturnier.fixtures.GewichtsklassenGruppeFixture;
 import de.sinnix.judoturnier.fixtures.MatteFixtures;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
-import de.sinnix.judoturnier.model.Benutzer;
-import de.sinnix.judoturnier.model.BenutzerRolle;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Gruppengroessen;

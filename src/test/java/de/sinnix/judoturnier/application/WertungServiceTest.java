@@ -1,5 +1,6 @@
 package de.sinnix.judoturnier.application;
 
+import de.sinnix.judoturnier.adapter.secondary.BegegnungJpa;
 import de.sinnix.judoturnier.adapter.secondary.BenutzerRepository;
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
 import de.sinnix.judoturnier.fixtures.MatteFixtures;
@@ -10,21 +11,26 @@ import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.BenutzerRolle;
 import de.sinnix.judoturnier.model.Runde;
+import de.sinnix.judoturnier.model.TurnierRollen;
 import de.sinnix.judoturnier.model.Wertung;
+import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.annotation.Rollback;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -325,4 +331,49 @@ class WertungServiceTest {
 		assertEquals(naechsteBegegnungUUID, gespeichertNext.getId());
 	}
 
+	@Test
+	@Disabled
+	public void testBerechnePlatzierungen() {
+		/**
+		 * SIEGERRUNDE
+		 . RUNDE 1                                    RUNDE 2
+		 . "Fox, Sweetie" vs "Reid, Riley" ------
+		 .                                       |___ "Fox, Sweetie" vs "Jameson, Jenna"  (---> Sieger "Fox, Sweetie")
+		 .                                       |
+		 . "Jameson, Jenna" vs "Belle, Lexi" ----
+		 .
+		 .TROSTRUNDE
+		                                         |
+		 .                                        --- "Reid, Riley" vs "Belle, Lexi"  (---> Sieger "Belle, Lexi")
+		 .
+		 */
+		Benutzer bewerter = new Benutzer(UUID.randomUUID(), "kr1", "Kampfrichter 1", List.of(), List.of(BenutzerRolle.KAMPFRICHTER));
+		Wertung wertung1 = new Wertung(UUID.randomUUID(), WettkaempferFixtures.wettkaempferin1, Duration.ofMinutes(2), 1, 0, 0, 0, null, null, null, null, null, null, null, null, bewerter);
+		Wertung wertung2 = new Wertung(UUID.randomUUID(), WettkaempferFixtures.wettkaempferin3, Duration.ofMinutes(2), 0, 0, 1, 0, null, null, null, null, null, null, null, null, bewerter);
+		Wertung wertung3 = new Wertung(UUID.randomUUID(), WettkaempferFixtures.wettkaempferin1, Duration.ofMinutes(2), 1, 0, 0, 0, null, null, null, null, null, null, null, null, bewerter);
+		Wertung wertung4 = new Wertung(UUID.randomUUID(), WettkaempferFixtures.wettkaempferin4, Duration.ofMinutes(2), 1, 0, 0, 0, null, null, null, null, null, null, null, null, bewerter);
+
+		List<Begegnung> begegnungList = List.of(
+			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), UUID.randomUUID(), 1, 1, 1, 1, Optional.of(WettkaempferFixtures.wettkaempferin1), Optional.of(WettkaempferFixtures.wettkaempferin2), List.of(wertung1), WettkampfgruppeFixture.gruppe1, turnierUUID),
+			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 2), UUID.randomUUID(), 1, 2, 2, 2, Optional.of(WettkaempferFixtures.wettkaempferin3), Optional.of(WettkaempferFixtures.wettkaempferin4), List.of(wertung2), WettkampfgruppeFixture.gruppe1, turnierUUID),
+			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 3), UUID.randomUUID(), 1, 3, 3, 3, Optional.of(WettkaempferFixtures.wettkaempferin1), Optional.of(WettkaempferFixtures.wettkaempferin3), List.of(wertung3), WettkampfgruppeFixture.gruppe1, turnierUUID),
+			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 4), UUID.randomUUID(), 1, 4, 4, 4, Optional.of(WettkaempferFixtures.wettkaempferin4), Optional.of(WettkaempferFixtures.wettkaempferin2), List.of(wertung4), WettkampfgruppeFixture.gruppe1, turnierUUID)
+		);
+		when(turnierRepository.ladeAlleBegegnungen(any())).thenReturn(begegnungList);
+
+		var results = wertungService.berechnePlatzierungen(turnierUUID);
+
+		logger.info("1 {}", WettkaempferFixtures.wettkaempferin1.name());
+		logger.info("2 {}", WettkaempferFixtures.wettkaempferin2.name());
+		logger.info("3 {}", WettkaempferFixtures.wettkaempferin3.name());
+		logger.info("4 {}", WettkaempferFixtures.wettkaempferin4.name());
+		for (Map.Entry<Wettkaempfer, Integer> result : results.entrySet()) {
+			logger.info("Result {} - Siege: {}x", result.getKey().name(), result.getValue());
+		}
+
+		assertEquals(results.get(WettkaempferFixtures.wettkaempferin1), 1); // "Fox, Sweetie", Erster Platz
+		assertEquals(results.get(WettkaempferFixtures.wettkaempferin2), 4); // "Reid, Riley", Letzter Platz
+		assertEquals(results.get(WettkaempferFixtures.wettkaempferin3), 2); // "Jameson, Jenna", Zweiter Platz
+		assertEquals(results.get(WettkaempferFixtures.wettkaempferin4), 3); // "Belle, Lexi", Dritter Platz
+	}
 }

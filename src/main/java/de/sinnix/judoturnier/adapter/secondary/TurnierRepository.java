@@ -52,7 +52,8 @@ public class TurnierRepository {
 
 	public List<Begegnung> ladeAlleBegegnungen(UUID turnierId) {
 		List<BegegnungJpa> begegnungenJpa = begegnungJpaRepository.findAllByTurnierUUID(turnierId.toString());
-		return begegnungenJpa.stream().map(begegnungJpa -> begegnungConverter.convertToBegegnung(begegnungJpa, List.of())).toList();
+		List<WettkampfGruppeJpa> wettkampfGruppeJpaList = wettkampfGruppeJpaRepository.findAll();
+		return begegnungenJpa.stream().map(begegnungJpa -> begegnungConverter.convertToBegegnung(begegnungJpa, wettkampfGruppeJpaList)).toList();
 	}
 
 	public void speichereWertung(Wertung wertung) {

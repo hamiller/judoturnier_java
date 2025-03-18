@@ -6,6 +6,7 @@ import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Wertung;
 import de.sinnix.judoturnier.model.Wettkaempfer;
+import de.sinnix.judoturnier.model.WettkampfGruppe;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -14,11 +15,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -135,6 +141,39 @@ public class WertungService {
 				turnierRepository.speichereBegegnung(nextTrostRunde);
 			}
 		}
+	}
+
+	public Map<Wettkaempfer, Integer> berechnePlatzierungen(UUID turnierUUID) {
+		logger.info("Berechnung platzierung in Turnier {}", turnierUUID);
+		Map<Wettkaempfer, Integer> results = new HashMap<>();
+		Map<WettkampfGruppe, List<Begegnung>> begegnungenDerWettkampfgruppen = turnierRepository.ladeAlleBegegnungen(turnierUUID).stream()
+			.collect(Collectors.groupingBy(Begegnung::getWettkampfGruppe));
+
+		for (Map.Entry<WettkampfGruppe, List<Begegnung>> begegnungenSet : begegnungenDerWettkampfgruppen.entrySet()) {
+			logger.debug("berechne Platzierungen in Gruppe {}", begegnungenSet.getKey().id());
+			var begegnungen = begegnungenSet.getValue();
+
+			// 1. Siege zählen
+			Map<Wettkaempfer, Integer> siege = new LinkedHashMap<>();
+			for (Begegnung begegnung : begegnungen) {
+				if (begegnung.getWettkaempfer1().isPresent()) siege.putIfAbsent(begegnung.getWettkaempfer1().get(), 0);
+				if (begegnung.getWettkaempfer2().isPresent()) siege.putIfAbsent(begegnung.getWettkaempfer2().get(), 0);
+
+				for (Wertung wertung : begegnung.getWertungen()) {
+					siege.put(wertung.getSieger(), siege.getOrDefault(wertung.getSieger(), 0) + 1);
+				}
+			}
+
+//			// 2. Platzierungen berechnen
+//			List<Wettkaempfer> platzierungen = new ArrayList<>(siege.keySet());
+//			platzierungen.sort((w1, w2) -> siege.get(w2) - siege.get(w1));
+
+			for (Map.Entry<Wettkaempfer, Integer> entry : siege.entrySet()) {
+				results.putIfAbsent(entry.getKey(), entry.getValue());
+			}
+		}
+
+		return results;
 	}
 
 	private Optional<Wertung> wertungVonBewerter(List<Wertung> wertungen, Benutzer benutzer) {
