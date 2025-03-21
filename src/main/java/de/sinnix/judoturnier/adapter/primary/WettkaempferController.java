@@ -57,6 +57,7 @@ public class WettkaempferController {
 		ModelAndView mav = new ModelAndView("wettkaempferliste");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("kaempferListe", wettkaempferList);
 		mav.addObject("anzahlwk", wettkaempferList.size());
 		mav.addObject("prevsuccess", id);
@@ -134,6 +135,7 @@ public class WettkaempferController {
 		ModelAndView mav = new ModelAndView("wettkaempfer");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("kaempfer", wk.get());
 		mav.addObject("vereine", vs);
 		mav.addObject("geschlechter", Geschlecht.values());
@@ -153,6 +155,7 @@ public class WettkaempferController {
 		ModelAndView mav = new ModelAndView("wettkaempfer");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("kaempfer", null);
 		mav.addObject("vereine", vs);
 		mav.addObject("geschlechter", Geschlecht.values());

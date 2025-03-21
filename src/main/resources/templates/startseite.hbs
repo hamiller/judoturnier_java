@@ -15,7 +15,7 @@
 
 
 <div class="generalcontent">
-  {{#if isNotloggedin}}
+  {{#unless isloggedin}}
     <div class="login_button centered-horizontal">
       <md-filled-tonal-button type="button" id="loginbtn" class="" href="/oauth2/authorization/keycloak">Login</md-filled-tonal-button>
     </div>
@@ -25,6 +25,10 @@
   {{else}}
     <div>
       <h1>Software des des 1.JC-Großkrotzenburg</h1>
+    </div>
+
+    <div>
+      <h2>Sie sind angemeldet als {{username}}</h2>
     </div>
     {{#if turniere}}
       <div class="">Deine Turniere:</div>
@@ -42,7 +46,7 @@
     {{else}}
       <div class="">Keine Turniere vorhanden</div>
     {{/if}}
-  {{/if}}
+  {{/unless}}
 </div>
 
 {{> footer}}

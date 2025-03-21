@@ -39,6 +39,7 @@ public class VereinController {
 		ModelAndView mav = new ModelAndView("vereineliste");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("vereine", vereine);
 		mav.addObject("prevsuccess", id);
 		mav.addObject("preverror", error);
@@ -56,6 +57,7 @@ public class VereinController {
 		ModelAndView mav = new ModelAndView("verein");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("vereinid", verein.id());
 		mav.addObject("name", verein.name());
 		mav.addObject("neuerEintrag", false);
@@ -106,6 +108,7 @@ public class VereinController {
 		ModelAndView mav = new ModelAndView("verein");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("vereinid", null);
 		mav.addObject("name", null);
 		mav.addObject("prevsuccess", id);

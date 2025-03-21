@@ -69,6 +69,7 @@ public class GewichtsklassenController {
 		ModelAndView mav = new ModelAndView("gewichtsklassen");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("gewichtsklassengruppenWeiblich", groupedByFemale);
 		mav.addObject("gewichtsklassengruppenMaennlich", groupedByMale);
 		mav.addObject("gewichtsklassengruppenAlter", groupedByAge);
@@ -83,11 +84,14 @@ public class GewichtsklassenController {
 	@GetMapping("/turnier/{turnierid}/gewichtsklassen/randori_printview_groups/{altersklasse}")
 	public ModelAndView ladeDruckAnsichtGruppenRandori(@PathVariable String turnierid, @PathVariable String altersklasse) {
 		logger.info("lade Druckansicht Randori-Gruppen für " + altersklasse);
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
+
 		var turnierUUID = UUID.fromString(turnierid);
 		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 
 		ModelAndView mav = new ModelAndView("druckansicht_gruppen_randori");
 		mav.addObject("turnierid", turnierid);
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("gruppen", currentGwks.stream().filter(gwk -> gwk.altersKlasse().name().equalsIgnoreCase(altersklasse)).toList());
 		return mav;
 	}
@@ -96,11 +100,14 @@ public class GewichtsklassenController {
 	@GetMapping("/turnier/{turnierid}/gewichtsklassen/turnier_printview_groups/{geschlecht}/{altersklasse}")
 	public ModelAndView ladeDruckAnsichtGruppenTurnier(@PathVariable String turnierid, @PathVariable String geschlecht, @PathVariable String altersklasse) {
 		logger.info("Lade Druckansicht für Turnier-Gruppen {}, Geschlecht {} und Altersklasse {}", turnierid, geschlecht, altersklasse);
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
+
 		var turnierUUID = UUID.fromString(turnierid);
 		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 
 		ModelAndView mav = new ModelAndView("druckansicht_gruppen_turnier");
 		mav.addObject("turnierid", turnierid);
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("gruppen", currentGwks.stream().filter(gwk -> gwk.altersKlasse().name().equalsIgnoreCase(altersklasse)).toList());
 		return mav;
 	}

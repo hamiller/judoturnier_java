@@ -114,6 +114,10 @@ public class SecurityConfig {
 
 		@Override
 		public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+			if (authentication == null) {
+				return;
+			}
+
 			var user = (OidcUser) authentication.getPrincipal();
 			String endSessionEndpoint = user.getIssuer() + "/protocol/openid-connect/logout";
 			logger.debug("Logging out endpoint {}", endSessionEndpoint);

@@ -7,4 +7,8 @@ public record OidcBenutzer(UUID uuid, String username, String name, List<Benutze
 	public boolean istAdmin() {
 		return benutzerRollen.contains(BenutzerRolle.ADMINISTRATOR);
 	}
+
+	public boolean isLoggedin() {
+		return !Benutzer.ANONYMOUS_USERNAME.equalsIgnoreCase(username);
+	}
 }

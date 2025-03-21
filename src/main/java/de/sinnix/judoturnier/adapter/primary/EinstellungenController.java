@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +63,7 @@ public class EinstellungenController {
 		ModelAndView mav = new ModelAndView("einstellungen");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("gewichtsklassengruppen", gwks);
 		mav.addObject("kampfsysteme", Kampfsystem.values());
 		mav.addObject("turniertyp", einstellungen.turnierTyp());

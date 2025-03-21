@@ -83,8 +83,9 @@ public class TurnierController {
 
 		ModelAndView mav = new ModelAndView("startseite");
 		mav.addObject("turniere", turniere);
-		mav.addObject("isadmin", benutzer.istAdmin());
-		mav.addObject("isNotloggedin", benutzer.istAnonym());
+		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
+		mav.addObject("username", benutzer.username());
 		return mav;
 	}
 
@@ -92,10 +93,9 @@ public class TurnierController {
 	public ModelAndView kontaktPage() {
 		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		logger.info("Turniere-Kontaktseite. User {}", oidcBenutzer);
-		Benutzer benutzer = benutzerService.holeBenutzer(oidcBenutzer);
 
 		ModelAndView mav = new ModelAndView("kontakt");
-		mav.addObject("isNotloggedin", benutzer.istAnonym());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		return mav;
 	}
 
@@ -140,6 +140,7 @@ public class TurnierController {
 		ModelAndView mav = new ModelAndView("turniere");
 		mav.addObject("turniere", turnierDtoList);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("anzahlturniere", turniere.size());
 		mav.addObject("enableEditing", oidcBenutzer.istAdmin());
 		mav.addObject("software_version", buildProperties.getVersion());
@@ -179,6 +180,7 @@ public class TurnierController {
 		ModelAndView mav = new ModelAndView("turnieruebersicht");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("anzahlwk", wks.size());
 		mav.addObject("anzahlv", anzahlv);
 		mav.addObject("turniertyp", einstellungen.turnierTyp());
@@ -248,6 +250,7 @@ public class TurnierController {
 		ModelAndView mav = new ModelAndView("begegnungen_randori");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("gewichtsklassenGruppe", gwks);
 		mav.addObject("matten", gefilterteMatten);
 		mav.addObject("altersklassen", altersklassen);
@@ -283,6 +286,7 @@ public class TurnierController {
 		ModelAndView mav = new ModelAndView("begegnungen_normal");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("gewichtsklassenGruppe", gwks);
 		mav.addObject("matten", gefilterteMatten);
 		mav.addObject("gruppenListMitTypen", gruppenListMitTypen);
@@ -374,6 +378,7 @@ public class TurnierController {
 		ModelAndView mav = new ModelAndView("druckansicht_begegnungen_randori");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("matten", wettkampfreihenfolgeJeMatteGefiltertUndGruppiert);
 		return mav;
 	}
@@ -393,6 +398,7 @@ public class TurnierController {
 		ModelAndView mav = new ModelAndView("druckansicht_begegnungen_turnier");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("matten", wettkampfreihenfolgeJeMatteGefiltertUndGruppiert);
 		return mav;
 	}
@@ -409,6 +415,7 @@ public class TurnierController {
 		ModelAndView mav = new ModelAndView("druckansicht_begegnungen_randori_inserting_data");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("matten", wettkampfreihenfolgeJeMatteGefiltertUndGruppiert);
 		return mav;
 	}

@@ -24,6 +24,8 @@
           <md-menu-item href="/turnier/{{turnierid}}/einstellungen">
               <div slot="headline">Einstellungen</div>
           </md-menu-item>
+        {{/if}}
+        {{#if isloggedin}}
           <md-menu-item href="/logout">
               <div slot="headline">Logout</div>
           </md-menu-item>

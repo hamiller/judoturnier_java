@@ -56,6 +56,7 @@ public class WertungController {
 		ModelAndView mav = new ModelAndView("wettkampf_randori");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("begegnung", begegnungDto);
 		mav.addObject("begegnungid", id);
 		mav.addObject("bewerter", benutzer);
@@ -82,6 +83,7 @@ public class WertungController {
 		ModelAndView mav = new ModelAndView("wettkampf_normal");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("begegnung", begegnungDto);
 		mav.addObject("begegnungid", id);
 		mav.addObject("bewerter", benutzer);
