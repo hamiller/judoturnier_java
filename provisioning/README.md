@@ -43,3 +43,7 @@ docker load -i /tmp/hetzner-certbot.tar
 
 ## Keycloak
 Keycloak muss die entsprechende Redirect URI erlaubt sein.
+
+Das hinterlegte client-secret in application-local.yml und im Keycloak selbst muss gleich sein.
+
+Es muss ausserdem sichergestellt sein, das "microprofile-jwt" in den "Client Scopes" aktiviert ist. -> das wird benötigt um die Rollen aus dem Token zu extrahieren.
