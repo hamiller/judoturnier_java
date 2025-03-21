@@ -42,8 +42,15 @@ public class SecurityConfig {
 
 	private static final Logger logger = LogManager.getLogger(SecurityConfig.class);
 
-	@Autowired
-	private KeycloakLogoutHandler keycloakLogoutHandler;
+	@Bean
+	public KeycloakLogoutHandler keycloakLogoutHandlerBean() {;
+		return new KeycloakLogoutHandler();
+	}
+
+	@Bean
+	public GrantedAuthoritiesMapper userAuthoritiesMapperBean() {
+		return new GrantedAuthoritiesMapperImpl();
+	}
 
 	@Bean
 	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
@@ -64,10 +71,18 @@ public class SecurityConfig {
 				.requestMatchers("/turnier/*/einstellungen/**").hasAnyAuthority("ROLE_ADMIN")
 				.anyRequest().authenticated());
 
+		http.exceptionHandling(exceptionHandling -> exceptionHandling
+			.accessDeniedHandler((request, response, accessDeniedException) -> {
+				logger.warn("Access denied for request to {} with user {}: {}",
+					request.getRequestURI(),
+					request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : "anonymous",
+					accessDeniedException.getMessage());
+			}));
+
 		http
 			.oauth2Login(Customizer.withDefaults())
 			.logout(logout -> logout
-				.addLogoutHandler(keycloakLogoutHandler)
+				.addLogoutHandler(keycloakLogoutHandlerBean())
 				.invalidateHttpSession(true)
 				.clearAuthentication(true)
 				.deleteCookies("JSESSIONID")
@@ -76,8 +91,6 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-	@Component
-	@RequiredArgsConstructor
 	static class GrantedAuthoritiesMapperImpl implements GrantedAuthoritiesMapper {
 
 		@Override
@@ -108,7 +121,6 @@ public class SecurityConfig {
 		}
 	}
 
-	@Component
 	static class KeycloakLogoutHandler implements LogoutHandler {
 		private final RestTemplate restTemplate = new RestTemplate();;
 
