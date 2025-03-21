@@ -26,7 +26,7 @@ public class BenutzerJpa extends AbstractEntity {
 	@OneToMany(mappedBy = "benutzer", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<TurnierRollenJpa> turnierRollen = new ArrayList<>();
 	@Convert(converter = BenutzerRolleListConverter.class)
-	private List<BenutzerRolle>    rollen;
+	private List<BenutzerRolle>    rollen        = new ArrayList<>();
 
 	public BenutzerJpa(String uuid, String username, String name, List<TurnierRollenJpa> turnierRollen, List<BenutzerRolle> rollen) {
 		super(uuid);

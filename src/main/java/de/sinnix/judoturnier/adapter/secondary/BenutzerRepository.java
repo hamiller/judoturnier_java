@@ -37,10 +37,14 @@ public class BenutzerRepository {
 		if (optionalBenutzerJpa.isPresent()) {
 			BenutzerJpa currentBenutzerJpa = optionalBenutzerJpa.get();
 			logger.info("Benutzer {} gefunden, schreibe neue Werte {}", currentBenutzerJpa, futureBenutzerJpa);
-			currentBenutzerJpa.getRollen().clear();
-			currentBenutzerJpa.getRollen().addAll(futureBenutzerJpa.getRollen());
-			currentBenutzerJpa.getTurnierRollen().clear();
-			currentBenutzerJpa.getTurnierRollen().addAll(futureBenutzerJpa.getTurnierRollen());
+			if (currentBenutzerJpa.getRollen() != null) {
+				currentBenutzerJpa.getRollen().clear();
+				currentBenutzerJpa.getRollen().addAll(futureBenutzerJpa.getRollen());
+			}
+			if (currentBenutzerJpa.getTurnierRollen() != null) {
+				currentBenutzerJpa.getTurnierRollen().clear();
+				currentBenutzerJpa.getTurnierRollen().addAll(futureBenutzerJpa.getTurnierRollen());
+			}
 			benutzerJpaRepository.save(currentBenutzerJpa);
 			return benutzer;
 		}

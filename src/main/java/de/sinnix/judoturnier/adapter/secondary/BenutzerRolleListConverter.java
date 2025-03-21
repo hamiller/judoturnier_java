@@ -4,6 +4,7 @@ import de.sinnix.judoturnier.model.BenutzerRolle;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +25,7 @@ public class BenutzerRolleListConverter implements AttributeConverter<List<Benut
 	@Override
 	public List<BenutzerRolle> convertToEntityAttribute(String dbData) {
 		if (dbData == null || dbData.isEmpty()) {
-			return List.of();
+			return new ArrayList<>();
 		}
 		return Arrays.stream(dbData.split(","))
 			.map(BenutzerRolle::valueOf)
