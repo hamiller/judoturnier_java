@@ -1,15 +1,8 @@
 package de.sinnix.judoturnier.config;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,10 +16,8 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +25,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Configuration
 @EnableWebSecurity
@@ -61,8 +57,9 @@ public class SecurityConfig {
 			.authorizeRequests(request -> request
 				.requestMatchers("/css/**", "/js/**", "/assets/**").permitAll() // Statische Dateien erlauben
 				.requestMatchers("/").permitAll()
+				.requestMatchers("/*.ico").permitAll()
 				.requestMatchers("/kontakt").permitAll()
-				.requestMatchers("/**").hasAnyAuthority("ROLE_ADMIN")
+				.requestMatchers("/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 				.requestMatchers("/turnier/**").hasAnyAuthority("ROLE_ZUSCHAUER", "ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 				.requestMatchers("/turnier/*/wettkaempfer/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 				.requestMatchers("/turnier/*/vereine/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
@@ -77,10 +74,12 @@ public class SecurityConfig {
 					request.getRequestURI(),
 					request.getUserPrincipal() != null ? request.getUserPrincipal().getName() : "anonymous",
 					accessDeniedException.getMessage());
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			}));
 
 		http
-			.oauth2Login(Customizer.withDefaults())
+			.oauth2Login(oauth2 -> oauth2
+				.userInfoEndpoint(userInfo -> userInfo.userAuthoritiesMapper(userAuthoritiesMapperBean())))
 			.logout(logout -> logout
 				.addLogoutHandler(keycloakLogoutHandlerBean())
 				.invalidateHttpSession(true)
@@ -95,6 +94,7 @@ public class SecurityConfig {
 
 		@Override
 		public Collection<? extends GrantedAuthority> mapAuthorities(Collection<? extends GrantedAuthority> authorities) {
+			logger.debug("Granted authorities: {}", authorities);
 			Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
 			authorities.forEach(authority -> {
 				if (OidcUserAuthority.class.isInstance(authority)) {
