@@ -41,6 +41,7 @@ public class VereinController {
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
 		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("vereine", vereine);
+		mav.addObject("anzahlvereine", vereine.length);
 		mav.addObject("prevsuccess", id);
 		mav.addObject("preverror", error);
 		return mav;

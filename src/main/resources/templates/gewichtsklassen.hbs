@@ -17,8 +17,10 @@
   <form id="gewichtsklassenzuordnungformular" action="/turnier/{{turnierid}}/gewichtsklassen" method="POST">
     <div class="navbar_fixed">
           <span style="position: relative">
-            <md-outlined-button type="button" id="renewGewichtsklassen">Alle Gewichtsklassen neu zuordnen</md-outlined-button>
-            <md-outlined-button type="button" id="submitFormular">Zuordnungen speichern</md-outlined-button>
+            {{#if isadmin}}
+              <md-outlined-button type="button" id="renewGewichtsklassen">Alle Gewichtsklassen neu zuordnen</md-outlined-button>
+              <md-outlined-button type="button" id="submitFormular">Zuordnungen speichern</md-outlined-button>
+            {{/if}}
           </span>
     </div>
     <div class="grid">

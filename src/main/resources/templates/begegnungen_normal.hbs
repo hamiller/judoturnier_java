@@ -16,8 +16,10 @@
   <div class="bodyheader no-print">
     <div class="navbar_fixed">
           <span style="position: relative">
-            <md-outlined-button type="button" id="renewBegegnungen" onclick="renewBegegnungen(); return false;">Alle Wettkampfgruppen neu erstellen</md-outlined-button>
-            <md-outlined-button type="button" id="deleteBegegnungen" onclick="deleteBegegnungen(); return false;">Alle Wettkampfgruppen löschen</md-outlined-button>
+            {{#if isadmin}}
+              <md-outlined-button type="button" id="renewBegegnungen" onclick="renewBegegnungen(); return false;">Alle Wettkampfgruppen neu erstellen</md-outlined-button>
+              <md-outlined-button type="button" id="deleteBegegnungen" onclick="deleteBegegnungen(); return false;">Alle Wettkampfgruppen löschen</md-outlined-button>
+            {{/if}}
           </span>
       {{#each altersklassen}}
         <span style="position: relative">

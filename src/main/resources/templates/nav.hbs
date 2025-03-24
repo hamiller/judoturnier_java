@@ -21,9 +21,11 @@
           <md-menu-item href="/turnier/{{turnierid}}/begegnungen">
               <div slot="headline">Begegnungen des Wettkampfs</div>
           </md-menu-item>
-          <md-menu-item href="/turnier/{{turnierid}}/einstellungen">
-              <div slot="headline">Einstellungen</div>
-          </md-menu-item>
+          {{#if isadmin}}
+            <md-menu-item href="/turnier/{{turnierid}}/einstellungen">
+                <div slot="headline">Einstellungen</div>
+            </md-menu-item>
+          {{/if}}
         {{/if}}
         {{#if isloggedin}}
           <md-menu-item href="/logout">

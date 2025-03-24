@@ -9,11 +9,13 @@
 
 <div>
   <div class="bodyheader">
-    <h2>Gemeldete Wettkämpfer</h2>
-    <div>Anzahl der Kämpfer: {{anzahlwk}}</div>
+    <h2>Eingetragene Vereine</h2>
+    <div>Anzahl der Vereine: {{anzahlvereine}}</div>
 
     <div class="actions">
-      <md-outlined-button href="/turnier/{{turnierid}}/verein-neu">Weiteren Verein eintragen</md-outlined-button>
+      {{#if isadmin}}
+        <md-outlined-button href="/turnier/{{turnierid}}/verein-neu">Weiteren Verein eintragen</md-outlined-button>
+      {{/if}}
     </div>
   </div>
 
@@ -33,8 +35,10 @@
       <li class="listeneintrag">
         <div class="listeneintrag-titel">{{name}}</div>
         <div>
-          <a href="/turnier/{{turnierid}}/vereine/{{ id }}"><span class="material-icons">edit</span></a>
-          <a href="#" onclick="deleteVerein({{ id }})"><span class="material-icons">person_remove</span></a>
+          {{#if isadmin}}
+            <a href="/turnier/{{turnierid}}/vereine/{{ id }}"><span class="material-icons">edit</span></a>
+            <a href="#" onclick="deleteVerein({{ id }})"><span class="material-icons">person_remove</span></a>
+          {{/if}}
         </div>
       </li>
     {{/vereine}}

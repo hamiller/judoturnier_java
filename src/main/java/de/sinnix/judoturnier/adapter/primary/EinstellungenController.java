@@ -16,6 +16,7 @@ import de.sinnix.judoturnier.model.Wettkampfzeiten;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -80,6 +81,7 @@ public class EinstellungenController {
 	}
 
 	@PostMapping("/turnier/{turnierid}/einstellungen")
+	@PreAuthorize("hasAnyRole('ROLE_AMDIN')")
 	public ModelAndView speichereTurnierEinstellungen(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
 		logger.debug("speichere Turnier-Einstellungen {}", formData);
 
