@@ -36,6 +36,11 @@
     <span>
       <md-outlined-button id="btn_alle_turniere" href="/turniere">Turniere-/Nutzer-Verwaltung</md-outlined-button>
     </span>
+    {{#if turnierid}}
+      <span>
+        <md-outlined-button id="btn_alle_login_qrcodes" href="/login/qrcode?turnierid={{turnierid}}">Anmeldung-QR-Codes</md-outlined-button>
+      </span>
+      {{/if}}
   {{/if}}
 </nav>
 

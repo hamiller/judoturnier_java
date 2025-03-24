@@ -1,30 +1,30 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.sinnix.judoturnier.model.BenutzerRolle;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-import java.util.List;
+import lombok.ToString;
 
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = "benutzer")
+@ToString(callSuper = true, exclude = "benutzer")
 @Data
 @Entity
 @Table(name = "turnier_rollen")
 public class TurnierRollenJpa extends AbstractEntity {
 
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "benutzer_uuid", nullable = false)
 	private BenutzerJpa         benutzer;

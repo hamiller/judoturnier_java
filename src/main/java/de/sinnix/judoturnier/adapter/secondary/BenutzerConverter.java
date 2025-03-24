@@ -16,6 +16,7 @@ public class BenutzerConverter {
 	private static final Logger logger = LogManager.getLogger(BenutzerConverter.class);
 
 	public Benutzer convertToBenutzer(BenutzerJpa jpa) {
+		logger.debug("BenutzerConverter.convertToBenutzer {}", jpa);
 		if (jpa == null) {
 			return null;
 		}
@@ -35,6 +36,7 @@ public class BenutzerConverter {
 	}
 
 	public BenutzerJpa convertFromBenutzer(Benutzer benutzer) {
+		logger.debug("BenutzerConverter.convertFromBenutzer {}", benutzer);
 		BenutzerJpa jpa = new BenutzerJpa();
 		if (benutzer.uuid() != null) jpa.setUuid(benutzer.uuid().toString());
 		jpa.setUsername(benutzer.username());
@@ -45,6 +47,7 @@ public class BenutzerConverter {
 	}
 
 	private List<TurnierRollenJpa> convertFromTurnierRollen(List<TurnierRollen> turnierRollen, BenutzerJpa benutzer) {
+		logger.debug("BenutzerConverter.convertFromTurnierRollen {}", turnierRollen);
 		if (turnierRollen == null) {
 			return new ArrayList<>();
 		}

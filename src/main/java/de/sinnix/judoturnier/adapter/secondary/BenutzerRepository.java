@@ -20,11 +20,13 @@ public class BenutzerRepository {
 	private              BenutzerConverter     benutzerConverter;
 
 	public Optional<Benutzer> findBenutzer(UUID benutzerId) {
+		logger.debug("BenutzerRepository.findBenutzer {}", benutzerId);
 		return benutzerJpaRepository.findById(benutzerId.toString())
 			.map(jpa -> benutzerConverter.convertToBenutzer(jpa));
 	}
 
 	public Optional<Benutzer> findBenutzerByUsername(String username) {
+		logger.debug("BenutzerRepository.findBenutzerByUsername {}", username);
 		return benutzerJpaRepository.findByUsername(username)
 			.map(jpa -> benutzerConverter.convertToBenutzer(jpa));
 	}
