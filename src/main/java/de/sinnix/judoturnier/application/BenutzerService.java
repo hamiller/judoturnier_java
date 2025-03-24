@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Transactional
 @Service
 public class BenutzerService {
 	private static final Logger logger = LogManager.getLogger(BenutzerService.class);
@@ -23,6 +22,7 @@ public class BenutzerService {
 	@Autowired
 	private BenutzerRepository benutzerRepository;
 
+	@Transactional
 	public Benutzer holeBenutzer(OidcBenutzer oidcBenutzer) {
 		if (oidcBenutzer.username().equals(Benutzer.ANONYMOUS_USERNAME)) {
 			return benutzerRepository.findBenutzerByUsername(Benutzer.ANONYMOUS_USERNAME).orElseThrow(() -> new RuntimeException("Dummy Nutzer ist nicht in der Datenbank hinterlegt!"));
@@ -47,16 +47,22 @@ public class BenutzerService {
 		return benutzerRepository.save(neuerBenutzer);
 	}
 
+	@Transactional
 	public List<Benutzer> holeAlleBenutzer() {
 		logger.info("Lade alle Benutzer");
 		return benutzerRepository.findAll();
 	}
 
+	@Transactional
 	public void ordneBenutzerZuTurnier(List<UUID> benutzerIds, UUID turnierUUID) {
 		logger.info("Ordne Benutzer [{}] zu Turnier {}", benutzerIds, turnierUUID);
+
+		benutzerRepository.deleteTurnierRollen(turnierUUID);
+
 		for (UUID userId : benutzerIds) {
 			Optional<Benutzer> ob = benutzerRepository.findBenutzer(userId);
 			if (ob.isPresent()) {
+
 				Benutzer benutzer = ob.get();
 				List<TurnierRollen> updatedTurnierRollen = new ArrayList<>(benutzer.turnierRollen());
 				updatedTurnierRollen.add(new TurnierRollen(null, turnierUUID, benutzer.benutzerRollen()));
@@ -71,6 +77,7 @@ public class BenutzerService {
 		}
 	}
 
+	@Transactional
 	public void entferneBenutzerVonTurnier(List<UUID> benutzerIds, UUID turnierUUID) {
 		logger.info("Entferne Benutzer [{}] von Turnier {}", benutzerIds, turnierUUID);
 		for (UUID userId : benutzerIds) {

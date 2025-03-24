@@ -1,8 +1,10 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
 import de.sinnix.judoturnier.model.Benutzer;
+import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,11 +15,13 @@ import java.util.stream.Collectors;
 
 @Repository
 public class BenutzerRepository {
-	private static final Logger                logger = LogManager.getLogger(BenutzerRepository.class);
+	private static final Logger                     logger = LogManager.getLogger(BenutzerRepository.class);
 	@Autowired
-	private              BenutzerJpaRepository benutzerJpaRepository;
+	private              BenutzerJpaRepository      benutzerJpaRepository;
 	@Autowired
-	private              BenutzerConverter     benutzerConverter;
+	private              TurnierRollenJpaRepository turnierRollenJpaRepository;
+	@Autowired
+	private              BenutzerConverter          benutzerConverter;
 
 	public Optional<Benutzer> findBenutzer(UUID benutzerId) {
 		logger.debug("BenutzerRepository.findBenutzer {}", benutzerId);
@@ -38,7 +42,7 @@ public class BenutzerRepository {
 		BenutzerJpa futureBenutzerJpa = benutzerConverter.convertFromBenutzer(benutzer);
 		if (optionalBenutzerJpa.isPresent()) {
 			BenutzerJpa currentBenutzerJpa = optionalBenutzerJpa.get();
-			logger.info("Benutzer {} gefunden, schreibe neue Werte {}", currentBenutzerJpa, futureBenutzerJpa);
+			logger.debug("existierenden Benutzer {} gefunden,\n schreibe neue Werte {}", currentBenutzerJpa, futureBenutzerJpa);
 			if (currentBenutzerJpa.getRollen() != null) {
 				currentBenutzerJpa.getRollen().clear();
 				currentBenutzerJpa.getRollen().addAll(futureBenutzerJpa.getRollen());
@@ -62,5 +66,9 @@ public class BenutzerRepository {
 			.map(jpa -> benutzerConverter.convertToBenutzer(jpa))
 			.peek(b -> logger.trace("Benutzer {}", b))
 			.collect(Collectors.toList());
+	}
+
+	public void deleteTurnierRollen(UUID turnierUUID) {
+		turnierRollenJpaRepository.deleteAllByTurnierUuid(turnierUUID.toString());
 	}
 }

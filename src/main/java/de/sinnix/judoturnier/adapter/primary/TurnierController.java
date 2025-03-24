@@ -212,12 +212,6 @@ public class TurnierController {
 			.collect(Collectors.toList());
 		benutzerService.ordneBenutzerZuTurnier(benutzerDesTurniers, turnierUUID);
 
-		List<UUID> keineBenutzer = formData.values().stream()
-			.filter(bz -> !bz.zugeordnetZuTurnier())
-			.map(bz -> UUID.fromString(bz.userid()))
-			.collect(Collectors.toList());
-		benutzerService.entferneBenutzerVonTurnier(keineBenutzer, turnierUUID);
-
 		return new ModelAndView("redirect:/turnier/" + turnierid);
 	}
 
