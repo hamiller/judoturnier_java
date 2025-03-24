@@ -39,7 +39,7 @@ import java.util.stream.Stream;
 public class WettkaempferService {
 	private static final Logger logger = LogManager.getLogger(WettkaempferService.class);
 
-	private DecimalFormat df = new DecimalFormat("#.00");
+	private DecimalFormat df = new DecimalFormat("0.00");
 
 	@Autowired
 	private WettkaempferRepository wettkaempferRepository;
@@ -149,7 +149,7 @@ public class WettkaempferService {
 				csvWriter.writeNext(new String[]{
 					wettkaempfer.id().toString(),
 					wettkaempfer.name(),
-					wettkaempfer.gewicht().toString(),
+					df.format(wettkaempfer.gewicht()),
 					wettkaempfer.altersklasse().toString(),
 					wettkaempfer.geschlecht().getBezeichnung(),
 					wettkaempfer.verein().name(),
@@ -185,16 +185,16 @@ public class WettkaempferService {
 		Map<UUID, GesamtWertung> gesamtWertungen = new HashMap<>();
 		for (Wettkaempfer wettkaempfer : wettkaempferList) {
 			List<Integer> kampfgeistList = holeWertungen(begegnungList, wettkaempfer, Wertung::getKampfgeistWettkaempfer1, Wertung::getKampfgeistWettkaempfer2);
-			double kampfgeist = kampfgeistList.stream().mapToInt(Integer::intValue).average().getAsDouble();
+			double kampfgeist = kampfgeistList.stream().mapToInt(Integer::intValue).average().orElseGet(() -> 0d);
 
 			List<Integer> technikList = holeWertungen(begegnungList, wettkaempfer, Wertung::getTechnikWettkaempfer1, Wertung::getTechnikWettkaempfer2);
-			double technik = technikList.stream().mapToInt(Integer::intValue).average().getAsDouble();
+			double technik = technikList.stream().mapToInt(Integer::intValue).average().orElseGet(() -> 0d);
 
 			List<Integer> kampfstilList = holeWertungen(begegnungList, wettkaempfer, Wertung::getKampfstilWettkaempfer1, Wertung::getKampfstilWettkaempfer2);
-			double kampfstil = kampfstilList.stream().mapToInt(Integer::intValue).average().getAsDouble();
+			double kampfstil = kampfstilList.stream().mapToInt(Integer::intValue).average().orElseGet(() -> 0d);
 
 			List<Integer> vielfaltList = holeWertungen(begegnungList, wettkaempfer, Wertung::getVielfaltWettkaempfer1, Wertung::getVielfaltWettkaempfer2);
-			double vielfalt = vielfaltList.stream().mapToInt(Integer::intValue).average().getAsDouble();
+			double vielfalt = vielfaltList.stream().mapToInt(Integer::intValue).average().orElseGet(() -> 0d);
 
 			GesamtWertung gesamtWertung = new GesamtWertung(kampfgeist, kampfgeistList, technik, technikList, kampfstil, kampfstilList, vielfalt, vielfaltList);
 			gesamtWertungen.put(wettkaempfer.id(), gesamtWertung);
