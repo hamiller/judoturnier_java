@@ -45,7 +45,7 @@
         </div>
         <div class="allewertungen when_mobile_toggle">
           {{#each begegnung.alleWertungen}}
-            <span class="row_small bewerterinfo">Kampfrichter {{truncate this.benutzer.id 5}}</span>
+            <span class="row_small bewerterinfo">Kampfrichter {{truncate this.bewerter.username 5}}</span>
             <span class="row_small"><label>Vielfalt</label>{{this.vielfaltWettkaempfer1}}</span>
             <span class="row_small"><label>Kampfgeist</label>{{this.kampfgeistWettkaempfer1}}</span>
             <span class="row_small"><label>Technik</label>{{this.technikWettkaempfer1}}</span>
@@ -88,7 +88,7 @@
         </div>
         <div class="allewertungen when_mobile_toggle">
           {{#each begegnung.alleWertungen}}
-            <span class="row_small bewerterinfo">Kampfrichter {{truncate this.benutzer.id 5}}</span>
+            <span class="row_small bewerterinfo">Kampfrichter {{truncate this.bewerter.username 5}}</span>
             <span class="row_small"><label>Vielfalt</label>{{this.vielfaltWettkaempfer2}}</span>
             <span class="row_small"><label>Kampfgeist</label>{{this.kampfgeistWettkaempfer2}}</span>
             <span class="row_small"><label>Technik</label>{{this.technikWettkaempfer2}}</span>

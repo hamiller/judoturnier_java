@@ -44,14 +44,14 @@ public class WertungController {
 	@GetMapping("/turnier/{turnierid}/begegnungen/randori/{id}")
 	public ModelAndView begegnungRandori(@PathVariable String turnierid, @PathVariable String id) {
 		logger.info("Lade Wertung für Begegnung {}", id);
-		UUID begegnungId = UUID.fromString(id);
-		UUID turnierId = UUID.fromString(turnierid);
+		UUID begegnungUuid = UUID.fromString(id);
+		UUID turnierUuid = UUID.fromString(turnierid);
 		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		Benutzer benutzer = benutzerService.holeBenutzer(oidcBenutzer);
-		Begegnung begegnung = wettkampfService.ladeBegegnung(begegnungId);
+		Begegnung begegnung = wettkampfService.ladeBegegnung(begegnungUuid);
 
-		Metadaten metadaten = turnierService.ladeMetadaten(begegnungId, turnierId);
-		BegegnungDto begegnungDto = DtosConverter.convertFromBegegnung(begegnung, benutzer.uuid(), metadaten.vorherigeBegegnungId(), metadaten.nachfolgendeBegegnungId());
+		Metadaten metadaten = turnierService.ladeMetadaten(begegnungUuid, turnierUuid);
+		BegegnungDto begegnungDto = DtosConverter.convertFromBegegnung(begegnung, benutzer.uuid(), turnierUuid, metadaten.vorherigeBegegnungId(), metadaten.nachfolgendeBegegnungId());
 
 		ModelAndView mav = new ModelAndView("wettkampf_randori");
 		mav.addObject("turnierid", turnierid);
@@ -60,7 +60,7 @@ public class WertungController {
 		mav.addObject("begegnung", begegnungDto);
 		mav.addObject("begegnungid", id);
 		mav.addObject("bewerter", benutzer);
-		mav.addObject("enableEditing", benutzer.istKampfrichter(turnierId));
+		mav.addObject("enableEditing", benutzer.istKampfrichter(turnierUuid));
 		mav.addObject("wertungsOptionen", List.of(1, 2, 3, 4, 5, 6));
 		return mav;
 	}
@@ -68,17 +68,17 @@ public class WertungController {
 	@GetMapping("/turnier/{turnierid}/begegnungen/normal/{id}")
 	public ModelAndView begegnungTurnier(@PathVariable String turnierid, @PathVariable String id) {
 		logger.info("Lade Wertung für Begegnung {}", id);
-		UUID begegnungId = UUID.fromString(id);
-		UUID turnierUUID = UUID.fromString(turnierid);
+		UUID begegnungUuid = UUID.fromString(id);
+		UUID turnierUuid = UUID.fromString(turnierid);
 		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		Benutzer benutzer = benutzerService.holeBenutzer(oidcBenutzer);
-		Begegnung begegnung = wettkampfService.ladeBegegnung(begegnungId);
-		Integer kampfzeit = einstellungenService.kampfZeit(turnierUUID, begegnung.getWettkampfGruppe().altersklasse());
+		Begegnung begegnung = wettkampfService.ladeBegegnung(begegnungUuid);
+		Integer kampfzeit = einstellungenService.kampfZeit(turnierUuid, begegnung.getWettkampfGruppe().altersklasse());
 		Integer matteid = begegnung.getMatteId();
 		Integer mattenrunde = begegnung.getMattenRunde();
 
-		Metadaten metadaten = turnierService.ladeMetadaten(begegnungId, turnierUUID);
-		BegegnungDto begegnungDto = DtosConverter.convertFromBegegnung(begegnung, benutzer.uuid(), metadaten.vorherigeBegegnungId(), metadaten.nachfolgendeBegegnungId());
+		Metadaten metadaten = turnierService.ladeMetadaten(begegnungUuid, turnierUuid);
+		BegegnungDto begegnungDto = DtosConverter.convertFromBegegnung(begegnung, benutzer.uuid(), turnierUuid, metadaten.vorherigeBegegnungId(), metadaten.nachfolgendeBegegnungId());
 
 		ModelAndView mav = new ModelAndView("wettkampf_normal");
 		mav.addObject("turnierid", turnierid);
@@ -87,7 +87,7 @@ public class WertungController {
 		mav.addObject("begegnung", begegnungDto);
 		mav.addObject("begegnungid", id);
 		mav.addObject("bewerter", benutzer);
-		mav.addObject("enableEditing", benutzer.istKampfrichter(turnierUUID));
+		mav.addObject("enableEditing", benutzer.istKampfrichter(turnierUuid));
 		mav.addObject("wertungsOptionen", List.of(1, 2, 3, 4, 5, 6));
 		mav.addObject("kampfzeit", kampfzeit);
 		mav.addObject("matteid", matteid);

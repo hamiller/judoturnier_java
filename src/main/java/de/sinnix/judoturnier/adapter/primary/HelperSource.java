@@ -124,8 +124,8 @@ public class HelperSource {
 		return "";
 	}
 
-	public static String wertungVorhanden(List<Wertung> wertung, Options options) {
-		return (wertung != null && wertung.size() > 0 && (wertung.get(0).getKampfgeistWettkaempfer1() != null || wertung.get(0).getSieger() != null)) ? "vorhanden" : "";
+	public static String wertungVorhanden(List<WertungDto> wertung, Options options) {
+		return (wertung != null && wertung.size() > 0 && (wertung.get(0).kampfgeistWettkaempfer1() != null || wertung.get(0).sieger() != null)) ? "vorhanden" : "";
 	}
 
 	public static List<ImmutablePair<RundeDto, RundeDto>> vorherigeRunde(List<RundeDto> runden, Options options) {
@@ -187,7 +187,7 @@ public class HelperSource {
 			return "";
 		}
 
-		return text.substring(0, size);
+		return text.length() <= size ? text : text.substring(0, size);
 	}
 
 	public static OidcBenutzer extractOidcBenutzer(Authentication authentication) {

@@ -66,7 +66,6 @@ public class TurnierRepository {
 
 		var begegnungenList = begegnungenJpaList.stream()
 			.map(jpa -> begegnungConverter.convertToBegegnung(jpa, wettkampfGruppeJpaList))
-			.peek(b -> logger.info("found {}", b))
 			.sorted(Comparator
 				.comparing(Begegnung::getGesamtBegegnung)
 				.thenComparing(begegnung -> begegnung.getBegegnungId().rundenTyp)

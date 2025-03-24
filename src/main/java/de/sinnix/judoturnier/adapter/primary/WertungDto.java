@@ -17,5 +17,5 @@ public record WertungDto(Wettkaempfer sieger,
 	 Integer technikWettkaempfer2,
 	 Integer kampfstilWettkaempfer2,
 	 Integer vielfaltWettkaempfer2,
-	 Benutzer bewerter) {
+	 BenutzerDto bewerter) {
 }

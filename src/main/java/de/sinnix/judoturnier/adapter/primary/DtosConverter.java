@@ -1,18 +1,19 @@
 package de.sinnix.judoturnier.adapter.primary;
 
-import de.sinnix.judoturnier.model.Begegnung;
-import de.sinnix.judoturnier.model.Benutzer;
-import de.sinnix.judoturnier.model.Matte;
-import de.sinnix.judoturnier.model.Runde;
-import de.sinnix.judoturnier.model.Turnier;
-import de.sinnix.judoturnier.model.Wettkaempfer;
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import de.sinnix.judoturnier.model.Begegnung;
+import de.sinnix.judoturnier.model.Benutzer;
+import de.sinnix.judoturnier.model.Matte;
+import de.sinnix.judoturnier.model.Runde;
+import de.sinnix.judoturnier.model.Turnier;
+import de.sinnix.judoturnier.model.Wertung;
+import de.sinnix.judoturnier.model.Wettkaempfer;
 
 public class DtosConverter {
 
@@ -36,11 +37,26 @@ public class DtosConverter {
 		return new MatteDto(mat.id(), gruppenRunden);
 	}
 
-	public static BegegnungDto convertFromBegegnung(Begegnung begegnung, UUID userid, Optional<UUID> vorherigeBegegnungId, Optional<UUID> nachfolgendeBegegnungId) {
+	public static BegegnungDto convertFromBegegnung(Begegnung begegnung, UUID userid, UUID turnierUuid, Optional<UUID> vorherigeBegegnungId, Optional<UUID> nachfolgendeBegegnungId) {
 		var begegnungId = begegnung.getId();
 		var	wettkaempfer1 = begegnung.getWettkaempfer1().orElseGet(() -> Wettkaempfer.Freilos());
 		var	wettkaempfer2 = begegnung.getWettkaempfer2().orElseGet(() -> Wettkaempfer.Freilos());
-		var kampfrichterWertung = begegnung.getWertungen().stream().filter(w -> w.getBewerter().uuid().equals(userid)).findFirst().map(w -> new WertungDto(w.getSieger(),
+		var kampfrichterWertung = getWertungDto(begegnung.getWertungen().stream().filter(w -> w.getBewerter().uuid().equals(userid)).findFirst(), turnierUuid);
+		var alleWertungen = begegnung.getWertungen().stream()
+			.map(w -> getWertungDto(Optional.ofNullable(w), turnierUuid))
+			.flatMap(Optional::stream)
+			.collect(Collectors.toList());
+		var vorher = vorherigeBegegnungId.map(id -> String.valueOf(id)).orElseGet(() -> "");
+		var nachher = nachfolgendeBegegnungId.map(id -> String.valueOf(id)).orElseGet(() -> "");
+		return new BegegnungDto(begegnungId.toString(), begegnung.getBegegnungId().getRundenTyp(), begegnung.getBegegnungId().runde, begegnung.getBegegnungId().akuellePaarung, wettkaempfer1, wettkaempfer2, kampfrichterWertung, alleWertungen, vorher, nachher);
+	}
+
+	private static Optional<WertungDto> getWertungDto(Optional<Wertung> wertung, UUID turnierUuid) {
+		if (wertung.isEmpty()) {
+			return Optional.empty();
+		}
+		var kampfrichter = convertFromBenutzer(wertung.get().getBewerter(), turnierUuid);
+		var kampfrichterWertung = wertung.map(w -> new WertungDto(w.getSieger(),
 			formatDuration(w.getZeit()),
 			w.getPunkteWettkaempferWeiss(),
 			w.getStrafenWettkaempferWeiss(),
@@ -54,17 +70,19 @@ public class DtosConverter {
 			w.getTechnikWettkaempfer2(),
 			w.getKampfstilWettkaempfer2(),
 			w.getVielfaltWettkaempfer2(),
-			w.getBewerter()));
-		var vorher = vorherigeBegegnungId.map(id -> String.valueOf(id)).orElseGet(() -> "");
-		var nachher = nachfolgendeBegegnungId.map(id -> String.valueOf(id)).orElseGet(() -> "");
-		return new BegegnungDto(begegnungId.toString(), begegnung.getBegegnungId().getRundenTyp(), begegnung.getBegegnungId().runde, begegnung.getBegegnungId().akuellePaarung, wettkaempfer1, wettkaempfer2, kampfrichterWertung, begegnung.getWertungen(), vorher, nachher);
+			kampfrichter));
+		return kampfrichterWertung;
 	}
 
 	public static BegegnungDto convertFromBegegnung(Begegnung begegnung) {
 		var begegnungId = begegnung.getId();
 		var	wettkaempfer1 = begegnung.getWettkaempfer1().orElseGet(() -> Wettkaempfer.Freilos());
 		var	wettkaempfer2 = begegnung.getWettkaempfer2().orElseGet(() -> Wettkaempfer.Freilos());
-		return new BegegnungDto(begegnungId.toString(), begegnung.getBegegnungId().getRundenTyp(), begegnung.getBegegnungId().runde, begegnung.getBegegnungId().akuellePaarung, wettkaempfer1, wettkaempfer2, null, begegnung.getWertungen(), null, null);
+		var alleWertungen = begegnung.getWertungen().stream()
+			.map(w -> getWertungDto(Optional.ofNullable(w), begegnung.getTurnierUUID()))
+			.flatMap(Optional::stream)
+			.collect(Collectors.toList());
+		return new BegegnungDto(begegnungId.toString(), begegnung.getBegegnungId().getRundenTyp(), begegnung.getBegegnungId().runde, begegnung.getBegegnungId().akuellePaarung, wettkaempfer1, wettkaempfer2, null, alleWertungen, null, null);
 	}
 
 	public static Long formatDuration(Duration duration) {
