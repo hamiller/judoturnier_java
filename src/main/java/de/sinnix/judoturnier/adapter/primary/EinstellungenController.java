@@ -81,7 +81,7 @@ public class EinstellungenController {
 	}
 
 	@PostMapping("/turnier/{turnierid}/einstellungen")
-	@PreAuthorize("hasAnyRole('ROLE_AMDIN')")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView speichereTurnierEinstellungen(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
 		logger.debug("speichere Turnier-Einstellungen {}", formData);
 
