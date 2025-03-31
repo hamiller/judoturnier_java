@@ -23,10 +23,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -182,19 +184,25 @@ class TurnierRepositoryTest {
 		Matte matte = new Matte(5, Arrays.asList(runde1, runde2));
 
 		WettkampfGruppeJpa wkgJpa = new WettkampfGruppeJpa(id.toString(), "name", "typ", "U11", turnierUUID.toString());
-		BegegnungJpa begegnungJpa1 = new BegegnungJpa(null, runde1UUID.toString(), 5, 3, 4, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, List.of(), wkgJpa.getUuid(), turnierUUID.toString(), 1, 1, 1);
-		BegegnungJpa begegnungJpa2 = new BegegnungJpa(null, runde2UUID.toString(), 5, 3, 4, 4, WettkaempferFixtures.wettkaempferJpa1, WettkaempferFixtures.wettkaempferJpa2, List.of(), wkgJpa.getUuid(), turnierUUID.toString(), 1, 1, 1);
 
 		when(wettkampfGruppeJpaRepository.findById(any())).thenReturn(Optional.empty(), Optional.of(wkgJpa));
-		when(wettkampfGruppeJpaRepository.save(any())).thenReturn(wkgJpa);
-		when(wettkampfGruppeConverter.convertToWettkampfGruppe(any())).thenReturn(wkg);
-		when(begegnungConverter.convertFromBegegnung(begegnung1)).thenReturn(begegnungJpa1);
-		when(begegnungConverter.convertFromBegegnung(begegnung2)).thenReturn(begegnungJpa2);
 
-		turnierRepository.speichereMatte(matte);
+		assertThrows(NoSuchElementException.class, () -> {
+			turnierRepository.speichereMatte(matte);
+		});
+	}
 
-		verify(begegnungJpaRepository, times(1)).saveAll(List.of(begegnungJpa1, begegnungJpa2));
-		verify(wettkampfGruppeJpaRepository, times(1)).save(any());
+	@Test
+	public void testSpeichereWettkampfgruppen() {
+		UUID turnierUUID = WettkaempferFixtures.turnierUUID;
+		UUID id = UUID.randomUUID();
+		WettkampfGruppe wkg = new WettkampfGruppe(id, "name", "typ", Altersklasse.U11, turnierUUID);
+
+		when(wettkampfGruppeConverter.convertFromWettkampfGruppe(wkg)).thenReturn(any());
+
+		turnierRepository.speichereGruppen(List.of(wkg));
+
+		verify(wettkampfGruppeJpaRepository).save(any());
 	}
 
 	@Test

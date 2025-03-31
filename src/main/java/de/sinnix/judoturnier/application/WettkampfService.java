@@ -124,8 +124,15 @@ public class WettkampfService {
 		}
 		logger.debug("erstellte Liste der WettkampfGruppeMitBegegnungen: {}", wettkampfGruppen);
 
+		// Speichern der Gruppen
+		turnierRepository.speichereGruppen(wettkampfGruppen.stream()
+			.map(wettkampfGruppeMitBegegnungen -> wettkampfGruppeMitBegegnungen.gruppe())
+			.toList());
+
+		// Erstellen aller Begegnungen
 		List<Matte> matten = erstelleGruppenReihenfolge(wettkampfGruppen, einstellungen.mattenAnzahl().anzahl(), einstellungen.wettkampfReihenfolge());
 
+		// Speichern der Begegnungen
 		turnierRepository.speichereMatten(matten);
 	}
 

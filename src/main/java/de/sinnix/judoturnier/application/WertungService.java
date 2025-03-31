@@ -164,12 +164,15 @@ public class WertungService {
 				}
 			}
 
-//			// 2. Platzierungen berechnen
-//			List<Wettkaempfer> platzierungen = new ArrayList<>(siege.keySet());
-//			platzierungen.sort((w1, w2) -> siege.get(w2) - siege.get(w1));
+			// 2. Platzierungen berechnen
+			List<Wettkaempfer> platzierungen = new ArrayList<>(siege.keySet());
+			platzierungen.sort((w1, w2) -> siege.get(w2) - siege.get(w1));
 
-			for (Map.Entry<Wettkaempfer, Integer> entry : siege.entrySet()) {
-				results.putIfAbsent(entry.getKey(), entry.getValue());
+			// 3. Platzierungen in die Map eintragen
+			for (int i = 0; i < platzierungen.size(); i++) {
+				Wettkaempfer wettkaempfer = platzierungen.get(i);
+				int platzierung = i + 1;
+				results.put(wettkaempfer, platzierung);
 			}
 		}
 

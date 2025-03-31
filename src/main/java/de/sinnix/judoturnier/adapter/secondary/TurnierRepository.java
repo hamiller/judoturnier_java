@@ -167,18 +167,9 @@ public class TurnierRepository {
 			logger.trace("Speichere Runde {} für Matte {}", runde, runde.matteId());
 
 			UUID wettkamfpGruppeID = runde.gruppe().id();
-			Optional<WettkampfGruppeJpa> optionalWettkampfGruppeJpa = wettkampfGruppeJpaRepository.findById(wettkamfpGruppeID.toString());
-			if (optionalWettkampfGruppeJpa.isEmpty()) {
-				logger.trace("Erstelle neue Wettkampfgruppe {} {}", runde.gruppe().name(), wettkamfpGruppeID);
-				WettkampfGruppeJpa wettkampfGruppeJpa = wettkampfGruppeConverter.convertFromWettkampfGruppe(runde.gruppe());
-				wettkampfGruppeJpa = wettkampfGruppeJpaRepository.save(wettkampfGruppeJpa);
+			WettkampfGruppeJpa wettkampfGruppeJpa = wettkampfGruppeJpaRepository.findById(wettkamfpGruppeID.toString()).orElseThrow();
 
-				optionalWettkampfGruppeJpa = Optional.of(wettkampfGruppeJpa);
-			} else {
-				logger.trace("Es existiert schon eine Wettkampfgruppe {}", wettkamfpGruppeID);
-			}
-
-			var wettkampfGruppe = wettkampfGruppeConverter.convertToWettkampfGruppe(optionalWettkampfGruppeJpa.get());
+			var wettkampfGruppe = wettkampfGruppeConverter.convertToWettkampfGruppe(wettkampfGruppeJpa);
 			var rundeId = runde.rundeId();
 
 			for (Begegnung begegnung : runde.begegnungen()) {
@@ -251,5 +242,14 @@ public class TurnierRepository {
 			.filter(b -> b.getPaarung().equals(paarung))
 			.map(b -> begegnungConverter.convertToBegegnung(b, wettkampfGruppeJpaList))
 			.findFirst();
+	}
+
+	public void speichereGruppen(List<WettkampfGruppe> wettkampfGruppen) {
+		logger.info("Speichere alle Wettkampfgruppen");
+		for (WettkampfGruppe wettkampfGruppe : wettkampfGruppen) {
+			logger.trace("Speichere Wettkampfgruppe {}", wettkampfGruppe);
+			WettkampfGruppeJpa jpa = wettkampfGruppeConverter.convertFromWettkampfGruppe(wettkampfGruppe);
+			wettkampfGruppeJpaRepository.save(jpa);
+		}
 	}
 }

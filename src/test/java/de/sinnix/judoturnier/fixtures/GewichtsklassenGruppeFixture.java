@@ -44,8 +44,8 @@ public class GewichtsklassenGruppeFixture {
     private static final UUID w24 = UUID.fromString("323e4567-e89b-12d3-a456-426614174028");
     private static final UUID w25 = UUID.fromString("323e4567-e89b-12d3-a456-426614174029");
 
-    private static final UUID gwkg1 = UUID.fromString("323e4567-e89b-12d3-a456-426614174030");
-    private static final UUID gwkg2 = UUID.fromString("323e4567-e89b-12d3-a456-426614174031");
+	public static final  UUID gwkg1 = UUID.fromString("323e4567-e89b-12d3-a456-426614174030");
+	private static final UUID gwkg2 = UUID.fromString("323e4567-e89b-12d3-a456-426614174031");
     private static final UUID gwkg3 = UUID.fromString("323e4567-e89b-12d3-a456-426614174032");
     private static final UUID gwkg4 = UUID.fromString("323e4567-e89b-12d3-a456-426614174033");
     private static final UUID gwkg5 = UUID.fromString("323e4567-e89b-12d3-a456-426614174034");

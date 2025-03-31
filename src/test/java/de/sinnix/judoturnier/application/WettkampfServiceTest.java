@@ -3,9 +3,11 @@ package de.sinnix.judoturnier.application;
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
 import de.sinnix.judoturnier.fixtures.GewichtsklassenGruppeFixture;
 import de.sinnix.judoturnier.fixtures.MatteFixtures;
+import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Einstellungen;
+import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Gruppengroessen;
 import de.sinnix.judoturnier.model.Matte;
@@ -28,6 +30,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -288,6 +291,78 @@ class WettkampfServiceTest {
 			.allMatch(i -> matten.getFirst().runden().get(i - 1).mattenRunde() < matten.getFirst().runden().get(i).mattenRunde()));
 		assertTrue(IntStream.range(1, matten.get(1).runden().size())
 			.allMatch(i -> matten.get(1).runden().get(i - 1).mattenRunde() < matten.get(1).runden().get(i).mattenRunde()));
+	}
+
+	@Test
+	void testTurnierverlaufAltersklasseNormal() {
+		// 1 Gruppe
+		//   Gruppe1: 6 Teilnehmer => wird auf 8 erweitert. 11 Begegnungen
+		List<GewichtsklassenGruppe> gewichtsklassenGruppen = Arrays.asList(
+			new GewichtsklassenGruppe(GewichtsklassenGruppeFixture.gwkg1, Altersklasse.Frauen, Optional.of(Geschlecht.w), Arrays.asList(
+				WettkaempferFixtures.wettkaempferin1,
+				WettkaempferFixtures.wettkaempferin2,
+				WettkaempferFixtures.wettkaempferin3,
+				WettkaempferFixtures.wettkaempferin4,
+				WettkaempferFixtures.wettkaempferin5,
+				WettkaempferFixtures.wettkaempferin6), Optional.empty(), 58.0, 62.0, turnierUUID));
+
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroessen(Map.of(Altersklasse.Frauen, 8)), new VariablerGewichtsteil(0.2), SeparateAlterklassen.GETRENNT, new Wettkampfzeiten(Map.of()), turnierUUID);
+
+		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
+		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);
+
+		wettkampfService.erstelleWettkampfreihenfolgeAltersklasse(Optional.empty(), turnierUUID);
+
+
+		// ArgumentCaptor verwenden
+		ArgumentCaptor<List<Matte>> argumentCaptor = ArgumentCaptor.forClass(List.class);
+		verify(turnierRepository, times(1)).speichereMatten(argumentCaptor.capture());
+		List<Matte> matten = argumentCaptor.getValue();
+		// Anzahl der Matten
+		assertEquals(2, matten.size());
+		// Anzahl der GewichtsklassenGruppen
+		assertEquals(1, gewichtsklassenGruppen.size());
+		// Anzahl Teilnehmer insgesamt
+		assertEquals(6, gewichtsklassenGruppen.stream().mapToInt(g -> g.teilnehmer().size()).sum());
+		// Anzahl aller Begegnungen
+		assertEquals(11, matten.stream().mapToInt(m -> m.runden().stream().mapToInt(r -> r.begegnungen().size()).sum()).sum());
+		// Alle Begegnungungen nur auf Matte 1
+		Matte matte1 = matten.getFirst();
+		assertEquals(11, matte1.runden().stream().mapToInt(r -> r.begegnungen().size()).sum());
+
+		// Anzahl der Runden: 3 Gewinnerrunden, x Trostrunden
+		assertEquals(3, matte1.runden().size());
+
+		logger.debug("1 ------------------------------");
+
+		// 1. Runde
+		Runde runde1 = matte1.runden().get(0);
+		logger.debug("Runde 1: {}", runde1);
+//		runde1.gruppe().alleRundenBegegnungen()
+//			.forEach(br -> br.begegnungenJeRunde()
+//				.forEach(b -> logger.debug("[Runde {}] Begegnung: {}", b.getBegegnungId(), (b.getWettkaempfer1().isPresent() ? b.getWettkaempfer1().get().name() : "/")  + " - " + (b.getWettkaempfer2().isPresent() ? b.getWettkaempfer2().get().name() : "/"))));
+//
+//		// 2. Runde
+//		Runde runde2 = matte1.runden().get(1);
+//		logger.debug("Runde 2: {}", runde2);
+//		runde2.gruppe().alleRundenBegegnungen()
+//			.forEach(br -> br.begegnungenJeRunde()
+//				.forEach(b -> logger.debug("[Runde {}] Begegnung: {}", b.getBegegnungId(),(b.getWettkaempfer1().isPresent() ? b.getWettkaempfer1().get().name() : "/")  + " - " + (b.getWettkaempfer2().isPresent() ? b.getWettkaempfer2().get().name() : "/"))));
+//
+//		// 3. Runde
+//		Runde runde3 = matte1.runden().get(2);
+//		logger.debug("Runde 3: {}", runde3);
+//		runde3.gruppe().alleRundenBegegnungen()
+//			.forEach(br -> br.begegnungenJeRunde()
+//				.forEach(b -> logger.debug("[Runde {}] Begegnung: {}", b.getBegegnungId(), (b.getWettkaempfer1().isPresent() ? b.getWettkaempfer1().get().name() : "/")  + " - " + (b.getWettkaempfer2().isPresent() ? b.getWettkaempfer2().get().name() : "/"))));
+
+		logger.debug("2 ------------------------------");
+		for (Runde runde : matte1.runden()) {
+			logger.debug("Runde {}  Gruppe: {}", runde.gruppenRunde(), runde.gruppe().id());
+			for (Begegnung begegnung : runde.begegnungen()) {
+				logger.debug("{} - Wettkaempfer1: {}, Wettkaempfer2: {}", begegnung.getBegegnungId(), begegnung.getWettkaempfer1().map(Wettkaempfer::name), begegnung.getWettkaempfer2().map(Wettkaempfer::name));
+			}
+		}
 	}
 
 }
