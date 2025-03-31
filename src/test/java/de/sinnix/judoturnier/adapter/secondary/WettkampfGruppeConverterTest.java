@@ -40,7 +40,6 @@ class WettkampfGruppeConverterTest {
 		assertEquals(wettkampfGruppeJpa.getTyp(), wettkampfGruppe.typ());
 		assertEquals(wettkampfGruppeJpa.getAltersklasse(), wettkampfGruppe.altersklasse().name());
 		assertEquals(wettkampfGruppeJpa.getTurnierUUID(), wettkampfGruppe.turnierUUID().toString());
-		assertNotNull(wettkampfGruppe.alleRundenBegegnungen()); // Leere Liste wird erwartet
 	}
 
 	@Test
@@ -50,7 +49,6 @@ class WettkampfGruppeConverterTest {
 			"Gruppe A",
 			"Team",
 			Altersklasse.U11,
-			List.of(),
 			UUID.randomUUID()
 		);
 

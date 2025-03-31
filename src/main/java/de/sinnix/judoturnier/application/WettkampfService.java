@@ -16,6 +16,7 @@ import de.sinnix.judoturnier.model.SeparateAlterklassen;
 import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
+import de.sinnix.judoturnier.model.WettkampfGruppeMitBegegnungen;
 import de.sinnix.judoturnier.model.WettkampfReihenfolge;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.tuple.Pair;
@@ -107,7 +108,7 @@ public class WettkampfService {
 	private void erstelleMatten(List<GewichtsklassenGruppe> gwks, Einstellungen einstellungen) {
 		// check gruppe auf vorhandene Daten
 		checkGruppenSindValide(gwks);
-		List<WettkampfGruppe> wettkampfGruppen = new ArrayList<>();
+		List<WettkampfGruppeMitBegegnungen> wettkampfGruppen = new ArrayList<>();
 		for (GewichtsklassenGruppe gwk : gwks) {
 			Algorithmus algorithmus = getAlgorithmus(einstellungen, gwk);
 
@@ -117,12 +118,11 @@ public class WettkampfService {
 			List<List<Wettkaempfer>> wettkaempferGruppen = splitArrayToChunkSize(gwk.teilnehmer(), maxGruppenGroesse);
 			for (List<Wettkaempfer> wettkaempferList : wettkaempferGruppen) {
 				var splittedGwkg = new GewichtsklassenGruppe(gwk.id(), gwk.altersKlasse(), gwk.gruppenGeschlecht(), wettkaempferList, gwk.name(), gwk.minGewicht(), gwk.maxGewicht(), gwk.turnierUUID());
-				WettkampfGruppe wettkampfGruppe = algorithmus.erstelleWettkampfGruppe(splittedGwkg);
-				wettkampfGruppen.add(wettkampfGruppe);
+				WettkampfGruppeMitBegegnungen wettkampfGruppeMitBegegnungen = algorithmus.erstelleWettkampfGruppe(splittedGwkg);
+				wettkampfGruppen.add(wettkampfGruppeMitBegegnungen);
 			}
 		}
-		logger.info("{}", wettkampfGruppen);
-		loggWettkampfgruppen(wettkampfGruppen);
+		logger.debug("erstellte Liste der WettkampfGruppeMitBegegnungen: {}", wettkampfGruppen);
 
 		List<Matte> matten = erstelleGruppenReihenfolge(wettkampfGruppen, einstellungen.mattenAnzahl().anzahl(), einstellungen.wettkampfReihenfolge());
 
@@ -142,25 +142,12 @@ public class WettkampfService {
 		return new DoppelKOSystem();
 	}
 
-	private static void loggWettkampfgruppen(List<WettkampfGruppe> wettkampfGruppen) {
-		for (WettkampfGruppe wettkampfGruppe : wettkampfGruppen) {
-			int r = 1;
-			for (BegegnungenJeRunde begegnungenJeRunde : wettkampfGruppe.alleRundenBegegnungen()) {
-				logger.debug("WettkampfGruppe {} Runde {}", wettkampfGruppe.name(), r);
-				for (Begegnung begegnung : begegnungenJeRunde.begegnungenJeRunde()) {
-					logger.debug("{} - Wettkaempfer1: {}, Wettkaempfer2: {}", begegnung.getBegegnungId(), begegnung.getWettkaempfer1().map(Wettkaempfer::name), begegnung.getWettkaempfer2().map(Wettkaempfer::name));
-				}
-				r++;
-			}
-		}
-	}
-
-	private List<Matte> erstelleGruppenReihenfolge(List<WettkampfGruppe> wettkampfGruppen, Integer anzahlMatten, WettkampfReihenfolge reihenfolge) {
+	private List<Matte> erstelleGruppenReihenfolge(List<WettkampfGruppeMitBegegnungen> wettkampfGruppen, Integer anzahlMatten, WettkampfReihenfolge reihenfolge) {
 		logger.debug("erstelle Reihenfolge der Wettkämpfe aus den Wettkampfgruppen: {}, {}", wettkampfGruppen.size(), reihenfolge);
 		List<Matte> matten = new ArrayList<>();
 
 		// Ausplitten der Begegnungen auf die Matten
-		List<List<WettkampfGruppe>> wettkampfGruppenJeMatten = helpers.splitArrayToParts(wettkampfGruppen, anzahlMatten);
+		List<List<WettkampfGruppeMitBegegnungen>> wettkampfGruppenJeMatten = helpers.splitArrayToParts(wettkampfGruppen, anzahlMatten);
 
 		for (int m = 0; m < anzahlMatten; m++) {
 			var gruppen = wettkampfGruppenJeMatten.get(m);

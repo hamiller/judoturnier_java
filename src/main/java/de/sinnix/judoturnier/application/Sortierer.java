@@ -6,6 +6,7 @@ import de.sinnix.judoturnier.model.BegegnungenJeRunde;
 import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
+import de.sinnix.judoturnier.model.WettkampfGruppeMitBegegnungen;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -129,13 +130,13 @@ public class Sortierer {
 	/**
 	 * Es wird die erste Runde aller Gruppen gekämpft, danach die zweite Runde aller Gruppen usw.
 	 */
-	public Pair<Integer, List<Runde>> erstelleReihenfolgeMitAllenGruppenJeDurchgang(List<WettkampfGruppe> gruppen, Integer matteId) {
+	public Pair<Integer, List<Runde>> erstelleReihenfolgeMitAllenGruppenJeDurchgang(List<WettkampfGruppeMitBegegnungen> gruppen, Integer matteId) {
 		logger.info("erstelle Reihenfolge -mit allen Gruppen je Durchgang- für Matte {}...", matteId);
 		List<Runde> runden = new ArrayList<>();
 		int gruppenRunde = 1;
 		for (int rundenNummer = 0; rundenNummer < DEFAULT_MAX_RUNDEN; rundenNummer++) {
 			for (int gruppenNr = 0; gruppenNr < gruppen.size(); gruppenNr++) {
-				WettkampfGruppe gruppe = gruppen.get(gruppenNr);
+				WettkampfGruppeMitBegegnungen gruppe = gruppen.get(gruppenNr);
 
 				if (gruppe.alleRundenBegegnungen().size() - 1 < rundenNummer) {
 					// wir sind hier fertig
@@ -143,10 +144,10 @@ public class Sortierer {
 				}
 
 				// hole Altersklasse der Gruppe
-				Altersklasse altersKlasse = gruppe.altersklasse();
+				Altersklasse altersKlasse = gruppe.gruppe().altersklasse();
 
-				logger.debug("Gruppe: {}", gruppe.name());
-				Runde runde = new Runde(null, mattenRunde, gruppenRunde, rundeGesamt, matteId, altersKlasse, gruppe, gruppe.alleRundenBegegnungen().get(rundenNummer).begegnungenJeRunde());
+				logger.debug("Gruppe: {}", gruppe.gruppe().name());
+				Runde runde = new Runde(null, mattenRunde, gruppenRunde, rundeGesamt, matteId, altersKlasse, gruppe.gruppe(), gruppe.alleRundenBegegnungen().get(rundenNummer).begegnungenJeRunde());
 				runden.add(runde);
 				rundeGesamt++;
 				mattenRunde++;
@@ -160,7 +161,7 @@ public class Sortierer {
 	 * Es werden immer zwei Gruppen abwechselnd kämpfen, bis in diesen Gruppen alle Runden gekämpft sind, danach kommen die nächsten beiden Gruppen an die Reihe.
 	 * Bei ungerader Anzahl wechseln sich die letzten drei Gruppen ab, davor gilt weiterhin, dass immer zwei Gruppen abwechselnd an der Reihe sind.
 	 */
-	public Pair<Integer, List<Runde>> erstelleReihenfolgeMitAbwechselndenGruppen(List<WettkampfGruppe> gruppen, Integer matteId) {
+	public Pair<Integer, List<Runde>> erstelleReihenfolgeMitAbwechselndenGruppen(List<WettkampfGruppeMitBegegnungen> gruppen, Integer matteId) {
 		logger.info("erstelle Reihenfolge -mit abwechselnden Gruppen- für Matte {}...", matteId);
 		List<Runde> runden = new ArrayList<>();
 		// gerade Anzahl an Gruppen -> 2 Gruppen je Matte
@@ -175,8 +176,8 @@ public class Sortierer {
 			if (gruppen.size() > 1) {
 				logger.info("Wir haben mehr als 1 Gruppe, also splitten wir");
 				// behandle die letzten 3 Gruppen separat und gruppiere zuerst die anderen Gruppen
-				List<WettkampfGruppe> letztenDreiGruppen = gruppen.subList(gruppen.size() - 3, gruppen.size());
-				List<WettkampfGruppe> andereGruppen = gruppen.subList(0, gruppen.size() - 3);
+				List<WettkampfGruppeMitBegegnungen> letztenDreiGruppen = gruppen.subList(gruppen.size() - 3, gruppen.size());
+				List<WettkampfGruppeMitBegegnungen> andereGruppen = gruppen.subList(0, gruppen.size() - 3);
 				var result = gruppiereAbwechselndPaare(andereGruppen, matteId);
 				runden.addAll(result);
 
@@ -185,12 +186,12 @@ public class Sortierer {
 				runden.addAll(result);
 			} else {
 				logger.info("Es existiert nur eine Gruppe, daher fügen wir diese komplett hinzu");
-				WettkampfGruppe gruppeZuletzt = gruppen.get(gruppen.size() - 1);
+				WettkampfGruppeMitBegegnungen gruppeZuletzt = gruppen.get(gruppen.size() - 1);
 				logger.debug("Gruppe {}", gruppeZuletzt);
 				int gruppenRunde = 1;
 				for (BegegnungenJeRunde begegnungen : gruppeZuletzt.alleRundenBegegnungen()) {
-					Altersklasse altersKlasseZuletzt = gruppeZuletzt.altersklasse();
-					Runde rundeZuletzt = new Runde(null, mattenRunde, gruppenRunde, rundeGesamt, matteId, altersKlasseZuletzt, gruppeZuletzt, begegnungen.begegnungenJeRunde());
+					Altersklasse altersKlasseZuletzt = gruppeZuletzt.gruppe().altersklasse();
+					Runde rundeZuletzt = new Runde(null, mattenRunde, gruppenRunde, rundeGesamt, matteId, altersKlasseZuletzt, gruppeZuletzt.gruppe(), begegnungen.begegnungenJeRunde());
 					runden.add(rundeZuletzt);
 					rundeGesamt++;
 					mattenRunde++;
@@ -201,19 +202,19 @@ public class Sortierer {
 		return new ImmutablePair(rundeGesamt, runden);
 	}
 
-	private List<Runde> gruppiereAbwechselndPaare(List<WettkampfGruppe> gruppen, Integer matteId) {
+	private List<Runde> gruppiereAbwechselndPaare(List<WettkampfGruppeMitBegegnungen> gruppen, Integer matteId) {
 		List<Runde> runden = new ArrayList<>();
 		for (int gruppenNr = 0; gruppenNr < gruppen.size(); gruppenNr += 2) {
-			WettkampfGruppe gruppe1 = gruppen.get(gruppenNr);
-			WettkampfGruppe gruppe2 = gruppen.get(gruppenNr + 1);
-			Altersklasse altersKlasse1 = gruppe1.altersklasse();
-			Altersklasse altersKlasse2 = gruppe2.altersklasse();
+			WettkampfGruppeMitBegegnungen gruppe1 = gruppen.get(gruppenNr);
+			WettkampfGruppeMitBegegnungen gruppe2 = gruppen.get(gruppenNr + 1);
+			Altersklasse altersKlasse1 = gruppe1.gruppe().altersklasse();
+			Altersklasse altersKlasse2 = gruppe2.gruppe().altersklasse();
 
 			// Abwechselnd die Begegnungen der gruppe1 und gruppe2 nehmen und der Matte hinzufügen
 			int maxAnzahlBegegnungen = Math.max(gruppe1.alleRundenBegegnungen().size(), gruppe2.alleRundenBegegnungen().size());
 			for (int g = 0; g < maxAnzahlBegegnungen; g++) {
 				if (gruppe1.alleRundenBegegnungen().size() > g) {
-					Runde runde1 = new Runde(null, mattenRunde, gruppe1Runde, rundeGesamt, matteId, altersKlasse1, gruppe1, gruppe1.alleRundenBegegnungen().get(g).begegnungenJeRunde());
+					Runde runde1 = new Runde(null, mattenRunde, gruppe1Runde, rundeGesamt, matteId, altersKlasse1, gruppe1.gruppe(), gruppe1.alleRundenBegegnungen().get(g).begegnungenJeRunde());
 					runden.add(runde1);
 					gruppe1Runde++;
 					rundeGesamt++;
@@ -221,14 +222,14 @@ public class Sortierer {
 				} else {
 					// Gruppe 1 hat keine Teilnehmer mehr, wir fügen daher einen Dummy (Pause) ein
 					logger.info("Gruppe 1 (von 2) ist leer, füge Dummy ein");
-					runden.add(dummyRunde(altersKlasse1, gruppe1, gruppe1Runde));
+					runden.add(dummyRunde(altersKlasse1, gruppe1.gruppe(), gruppe1Runde));
 					gruppe1Runde++;
 					rundeGesamt++;
 					mattenRunde++;
 				}
 
 				if (gruppe2.alleRundenBegegnungen().size() > g) {
-					Runde runde2 = new Runde(null, mattenRunde, gruppe2Runde, rundeGesamt, matteId, altersKlasse2, gruppe2, gruppe2.alleRundenBegegnungen().get(g).begegnungenJeRunde());
+					Runde runde2 = new Runde(null, mattenRunde, gruppe2Runde, rundeGesamt, matteId, altersKlasse2, gruppe2.gruppe(), gruppe2.alleRundenBegegnungen().get(g).begegnungenJeRunde());
 					runden.add(runde2);
 					gruppe2Runde++;
 					rundeGesamt++;
@@ -240,7 +241,7 @@ public class Sortierer {
 						break;
 					}
 					logger.info("Gruppe 2 (von 2) ist leer, füge Dummy ein");
-					runden.add(dummyRunde(altersKlasse2, gruppe2, gruppe2Runde));
+					runden.add(dummyRunde(altersKlasse2, gruppe2.gruppe(), gruppe2Runde));
 					gruppe2Runde++;
 					rundeGesamt++;
 					mattenRunde++;
@@ -262,20 +263,20 @@ public class Sortierer {
 		return new Runde(null, mattenRunde, gruppenRunde, rundeGesamt, null, altersKlasse, gruppe, List.of(pausenBegegnung));
 	}
 
-	private List<Runde> gruppiereAbwechselndTrios(List<WettkampfGruppe> gruppen, Integer matteId) {
+	private List<Runde> gruppiereAbwechselndTrios(List<WettkampfGruppeMitBegegnungen> gruppen, Integer matteId) {
 		logger.debug("gruppiere Matte {}", matteId);
 		List<Runde> runden = new ArrayList<>();
-		WettkampfGruppe gruppe1 = gruppen.get(0);
-		WettkampfGruppe gruppe2 = gruppen.get(1);
-		WettkampfGruppe gruppe3 = gruppen.get(2);
-		Altersklasse altersKlasse1 = gruppe1.altersklasse();
-		Altersklasse altersKlasse2 = gruppe2.altersklasse();
-		Altersklasse altersKlasse3 = gruppe3.altersklasse();
+		WettkampfGruppeMitBegegnungen gruppe1 = gruppen.get(0);
+		WettkampfGruppeMitBegegnungen gruppe2 = gruppen.get(1);
+		WettkampfGruppeMitBegegnungen gruppe3 = gruppen.get(2);
+		Altersklasse altersKlasse1 = gruppe1.gruppe().altersklasse();
+		Altersklasse altersKlasse2 = gruppe2.gruppe().altersklasse();
+		Altersklasse altersKlasse3 = gruppe3.gruppe().altersklasse();
 
 		// Abwechselnd die Begegnungen der gruppe1 und gruppe2 nehmen und der Matte hinzufügen
 		for (int r = 0; r < Math.max(gruppe1.alleRundenBegegnungen().size(), Math.max(gruppe2.alleRundenBegegnungen().size(), gruppe3.alleRundenBegegnungen().size())); r++) {
 			if (gruppe1.alleRundenBegegnungen().size() > r) {
-				Runde runde1 = new Runde(null, mattenRunde, gruppe1Runde, rundeGesamt, matteId, altersKlasse1, gruppe1, gruppe1.alleRundenBegegnungen().get(r).begegnungenJeRunde());
+				Runde runde1 = new Runde(null, mattenRunde, gruppe1Runde, rundeGesamt, matteId, altersKlasse1, gruppe1.gruppe(), gruppe1.alleRundenBegegnungen().get(r).begegnungenJeRunde());
 				runden.add(runde1);
 				gruppe1Runde++;
 				rundeGesamt++;
@@ -286,7 +287,7 @@ public class Sortierer {
 			}
 
 			if (gruppe2.alleRundenBegegnungen().size() > r) {
-				Runde runde2 = new Runde(null, mattenRunde, gruppe2Runde, rundeGesamt, matteId, altersKlasse2, gruppe2, gruppe2.alleRundenBegegnungen().get(r).begegnungenJeRunde());
+				Runde runde2 = new Runde(null, mattenRunde, gruppe2Runde, rundeGesamt, matteId, altersKlasse2, gruppe2.gruppe(), gruppe2.alleRundenBegegnungen().get(r).begegnungenJeRunde());
 				runden.add(runde2);
 				gruppe2Runde++;
 				rundeGesamt++;
@@ -297,7 +298,7 @@ public class Sortierer {
 			}
 
 			if (gruppe3.alleRundenBegegnungen().size() > r) {
-				Runde runde3 = new Runde(null, mattenRunde, gruppe3Runde, rundeGesamt, matteId, altersKlasse3, gruppe3, gruppe3.alleRundenBegegnungen().get(r).begegnungenJeRunde());
+				Runde runde3 = new Runde(null, mattenRunde, gruppe3Runde, rundeGesamt, matteId, altersKlasse3, gruppe3.gruppe(), gruppe3.alleRundenBegegnungen().get(r).begegnungenJeRunde());
 				runden.add(runde3);
 				gruppe3Runde++;
 				rundeGesamt++;

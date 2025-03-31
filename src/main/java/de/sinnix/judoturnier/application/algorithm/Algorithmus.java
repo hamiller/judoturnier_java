@@ -1,11 +1,9 @@
 package de.sinnix.judoturnier.application.algorithm;
 
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
-import de.sinnix.judoturnier.model.WettkampfGruppe;
-
-import java.util.List;
+import de.sinnix.judoturnier.model.WettkampfGruppeMitBegegnungen;
 
 public interface Algorithmus {
 
-	WettkampfGruppe erstelleWettkampfGruppe(GewichtsklassenGruppe gewichtsklassenGruppe);
+	WettkampfGruppeMitBegegnungen erstelleWettkampfGruppe(GewichtsklassenGruppe gewichtsklassenGruppe);
 }

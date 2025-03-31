@@ -10,6 +10,7 @@ import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.RandoriGruppenName;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
+import de.sinnix.judoturnier.model.WettkampfGruppeMitBegegnungen;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +45,7 @@ class JederGegenJedenTest {
 		 * 6 Teilnehmer, jeder gegen jeden -> 5 Runden
 		 */
 		GewichtsklassenGruppe gewichtsklassenGruppe = GewichtsklassenGruppeFixture.gewichtsklassenGruppen.getFirst();
-		WettkampfGruppe erstellteWettkampfgruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassenGruppe);
+		WettkampfGruppeMitBegegnungen erstellteWettkampfgruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassenGruppe);
 		var n = gewichtsklassenGruppe.teilnehmer().size();
 
 		assertTrue(gewichtsklassenGruppe.name().isPresent());
@@ -54,8 +55,8 @@ class JederGegenJedenTest {
 		assertEquals(6, gewichtsklassenGruppe.teilnehmer().size());
 
 		// Aufteilung in Gruppen
-		assertEquals("(23.8-24.5 U11)", erstellteWettkampfgruppe.typ());
-		assertEquals("Antilope", erstellteWettkampfgruppe.name());
+		assertEquals("(23.8-24.5 U11)", erstellteWettkampfgruppe.gruppe().typ());
+		assertEquals("Antilope", erstellteWettkampfgruppe.gruppe().name());
 		// Anzahl der Runden
 		var anzahlRunden = n - 1;
 		assertEquals(anzahlRunden, erstellteWettkampfgruppe.alleRundenBegegnungen().size());
@@ -110,7 +111,7 @@ class JederGegenJedenTest {
 		 * 3 Teilnehmer, jeder gegen jeden -> 3 Runden
 		 */
 		GewichtsklassenGruppe gewichtsklassenGruppe = GewichtsklassenGruppeFixture.gewichtsklassenGruppen.getLast();
-		WettkampfGruppe erstellteWettkampfgruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassenGruppe);
+		WettkampfGruppeMitBegegnungen erstellteWettkampfgruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassenGruppe);
 		var n = gewichtsklassenGruppe.teilnehmer().size();
 
 		assertTrue(gewichtsklassenGruppe.name().isPresent());
@@ -120,8 +121,8 @@ class JederGegenJedenTest {
 		assertEquals(3, gewichtsklassenGruppe.teilnehmer().size());
 
 		// Aufteilung in Gruppen
-		assertEquals("(28.0-28.2 U11)", erstellteWettkampfgruppe.typ());
-		assertEquals("Tiger", erstellteWettkampfgruppe.name());
+		assertEquals("(28.0-28.2 U11)", erstellteWettkampfgruppe.gruppe().typ());
+		assertEquals("Tiger", erstellteWettkampfgruppe.gruppe().name());
 		// Anzahl der Runden
 		var anzahlRunden = n;
 		assertEquals(anzahlRunden, erstellteWettkampfgruppe.alleRundenBegegnungen().size());
@@ -158,7 +159,7 @@ class JederGegenJedenTest {
 		List<Wettkaempfer> teilnehmer = List.of(WettkaempferFixtures.wettkaempfer1.get());
 		GewichtsklassenGruppe gewichtsklassenGruppe = new GewichtsklassenGruppe(UUID.randomUUID(), Altersklasse.U11, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Adler), 25.0, 25.0, turnierUUID);
 
-		WettkampfGruppe erstellteWettkampfgruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassenGruppe);
+		WettkampfGruppeMitBegegnungen erstellteWettkampfgruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassenGruppe);
 
 		assertTrue(!erstellteWettkampfgruppe.alleRundenBegegnungen().isEmpty());
 		assertEquals(1, erstellteWettkampfgruppe.alleRundenBegegnungen().stream().mapToInt(b -> b.begegnungenJeRunde().size()).sum());

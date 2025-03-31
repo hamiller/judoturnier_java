@@ -9,6 +9,7 @@ import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Verein;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
+import de.sinnix.judoturnier.model.WettkampfGruppeMitBegegnungen;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,7 +60,7 @@ class DoppelKOSystemTest {
 		);
 		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(UUID.randomUUID(), Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 26.1, turnierUUID);
 
-		WettkampfGruppe wettkampfGruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassengruppe);
+		WettkampfGruppeMitBegegnungen wettkampfGruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassengruppe);
 		// Ausgabe des Turnierbaums
 		int r = 1;
 		for (BegegnungenJeRunde begegnungenJeRunde : wettkampfGruppe.alleRundenBegegnungen()) {
@@ -94,7 +95,7 @@ class DoppelKOSystemTest {
 
 		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(UUID.randomUUID(), Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 43.0, turnierUUID);
 
-		WettkampfGruppe wettkampfGruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassengruppe);
+		WettkampfGruppeMitBegegnungen wettkampfGruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassengruppe);
 
 		// Ausgabe des Turnierbaums
 		int r = 1;
@@ -146,7 +147,7 @@ class DoppelKOSystemTest {
 
 		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(UUID.randomUUID(), Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 43.0, turnierUUID);
 
-		WettkampfGruppe wettkampfGruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassengruppe);
+		WettkampfGruppeMitBegegnungen wettkampfGruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassengruppe);
 
 		// Ausgabe des Turnierbaums
 		int r = 1;
@@ -200,7 +201,7 @@ class DoppelKOSystemTest {
 
 		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(UUID.randomUUID(), Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 43.0, turnierUUID);
 
-		WettkampfGruppe wettkampfGruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassengruppe);
+		WettkampfGruppeMitBegegnungen wettkampfGruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassengruppe);
 
 		// Ausgabe des Turnierbaums
 		int r = 1;
@@ -279,7 +280,7 @@ class DoppelKOSystemTest {
 
 		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(UUID.randomUUID(), Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 43.0, turnierUUID);
 
-		WettkampfGruppe wettkampfGruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassengruppe);
+		WettkampfGruppeMitBegegnungen wettkampfGruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassengruppe);
 
 		// Ausgabe des Turnierbaums
 		int r = 1;
@@ -380,7 +381,7 @@ class DoppelKOSystemTest {
 
 		GewichtsklassenGruppe gewichtsklassengruppe = new GewichtsklassenGruppe(UUID.randomUUID(), Altersklasse.U11, Optional.of(Geschlecht.m), teilnehmer, Optional.empty(), 25.0, 43.0, turnierUUID);
 
-		WettkampfGruppe wettkampfGruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassengruppe);
+		WettkampfGruppeMitBegegnungen wettkampfGruppe = algorithmus.erstelleWettkampfGruppe(gewichtsklassengruppe);
 
 		// Ausgabe des Turnierbaums
 		int r = 1;

@@ -6,6 +6,7 @@ import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.RandoriGruppenName;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
+import de.sinnix.judoturnier.model.WettkampfGruppeMitBegegnungen;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -41,7 +42,7 @@ public class DoppelKOSystem implements Algorithmus {
 	private static final Logger logger          = LogManager.getLogger(DoppelKOSystem.class);
 
 	@Override
-	public WettkampfGruppe erstelleWettkampfGruppe(GewichtsklassenGruppe gewichtsklassenGruppe) {
+	public WettkampfGruppeMitBegegnungen erstelleWettkampfGruppe(GewichtsklassenGruppe gewichtsklassenGruppe) {
 		// Teilnehmer der Gruppe
 		List<Wettkaempfer> teilnehmer = gewichtsklassenGruppe.teilnehmer();
 
@@ -62,10 +63,9 @@ public class DoppelKOSystem implements Algorithmus {
 			gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
 			"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
 			gewichtsklassenGruppe.altersKlasse(),
-			begegnungenJeRunde,
 			gewichtsklassenGruppe.turnierUUID()
 		);
-		return wettkampfGruppe;
+		return new WettkampfGruppeMitBegegnungen(wettkampfGruppe, begegnungenJeRunde);
 	}
 
 	// Erstelle Begegnungen dieser Gruppe (Gewinner- und Trostrunden)

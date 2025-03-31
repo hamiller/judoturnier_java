@@ -6,6 +6,7 @@ import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.RandoriGruppenName;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
+import de.sinnix.judoturnier.model.WettkampfGruppeMitBegegnungen;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +27,7 @@ public class BesterAusDrei implements Algorithmus {
 	private static final Logger logger = LogManager.getLogger(BesterAusDrei.class);
 
 	@Override
-	public WettkampfGruppe erstelleWettkampfGruppe(GewichtsklassenGruppe gewichtsklassenGruppe) {
+	public WettkampfGruppeMitBegegnungen erstelleWettkampfGruppe(GewichtsklassenGruppe gewichtsklassenGruppe) {
 		// Teilnehmer der Gruppe
 		List<Wettkaempfer> teilnehmer = gewichtsklassenGruppe.teilnehmer();
 
@@ -40,14 +41,14 @@ public class BesterAusDrei implements Algorithmus {
 			.map(BegegnungenJeRunde::new)
 			.collect(Collectors.toList());
 
-		return new WettkampfGruppe(
+		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(
 			UUID.randomUUID(),
 			gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
 			"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
 			gewichtsklassenGruppe.altersKlasse(),
-			begegnungenJeRunde,
 			gewichtsklassenGruppe.turnierUUID()
 		);
+		return new WettkampfGruppeMitBegegnungen(wettkampfGruppe, begegnungenJeRunde);
 	}
 
 	private List<Begegnung> erstelleBegegnungen(List<Wettkaempfer> teilnehmer, UUID turnierUUID) {

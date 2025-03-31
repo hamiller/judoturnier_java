@@ -1,6 +1,5 @@
 package de.sinnix.judoturnier.model;
 
-import java.util.List;
 import java.util.UUID;
 
 public record WettkampfGruppe(
@@ -8,7 +7,6 @@ public record WettkampfGruppe(
 	String name,
 	String typ,
 	Altersklasse altersklasse,
-	List<BegegnungenJeRunde> alleRundenBegegnungen,
 	UUID turnierUUID) {
 	@Override
 	public String toString() {
@@ -17,7 +15,6 @@ public record WettkampfGruppe(
 			", name='" + name + '\'' +
 			", typ='" + typ + '\'' +
 			", altersklasse=" + altersklasse +
-			", alleRundenBegegnungen(size)=" + alleRundenBegegnungen +
 			", turnierUUID=" + turnierUUID +
 			'}';
 	}

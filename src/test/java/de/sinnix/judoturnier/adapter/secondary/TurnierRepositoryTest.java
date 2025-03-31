@@ -63,7 +63,7 @@ class TurnierRepositoryTest {
 	void testLadeBegegnung() {
 		UUID turnierUUID = UUID.randomUUID();
 		UUID id = UUID.randomUUID();
-		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(id, "Gruppe1", "typ1", Altersklasse.U11, List.of(), turnierUUID);
+		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(id, "Gruppe1", "typ1", Altersklasse.U11, turnierUUID);
 
 		Wertung wertung = new Wertung(
 			UUID.randomUUID(),
@@ -115,7 +115,7 @@ class TurnierRepositoryTest {
 		UUID turnierUUID = WettkaempferFixtures.turnierUUID;
 		UUID rundeUUID = UUID.randomUUID();
 		UUID id = UUID.randomUUID();
-		WettkampfGruppe wkg = new WettkampfGruppe(id, "name", "typ", Altersklasse.U11, List.of(), turnierUUID);
+		WettkampfGruppe wkg = new WettkampfGruppe(id, "name", "typ", Altersklasse.U11, turnierUUID);
 		List<Begegnung> begegnungList = new ArrayList<>();
 		Begegnung.BegegnungId begegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1);
 		begegnungList.add(new Begegnung(null, begegnungId, rundeUUID, 2, 3, 4, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(), wkg, turnierUUID));
@@ -143,7 +143,7 @@ class TurnierRepositoryTest {
 		UUID runde1UUID = UUID.randomUUID();
 		UUID runde2UUID = UUID.randomUUID();
 		UUID id = UUID.randomUUID();
-		WettkampfGruppe wkg = new WettkampfGruppe(id, "name", "typ", Altersklasse.U11, List.of(), turnierUUID);
+		WettkampfGruppe wkg = new WettkampfGruppe(id, "name", "typ", Altersklasse.U11, turnierUUID);
 		Begegnung.BegegnungId begegnungId1 = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1);
 		Begegnung.BegegnungId begegnungId2 = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1);
 		Begegnung begegnung1 = new Begegnung(null, begegnungId1, runde1UUID, 5, 3, 4, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(), wkg, turnierUUID);
@@ -172,7 +172,7 @@ class TurnierRepositoryTest {
 		UUID runde1UUID = UUID.randomUUID();
 		UUID runde2UUID = UUID.randomUUID();
 		UUID id = UUID.randomUUID();
-		WettkampfGruppe wkg = new WettkampfGruppe(id, "name", "typ", Altersklasse.U11, List.of(), turnierUUID);
+		WettkampfGruppe wkg = new WettkampfGruppe(id, "name", "typ", Altersklasse.U11, turnierUUID);
 		Begegnung.BegegnungId begegnungId1 = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1);
 		Begegnung.BegegnungId begegnungId2 = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1);
 		Begegnung begegnung1 = new Begegnung(null, begegnungId1, runde1UUID, 5, 3, 4, 4, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(), wkg, turnierUUID);
@@ -204,7 +204,7 @@ class TurnierRepositoryTest {
 		UUID wkgId = UUID.randomUUID();
 		UUID jpa1Id = UUID.randomUUID();
 		UUID jpa2Id = UUID.randomUUID();
-		WettkampfGruppe wkg = new WettkampfGruppe(wkgId, "name", "typ", Altersklasse.U11, List.of(), turnierUUID);
+		WettkampfGruppe wkg = new WettkampfGruppe(wkgId, "name", "typ", Altersklasse.U11, turnierUUID);
 		BegegnungJpa jpa1 = new BegegnungJpa();
 		jpa1.setUuid(jpa1Id.toString());
 		BegegnungJpa jpa2 = new BegegnungJpa();
@@ -260,7 +260,7 @@ class TurnierRepositoryTest {
 		UUID jpa1Id = UUID.randomUUID();
 		UUID jpa2Id = UUID.randomUUID();
 		UUID jpa3Id = UUID.randomUUID();
-		WettkampfGruppe wkg = new WettkampfGruppe(wkgId, "name", "typ", Altersklasse.U11, List.of(), turnierUUID);
+		WettkampfGruppe wkg = new WettkampfGruppe(wkgId, "name", "typ", Altersklasse.U11, turnierUUID);
 		BegegnungJpa jpa1 = new BegegnungJpa();
 		jpa1.setUuid(jpa1Id.toString());
 		BegegnungJpa jpa2 = new BegegnungJpa();
@@ -300,7 +300,7 @@ class TurnierRepositoryTest {
 		UUID jpa1Id = UUID.randomUUID();
 		UUID jpa2Id = UUID.randomUUID();
 		UUID jpa3Id = UUID.randomUUID();
-		WettkampfGruppe wkg = new WettkampfGruppe(wkgId, "name", "typ", Altersklasse.U11, List.of(), turnierUUID);
+		WettkampfGruppe wkg = new WettkampfGruppe(wkgId, "name", "typ", Altersklasse.U11, turnierUUID);
 		WettkampfGruppeJpa wkgJpa = new WettkampfGruppeJpa();
 		BegegnungJpa jpa1 = new BegegnungJpa();
 		jpa1.setUuid(jpa1Id.toString());

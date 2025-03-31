@@ -11,7 +11,7 @@ import java.util.UUID;
 public class WettkampfGruppeConverter {
 
 	public WettkampfGruppe convertToWettkampfGruppe(WettkampfGruppeJpa jpa) {
-		return new WettkampfGruppe(UUID.fromString(jpa.getUuid()), jpa.getName(), jpa.getTyp(), Altersklasse.valueOf(jpa.getAltersklasse()), List.of(), UUID.fromString(jpa.getTurnierUUID()));
+		return new WettkampfGruppe(UUID.fromString(jpa.getUuid()), jpa.getName(), jpa.getTyp(), Altersklasse.valueOf(jpa.getAltersklasse()), UUID.fromString(jpa.getTurnierUUID()));
 	}
 
 	public WettkampfGruppeJpa convertFromWettkampfGruppe(WettkampfGruppe wettkampfGruppe) {

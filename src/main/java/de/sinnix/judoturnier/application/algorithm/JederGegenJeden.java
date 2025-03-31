@@ -6,6 +6,7 @@ import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.RandoriGruppenName;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
+import de.sinnix.judoturnier.model.WettkampfGruppeMitBegegnungen;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,20 +19,19 @@ public class JederGegenJeden implements Algorithmus {
 	private static final Logger logger                   = LogManager.getLogger(JederGegenJeden.class);
 
 	@Override
-	public WettkampfGruppe erstelleWettkampfGruppe(GewichtsklassenGruppe gewichtsklassenGruppe) {
+	public WettkampfGruppeMitBegegnungen erstelleWettkampfGruppe(GewichtsklassenGruppe gewichtsklassenGruppe) {
 		logger.info("JederGegenJeden Algorithmus genutzt");
 		List<Wettkaempfer> wettkaempferGruppe = gewichtsklassenGruppe.teilnehmer();
-		List<BegegnungenJeRunde> begegnungen = berechneBegegnungen(wettkaempferGruppe);
+		List<BegegnungenJeRunde> begegnungenJeRunde = berechneBegegnungen(wettkaempferGruppe);
 
 		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(
 			UUID.randomUUID(),
 			gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
 			"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
 			gewichtsklassenGruppe.altersKlasse(),
-			begegnungen,
 			gewichtsklassenGruppe.turnierUUID()
 		);
-		return wettkampfGruppe;
+		return new WettkampfGruppeMitBegegnungen(wettkampfGruppe, begegnungenJeRunde);
 	}
 
 	private List<BegegnungenJeRunde> berechneBegegnungen(List<Wettkaempfer> teilnehmer) {

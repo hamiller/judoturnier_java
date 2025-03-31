@@ -70,7 +70,7 @@ class BegegnungConverterTest {
 		begegnungJpa.setPaarung(begegnungId.getAkuellePaarung());
 
 		when(wettkaempferConverter.convertToWettkaempfer(any(WettkaempferJpa.class))).thenReturn(WettkaempferFixtures.wettkaempfer1.get());
-		when(wettkampfGruppeConverter.convertToWettkampfGruppe(any())).thenReturn(new WettkampfGruppe(wkgUUID, "name", "typ", Altersklasse.U11, List.of(), turnierUUID));
+		when(wettkampfGruppeConverter.convertToWettkampfGruppe(any())).thenReturn(new WettkampfGruppe(wkgUUID, "name", "typ", Altersklasse.U11, turnierUUID));
 
 		Begegnung result = begegnungConverter.convertToBegegnung(begegnungJpa, List.of(wettkampfGruppeJpa));
 
@@ -106,7 +106,7 @@ class BegegnungConverterTest {
 			bewerter);
 
 		Begegnung.BegegnungId begegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1);
-		Begegnung begegnung = new Begegnung(begegnungUUID, begegnungId, rundeUUID,2, 123, 22, 13, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(wertung), new WettkampfGruppe(wkgUUID, "Gruppe1", "typ1", Altersklasse.U11, List.of(), turnierUUID), turnierUUID);
+		Begegnung begegnung = new Begegnung(begegnungUUID, begegnungId, rundeUUID,2, 123, 22, 13, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(wertung), new WettkampfGruppe(wkgUUID, "Gruppe1", "typ1", Altersklasse.U11, turnierUUID), turnierUUID);
 
 		WertungJpa wertungJpa = new WertungJpa();
 		wertungJpa.setUuid(wertung.getUuid().toString());

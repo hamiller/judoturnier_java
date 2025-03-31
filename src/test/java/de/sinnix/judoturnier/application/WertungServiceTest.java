@@ -82,7 +82,7 @@ class WertungServiceTest {
 			1, 2, 3, 3,
 			WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2,
 			wertungList,
-			WettkampfgruppeFixture.gruppe1,
+			WettkampfgruppeFixture.gruppe1.gruppe(),
 			turnierUUID
 		);
 
@@ -124,7 +124,7 @@ class WertungServiceTest {
 			1, 2, 3, 3,
 			WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2,
 			wertungList,
-			WettkampfgruppeFixture.gruppe1,
+			WettkampfgruppeFixture.gruppe1.gruppe(),
 			turnierUUID
 		);
 
@@ -159,7 +159,7 @@ class WertungServiceTest {
 			1, 2, 3, 3,
 			WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2,
 			new ArrayList<>(),
-			WettkampfgruppeFixture.gruppe1,
+			WettkampfgruppeFixture.gruppe1.gruppe(),
 			turnierUUID
 		);
 
@@ -201,7 +201,7 @@ class WertungServiceTest {
 			1, aktuelleMattenRunde, aktuelleGruppenRunde, aktuelleGesamtRunde,
 			WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2,
 			new ArrayList<>(),
-			WettkampfgruppeFixture.gruppe1,
+			WettkampfgruppeFixture.gruppe1.gruppe(),
 			turnierUUID
 		);
 
@@ -209,7 +209,7 @@ class WertungServiceTest {
 		when(wettkampfService.ladeBegegnung(any())).thenReturn(aktuelleBegegnung);
 		when(benutzerRepository.findBenutzer(eq(benutzer.uuid()))).thenReturn(Optional.of(benutzer));
 		when(wettkaempferService.ladeKaempfer(eq(siegerUuid))).thenReturn(WettkaempferFixtures.wettkaempfer1);
-		when(turnierRepository.ladeWettkampfgruppeRunden(eq(WettkampfgruppeFixture.gruppe1.id()), eq(turnierUUID))).thenReturn(List.of());
+		when(turnierRepository.ladeWettkampfgruppeRunden(eq(WettkampfgruppeFixture.gruppe1.gruppe().id()), eq(turnierUUID))).thenReturn(List.of());
 
 		wertungService.speichereTurnierWertung(aktuelleBegegnung.getId(), scoreWeiss, scoreBlau, penaltiesWeiss, penaltiesBlau, fighttime, siegerUuid, benutzer.uuid());
 
@@ -241,7 +241,7 @@ class WertungServiceTest {
 		var naechsteBegegnungUUID = WettkampfgruppeFixture.b7UUID;
 		var naechsteBegegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 1);
 
-		WettkampfGruppe wkg = WettkampfgruppeFixture.wettkampfGruppeFrauen;
+		WettkampfGruppe wkg = WettkampfgruppeFixture.wettkampfGruppeFrauen.gruppe();
 		List<Begegnung> begegnungListRunde1 = new ArrayList<>();
 		begegnungListRunde1.add(new Begegnung(WettkampfgruppeFixture.b1UUID, new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), null, null, null, null, null,
 			Optional.of(WettkaempferFixtures.wettkaempferin1),
@@ -294,9 +294,9 @@ class WertungServiceTest {
 		UUID rundeUUID1 = UUID.randomUUID();
 		UUID rundeUUID2 = UUID.randomUUID();
 		UUID rundeUUID3 = UUID.randomUUID();
-		rundenList.add(new Runde(rundeUUID1, 1, 1, 1, 1, Altersklasse.Frauen, WettkampfgruppeFixture.wettkampfGruppeFrauen, begegnungListRunde1));
-		rundenList.add(new Runde(rundeUUID2, 2, 2, 2, 1, Altersklasse.Frauen, WettkampfgruppeFixture.wettkampfGruppeFrauen, begegnungListRunde2));
-		rundenList.add(new Runde(rundeUUID3, 3, 3, 3, 1, Altersklasse.Frauen, WettkampfgruppeFixture.wettkampfGruppeFrauen, begegnungListRunde3));
+		rundenList.add(new Runde(rundeUUID1, 1, 1, 1, 1, Altersklasse.Frauen, WettkampfgruppeFixture.wettkampfGruppeFrauen.gruppe(), begegnungListRunde1));
+		rundenList.add(new Runde(rundeUUID2, 2, 2, 2, 1, Altersklasse.Frauen, WettkampfgruppeFixture.wettkampfGruppeFrauen.gruppe(), begegnungListRunde2));
+		rundenList.add(new Runde(rundeUUID3, 3, 3, 3, 1, Altersklasse.Frauen, WettkampfgruppeFixture.wettkampfGruppeFrauen.gruppe(), begegnungListRunde3));
 
 		// Teil 1
 		when(wettkampfService.ladeBegegnung(any())).thenReturn(begegnungListRunde1.get(1));
@@ -354,10 +354,10 @@ class WertungServiceTest {
 		Wertung wertung4 = new Wertung(UUID.randomUUID(), WettkaempferFixtures.wettkaempferin4, Duration.ofMinutes(2), 1, 0, 0, 0, null, null, null, null, null, null, null, null, bewerter);
 
 		List<Begegnung> begegnungList = List.of(
-			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), UUID.randomUUID(), 1, 1, 1, 1, Optional.of(WettkaempferFixtures.wettkaempferin1), Optional.of(WettkaempferFixtures.wettkaempferin2), List.of(wertung1), WettkampfgruppeFixture.gruppe1, turnierUUID),
-			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 2), UUID.randomUUID(), 1, 2, 2, 2, Optional.of(WettkaempferFixtures.wettkaempferin3), Optional.of(WettkaempferFixtures.wettkaempferin4), List.of(wertung2), WettkampfgruppeFixture.gruppe1, turnierUUID),
-			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 3), UUID.randomUUID(), 1, 3, 3, 3, Optional.of(WettkaempferFixtures.wettkaempferin1), Optional.of(WettkaempferFixtures.wettkaempferin3), List.of(wertung3), WettkampfgruppeFixture.gruppe1, turnierUUID),
-			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 4), UUID.randomUUID(), 1, 4, 4, 4, Optional.of(WettkaempferFixtures.wettkaempferin4), Optional.of(WettkaempferFixtures.wettkaempferin2), List.of(wertung4), WettkampfgruppeFixture.gruppe1, turnierUUID)
+			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), UUID.randomUUID(), 1, 1, 1, 1, Optional.of(WettkaempferFixtures.wettkaempferin1), Optional.of(WettkaempferFixtures.wettkaempferin2), List.of(wertung1), WettkampfgruppeFixture.gruppe1.gruppe(), turnierUUID),
+			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 2), UUID.randomUUID(), 1, 2, 2, 2, Optional.of(WettkaempferFixtures.wettkaempferin3), Optional.of(WettkaempferFixtures.wettkaempferin4), List.of(wertung2), WettkampfgruppeFixture.gruppe1.gruppe(), turnierUUID),
+			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 3), UUID.randomUUID(), 1, 3, 3, 3, Optional.of(WettkaempferFixtures.wettkaempferin1), Optional.of(WettkaempferFixtures.wettkaempferin3), List.of(wertung3), WettkampfgruppeFixture.gruppe1.gruppe(), turnierUUID),
+			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 4), UUID.randomUUID(), 1, 4, 4, 4, Optional.of(WettkaempferFixtures.wettkaempferin4), Optional.of(WettkaempferFixtures.wettkaempferin2), List.of(wertung4), WettkampfgruppeFixture.gruppe1.gruppe(), turnierUUID)
 		);
 		when(turnierRepository.ladeAlleBegegnungen(any())).thenReturn(begegnungList);
 

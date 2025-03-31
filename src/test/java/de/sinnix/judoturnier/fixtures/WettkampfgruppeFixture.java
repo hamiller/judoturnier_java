@@ -8,6 +8,7 @@ import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.Verein;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
+import de.sinnix.judoturnier.model.WettkampfGruppeMitBegegnungen;
 
 import java.util.Arrays;
 import java.util.List;
@@ -105,7 +106,7 @@ public class WettkampfgruppeFixture {
 	public static final  UUID b51UUID     = UUID.randomUUID();
 
 
-    public static WettkampfGruppe gruppe1 = new WettkampfGruppe(gwkgk1UUID, "Antilope", "(Gewichtskl.1 U11)", Altersklasse.U11, Arrays.asList(
+    public static WettkampfGruppeMitBegegnungen gruppe1 = new WettkampfGruppeMitBegegnungen(new WettkampfGruppe(gwkgk1UUID, "Antilope", "(Gewichtskl.1 U11)", Altersklasse.U11, turnierUUID), Arrays.asList(
         new BegegnungenJeRunde(Arrays.asList(
             new Begegnung(b1UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1),rundeUUID1, 1, 1, 1, 1,
                 Optional.of(new Wettkaempfer(wk1UUID, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(v1UUID, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)),
@@ -161,10 +162,12 @@ public class WettkampfgruppeFixture {
                 Optional.of(new Wettkaempfer(wk5UUID, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(v5UUID, "Verein5", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)),
                 Optional.of(new Wettkaempfer(wk1UUID, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(v1UUID, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)), null, null, turnierUUID)
         ))
-    ), turnierUUID);
+    ));
 
-    public static List<WettkampfGruppe> wks_gerade = Arrays.asList(
-            new WettkampfGruppe(gwkgk1UUID, "Antilope", "(Gewichtskl.1 U11)", Altersklasse.U11, Arrays.asList(
+    public static List<WettkampfGruppeMitBegegnungen> wks_gerade = Arrays.asList(
+		new WettkampfGruppeMitBegegnungen(
+            new WettkampfGruppe(gwkgk1UUID, "Antilope", "(Gewichtskl.1 U11)", Altersklasse.U11, turnierUUID),
+			Arrays.asList(
                 new BegegnungenJeRunde(Arrays.asList(
                             new Begegnung(b1UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1),rundeUUID1, 1, 1, 1,1,
                                     Optional.of(new Wettkaempfer(wk1UUID, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(v1UUID, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)),
@@ -220,8 +223,10 @@ public class WettkampfgruppeFixture {
                                     Optional.of(new Wettkaempfer(wk5UUID, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(v5UUID, "Verein5", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)),
                                     Optional.of(new Wettkaempfer(wk1UUID, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(v1UUID, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)), null, null, turnierUUID))
                 )
-            ), turnierUUID),
-            new WettkampfGruppe(gwkgk2UUID, "Eule", "(Gewichtskl.1 U11)", Altersklasse.U11, Arrays.asList(
+            )),
+		new WettkampfGruppeMitBegegnungen(
+			new WettkampfGruppe(gwkgk2UUID, "Eule", "(Gewichtskl.1 U11)", Altersklasse.U11, turnierUUID),
+			Arrays.asList(
                 new BegegnungenJeRunde(Arrays.asList(
                             new Begegnung(b16UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1),rundeUUID1, 1, 1, 1,16,
                                     Optional.of(new Wettkaempfer(wk7UUID, "Teilnehmer G", Geschlecht.m, Altersklasse.U11, new Verein(v7UUID, "Verein7", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)),
@@ -277,8 +282,10 @@ public class WettkampfgruppeFixture {
                                     Optional.of(new Wettkaempfer(wk11UUID, "Teilnehmer K", Geschlecht.m, Altersklasse.U11, new Verein(v1UUID, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)),
                                     Optional.of(new Wettkaempfer(wk7UUID, "Teilnehmer G", Geschlecht.m, Altersklasse.U11, new Verein(v7UUID, "Verein7", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)), null, null, turnierUUID))
                 )
-            ), turnierUUID),
-            new WettkampfGruppe(gwkgk3UUID, "Katze", "(Gewichtskl.1 U11)", Altersklasse.U11, Arrays.asList(
+            )),
+		new WettkampfGruppeMitBegegnungen(
+            new WettkampfGruppe(gwkgk3UUID, "Katze", "(Gewichtskl.1 U11)", Altersklasse.U11, turnierUUID),
+			Arrays.asList(
                 new BegegnungenJeRunde(Arrays.asList(
                             new Begegnung(b31UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1),rundeUUID1, 1, 1, 1, 31,
                                     Optional.of(new Wettkaempfer(wk13UUID, "Teilnehmer M", Geschlecht.m, Altersklasse.U11, new Verein(v3UUID, "Verein3", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)),
@@ -334,8 +341,10 @@ public class WettkampfgruppeFixture {
                                     Optional.of(new Wettkaempfer(wk19UUID, "Teilnehmer Q", Geschlecht.m, Altersklasse.U11, new Verein(v9UUID, "Verein9", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)),
                                     Optional.of(new Wettkaempfer(wk13UUID, "Teilnehmer M", Geschlecht.m, Altersklasse.U11, new Verein(v3UUID, "Verein3", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)), null, null, turnierUUID))
                 )
-            ), turnierUUID),
-            new WettkampfGruppe(gwkgk4UUID, "Maus", "(Gewichtskl.1 U11)", Altersklasse.U11, Arrays.asList(
+            )),
+		new WettkampfGruppeMitBegegnungen(
+            new WettkampfGruppe(gwkgk4UUID, "Maus", "(Gewichtskl.1 U11)", Altersklasse.U11, turnierUUID),
+			Arrays.asList(
                 new BegegnungenJeRunde(Arrays.asList(
                             new Begegnung(b46UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1),rundeUUID1, 1, 1, 1, 46,
                                     Optional.of(new Wettkaempfer(wk19UUID, "Teilnehmer S", Geschlecht.m, Altersklasse.U11, new Verein(v9UUID, "Verein9", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)),
@@ -360,13 +369,13 @@ public class WettkampfgruppeFixture {
                                     Optional.of(new Wettkaempfer(wk21UUID, "Teilnehmer U", Geschlecht.m, Altersklasse.U11, new Verein(v1UUID, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)),
                                     Optional.of(new Wettkaempfer(wk19UUID, "Teilnehmer S", Geschlecht.m, Altersklasse.U11, new Verein(v9UUID, "Verein9", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)), null, null, turnierUUID))
                 )
-            ), turnierUUID)
+            ))
     );
 
 
 
-    public static List<WettkampfGruppe>  wks2 = Arrays.asList(
-        new WettkampfGruppe(gwkgk1UUID, "Antilope", "(Gewichtskl.1 U11)", Altersklasse.U11, Arrays.asList(
+    public static List<WettkampfGruppeMitBegegnungen> wks2 = Arrays.asList(
+        new WettkampfGruppeMitBegegnungen(new WettkampfGruppe(gwkgk1UUID, "Antilope", "(Gewichtskl.1 U11)", Altersklasse.U11, turnierUUID), Arrays.asList(
             new BegegnungenJeRunde(Arrays.asList(
                 new Begegnung(b1UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1),rundeUUID1, 1, 1, 1, 1,
                         Optional.of(new Wettkaempfer(wk1UUID, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(v1UUID, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)),
@@ -391,10 +400,11 @@ public class WettkampfgruppeFixture {
                         Optional.of(new Wettkaempfer(wk3UUID, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(v3UUID, "Verein3", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)),
                         Optional.of(new Wettkaempfer(wk1UUID, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(v1UUID, "Verein1", turnierUUID), 24.0, Optional.of(Farbe.ORANGE), true, true, turnierUUID)), null, null, turnierUUID))
             )
-        ), turnierUUID)
+        ))
     );
 
-	public static WettkampfGruppe wettkampfGruppeFrauen = new WettkampfGruppe(UUID.randomUUID(), "Ameise", "(58.0-62.0 Frauen)", Altersklasse.Frauen, Arrays.asList(
+	public static WettkampfGruppeMitBegegnungen wettkampfGruppeFrauen = new WettkampfGruppeMitBegegnungen(new WettkampfGruppe(UUID.randomUUID(), "Ameise", "(58.0-62.0 Frauen)", Altersklasse.Frauen, turnierUUID),
+		Arrays.asList(
 		new BegegnungenJeRunde(Arrays.asList(
 			new Begegnung(b1UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), null, null, null, null, null,
 				Optional.of(WettkaempferFixtures.wettkaempferin1),
@@ -444,7 +454,7 @@ public class WettkampfgruppeFixture {
 				Optional.empty(),
 				null, null, turnierUUID))
 		)
-	), turnierUUID);
+	));
 
-	public static List<WettkampfGruppe> wettkampfGruppenListeFrauen = Arrays.asList(wettkampfGruppeFrauen);
+	public static List<WettkampfGruppeMitBegegnungen> wettkampfGruppenListeFrauen = Arrays.asList(wettkampfGruppeFrauen);
 }
