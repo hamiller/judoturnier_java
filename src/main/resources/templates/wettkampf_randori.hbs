@@ -112,8 +112,8 @@
     </div>
     <div class="">
       {{#if enableEditing}}
-        <md-filled-button type="button" id="nav_submit" class="" onclick="save(event);">
-          Ergebnis speichern
+        <md-filled-button type="button" id="nav_submit" class="" onclick="save(event, '{{begegnung.nachfolgerBegegnungId}}');">
+          Ergebnis speichern und weiter
           <svg slot="icon" height="18" viewBox="0 -960 720 720" width="18" fill="#5f6368">
             <path
               d="m 720,-800 v 480 q 0,33 -23.5,56.5 Q 673,-240 640,-240 H 80 Q 47,-240 23.5,-263.5 0,-287 0,-320 V -880 Q 0,-913 23.5,-936.5 47,-960 80,-960 h 480 z m -80,34 -114,-114 H 80 v 560 h 560 z m -280,406 q 50,0 85,-35 35,-35 35,-85 0,-50 -35,-85 -35,-35 -85,-35 -50,0 -85,35 -35,35 -35,85 0,50 35,85 35,35 85,35 z M 120,-680 H 480 V -840 H 120 Z m -40,-86 v 446 -560 z"/>
@@ -204,17 +204,25 @@
     setActiveButton('stil2');
   });
 
-  const save = async (event) => {
-    console.log("save event", event);
+  const save = async (event, nextBegegungId) => {
+    console.log("save event", event, nextBegegungId);
     var form = document.getElementById("wertungen");
     var isValid = validateForm(event);
     if (isValid) {
-      form.submit();
+      event.preventDefault();
+      fetch('/turnier/{{turnierid}}/begegnungen/randori/{{begegnungid}}', {method: 'POST', body: event, redirect: 'follow'})
+        .then(response => {
+          if (response.ok) {
+            navigate(nextBegegungId);
+          }
+        }
+      );
+      // form.submit();
+      // navigate(nextBegegungId);
       return;
     }
 
     alert("Bitte alle Wertungen angeben.");
-    event.preventDefault();
   };
 </script>
 </body>
