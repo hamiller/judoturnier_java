@@ -800,7 +800,24 @@ div .vorhanden {
   z-index: 999;
 }
 
+.time-control-buttons {
+   position: fixed;
+   bottom: 20px;
+   right: calc(10%); /* 5% vom Rand + 20px Abstand */
+  display: flex;
+   gap: 10px;
+   background-color: rgba(255, 255, 255, 0.9);
+   padding: 10px;
+   border-radius: 8px;
+   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+   z-index: 1000;
+ }
 
+@media print {
+  .time-control-buttons {
+    display: none;
+  }
+}
 
 /* responsive design */
 /* Druckmodus */

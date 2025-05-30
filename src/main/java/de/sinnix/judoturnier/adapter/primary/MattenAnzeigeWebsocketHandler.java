@@ -16,35 +16,59 @@ public class MattenAnzeigeWebsocketHandler extends TextWebSocketHandler {
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) {
-		String matte = getMatteFromQuery(session);
-		if (matte != null) {
-			sessions.put(matte, session);
-			logger.info("Verbindung für Matte {} hergestellt.", matte);
+		String matteTyp = getMatteAndTypeFromQuery(session);
+		if (matteTyp != null) {
+			sessions.put(matteTyp, session);
+			logger.info("Verbindung für Matte {} hergestellt.", matteTyp);
 		}
 	}
 
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 		String command = message.getPayload();
-		String matte = getMatteFromQuery(session);
+		String matte = getMatteAndTypeFromQuery(session);
 		logger.debug("Nachricht von Matte {}: {}", matte, command);
 		sessions.get(matte).sendMessage(new TextMessage(command));
 	}
 
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, org.springframework.web.socket.CloseStatus status) {
-		String matte = getMatteFromQuery(session);
+		String matte = getMatteAndTypeFromQuery(session);
 		if (matte != null) {
 			sessions.remove(matte);
 			logger.info("Verbindung für Matte {} geschlossen.", matte);
 		}
 	}
 
-	private String getMatteFromQuery(WebSocketSession session) {
-		String query = session.getUri().getQuery(); // Beispiel: "matte=1"
-		if (query != null && query.startsWith("matte=")) {
-			return query.substring(6); // Rückgabe des Parameters "1"
+	private String getMatteAndTypeFromQuery(WebSocketSession session) {
+		String query = session.getUri().getQuery(); // Beispiel: "matte=1&type=zeit"
+		if (query == null) {
+			return null;
 		}
+
+		String matte = null;
+		String type = null;
+
+		String[] params = query.split("&");
+		for (String param : params) {
+			String[] keyValue = param.split("=");
+			if (keyValue.length == 2) {
+				if ("matte".equals(keyValue[0])) {
+					matte = keyValue[1];
+				} else if ("type".equals(keyValue[0])) {
+					type = keyValue[1];
+				}
+			}
+		}
+
+		if (matte != null) {
+			if (type != null) {
+				return matte + "_" + type; // Rückgabe eines kombinierten Schlüssels "1_zeit"
+			} else {
+				return matte; // Abwärtskompatibilität für ältere URLs ohne type
+			}
+		}
+
 		return null;
 	}
 }

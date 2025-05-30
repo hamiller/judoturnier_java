@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <title>Judo-Turniersoftware</title>
+  <title>Zeit</title>
   <link rel="stylesheet" href="/css/interface.css">
   <link rel="stylesheet" href="/css/mainstyle.css">
 </head>
@@ -25,7 +25,7 @@
 </div>
 <script src="/js/allgemein.js"></script>
 <script>
-  const socket = new WebSocket("/mattenanzeigews?matte=" +{{matte}} + "&type=wertung");
+  const socket = new WebSocket("/mattenanzeigews?matte=" +{{matte}} + "&type=zeit");
   socket.onmessage = function (event) {
     const command = event.data;
     if (command === "start") start();

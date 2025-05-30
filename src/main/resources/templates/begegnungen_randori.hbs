@@ -57,19 +57,17 @@
 
   <div class="generalcontent">
 
-    <div id="windowStatus">Kein Fenster geöffnet.</div>
+    <div id="windowStatus">Kein Wertungsfenster geöffnet.</div>
+    <div id="windowStatus2">Kein Zeitfenster geöffnet.</div>
 
     {{#each matten}}
       <div class="matte tabcontent" id="matten-panel-{{id}}">
         <div class="listeneintrag-titel">Matte {{id}}</div>
 
-        <div>
+        <div class="time-control-buttons">
           <md-filled-button type="button" class="" onclick="sendCommand('start', {{id}})">Starte Zeit</md-filled-button>
           <md-filled-button type="button" class="" onclick="sendCommand('stop', {{id}})">Stoppe Zeit</md-filled-button>
           <md-filled-button type="button" class="" onclick="sendCommand('reset', {{id}})">Zeit zurücksetzen</md-filled-button>
-          <div id="timer-container">
-            <h1 id="timer-display" class="centered-horizontal"></h1>
-          </div>
         </div>
 
         <div class="wettkampfgruppe">
@@ -103,7 +101,7 @@
                 {{/if}}
               {{/each}}
               <md-divider inset></md-divider>
-              <md-filled-tonal-button type="button" class="" onclick="openTimerWindow({{../id}}, {{mattenRunde}})">Wertungsbildschirm öffnen</md-filled-tonal-button>
+              <md-filled-tonal-button type="button" class="" onclick="openTimerWindow({{../id}}, {{mattenRunde}})">Werungsfenster öffnen</md-filled-tonal-button>
             {{/each}}
           {{/each}}
         </div>
@@ -116,9 +114,10 @@
 {{> footer}}
 
 <script type="text/javascript">
-  let controlledWindow = null;
-  let socket = []; // WebSocket-Instanz
-
+  let controlledWindows = [];
+  let controlledWindows2 = [];
+  let socketZeit = []; // WebSocket-Instanz
+  let socketWertung = []; // WebSocket-Instanz
 
   document.body.querySelectorAll(".theming-anchors").forEach(value => value.addEventListener("click", (data) => {
     var altersklasse = data.target.attributes.getNamedItem("altersklasse").value;
@@ -134,39 +133,58 @@
       if (!sicher) return;
     }
 
-    if (socket && socket[matte] && socket[matte].readyState === WebSocket.OPEN) {
-      socket[matte].send(command);
+    if (socketZeit && socketZeit[matte] && socketZeit[matte].readyState === WebSocket.OPEN) {
+      socketZeit[matte].send(command);
     } else {
-      alert("WebSocket ist nicht verbunden.");
+      alert("Wertungfenster ist nicht geöffnet.");
+    }
+    if (socketWertung && socketWertung[matte] && socketWertung[matte].readyState === WebSocket.OPEN) {
+      socketWertung[matte].send(command);
+    } else {
+      alert("Zeitfenster ist nicht geöffnet.");
     }
   }
 
   const openTimerWindow = (matte, mattenRunde) => {
     // create new window
-    console.log("Öffne Wertungsbildschirm für Matte und Runde", matte, mattenRunde)
-    controlledWindow = window.open(
+    console.log("Öffne Wertungsfenster für Matte und Runde", matte, mattenRunde)
+    controlledWindows[matte] = window.open(
       '/turnier/{{turnierid}}/mattenanzeige/randori/' + matte + '/' + mattenRunde,
-      'Matte ' + matte,
+      'Wertung Matte ' + matte,
       'width=800,height=600,left=2000,top=0' // Passen Sie die Werte an Ihren zweiten Monitor an
     );
-    controlledWindow.onbeforeunload = () => {
-      controlledWindow = null;
+    controlledWindows[matte].onbeforeunload = () => {
+      controlledWindows[matte] = null;
+    };
+    controlledWindows2[matte] = window.open(
+      '/turnier/{{turnierid}}/mattenanzeige/randori/' + matte + '/' + mattenRunde + '/zeit',
+      'Zeit Matte ' + matte,
+      'width=400,height=400,left=2000,top=0' // Passen Sie die Werte an Ihren zweiten Monitor an
+    );
+    controlledWindows2[matte].onbeforeunload = () => {
+      controlledWindows2[matte] = null;
     };
 
     // establish websocket
     const protocol = window.location.protocol === "https:" ? "wss" : "ws";
     const host = window.location.host; // z. B. "localhost:8080" oder "example.com"
     const path = "/mattenanzeigews?matte=" + matte; // Ihr WebSocket-Pfad
-    const socketUrl = `${protocol}://${host}${path}`;
-    socket[matte] = new WebSocket(socketUrl);
+    socketWertung[matte] = new WebSocket(`${protocol}://${host}${path}` + "&type=wertung");
+    socketZeit[matte] = new WebSocket(`${protocol}://${host}${path}` + "&type=zeit");
 
-    socket[matte].onopen = function () {
-      console.log("Verbunden mit WebSocket, Matte ", matte);
+    socketWertung[matte].onopen = function () {
+      console.log("Verbunden mit WebSocket Wertungsfenster, Matte ", matte);
     };
-
-    socket[matte].onclose = function () {
-      console.log("WebSocket-Verbindung geschlossen, Matte ", matte);
-      socket[matte] = null;
+    socketWertung[matte].onclose = function () {
+      console.log("WebSocket-Verbindung Wertungsfenster geschlossen, Matte ", matte);
+      socketWertung[matte] = null;
+    };
+    socketZeit[matte].onopen = function () {
+      console.log("Verbunden mit WebSocket Zeitfenster, Matte ", matte);
+    };
+    socketZeit[matte].onclose = function () {
+      console.log("WebSocket-Verbindung Zeitfenster geschlossen, Matte ", matte);
+      socketZeit[matte] = null;
     };
 
     updateWindowStatus(matte, mattenRunde); // UI aktualisieren
@@ -174,10 +192,17 @@
 
   const updateWindowStatus = (matte, mattenRunde) => {
     const statusElement = document.getElementById("windowStatus");
-    if (controlledWindow && !controlledWindow.closed) {
-      statusElement.innerText = "Geöffneter Wertungsbildschirm: Matte " + matte + ", Runde " + mattenRunde;
+    if (controlledWindows[matte] && !controlledWindows[matte].closed) {
+      statusElement.innerText = "Geöffnetes Wertungsfenster: Matte " + matte + ", Runde " + mattenRunde;
     } else {
-      statusElement.innerText = "Kein Fenster geöffnet.";
+      statusElement.innerText = "Kein Wertungsfenster geöffnet.";
+    }
+
+    const statusElement2 = document.getElementById("windowStatus2");
+    if (controlledWindows2[matte] && !controlledWindows2[matte].closed) {
+      statusElement2.innerText = "Geöffnetes Zeitfenster: Matte " + matte + ", Runde " + mattenRunde;
+    } else {
+      statusElement2.innerText = "Kein Zeitfenster geöffnet.";
     }
   }
 

@@ -79,4 +79,55 @@ public class MattenAnzeigeController {
 		mav.addObject("kampfzeit", kampfzeit);
 		return mav;
 	}
+
+	@GetMapping("/turnier/{turnierid}/mattenanzeige/randori/{matte}/{mattenrunde}/zeit")
+	public ModelAndView anzeigeZeitRandori(@PathVariable String turnierid, @PathVariable String matte, @PathVariable String mattenrunde) {
+		logger.info("Öffne Anzeige der Runde {} auf Matte {}", mattenrunde, matte);
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
+
+		UUID turnierUUID = UUID.fromString(turnierid);
+		Einstellungen einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
+		List<Begegnung> begegnungen = turnierService.ladeMattenRunde(turnierUUID, Integer.parseInt(matte), Integer.parseInt(mattenrunde));
+		List<BegegnungDto> begegnungDtos = begegnungen.stream().map(b -> DtosConverter.convertFromBegegnung(b)).toList();
+		var altersklasse = begegnungen.stream().findFirst().flatMap(b -> b.getWettkaempfer1().map(wk -> wk.altersklasse()));
+		Integer kampfzeit = einstellungenService.kampfZeit(turnierUUID, altersklasse.get());
+
+		logger.debug("kampfzeit {}", kampfzeit);
+
+		ModelAndView mav = new ModelAndView("mattenanzeige_zeit");
+		mav.addObject("turnierid", turnierid);
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
+		mav.addObject("matte", matte);
+		mav.addObject("mattenrunde", mattenrunde);
+		mav.addObject("begegnungen", begegnungDtos);
+		mav.addObject("kampfzeit", kampfzeit);
+		return mav;
+	}
+
+	@GetMapping("/turnier/{turnierid}/mattenanzeige/normal/{begegnungid}/zeit")
+	public ModelAndView anzeigeZeitNormal(@PathVariable String turnierid, @PathVariable String begegnungid) {
+		logger.info("Öffne Anzeige der Begegnung {}", begegnungid);
+		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
+
+		UUID turnierUUID = UUID.fromString(turnierid);
+		UUID begegnungUUID = UUID.fromString(begegnungid);
+		Einstellungen einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
+		Begegnung begegnung = wettkampfService.ladeBegegnung(begegnungUUID);
+		BegegnungDto begegnungDto = DtosConverter.convertFromBegegnung(begegnung);
+		var altersklasse = begegnung.getWettkampfGruppe().altersklasse();
+		Integer kampfzeit = einstellungenService.kampfZeit(turnierUUID, altersklasse);
+		Integer matte = begegnung.getMatteId();
+		Integer mattenrunde = begegnung.getMattenRunde();
+
+		logger.debug("kampfzeit {}", kampfzeit);
+
+		ModelAndView mav = new ModelAndView("mattenanzeige_zeit");
+		mav.addObject("turnierid", turnierid);
+		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
+		mav.addObject("matte", matte);
+		mav.addObject("mattenrunde", mattenrunde);
+		mav.addObject("begegnungen", List.of(begegnungDto));
+		mav.addObject("kampfzeit", kampfzeit);
+		return mav;
+	}
 }
