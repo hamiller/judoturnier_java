@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,17 +49,21 @@ public class WertungController {
 		UUID turnierUuid = UUID.fromString(turnierid);
 		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		Benutzer benutzer = benutzerService.holeBenutzer(oidcBenutzer);
-		Begegnung begegnung = wettkampfService.ladeBegegnung(begegnungUuid);
 
 		Metadaten metadaten = turnierService.ladeMetadaten(begegnungUuid, turnierUuid);
-		BegegnungDto begegnungDto = DtosConverter.convertFromBegegnung(begegnung, benutzer.uuid(), turnierUuid, metadaten.vorherigeBegegnungId(), metadaten.nachfolgendeBegegnungId());
+		List<BegegnungDto> begegnungDtoList = new ArrayList<>();
+		for(UUID begegnungid : metadaten.alleRundenBegegnungIds()) {
+			Begegnung begegnung = wettkampfService.ladeBegegnung(begegnungid);
+			BegegnungDto begegnungDto = DtosConverter.convertFromBegegnung(begegnung, benutzer.uuid(), turnierUuid, metadaten.vorherigeBegegnungId(), metadaten.nachfolgendeBegegnungId());
+			begegnungDtoList.add(begegnungDto);
+		}
 
 		ModelAndView mav = new ModelAndView("wettkampf_randori");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
 		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
-		mav.addObject("begegnung", begegnungDto);
-		mav.addObject("begegnungid", id);
+		mav.addObject("begegnungen", begegnungDtoList);
+		mav.addObject("sourcebegegnungid", id);
 		mav.addObject("bewerter", benutzer);
 		mav.addObject("enableEditing", benutzer.istKampfrichter(turnierUuid));
 		mav.addObject("wertungsOptionen", List.of(1, 2, 3, 4, 5, 6));
