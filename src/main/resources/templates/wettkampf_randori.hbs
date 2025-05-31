@@ -55,7 +55,7 @@
       </div>
 
       <div class="ergebnis_eintrag rot">
-        <label class="wettkaempfer name">
+        <div class="wettkaempfer name">
           <label>
             <details>
             <summary>{{begegnung.wettkaempfer2.name}}</summary>
@@ -205,12 +205,19 @@
   });
 
   const save = async (event, nextBegegungId) => {
-    console.log("save event", event, nextBegegungId);
     var form = document.getElementById("wertungen");
     var isValid = validateForm(event);
     if (isValid) {
       event.preventDefault();
-      fetch('/turnier/{{turnierid}}/begegnungen/randori/{{begegnungid}}', {method: 'POST', body: event, redirect: 'follow'})
+      const formData = new FormData(form);
+      const urlEncodedData = new URLSearchParams(formData);
+      fetch('/turnier/{{turnierid}}/begegnungen/randori/{{begegnungid}}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: urlEncodedData,
+        redirect: 'follow'})
         .then(response => {
           if (response.ok) {
             navigate(nextBegegungId);
