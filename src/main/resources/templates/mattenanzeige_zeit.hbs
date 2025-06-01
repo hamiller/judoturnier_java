@@ -6,9 +6,19 @@
   <link rel="stylesheet" href="/css/mainstyle.css">
 </head>
 <body>
-<h1>Matte {{matte}} - Runde {{mattenrunde}}</h1>
+<h2>Matte {{matte}} - Runde {{mattenrunde}}</h2>
+<div class=""><h1>{{rundenCode}}</h1></div>
 <div id="timer-container">
-  <h1 id="timer-display" class="centered-horizontal"></h1>
+  <h1 id="timer-display" class=""></h1>
+</div>
+<div class="box">
+  <h1>Kampfrichter</h1>
+
+  <span class="freiraum"></span>
+
+  <div class="qrcode">
+    <img src="data:image/png;base64,{{imageWertungen}}" alt="QRCode Wettkampfwertung"/>
+  </div>
 </div>
 <div>
   {{#each begegnungen}}

@@ -8,6 +8,7 @@
 {{> nav}}
 
 <div>
+  <div class=""><h2>{{rundenCode}}</h2></div>
   {{#each begegnungen as |begegnung id|}}
     <div class="when_mobile_hide">Aktuelle Begegnung {{begegnung.begegnungId}}</div>
     <form class="wertungen" action="/turnier/{{turnierid}}/begegnungen/randori/{{begegnung.begegnungId}}" method="POST">

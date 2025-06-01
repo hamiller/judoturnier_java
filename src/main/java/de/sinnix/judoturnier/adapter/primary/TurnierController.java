@@ -1,6 +1,7 @@
 package de.sinnix.judoturnier.adapter.primary;
 
 import de.sinnix.judoturnier.application.BenutzerService;
+import de.sinnix.judoturnier.application.CodeGeneratorService;
 import de.sinnix.judoturnier.application.EinstellungenService;
 import de.sinnix.judoturnier.application.GewichtsklassenService;
 import de.sinnix.judoturnier.application.TurnierService;
@@ -70,6 +71,8 @@ public class TurnierController {
 	private BuildProperties        buildProperties;
 	@Autowired
 	private BenutzerService        benutzerService;
+	@Autowired
+	private CodeGeneratorService   codeGeneratorService;
 
 	@GetMapping("/")
 	public ModelAndView startPage() {
@@ -239,6 +242,7 @@ public class TurnierController {
 		List<MatteDto> gefilterteMatten = filtereMatten(altersklasse, wettkampfreihenfolgeJeMatte).stream()
 			.map(m -> DtosConverter.convertFromMatte(m))
 			.collect(Collectors.toList());
+
 
 		logger.trace("wettkampfreihenfolgeJeMatte {} ", wettkampfreihenfolgeJeMatte);
 		ModelAndView mav = new ModelAndView("begegnungen_randori");

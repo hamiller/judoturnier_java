@@ -1,6 +1,7 @@
 package de.sinnix.judoturnier.adapter.primary;
 
 import de.sinnix.judoturnier.application.BenutzerService;
+import de.sinnix.judoturnier.application.CodeGeneratorService;
 import de.sinnix.judoturnier.application.EinstellungenService;
 import de.sinnix.judoturnier.application.TurnierService;
 import de.sinnix.judoturnier.application.WertungService;
@@ -11,6 +12,8 @@ import de.sinnix.judoturnier.model.Metadaten;
 import de.sinnix.judoturnier.model.OidcBenutzer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +31,10 @@ import java.util.UUID;
 
 @RestController
 public class WertungController {
+	public static final String LADE_WERTUNG_RANDORI      = "/turnier/{turnierid}/begegnungen/randori/{id}";
+	public static final String LADE_WERTUNG_NORMAL       = "/turnier/{turnierid}/begegnungen/normal/{id}";
+	public static final String SPEICHERE_WERTUNG_RANDORI = "/turnier/{turnierid}/begegnungen/randori/{id}";
+	public static final String SPEICHERE_WERTUNG_NORMAL  = "/turnier/{turnierid}/begegnungen/normal/{id}";
 
 	private static final Logger logger = LogManager.getLogger(WertungController.class);
 
@@ -41,8 +48,10 @@ public class WertungController {
 	private WettkampfService     wettkampfService;
 	@Autowired
 	private WertungService       wertungService;
+	@Autowired
+	private CodeGeneratorService codeGeneratorService;
 
-	@GetMapping("/turnier/{turnierid}/begegnungen/randori/{id}")
+	@GetMapping(LADE_WERTUNG_RANDORI)
 	public ModelAndView begegnungRandori(@PathVariable String turnierid, @PathVariable String id) {
 		logger.info("Lade Wertung für Begegnung {}", id);
 		UUID begegnungUuid = UUID.fromString(id);
@@ -52,25 +61,28 @@ public class WertungController {
 
 		Metadaten metadaten = turnierService.ladeMetadaten(begegnungUuid, turnierUuid);
 		List<BegegnungDto> begegnungDtoList = new ArrayList<>();
-		for(UUID begegnungid : metadaten.alleRundenBegegnungIds()) {
+		for (UUID begegnungid : metadaten.alleRundenBegegnungIds()) {
 			Begegnung begegnung = wettkampfService.ladeBegegnung(begegnungid);
 			BegegnungDto begegnungDto = DtosConverter.convertFromBegegnung(begegnung, benutzer.uuid(), turnierUuid, metadaten.vorherigeBegegnungId(), metadaten.nachfolgendeBegegnungId());
 			begegnungDtoList.add(begegnungDto);
 		}
+		UUID rundeId = UUID.fromString(begegnungDtoList.get(0).rundeId());
+		String rundenCode = codeGeneratorService.generateCode(rundeId);
 
 		ModelAndView mav = new ModelAndView("wettkampf_randori");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
 		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("begegnungen", begegnungDtoList);
-		mav.addObject("anchor", begegnungDtoList.get(0).rundeId());
+		mav.addObject("anchor", rundeId.toString());
+		mav.addObject("rundenCode", rundenCode);
 		mav.addObject("bewerter", benutzer);
 		mav.addObject("enableEditing", benutzer.istKampfrichter(turnierUuid));
 		mav.addObject("wertungsOptionen", List.of(1, 2, 3, 4, 5, 6));
 		return mav;
 	}
 
-	@GetMapping("/turnier/{turnierid}/begegnungen/normal/{id}")
+	@GetMapping(LADE_WERTUNG_NORMAL)
 	public ModelAndView begegnungTurnier(@PathVariable String turnierid, @PathVariable String id) {
 		logger.info("Lade Wertung für Begegnung {}", id);
 		UUID begegnungUuid = UUID.fromString(id);
@@ -100,7 +112,7 @@ public class WertungController {
 		return mav;
 	}
 
-	@PostMapping("/turnier/{turnierid}/begegnungen/randori/{id}")
+	@PostMapping(SPEICHERE_WERTUNG_RANDORI)
 	@PreAuthorize("hasRole('ROLE_KAMPFRICHTER')")
 	public ModelAndView speichereBegegnungRandori(@PathVariable String turnierid, @PathVariable String id, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("Speichere Wertung für Begegnung {}: {}", id, formData);
@@ -121,7 +133,7 @@ public class WertungController {
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori");
 	}
 
-	@PostMapping("/turnier/{turnierid}/begegnungen/normal/{id}")
+	@PostMapping(SPEICHERE_WERTUNG_NORMAL)
 	@PreAuthorize("hasRole('ROLE_KAMPFRICHTER')")
 	public ModelAndView speichereBegegnungTurnier(@PathVariable String turnierid, @PathVariable String id, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("Speichere Wertung für Begegnung {}: {}", id, formData);

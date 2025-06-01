@@ -16,11 +16,10 @@ import java.util.Base64;
 
 @RestController
 public class QRCodeController {
-	private static final Logger logger = LogManager.getLogger(QRCodeController.class);
-
 	private static final String GEWICHTSKLASSEN_URI = "/turnier/{turnierid}/gewichtsklassen/randori_printview_groups/{altersklasse}";
 	private static final String BEGEGNUNGEN_URI     = "/turnier/{turnierid}/begegnungen/randori_printview_matches/{altersklasse}";
 
+	private static final Logger logger = LogManager.getLogger(QRCodeController.class);
 
 	@Autowired
 	private QRCodeGeneratorService qrCodeGeneratorService;
