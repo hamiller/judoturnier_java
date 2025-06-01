@@ -130,25 +130,10 @@
 {{> footer}}
 
 <script type="text/javascript">
-  const navigate = async (begegnungid) => {
-    console.log("navigation called", begegnungid);
-    var uriEnd = "";
-    if (begegnungid) {
-      console.log("lade Begegnung " + begegnungid);
-      uriEnd = "/" + begegnungid;
-    }
-    fetch('/turnier/{{turnierid}}/begegnungen/randori' + uriEnd, {method: 'GET', redirect: 'follow'})
-      .then(response => {
-        if (response.redirected) {
-          window.location.href = response.url;
-        } else if (response.ok) {
-          window.location.href = response.url;
-        } else {
-          console.error('Error:', response.statusText);
-        }
-      })
+  const navigate = async () => {
+    // Statt fetch: nutze window.location.href mit Fragment (anchor)
+    window.location.href = '/turnier/{{turnierid}}/begegnungen/randori#{{anchor}}';
   };
-
 
   const updateInputValue = (name, formIndex, value) => {
     var forms = document.getElementsByClassName("wertungen");
@@ -227,7 +212,7 @@
         body: urlEncodedData
       })
     }
-    navigate('{{sourcebegegnungid}}');
+    navigate();
   };
 </script>
 </body>

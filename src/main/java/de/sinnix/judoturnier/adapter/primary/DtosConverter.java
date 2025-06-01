@@ -48,7 +48,7 @@ public class DtosConverter {
 			.collect(Collectors.toList());
 		var vorher = vorherigeBegegnungId.map(id -> String.valueOf(id)).orElseGet(() -> "");
 		var nachher = nachfolgendeBegegnungId.map(id -> String.valueOf(id)).orElseGet(() -> "");
-		return new BegegnungDto(begegnungId.toString(), begegnung.getBegegnungId().getRundenTyp(), begegnung.getBegegnungId().runde, begegnung.getBegegnungId().akuellePaarung, wettkaempfer1, wettkaempfer2, kampfrichterWertung, alleWertungen, vorher, nachher);
+		return new BegegnungDto(begegnungId.toString(), begegnung.getBegegnungId().getRundenTyp(), begegnung.getBegegnungId().runde, begegnung.getBegegnungId().akuellePaarung, wettkaempfer1, wettkaempfer2, kampfrichterWertung, alleWertungen, begegnung.getRundeId().toString(), vorher, nachher);
 	}
 
 	private static Optional<WertungDto> getWertungDto(Optional<Wertung> wertung, UUID turnierUuid) {
@@ -82,7 +82,7 @@ public class DtosConverter {
 			.map(w -> getWertungDto(Optional.ofNullable(w), begegnung.getTurnierUUID()))
 			.flatMap(Optional::stream)
 			.collect(Collectors.toList());
-		return new BegegnungDto(begegnungId.toString(), begegnung.getBegegnungId().getRundenTyp(), begegnung.getBegegnungId().runde, begegnung.getBegegnungId().akuellePaarung, wettkaempfer1, wettkaempfer2, null, alleWertungen, null, null);
+		return new BegegnungDto(begegnungId.toString(), begegnung.getBegegnungId().getRundenTyp(), begegnung.getBegegnungId().runde, begegnung.getBegegnungId().akuellePaarung, wettkaempfer1, wettkaempfer2, null, alleWertungen, begegnung.getRundeId().toString(), null, null);
 	}
 
 	public static Long formatDuration(Duration duration) {

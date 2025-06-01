@@ -15,6 +15,7 @@ public record BegegnungDto(String begegnungId,
 						   Wettkaempfer wettkaempfer2,
 						   Optional<WertungDto> kampfrichterWertung,
 						   List<WertungDto> alleWertungen,
+						   String rundeId,
 						   String vorherigeBegegnungId,
 						   String nachfolgerBegegnungId
 ) {

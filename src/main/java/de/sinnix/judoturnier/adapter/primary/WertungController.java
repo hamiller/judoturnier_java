@@ -63,7 +63,7 @@ public class WertungController {
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
 		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("begegnungen", begegnungDtoList);
-		mav.addObject("sourcebegegnungid", id);
+		mav.addObject("anchor", begegnungDtoList.get(0).rundeId());
 		mav.addObject("bewerter", benutzer);
 		mav.addObject("enableEditing", benutzer.istKampfrichter(turnierUuid));
 		mav.addObject("wertungsOptionen", List.of(1, 2, 3, 4, 5, 6));
