@@ -26,9 +26,29 @@ public class MattenAnzeigeWebsocketHandler extends TextWebSocketHandler {
 	@Override
 	public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 		String command = message.getPayload();
-		String matte = getMatteAndTypeFromQuery(session);
-		logger.debug("Nachricht von Matte {}: {}", matte, command);
-		sessions.get(matte).sendMessage(new TextMessage(command));
+		String matteTyp = getMatteAndTypeFromQuery(session);
+		String matte = matteTyp.split("_")[0]; // Extrahiere nur die Mattennummer
+
+		logger.debug("Nachricht von Matte {}: {}", matteTyp, command);
+
+		// An alle Sessions für diese Matte senden (sequentiell, mit Statusprüfung)
+		for (Map.Entry<String, WebSocketSession> entry : sessions.entrySet()) {
+			if (entry.getKey().startsWith(matte + "_")) {
+				WebSocketSession targetSession = entry.getValue();
+				try {
+					// Prüfen, ob die Session offen ist, bevor gesendet wird
+					if (targetSession.isOpen()) {
+						synchronized (targetSession) {
+							targetSession.sendMessage(new TextMessage(command));
+						}
+						// Kurze Pause zwischen den Sendevorgängen
+						Thread.sleep(10);
+					}
+				} catch (Exception e) {
+					logger.error("Fehler beim Senden an {}: {}", entry.getKey(), e.getMessage());
+				}
+			}
+		}
 	}
 
 	@Override
