@@ -63,13 +63,6 @@
     {{#each matten}}
       <div class="matte tabcontent" id="matten-panel-{{id}}">
         <div class="listeneintrag-titel">Matte {{id}}</div>
-
-        <div class="time-control-buttons when_mobile_hide">
-          <md-filled-button type="button" class="" onclick="sendCommand('start', {{id}})">Starte Zeit</md-filled-button>
-          <md-filled-button type="button" class="" onclick="sendCommand('stop', {{id}})">Stoppe Zeit</md-filled-button>
-          <md-filled-button type="button" class="" onclick="sendCommand('reset', {{id}})">Zeit zurücksetzen</md-filled-button>
-        </div>
-
         <div class="wettkampfgruppe">
 
           {{#each gruppenRunden}}
@@ -117,8 +110,6 @@
 <script type="text/javascript">
   let controlledWindows = [];
   let controlledWindows2 = [];
-  let socketZeit = []; // WebSocket-Instanz
-  let socketWertung = []; // WebSocket-Instanz
 
   document.body.querySelectorAll(".theming-anchors").forEach(value => value.addEventListener("click", (data) => {
     var altersklasse = data.target.attributes.getNamedItem("altersklasse").value;
@@ -126,37 +117,10 @@
     document.body.querySelector("#theming-menu-" + altersklasse).show();
   }));
 
-  const sendCommand = (command, matte) => {
-    console.log("Sende Command für Matte", command, matte)
-
-    if (command == 'reset') {
-      var sicher = confirm("ACHTUNG\n\nHiermit wird die Wettkampfzeit zurückgesetzt! \n\nSind sie sicher?");
-      if (!sicher) return;
-    }
-
-    if (socketZeit && socketZeit[matte] && socketZeit[matte].readyState === WebSocket.OPEN) {
-      socketZeit[matte].send(command);
-    } else {
-      alert("Wertungfenster ist nicht geöffnet.");
-    }
-    if (socketWertung && socketWertung[matte] && socketWertung[matte].readyState === WebSocket.OPEN) {
-      socketWertung[matte].send(command);
-    } else {
-      alert("Zeitfenster ist nicht geöffnet.");
-    }
-  }
-
   const openTimerWindow = (matte, mattenRunde) => {
     // create new window
     console.log("Öffne Wertungsfenster für Matte und Runde", matte, mattenRunde)
-    controlledWindows[matte] = window.open(
-      '/turnier/{{turnierid}}/mattenanzeige/randori/' + matte + '/' + mattenRunde,
-      'Wertung Matte ' + matte,
-      'width=800,height=600,left=2000,top=0' // Passen Sie die Werte an Ihren zweiten Monitor an
-    );
-    controlledWindows[matte].onbeforeunload = () => {
-      controlledWindows[matte] = null;
-    };
+    // lokales Zeitfenster
     controlledWindows2[matte] = window.open(
       '/turnier/{{turnierid}}/mattenanzeige/randori/' + matte + '/' + mattenRunde + '/zeit',
       'Zeit Matte ' + matte,
@@ -166,28 +130,15 @@
       controlledWindows2[matte] = null;
     };
 
-    // establish websocket
-    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-    const host = window.location.host; // z. B. "localhost:8080" oder "example.com"
-    const path = "/mattenanzeigews?matte=" + matte; // Ihr WebSocket-Pfad
-    socketWertung[matte] = new WebSocket(`${protocol}://${host}${path}` + "&type=wertung");
-    socketZeit[matte] = new WebSocket(`${protocol}://${host}${path}` + "&type=zeit");
-
-    socketWertung[matte].onopen = function () {
-      console.log("Verbunden mit WebSocket Wertungsfenster, Matte ", matte);
+    // lokales Wertungsfenster
+    controlledWindows[matte] = window.open(
+      '/turnier/{{turnierid}}/mattenanzeige/randori/' + matte + '/' + mattenRunde,
+      'Wertung Matte ' + matte,
+      'width=800,height=600,left=2000,top=0' // Passen Sie die Werte an Ihren zweiten Monitor an
+    );
+    controlledWindows[matte].onbeforeunload = () => {
+      controlledWindows[matte] = null;
     };
-    socketWertung[matte].onclose = function () {
-      console.log("WebSocket-Verbindung Wertungsfenster geschlossen, Matte ", matte);
-      socketWertung[matte] = null;
-    };
-    socketZeit[matte].onopen = function () {
-      console.log("Verbunden mit WebSocket Zeitfenster, Matte ", matte);
-    };
-    socketZeit[matte].onclose = function () {
-      console.log("WebSocket-Verbindung Zeitfenster geschlossen, Matte ", matte);
-      socketZeit[matte] = null;
-    };
-
     updateWindowStatus(matte, mattenRunde); // UI aktualisieren
   };
 
@@ -282,3 +233,4 @@
 </body>
 
 </html>
+

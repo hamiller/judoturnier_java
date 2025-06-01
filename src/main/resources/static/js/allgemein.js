@@ -11,6 +11,14 @@ const init = (countdown) => {
   updateTimer();
 }
 
+const sendCommandToSocket = (command, socket) => {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    socket.send(command);
+  } else {
+    alert("Zeitfenster ist nicht verbunden.");
+  }
+}
+
 const formatTime = (milliseconds) => {
   const totalSeconds = Math.floor(Math.abs(milliseconds) / 1000);
   const minutes = Math.floor(totalSeconds / 60);
@@ -31,18 +39,18 @@ const updateTimer = () => {
   totalTime += 10;
 }
 
-function start() {
+const start = () => {
   if (!interval) {
     interval = setInterval(updateTimer, 10);
   }
 }
 
-function stop() {
+const stop = () => {
   clearInterval(interval);
   interval = null;
 }
 
-function reset() {
+const reset = () => {
   stop();
   totalTime = 0;
   countdownTime = configuredCountdown;

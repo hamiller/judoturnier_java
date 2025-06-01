@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-  <title>Zeit</title>
-  <link rel="stylesheet" href="/css/interface.css">
-  <link rel="stylesheet" href="/css/mainstyle.css">
-</head>
+<header>
+  {{> header}}
+</header>
 <body>
 <h2>Matte {{matte}} - Runde {{mattenrunde}}</h2>
 <div class=""><h1>{{rundenCode}}</h1></div>
 <div id="timer-container">
   <h1 id="timer-display" class=""></h1>
+  <div class="time-control-buttons">
+    <md-filled-button type="button" onclick="sendCommand('start')">Starte Zeit</md-filled-button>
+    <md-filled-button type="button" onclick="sendCommand('stop')">Stoppe Zeit</md-filled-button>
+    <md-filled-button type="button" onclick="sendCommand('reset')">Zeit zurücksetzen</md-filled-button>
+  </div>
 </div>
 <div class="box">
   <h1>Kampfrichter</h1>
@@ -35,13 +38,23 @@
 </div>
 <script src="/js/allgemein.js"></script>
 <script>
-  const socket = new WebSocket("/mattenanzeigews?matte=" +{{matte}} + "&type=zeit");
-  socket.onmessage = function (event) {
+  const socketZeit = new WebSocket("/mattenanzeigews?matte=" + {{matte}} + "&type=zeit");
+  const socketWertung = new WebSocket("/mattenanzeigews?matte=" + {{matte}} + "&type=wertung");
+  socketZeit.onmessage = function (event) {
     const command = event.data;
     if (command === "start") start();
     if (command === "stop") stop();
     if (command === "reset") reset();
   };
+
+  function sendCommand(command) {
+    if (command === 'reset') {
+      var sicher = confirm("ACHTUNG\n\nHiermit wird die Wettkampfzeit zurückgesetzt! \n\nSind sie sicher?");
+      if (!sicher) return;
+    }
+    sendCommandToSocket(command, socketZeit);
+    sendCommandToSocket(command, socketWertung);
+  }
 
   const COUNTDOWN = {{kampfzeit}} * 1000; // Millisekunden
   init(COUNTDOWN);
