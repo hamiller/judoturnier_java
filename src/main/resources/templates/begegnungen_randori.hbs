@@ -57,14 +57,14 @@
 
   <div class="generalcontent">
 
-    <div id="windowStatus">Kein Wertungsfenster geöffnet.</div>
-    <div id="windowStatus2">Kein Zeitfenster geöffnet.</div>
+    <div id="windowStatus" class="when_mobile_hide">Kein Wertungsfenster geöffnet.</div>
+    <div id="windowStatus2" class="when_mobile_hide">Kein Zeitfenster geöffnet.</div>
 
     {{#each matten}}
       <div class="matte tabcontent" id="matten-panel-{{id}}">
         <div class="listeneintrag-titel">Matte {{id}}</div>
 
-        <div class="time-control-buttons">
+        <div class="time-control-buttons when_mobile_hide">
           <md-filled-button type="button" class="" onclick="sendCommand('start', {{id}})">Starte Zeit</md-filled-button>
           <md-filled-button type="button" class="" onclick="sendCommand('stop', {{id}})">Stoppe Zeit</md-filled-button>
           <md-filled-button type="button" class="" onclick="sendCommand('reset', {{id}})">Zeit zurücksetzen</md-filled-button>
@@ -102,7 +102,7 @@
                 {{/if}}
               {{/each}}
               <md-divider inset></md-divider>
-              <md-filled-tonal-button type="button" class="" onclick="openTimerWindow({{../id}}, {{mattenRunde}})">Werungsfenster öffnen</md-filled-tonal-button>
+              <md-filled-tonal-button type="button" class="when_mobile_hide" onclick="openTimerWindow({{../id}}, {{mattenRunde}})">Werungsfenster öffnen</md-filled-tonal-button>
             {{/each}}
           {{/each}}
         </div>
