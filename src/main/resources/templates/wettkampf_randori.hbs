@@ -131,7 +131,7 @@
 {{> footer}}
 
 <script type="text/javascript">
-  const navigate = async () => {
+  const navigate = () => {
     // Statt fetch: nutze window.location.href mit Fragment (anchor)
     window.location.href = '/turnier/{{turnierid}}/begegnungen/randori#{{anchor}}';
   };
@@ -192,7 +192,10 @@
   });
 
   const save = async (event) => {
+    event.preventDefault();
     var forms = document.getElementsByClassName("wertungen");
+    const fetchPromises = [];
+
     for (let i = 0; i < forms.length; i++) {
       const form = forms[i];
       const begegnungidInput = form.querySelector("input[name='begegnungid']").value;
@@ -202,18 +205,25 @@
         return;
       }
 
-      event.preventDefault();
       const formData = new FormData(form);
       const urlEncodedData = new URLSearchParams(formData);
-      await fetch('/turnier/{{turnierid}}/begegnungen/randori/' + begegnungidInput, {
+      fetchPromises.push(fetch('/turnier/{{turnierid}}/begegnungen/randori/' + begegnungidInput, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: urlEncodedData
-      })
+      }));
     }
-    navigate();
+
+    try {
+      await Promise.all(fetchPromises);
+      // Nutze die bestehende navigate()-Funktion für die Weiterleitung
+      navigate();
+    } catch (error) {
+      console.error('Fehler beim Speichern:', error);
+      alert('Es ist ein Fehler beim Speichern aufgetreten.');
+    }
   };
 </script>
 </body>
