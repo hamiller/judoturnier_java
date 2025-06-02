@@ -25,7 +25,7 @@
 </div>
 <script src="/js/allgemein.js"></script>
 <script>
-  const socket = new WebSocket("/mattenanzeigews?matte=" +{{matte}} + "&type=wertung");
+  const socket = new WebSocket("/mattenanzeigews?matte=" +{{matte}});
 
   // Verbindungsstatus prüfen
   socket.onopen = function() {

@@ -42,8 +42,6 @@ public class MattenAnzeigeController {
 	@Autowired
 	private WettkampfService       wettkampfService;
 	@Autowired
-	private CodeGeneratorService   codeGeneratorService;
-	@Autowired
 	private QRCodeGeneratorService qrCodeGeneratorService;
 
 	@GetMapping(LADE_MATTENANZEIGE_RANDORI)
@@ -109,7 +107,7 @@ public class MattenAnzeigeController {
 		Integer kampfzeit = einstellungenService.kampfZeit(turnierUUID, altersklasse.get());
 
 		UUID rundeId = begegnungen.get(0).getRundeId();
-		String rundenCode = codeGeneratorService.generateCode(rundeId);
+		String rundenCode = CodeGeneratorService.generateCode(rundeId);
 
 		String ersteBegegnungId = begegnungen.get(0).getId().toString();
 		URI uri = ServletUriComponentsBuilder

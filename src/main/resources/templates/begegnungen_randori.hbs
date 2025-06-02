@@ -57,11 +57,12 @@
 
   <div class="generalcontent">
 
-    <div id="windowStatus" class="when_mobile_hide">Kein Wertungsfenster geöffnet.</div>
-    <div id="windowStatus2" class="when_mobile_hide">Kein Zeitfenster geöffnet.</div>
 
     {{#each matten}}
       <div class="matte tabcontent" id="matten-panel-{{id}}">
+        <div id="windowStatusWertung_{{id}}" class="when_mobile_hide">Kein Wertungsfenster geöffnet.</div>
+        <div id="windowStatusZeit_{{id}}" class="when_mobile_hide">Kein Zeitfenster geöffnet.</div>
+
         <div class="listeneintrag-titel">Matte {{id}}</div>
         <div class="wettkampfgruppe">
 
@@ -108,8 +109,10 @@
 {{> footer}}
 
 <script type="text/javascript">
-  let controlledWindows = [];
-  let controlledWindows2 = [];
+  let controlledWertungsFenster = [];
+  let controlledZeitFenster = [];
+  // Globale Variable für Intervall-IDs
+  const intervalIds = {};
 
   document.body.querySelectorAll(".theming-anchors").forEach(value => value.addEventListener("click", (data) => {
     var altersklasse = data.target.attributes.getNamedItem("altersklasse").value;
@@ -118,43 +121,88 @@
   }));
 
   const openTimerWindow = (matte, mattenRunde) => {
-    // create new window
-    console.log("Öffne Wertungsfenster für Matte und Runde", matte, mattenRunde)
-    // lokales Zeitfenster
-    controlledWindows2[matte] = window.open(
-      '/turnier/{{turnierid}}/mattenanzeige/randori/' + matte + '/' + mattenRunde + '/zeit',
-      'Zeit Matte ' + matte,
-      'width=400,height=400,left=2000,top=0' // Passen Sie die Werte an Ihren zweiten Monitor an
-    );
-    controlledWindows2[matte].onbeforeunload = () => {
-      controlledWindows2[matte] = null;
-    };
+    try {
+      // Bestehenden Intervall beenden
+      if (intervalIds[matte]) {
+        clearInterval(intervalIds[matte]);
+        intervalIds[matte] = null;
+      }
 
-    // lokales Wertungsfenster
-    controlledWindows[matte] = window.open(
-      '/turnier/{{turnierid}}/mattenanzeige/randori/' + matte + '/' + mattenRunde,
-      'Wertung Matte ' + matte,
-      'width=800,height=600,left=2000,top=0' // Passen Sie die Werte an Ihren zweiten Monitor an
-    );
-    controlledWindows[matte].onbeforeunload = () => {
-      controlledWindows[matte] = null;
-    };
-    updateWindowStatus(matte, mattenRunde); // UI aktualisieren
+      // Bestehende Fenster schließen
+      if (controlledZeitFenster[matte] && !controlledZeitFenster[matte].closed) {
+        controlledZeitFenster[matte].close();
+      }
+      if (controlledWertungsFenster[matte] && !controlledWertungsFenster[matte].closed) {
+        controlledWertungsFenster[matte].close();
+      }
+
+      // lokales Zeitfenster
+      console.log("Öffne Zeitfenster für Matte und Runde", matte, mattenRunde);
+      controlledZeitFenster[matte] = window.open(
+        '/turnier/{{turnierid}}/mattenanzeige/randori/' + matte + '/' + mattenRunde + '/zeit',
+        'Zeit Matte ' + matte,
+        'width=400,height=400,left=2000,top=0' // Passen Sie die Werte an Ihren zweiten Monitor an
+      );
+
+      // Kurze Verzögerung vor dem Öffnen des zweiten Fensters
+      setTimeout(() => {
+        try {
+          // Dann das Wertungsfenster öffnen
+          console.log("Öffne Wertungsfenster für Matte und Runde", matte, mattenRunde);
+          controlledWertungsFenster[matte] = window.open(
+            '/turnier/{{turnierid}}/mattenanzeige/randori/' + matte + '/' + mattenRunde,
+            'Wertung Matte ' + matte,
+            'width=800,height=600,left=2000,top=400'
+          );
+        } catch (error) {
+          console.error("Fehler beim Öffnen des Wertungsfensters:", error);
+        }
+      }, 300); // 300ms Verzögerung
+    }
+    catch (error) {
+      console.error("Fehler beim Öffnen des Zeitfensters:", error);
+    }
+    finally {
+      startWindowChecking(matte, mattenRunde);
+    }
   };
 
+  const startWindowChecking = (matte, mattenRunde) => {
+    // Aktuellen mattenRunde-Wert für diesen Intervall speichern
+    const currentMattenRunde = mattenRunde;
+
+    intervalIds[matte] = setInterval(() => {
+      // Prüfen, ob Fenster noch existieren/offen sind
+      if (controlledWertungsFenster[matte] && controlledWertungsFenster[matte].closed) {
+        controlledWertungsFenster[matte] = null;
+      }
+
+      if (controlledZeitFenster[matte] && controlledZeitFenster[matte].closed) {
+        controlledZeitFenster[matte] = null;
+      }
+
+      // Intervall beenden, wenn beide Fenster geschlossen
+      if (!controlledWertungsFenster[matte] && !controlledZeitFenster[matte]) {
+        clearInterval(intervalIds[matte]);
+        intervalIds[matte] = null;
+      }
+      updateWindowStatus(matte, mattenRunde);
+    }, 1000);
+  }
+
   const updateWindowStatus = (matte, mattenRunde) => {
-    const statusElement = document.getElementById("windowStatus");
-    if (controlledWindows[matte] && !controlledWindows[matte].closed) {
-      statusElement.innerText = "Geöffnetes Wertungsfenster: Matte " + matte + ", Runde " + mattenRunde;
+    const windowStatusWertung = document.getElementById("windowStatusWertung_" + matte);
+    if (controlledWertungsFenster[matte] && !controlledWertungsFenster[matte].closed) {
+      windowStatusWertung.innerText = "Geöffnetes Wertungsfenster: Matte " + matte + ", Runde " + mattenRunde;
     } else {
-      statusElement.innerText = "Kein Wertungsfenster geöffnet.";
+      windowStatusWertung.innerText = "Kein Wertungsfenster geöffnet.";
     }
 
-    const statusElement2 = document.getElementById("windowStatus2");
-    if (controlledWindows2[matte] && !controlledWindows2[matte].closed) {
-      statusElement2.innerText = "Geöffnetes Zeitfenster: Matte " + matte + ", Runde " + mattenRunde;
+    const windowStatusZeit = document.getElementById("windowStatusZeit_" + matte);
+    if (controlledZeitFenster[matte] && !controlledZeitFenster[matte].closed) {
+      windowStatusZeit.innerText = "Geöffnetes Zeitfenster: Matte " + matte + ", Runde " + mattenRunde;
     } else {
-      statusElement2.innerText = "Kein Zeitfenster geöffnet.";
+      windowStatusZeit.innerText = "Kein Zeitfenster geöffnet.";
     }
   }
 
