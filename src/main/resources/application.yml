@@ -8,7 +8,7 @@ server:
     remoteip:
       protocol-header: x-forwarded-proto
       remote-ip-header: X-Forwarded-For
-      use-relative-redirects: false
+    use-relative-redirects: false
 
 spring:
   application.name: judoturnier
