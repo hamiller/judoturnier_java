@@ -4,6 +4,11 @@ server:
     whitelabel:
       enabled: false
   forward-headers-strategy: native
+  tomcat:
+    remoteip:
+      protocol-header: x-forwarded-proto
+      remote-ip-header: X-Forwarded-For
+      use-relative-redirects: false
 
 spring:
   application.name: judoturnier
