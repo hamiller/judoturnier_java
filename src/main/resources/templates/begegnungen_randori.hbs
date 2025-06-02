@@ -74,9 +74,11 @@
                 {{#if (istGleich altersklasse null)}}
                   <div class="listeneintrag-titel pause">PAUSE</div>
                 {{else}}
-                  <div class="listeneintrag-titel">{{gruppe.name}} ({{altersklasse}})</div>
+                  <div class="listeneintrag-titel">{{gruppe.name}} ({{altersklasse}}) - {{calculateRundenCode rundeId}}</div>
                   <div class="listeneintrag-titel-info rechts">(Wettkampf Nr. {{mattenRunde}} auf Matte {{../id}}, Runde Nr. {{gruppenRunde}} für Gruppe {{gruppe.name}}, Gesamtrunde {{rundeGesamt}})
                   </div>
+                  <md-filled-tonal-button type="button" class="when_mobile_hide" onclick="openTimerWindow({{../id}}, {{mattenRunde}})">Wertungsfenster öffnen</md-filled-tonal-button>
+
                 {{/if}}
               </div>
 
@@ -94,9 +96,11 @@
                     </div>
                   </a>
                 {{/if}}
+
+                {{#if @last}}
+                  <md-divider inset class="begegnngen_spacer"></md-divider>
+                {{/if}}
               {{/each}}
-              <md-divider inset></md-divider>
-              <md-filled-tonal-button type="button" class="when_mobile_hide" onclick="openTimerWindow({{../id}}, {{mattenRunde}})">Wertungsfenster öffnen</md-filled-tonal-button>
             {{/each}}
           {{/each}}
         </div>

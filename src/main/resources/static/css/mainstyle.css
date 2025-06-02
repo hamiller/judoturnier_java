@@ -172,6 +172,10 @@ tr {
   border-color: #ccc;
 }
 
+.begegnngen_spacer {
+  margin-bottom: 100px;
+}
+
 .bewerterinfo {
   justify-content: left;
 }
@@ -491,6 +495,8 @@ ul.info_maincontent > li {
   display: flex;
   margin-top: 20px;
   page-break-before: auto;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .listeneintrag-titel {
@@ -763,6 +769,10 @@ div .vorhanden {
   flex-wrap: wrap;
 }
 
+ergebnis_eintrag > .wettkaempfer.name {
+  justify-content: space-between;
+}
+
 .wettkaempferliste-wettkaempfer > div {
   width: 200px;
   display: flex;
@@ -885,7 +895,7 @@ div .vorhanden {
     /*border: 3px solid var(--color-dark-grey2);*/
     border-radius: var(--md-sys-shape-corner-small);
     display: block;
-    margin-bottom: 50px;
+    margin-bottom: 5%;
     font-size: 20px;
   }
 
@@ -1010,9 +1020,9 @@ div .vorhanden {
   }
 
   .wettkaempfer {
-    font-size: 20px;
+    font-size: 1.2em;
     margin-top: 10px;
-    display: block;
+    justify-content: space-between;
   }
 
   .when_mobile_hide {

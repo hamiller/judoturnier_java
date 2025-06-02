@@ -21,3 +21,6 @@ spring:
           keycloak:
             issuer-uri: http://localhost:7080/realms/judoturnier
             authorization-uri: http://localhost:7080/realms/judoturnier/protocol/openid-connect/auth
+
+logging:
+  config: classpath:log4j2-spring-local.xml

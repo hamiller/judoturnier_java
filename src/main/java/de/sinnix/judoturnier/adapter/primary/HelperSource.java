@@ -1,6 +1,7 @@
 package de.sinnix.judoturnier.adapter.primary;
 
 import com.github.jknack.handlebars.Options;
+import de.sinnix.judoturnier.application.CodeGeneratorService;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.BenutzerRolle;
 import de.sinnix.judoturnier.model.OidcBenutzer;
@@ -239,5 +240,9 @@ public class HelperSource {
 		Integer matte = options.param(0);
 		var r = gruppenListMitTypen.get(matte);
 		return r;
+	}
+
+	public static String calculateRundenCode(UUID rundenId, Options options) {
+		return CodeGeneratorService.generateCode(rundenId);
 	}
 }
