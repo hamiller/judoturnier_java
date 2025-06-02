@@ -178,14 +178,14 @@ public class TurnierController {
 
 		var wks = wettkaempferService.alleKaempfer(turnierUUID);
 		var einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
-		var anzahlv = wks.stream().map(wk -> wk.verein().id()).collect(Collectors.toSet()).size();
+		var vereine = vereinService.holeAlleVereine(turnierUUID);
 
 		ModelAndView mav = new ModelAndView("turnieruebersicht");
 		mav.addObject("turnierid", turnierid);
 		mav.addObject("isadmin", oidcBenutzer.istAdmin());
 		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
 		mav.addObject("anzahlwk", wks.size());
-		mav.addObject("anzahlv", anzahlv);
+		mav.addObject("anzahlv", vereine.size());
 		mav.addObject("turniertyp", einstellungen.turnierTyp());
 		mav.addObject("enableEditing", oidcBenutzer.istAdmin());
 		mav.addObject("turniername", turnierdaten.name());
