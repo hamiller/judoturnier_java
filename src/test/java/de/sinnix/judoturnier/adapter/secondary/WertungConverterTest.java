@@ -35,11 +35,11 @@ class WertungConverterTest {
 	@InjectMocks
 	private WertungConverter wertungConverter;
 
-	private static final String          UUID_STRING = "550e8400-e29b-41d4-a716-446655440000";
-	private              UUID            vereinId    = UUID.randomUUID();
-	private              UUID            wkId        = UUID.randomUUID();
-	private              WettkaempferJpa wk1Jpa      = new WettkaempferJpa(wkId.toString(), "Teilnehmer A", "m", "U11", new VereinJpa(vereinId.toString(), "Verein1", UUID_STRING), 25.0, "ORANGE", true, false, UUID_STRING);
-	private              Wettkaempfer    wk1         = new Wettkaempfer(wkId, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(vereinId, "Verein1", UUID.fromString(UUID_STRING)), 25.0, Optional.of(Farbe.ORANGE), true, false, UUID.fromString(UUID_STRING));
+	private static final UUID            UUID_TURNIER = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+	private              UUID            vereinId     = UUID.randomUUID();
+	private              UUID            wkId         = UUID.randomUUID();
+	private              WettkaempferJpa wk1Jpa       = new WettkaempferJpa("Teilnehmer A", "m", "U11", new VereinJpa("Verein1", UUID_TURNIER), 25.0, "ORANGE", true, false, UUID_TURNIER);
+	private              Wettkaempfer    wk1          = new Wettkaempfer(wkId, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(vereinId, "Verein1", UUID_TURNIER), 25.0, Optional.of(Farbe.ORANGE), true, false, UUID_TURNIER);
 	private              Benutzer        bewerter;
 
 	@BeforeEach
@@ -50,7 +50,7 @@ class WertungConverterTest {
 	@Test
 	void convertToWertungTurnier() {
 		WertungJpa jpa = new WertungJpa();
-		jpa.setUuid(UUID.randomUUID().toString());
+		jpa.setId(UUID.randomUUID());
 		jpa.setSieger(wk1Jpa);
 		jpa.setZeit(180_000_000_000l); // 3 Minuten
 		jpa.setPunkteWettkaempfer1(1);
@@ -62,7 +62,7 @@ class WertungConverterTest {
 
 		Wertung wertung = wertungConverter.convertToWertung(jpa);
 
-		assertEquals(wertung.getUuid().toString(), jpa.getUuid());
+		assertEquals(wertung.getUuid(), jpa.getId());
 		assertEquals(wertung.getSieger(), wk1);
 		assertEquals(wertung.getZeit(), Duration.of(3l, ChronoUnit.MINUTES));
 		assertEquals(wertung.getPunkteWettkaempferWeiss(), jpa.getPunkteWettkaempfer1());
@@ -101,7 +101,7 @@ class WertungConverterTest {
 	@Test
 	void convertToWertungRandori() {
 		WertungJpa jpa = new WertungJpa();
-		jpa.setUuid(UUID.randomUUID().toString());
+		jpa.setId(UUID.randomUUID());
 		jpa.setZeit(180_000_000_000l); // 3 Minuten
 		jpa.setKampfgeistWettkaempfer1(1);
 		jpa.setTechnikWettkaempfer1(2);
@@ -114,7 +114,7 @@ class WertungConverterTest {
 
 		Wertung wertung = wertungConverter.convertToWertung(jpa);
 
-		assertEquals(wertung.getUuid().toString(), jpa.getUuid());
+		assertEquals(wertung.getUuid(), jpa.getId());
 		assertEquals(wertung.getZeit(), Duration.of(3l, ChronoUnit.MINUTES));
 		assertEquals(wertung.getKampfgeistWettkaempfer1(), jpa.getKampfgeistWettkaempfer1());
 		assertEquals(wertung.getTechnikWettkaempfer1(), jpa.getTechnikWettkaempfer1());

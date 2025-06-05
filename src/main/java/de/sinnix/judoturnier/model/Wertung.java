@@ -38,5 +38,6 @@ public class Wertung {
 	private Integer kampfstilWettkaempfer2;
 	private Integer vielfaltWettkaempfer2;
 
+	@ToString.Exclude
 	private Benutzer bewerter;
 }

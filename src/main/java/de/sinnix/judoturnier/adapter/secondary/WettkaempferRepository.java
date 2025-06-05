@@ -21,46 +21,46 @@ public class WettkaempferRepository {
 	@Autowired
 	private WettkaempferConverter     wettkaempferConverter;
 	@Autowired
-	private VereinConverter           vereinConverter;
+	private VereinConverter     vereinConverter;
+	@Autowired
+	private VereinJpaRepository vereinJpaRepository;
 
 	public List<Wettkaempfer> findAll(UUID turnierUUID) {
-		return wettkaempferJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream().map(jpa -> wettkaempferConverter.convertToWettkaempfer(jpa)).collect(Collectors.toUnmodifiableList());
+		return wettkaempferJpaRepository.findAllByTurnierUUID(turnierUUID).stream().map(jpa -> wettkaempferConverter.convertToWettkaempfer(jpa)).collect(Collectors.toUnmodifiableList());
 	}
 
 	public void deleteById(UUID id) {
-		var optionalWettkaempfer = wettkaempferJpaRepository.findById(id.toString());
+		var optionalWettkaempfer = wettkaempferJpaRepository.findById(id);
 		if (optionalWettkaempfer.isEmpty()) {
 			return;
 		}
 
-		wettkaempferJpaRepository.deleteById(id.toString());
+		wettkaempferJpaRepository.deleteById(id);
 	}
 
 	public Optional<Wettkaempfer> findById(UUID id) {
-		return wettkaempferJpaRepository.findById(id.toString()).map(jpa -> wettkaempferConverter.convertToWettkaempfer(jpa));
+		return wettkaempferJpaRepository.findById(id).map(jpa -> wettkaempferConverter.convertToWettkaempfer(jpa));
 	}
 
 	public Wettkaempfer save(Wettkaempfer wettkaempfer) {
-		logger.debug("Speichere wettkaempfer in db: {}", wettkaempfer);
+		logger.info("Speichere wettkaempfer");
+
+		VereinJpa vereinJpa = vereinJpaRepository.findById(wettkaempfer.verein().id()).orElseThrow();
 		if (wettkaempfer.id() != null) {
-			var optionalWettkaempfer = wettkaempferJpaRepository.findById(wettkaempfer.id().toString());
+			var optionalWettkaempfer = wettkaempferJpaRepository.findById(wettkaempfer.id());
 			if (optionalWettkaempfer.isPresent()) {
-				WettkaempferJpa wk = optionalWettkaempfer.get();
-				wk.setName(wettkaempfer.name());
-				wk.setGeschlecht(wettkaempfer.geschlecht().name());
-				wk.setAltersklasse(wettkaempfer.altersklasse().name());
-				wk.setVerein(vereinConverter.convertFromVerein(wettkaempfer.verein()));
-				wk.setGewicht(wettkaempfer.gewicht());
-				wk.setFarbe(wettkaempfer.farbe().map(f -> f.name()).orElse(null));
-				wk.setChecked(wettkaempfer.checked());
-				wk.setPrinted(wettkaempfer.printed());
-				wk = wettkaempferJpaRepository.save(wk);
-				return wettkaempferConverter.convertToWettkaempfer(wk);
+				logger.debug("Wettkämpfer existiert bereits, aktualisiere {}", wettkaempfer);
+				WettkaempferJpa jpa = optionalWettkaempfer.get();
+				jpa.updateFrom(wettkaempferConverter.convertFromWettkaempfer(wettkaempfer), vereinJpa);
+				jpa = wettkaempferJpaRepository.save(jpa);
+				return wettkaempferConverter.convertToWettkaempfer(jpa);
 			}
 		}
 
-		var wk = wettkaempferConverter.convertFromWettkaempfer(wettkaempfer);
-		wk = wettkaempferJpaRepository.save(wk);
-		return wettkaempferConverter.convertToWettkaempfer(wk);
+		logger.debug("Wettkämpfer wird neu angelegt {}", wettkaempfer);
+		WettkaempferJpa jpa = wettkaempferConverter.convertFromWettkaempfer(wettkaempfer);
+		jpa.setVerein(vereinJpa);
+		jpa = wettkaempferJpaRepository.save(jpa);
+		return wettkaempferConverter.convertToWettkaempfer(jpa);
 	}
 }

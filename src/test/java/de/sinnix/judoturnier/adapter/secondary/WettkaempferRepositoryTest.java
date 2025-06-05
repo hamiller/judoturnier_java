@@ -32,13 +32,14 @@ class WettkaempferRepositoryTest {
     private WettkaempferConverter wettkaempferConverter;
 
     @Mock
-    private VereinConverter vereinConverter;
+    private VereinJpaRepository vereinJpaRepository;
 
     @InjectMocks
     private WettkaempferRepository wettkaempferRepository;
 
     private Wettkaempfer wettkaempfer;
     private WettkaempferJpa wettkaempferJpa;
+	private VereinJpa vereinJpa;
     private UUID turnierUUID;
     private UUID wkUUID;
     private UUID vUUID;
@@ -51,56 +52,59 @@ class WettkaempferRepositoryTest {
         Verein verein = new Verein(vUUID, "Verein A", turnierUUID);
         wettkaempfer = new Wettkaempfer(wkUUID, "John Doe", Geschlecht.m, Altersklasse.U18, verein, 70d, Optional.empty(), false, false, turnierUUID);
         wettkaempferJpa = new WettkaempferJpa();
-        wettkaempferJpa.setUuid(wkUUID.toString());
+        wettkaempferJpa.setId(wkUUID);
         wettkaempferJpa.setName("John Doe");
         wettkaempferJpa.setGeschlecht("MAENNLICH");
         wettkaempferJpa.setAltersklasse("U18");
-        wettkaempferJpa.setVerein(new VereinJpa(vUUID.toString(), "Verein A", turnierUUID.toString()));
+		vereinJpa = new VereinJpa("Verein A", turnierUUID);
+		vereinJpa.setId(vUUID);
+        wettkaempferJpa.setVerein(vereinJpa);
         wettkaempferJpa.setGewicht(70d);
         wettkaempferJpa.setFarbe(null);
         wettkaempferJpa.setChecked(false);
         wettkaempferJpa.setPrinted(false);
-        wettkaempferJpa.setTurnierUUID(turnierUUID.toString());
+        wettkaempferJpa.setTurnierUUID(turnierUUID);
     }
 
     @Test
     public void testFindAll() {
-        when(wettkaempferJpaRepository.findAllByTurnierUUID(turnierUUID.toString())).thenReturn(List.of(wettkaempferJpa));
+        when(wettkaempferJpaRepository.findAllByTurnierUUID(turnierUUID)).thenReturn(List.of(wettkaempferJpa));
         when(wettkaempferConverter.convertToWettkaempfer(wettkaempferJpa)).thenReturn(wettkaempfer);
 
         List<Wettkaempfer> result = wettkaempferRepository.findAll(turnierUUID);
 
         assertEquals(1, result.size());
         assertEquals(wettkaempfer, result.get(0));
-        verify(wettkaempferJpaRepository, times(1)).findAllByTurnierUUID(turnierUUID.toString());
+        verify(wettkaempferJpaRepository, times(1)).findAllByTurnierUUID(turnierUUID);
         verify(wettkaempferConverter, times(1)).convertToWettkaempfer(wettkaempferJpa);
     }
 
     @Test
     public void testDeleteById() {
-        when(wettkaempferJpaRepository.findById(wkUUID.toString())).thenReturn(Optional.of(wettkaempferJpa));
+        when(wettkaempferJpaRepository.findById(wkUUID)).thenReturn(Optional.of(wettkaempferJpa));
 
         wettkaempferRepository.deleteById(wkUUID);
 
-        verify(wettkaempferJpaRepository, times(1)).findById(wkUUID.toString());
-        verify(wettkaempferJpaRepository, times(1)).deleteById(wkUUID.toString());
+        verify(wettkaempferJpaRepository, times(1)).findById(wkUUID);
+        verify(wettkaempferJpaRepository, times(1)).deleteById(wkUUID);
     }
 
     @Test
     public void testFindById() {
-        when(wettkaempferJpaRepository.findById(wkUUID.toString())).thenReturn(Optional.of(wettkaempferJpa));
+        when(wettkaempferJpaRepository.findById(wkUUID)).thenReturn(Optional.of(wettkaempferJpa));
         when(wettkaempferConverter.convertToWettkaempfer(wettkaempferJpa)).thenReturn(wettkaempfer);
 
         Optional<Wettkaempfer> result = wettkaempferRepository.findById(wkUUID);
 
         assertNotNull(result);
         assertEquals(wettkaempfer, result.get());
-        verify(wettkaempferJpaRepository, times(1)).findById(wkUUID.toString());
+        verify(wettkaempferJpaRepository, times(1)).findById(wkUUID);
         verify(wettkaempferConverter, times(1)).convertToWettkaempfer(wettkaempferJpa);
     }
 
     @Test
     public void testSave_NewWettkaempfer() {
+		when(vereinJpaRepository.findById(any())).thenReturn(Optional.of(vereinJpa));
         when(wettkaempferJpaRepository.save(any(WettkaempferJpa.class))).thenReturn(wettkaempferJpa);
         when(wettkaempferConverter.convertFromWettkaempfer(wettkaempfer)).thenReturn(wettkaempferJpa);
         when(wettkaempferConverter.convertToWettkaempfer(wettkaempferJpa)).thenReturn(wettkaempfer);
@@ -116,15 +120,17 @@ class WettkaempferRepositoryTest {
 
     @Test
     public void testSave_ExistingWettkaempfer() {
-        when(wettkaempferJpaRepository.findById(wkUUID.toString())).thenReturn(Optional.of(wettkaempferJpa));
+		when(vereinJpaRepository.findById(any())).thenReturn(Optional.of(vereinJpa));
+        when(wettkaempferJpaRepository.findById(wkUUID)).thenReturn(Optional.of(wettkaempferJpa));
         when(wettkaempferJpaRepository.save(any(WettkaempferJpa.class))).thenReturn(wettkaempferJpa);
+        when(wettkaempferConverter.convertFromWettkaempfer(wettkaempfer)).thenReturn(wettkaempferJpa);
         when(wettkaempferConverter.convertToWettkaempfer(wettkaempferJpa)).thenReturn(wettkaempfer);
 
         Wettkaempfer result = wettkaempferRepository.save(wettkaempfer);
 
         assertNotNull(result);
         assertEquals(wettkaempfer, result);
-        verify(wettkaempferJpaRepository, times(1)).findById(wkUUID.toString());
+        verify(wettkaempferJpaRepository, times(1)).findById(wkUUID);
         verify(wettkaempferJpaRepository, times(1)).save(wettkaempferJpa);
         verify(wettkaempferConverter, times(1)).convertToWettkaempfer(wettkaempferJpa);
     }

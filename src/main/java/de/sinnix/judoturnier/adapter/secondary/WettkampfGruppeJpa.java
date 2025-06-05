@@ -1,6 +1,8 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import java.util.UUID;
 
+import de.sinnix.judoturnier.model.WettkampfGruppe;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -20,13 +22,19 @@ public class WettkampfGruppeJpa extends AbstractEntity {
 	private String typ;
 	private String altersklasse;
 	@Column(name = "turnier_uuid", nullable = false)
-	private String turnierUUID;
+	private UUID   turnierUUID;
 
-	public WettkampfGruppeJpa(String uuid, String name, String typ, String altersklasse, String turnierUUID) {
-		super(uuid);
+	public WettkampfGruppeJpa(String name, String typ, String altersklasse, UUID turnierUUID) {
+		super();
 		this.name = name;
 		this.typ = typ;
 		this.altersklasse = altersklasse;
 		this.turnierUUID = turnierUUID;
+	}
+
+	public void updateFrom(WettkampfGruppe wettkampfGruppe) {
+		this.setName(wettkampfGruppe.name());
+		this.setTyp(wettkampfGruppe.typ());
+		this.setAltersklasse(wettkampfGruppe.altersklasse().name());
 	}
 }

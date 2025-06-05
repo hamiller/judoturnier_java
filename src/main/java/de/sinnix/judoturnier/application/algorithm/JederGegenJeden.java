@@ -25,7 +25,7 @@ public class JederGegenJeden implements Algorithmus {
 		List<BegegnungenJeRunde> begegnungenJeRunde = berechneBegegnungen(wettkaempferGruppe);
 
 		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(
-			UUID.randomUUID(),
+			null,
 			gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
 			"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
 			gewichtsklassenGruppe.altersKlasse(),

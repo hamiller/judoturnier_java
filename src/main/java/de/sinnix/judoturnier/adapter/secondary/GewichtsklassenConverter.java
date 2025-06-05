@@ -18,26 +18,25 @@ public class GewichtsklassenConverter {
 
 	public GewichtsklassenGruppe convertToGewichtsklassen(GewichtsklassenJpa jpa) {
 		return new GewichtsklassenGruppe(
-			UUID.fromString(jpa.getUuid()),
+			jpa.getId(),
 			getAltersklasse(jpa.getAltersklasse()),
 			getGeschlecht(jpa.getGruppengeschlecht()),
 			wettkaempferConverter.convertToWettkaempferList(jpa.getTeilnehmer()),
 			getRandoriGruppenName(jpa.getName()),
 			jpa.getMingewicht(),
 			jpa.getMaxgewicht(),
-			UUID.fromString(jpa.getTurnierUUID()));
+			jpa.getTurnierUUID());
 	}
 
 	public GewichtsklassenJpa convertFromGewichtsklassen(GewichtsklassenGruppe gwk) {
 		GewichtsklassenJpa jpa = new GewichtsklassenJpa();
-		if (gwk.id() != null) jpa.setUuid(gwk.id().toString());
 		jpa.setName(gwk.name().map(n -> n.name()).orElse(""));
 		jpa.setAltersklasse(gwk.altersKlasse().name());
 		jpa.setMingewicht(gwk.minGewicht());
 		jpa.setMaxgewicht(gwk.maxGewicht());
 		jpa.setGruppengeschlecht(gwk.gruppenGeschlecht().map(g -> g.name()).orElse(null));
 		jpa.setTeilnehmer(wettkaempferConverter.convertFromWettkaempferList(gwk.teilnehmer()));
-		jpa.setTurnierUUID(gwk.turnierUUID().toString());
+		jpa.setTurnierUUID(gwk.turnierUUID());
 		return jpa;
 	}
 

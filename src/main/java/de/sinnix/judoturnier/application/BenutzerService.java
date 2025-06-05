@@ -1,6 +1,7 @@
 package de.sinnix.judoturnier.application;
 
 import de.sinnix.judoturnier.adapter.secondary.BenutzerRepository;
+import de.sinnix.judoturnier.adapter.secondary.TurnierRollenJpaRepository;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.OidcBenutzer;
 import de.sinnix.judoturnier.model.TurnierRollen;
@@ -20,7 +21,9 @@ public class BenutzerService {
 	private static final Logger logger = LogManager.getLogger(BenutzerService.class);
 
 	@Autowired
-	private BenutzerRepository benutzerRepository;
+	private BenutzerRepository         benutzerRepository;
+	@Autowired
+	private TurnierRollenJpaRepository turnierRollenJpaRepository;
 
 	@Transactional
 	public Benutzer holeBenutzer(OidcBenutzer oidcBenutzer) {
@@ -56,24 +59,10 @@ public class BenutzerService {
 	@Transactional
 	public void ordneBenutzerZuTurnier(List<UUID> benutzerIds, UUID turnierUUID) {
 		logger.info("Ordne Benutzer [{}] zu Turnier {}", benutzerIds, turnierUUID);
-
-		benutzerRepository.deleteTurnierRollen(turnierUUID);
-
 		for (UUID userId : benutzerIds) {
-			Optional<Benutzer> ob = benutzerRepository.findBenutzer(userId);
-			if (ob.isPresent()) {
-
-				Benutzer benutzer = ob.get();
-				List<TurnierRollen> updatedTurnierRollen = new ArrayList<>(benutzer.turnierRollen());
-				updatedTurnierRollen.add(new TurnierRollen(null, turnierUUID, benutzer.benutzerRollen()));
-				benutzerRepository.save(new Benutzer(
-					benutzer.uuid(),
-					benutzer.username(),
-					benutzer.name(),
-					updatedTurnierRollen,
-					benutzer.benutzerRollen()
-				));
-			}
+			var rollen = benutzerRepository.findBenutzer(userId).map(Benutzer::benutzerRollen).orElseThrow();
+			TurnierRollen turnierRollen = new TurnierRollen(null, turnierUUID, rollen);
+			benutzerRepository.addTurnierRollen(userId, turnierRollen, turnierUUID);
 		}
 	}
 

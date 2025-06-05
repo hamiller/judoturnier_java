@@ -28,10 +28,10 @@ public class BegegnungConverter {
 
 		WettkampfGruppe wettkampfGruppe = null;
 		if (!wettkampfGruppeJpaList.isEmpty()) {
-			WettkampfGruppeJpa wettkampfGruppeJpa = wettkampfGruppeJpaList.stream().filter(wkg -> wkg.getUuid().equals(jpa.getWettkampfGruppeId())).findFirst().orElseThrow();
+			WettkampfGruppeJpa wettkampfGruppeJpa = wettkampfGruppeJpaList.stream().filter(wkg -> wkg.getId().equals(jpa.getWettkampfGruppeId())).findFirst().orElseThrow();
 			wettkampfGruppe = wettkampfGruppeConverter.convertToWettkampfGruppe(wettkampfGruppeJpa);
 		}
-		return new Begegnung(UUID.fromString(jpa.getUuid()),
+		return new Begegnung(jpa.getId(),
 			begegnungId,
 			UUID.fromString(jpa.getRundeUUID()),
 			jpa.getMatteId(),
@@ -42,7 +42,7 @@ public class BegegnungConverter {
 			Optional.ofNullable(wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer2())),
 			jpa.getWertungen().stream().map(wertung -> wertungConverter.convertToWertung(wertung)).collect(Collectors.toList()),
 			wettkampfGruppe,
-			UUID.fromString(jpa.getTurnierUUID())
+			jpa.getTurnierUUID()
 			);
 	}
 
@@ -56,7 +56,7 @@ public class BegegnungConverter {
 		if (wettkampfGruppeJpa.isPresent()) {
 			wettkampfGruppe = wettkampfGruppeConverter.convertToWettkampfGruppe(wettkampfGruppeJpa.get());
 		}
-		return new Begegnung(UUID.fromString(jpa.getUuid()),
+		return new Begegnung(jpa.getId(),
 			begegnungId,
 			UUID.fromString(jpa.getRundeUUID()),
 			jpa.getMatteId(),
@@ -67,13 +67,12 @@ public class BegegnungConverter {
 			Optional.ofNullable(wettkaempferConverter.convertToWettkaempfer(jpa.getWettkaempfer2())),
 			jpa.getWertungen().stream().map(wertung -> wertungConverter.convertToWertung(wertung)).collect(Collectors.toList()),
 			wettkampfGruppe,
-			UUID.fromString(jpa.getTurnierUUID())
+			jpa.getTurnierUUID()
 		);
 	}
 
 	public BegegnungJpa convertFromBegegnung(Begegnung begegnung) {
 		BegegnungJpa jpa = new BegegnungJpa();
-		if (begegnung.getId() != null) jpa.setUuid(begegnung.getId().toString());
 		jpa.setRunde(begegnung.getBegegnungId().getRunde());
 		jpa.setRundenTyp(begegnung.getBegegnungId().getRundenTyp().getValue());
 		jpa.setPaarung(begegnung.getBegegnungId().getAkuellePaarung());
@@ -86,8 +85,8 @@ public class BegegnungConverter {
 		jpa.setWettkaempfer2(wettkaempferConverter.convertFromWettkaempfer(begegnung.getWettkaempfer2().orElse(null)));
 		jpa.setWertungen(begegnung.getWertungen().stream().map(wertung -> wertungConverter.convertFromWertung(wertung)).toList());
 		begegnung.getWertungen().stream().map(wertung -> wertungConverter.convertFromWertung(wertung)).toList();
-		if (begegnung.getWettkampfGruppe().id() != null) jpa.setWettkampfGruppeId(begegnung.getWettkampfGruppe().id().toString());
-		jpa.setTurnierUUID(begegnung.getTurnierUUID().toString());
+		if (begegnung.getWettkampfGruppe().id() != null) jpa.setWettkampfGruppeId(begegnung.getWettkampfGruppe().id());
+		jpa.setTurnierUUID(begegnung.getTurnierUUID());
 		return jpa;
 	}
 

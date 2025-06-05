@@ -61,8 +61,6 @@ public class TurnierService {
 			Turnier neuesTurnier = new Turnier(UUID.randomUUID(), name, ort, parsedDate);
 			Turnier turnier = turnierRepository.speichereTurnier(neuesTurnier);
 
-
-
 			einstellungenService.speichereDefaultEinstellungen(turnier.uuid());
 
 			return turnier;

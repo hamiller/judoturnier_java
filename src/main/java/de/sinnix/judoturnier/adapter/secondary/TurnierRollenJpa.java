@@ -1,9 +1,12 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
 import java.util.List;
+import java.util.UUID;
+
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.sinnix.judoturnier.model.BenutzerRolle;
+import de.sinnix.judoturnier.model.TurnierRollen;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -32,12 +35,16 @@ public class TurnierRollenJpa extends AbstractEntity {
 	@Column(name = "rollen")
 	private List<BenutzerRolle> rollen;
 	@Column(name = "turnier_uuid")
-	private String              turnierUuid;
+	private UUID                turnierUuid;
 
-	public TurnierRollenJpa(String uuid, BenutzerJpa benutzer, List<BenutzerRolle> rollen, String turnierUuid) {
-		super(uuid);
+	public TurnierRollenJpa(BenutzerJpa benutzer, List<BenutzerRolle> rollen, UUID turnierUuid) {
+		super();
 		this.benutzer = benutzer;
 		this.rollen = rollen;
 		this.turnierUuid = turnierUuid;
+	}
+
+	public void updateFrom(TurnierRollen turnierRollen) {
+		this.rollen = turnierRollen.rollen();
 	}
 }

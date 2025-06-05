@@ -53,17 +53,17 @@ class BegegnungConverterTest {
 		UUID wkgUUID = UUID.randomUUID();
 
 		Begegnung.BegegnungId begegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1);
-		WettkampfGruppeJpa wettkampfGruppeJpa = new WettkampfGruppeJpa(wkgUUID.toString(), "Gruppe1", "typ1", "U11", turnierUUID.toString());
+		WettkampfGruppeJpa wettkampfGruppeJpa = new WettkampfGruppeJpa("Gruppe1", "typ1", "U11", turnierUUID);
+		wettkampfGruppeJpa.setId(UUID.randomUUID());
 		BegegnungJpa begegnungJpa = new BegegnungJpa();
-		begegnungJpa.setUuid(begegnungUUID.toString());
 		begegnungJpa.setRundeUUID(rundeUUID.toString());
 		begegnungJpa.setMatteId(2);
 		begegnungJpa.setMattenRunde(123);
 		begegnungJpa.setGruppenRunde(22);
 		begegnungJpa.setWettkaempfer1(new WettkaempferJpa());
 		begegnungJpa.setWettkaempfer2(new WettkaempferJpa());
-		begegnungJpa.setWettkampfGruppeId(wettkampfGruppeJpa.getUuid());
-		begegnungJpa.setTurnierUUID(turnierUUID.toString());
+		begegnungJpa.setWettkampfGruppeId(wettkampfGruppeJpa.getId());
+		begegnungJpa.setTurnierUUID(turnierUUID);
 		begegnungJpa.setWertungen(List.of());
 		begegnungJpa.setRundenTyp(begegnungId.getRundenTyp().getValue());
 		begegnungJpa.setRunde(begegnungId.getRunde());
@@ -75,7 +75,6 @@ class BegegnungConverterTest {
 		Begegnung result = begegnungConverter.convertToBegegnung(begegnungJpa, List.of(wettkampfGruppeJpa));
 
 		assertTrue(result != null);
-		assertEquals(begegnungJpa.getUuid(), result.getId().toString());
 		assertNotNull(result.getBegegnungId());
 		assertEquals(begegnungJpa.getRundenTyp(), result.getBegegnungId().getRundenTyp().getValue());
 		assertEquals(begegnungJpa.getRunde(), result.getBegegnungId().getRunde());
@@ -109,7 +108,6 @@ class BegegnungConverterTest {
 		Begegnung begegnung = new Begegnung(begegnungUUID, begegnungId, rundeUUID,2, 123, 22, 13, WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2, List.of(wertung), new WettkampfGruppe(wkgUUID, "Gruppe1", "typ1", Altersklasse.U11, turnierUUID), turnierUUID);
 
 		WertungJpa wertungJpa = new WertungJpa();
-		wertungJpa.setUuid(wertung.getUuid().toString());
 		wertungJpa.setZeit(wertung.getZeit().getSeconds());
 		wertungJpa.setSieger(WettkaempferFixtures.wettkaempferJpa1);
 		wertungJpa.setPunkteWettkaempfer1(1);
@@ -123,18 +121,18 @@ class BegegnungConverterTest {
 
 		BegegnungJpa result = begegnungConverter.convertFromBegegnung(begegnung);
 
-		WettkampfGruppeJpa wettkampfGruppeJpa = new WettkampfGruppeJpa(wkgUUID.toString(), "Gruppe1", "typ1", "U11", turnierUUID.toString());
+		WettkampfGruppeJpa wettkampfGruppeJpa = new WettkampfGruppeJpa("Gruppe1", "typ1", "U11", turnierUUID);
+		wettkampfGruppeJpa.setId(wkgUUID);
 		BegegnungJpa begegnungJpa = new BegegnungJpa();
 		begegnungJpa.setRundeUUID(rundeUUID.toString());
-		begegnungJpa.setUuid(begegnungUUID.toString());
 		begegnungJpa.setMatteId(2);
 		begegnungJpa.setMattenRunde(123);
 		begegnungJpa.setGruppenRunde(22);
 		begegnungJpa.setGesamtBegegnung(13);
 		begegnungJpa.setWettkaempfer1(WettkaempferFixtures.wettkaempferJpa1);
 		begegnungJpa.setWettkaempfer2(WettkaempferFixtures.wettkaempferJpa2);
-		begegnungJpa.setWettkampfGruppeId(wettkampfGruppeJpa.getUuid());
-		begegnungJpa.setTurnierUUID(turnierUUID.toString());
+		begegnungJpa.setWettkampfGruppeId(wettkampfGruppeJpa.getId());
+		begegnungJpa.setTurnierUUID(turnierUUID);
 		begegnungJpa.setWertungen(List.of(wertungJpa));
 		begegnungJpa.setRunde(begegnungId.getRunde());
 		begegnungJpa.setPaarung(begegnungId.getAkuellePaarung());

@@ -151,41 +151,41 @@ public class GewichtsklassenGruppeFixture {
     );
 
     public static List<GewichtsklassenJpa> gewichtsklassenGruppenJpa = Arrays.asList(
-            new GewichtsklassenJpa(gwkg1.toString(), "U11", "m", Arrays.asList(
-                    new WettkaempferJpa(w1.toString(), "Teilnehmer A", "m", "U11", new VereinJpa(v1.toString(), "Verein1", turnierUUID.toString()), 24.0, "BLAU", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w2.toString(), "Teilnehmer B", "m", "U11", new VereinJpa(v2.toString(), "Verein2", turnierUUID.toString()), 24.5, "ORANGE", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w3.toString(), "Teilnehmer C", "m", "U11", new VereinJpa(v3.toString(), "Verein3", turnierUUID.toString()), 23.8, "GRUEN", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w4.toString(), "Teilnehmer D", "m", "U11", new VereinJpa(v4.toString(), "Verein4", turnierUUID.toString()), 24.2, "GELB", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w5.toString(), "Teilnehmer E", "m", "U11", new VereinJpa(v5.toString(), "Verein5", turnierUUID.toString()), 24.4, "SCHWARZ", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w6.toString(), "Teilnehmer F", "m", "U11", new VereinJpa(v2.toString(), "Verein2", turnierUUID.toString()), 24.3, "WEISS", true, true, turnierUUID.toString())
-            ), "Antilope", 24.8, 23.8, turnierUUID.toString()),
-            new GewichtsklassenJpa(gwkg2.toString(), "U11", "m", Arrays.asList(
-                    new WettkaempferJpa(w7.toString(), "Teilnehmer G", "m", "U11", new VereinJpa(v3.toString(), "Verein3", turnierUUID.toString()), 25.0, "BLAU", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w8.toString(), "Teilnehmer H", "m", "U11", new VereinJpa(v4.toString(), "Verein4", turnierUUID.toString()), 25.2, "ORANGE", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w9.toString(), "Teilnehmer I", "m", "U11", new VereinJpa(v1.toString(), "Verein1", turnierUUID.toString()), 24.9, "GRUEN", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w10.toString(), "Teilnehmer J", "m", "U11", new VereinJpa(v5.toString(), "Verein5", turnierUUID.toString()), 25.1, "GELB", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w11.toString(), "Teilnehmer K", "m", "U11", new VereinJpa(v3.toString(), "Verein3", turnierUUID.toString()), 25.3, "SCHWARZ", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w12.toString(), "Teilnehmer L", "m", "U11", new VereinJpa(v2.toString(), "Verein2", turnierUUID.toString()), 25.4, "WEISS", true, true, turnierUUID.toString())
-            ), "Eule", 25.8, 24.8, turnierUUID.toString()),
-            new GewichtsklassenJpa(gwkg3.toString(), "U11", "m", Arrays.asList(
-                    new WettkaempferJpa(w13.toString(), "Teilnehmer M", "m", "U11", new VereinJpa(v4.toString(), "Verein4", turnierUUID.toString()), 26.0, "BLAU", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w14.toString(), "Teilnehmer N", "m", "U11", new VereinJpa(v5.toString(), "Verein5", turnierUUID.toString()), 26.2, "ORANGE", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w15.toString(), "Teilnehmer O", "m", "U11", new VereinJpa(v1.toString(), "Verein1", turnierUUID.toString()), 26.1, "GRUEN", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w16.toString(), "Teilnehmer P", "m", "U11", new VereinJpa(v3.toString(), "Verein3", turnierUUID.toString()), 26.4, "GELB", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w17.toString(), "Teilnehmer Q", "m", "U11", new VereinJpa(v2.toString(), "Verein2", turnierUUID.toString()), 26.3, "SCHWARZ", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w18.toString(), "Teilnehmer R", "m", "U11", new VereinJpa(v1.toString(), "Verein1", turnierUUID.toString()), 26.5, "WEISS", true, true, turnierUUID.toString())
-            ), "Katze", 26.8, 25.8, turnierUUID.toString()),
-            new GewichtsklassenJpa(gwkg4.toString(), "U11", "m", Arrays.asList(
-                    new WettkaempferJpa(w19.toString(), "Teilnehmer S", "m", "U11", new VereinJpa(v4.toString(), "Verein4", turnierUUID.toString()), 27.0, "BLAU", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w20.toString(), "Teilnehmer T", "m", "U11", new VereinJpa(v5.toString(), "Verein5", turnierUUID.toString()), 27.2, "ORANGE", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w21.toString(), "Teilnehmer U", "m", "U11", new VereinJpa(v2.toString(), "Verein2", turnierUUID.toString()), 27.1, "GRUEN", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w22.toString(), "Teilnehmer V", "m", "U11", new VereinJpa(v3.toString(), "Verein3", turnierUUID.toString()), 27.3, "GELB", true, true, turnierUUID.toString())
-            ), "Maus", 27.8, 26.8, turnierUUID.toString()),
-            new GewichtsklassenJpa(gwkg5.toString(), "U11", "m", Arrays.asList(
-                    new WettkaempferJpa(w23.toString(), "Teilnehmer W", "m", "U11", new VereinJpa(v1.toString(), "Verein1", turnierUUID.toString()), 28.0, "BLAU", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w24.toString(), "Teilnehmer X", "m", "U11", new VereinJpa(v4.toString(), "Verein4", turnierUUID.toString()), 28.2, "ORANGE", true, true, turnierUUID.toString()),
-                    new WettkaempferJpa(w25.toString(), "Teilnehmer Y", "m", "U11", new VereinJpa(v5.toString(), "Verein5", turnierUUID.toString()), 28.1, "GRUEN", true, true, turnierUUID.toString())
-            ), "Tiger", 28.8, 27.8, turnierUUID.toString())
+            new GewichtsklassenJpa("U11", "m", Arrays.asList(
+                    new WettkaempferJpa("Teilnehmer A", "m", "U11", new VereinJpa("Verein1", turnierUUID), 24.0, "BLAU", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer B", "m", "U11", new VereinJpa("Verein2", turnierUUID), 24.5, "ORANGE", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer C", "m", "U11", new VereinJpa("Verein3", turnierUUID), 23.8, "GRUEN", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer D", "m", "U11", new VereinJpa("Verein4", turnierUUID), 24.2, "GELB", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer E", "m", "U11", new VereinJpa("Verein5", turnierUUID), 24.4, "SCHWARZ", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer F", "m", "U11", new VereinJpa("Verein2", turnierUUID), 24.3, "WEISS", true, true, turnierUUID)
+            ), "Antilope", 24.8, 23.8, turnierUUID),
+            new GewichtsklassenJpa("U11", "m", Arrays.asList(
+                    new WettkaempferJpa("Teilnehmer G", "m", "U11", new VereinJpa("Verein3", turnierUUID), 25.0, "BLAU", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer H", "m", "U11", new VereinJpa("Verein4", turnierUUID), 25.2, "ORANGE", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer I", "m", "U11", new VereinJpa("Verein1", turnierUUID), 24.9, "GRUEN", true, true, turnierUUID),
+                    new WettkaempferJpa( "Teilnehmer J", "m", "U11", new VereinJpa("Verein5", turnierUUID), 25.1, "GELB", true, true, turnierUUID),
+                    new WettkaempferJpa( "Teilnehmer K", "m", "U11", new VereinJpa("Verein3", turnierUUID), 25.3, "SCHWARZ", true, true, turnierUUID),
+                    new WettkaempferJpa( "Teilnehmer L", "m", "U11", new VereinJpa("Verein2", turnierUUID), 25.4, "WEISS", true, true, turnierUUID)
+            ), "Eule", 25.8, 24.8, turnierUUID),
+            new GewichtsklassenJpa("U11", "m", Arrays.asList(
+                    new WettkaempferJpa("Teilnehmer M", "m", "U11", new VereinJpa("Verein4", turnierUUID), 26.0, "BLAU", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer N", "m", "U11", new VereinJpa("Verein5", turnierUUID), 26.2, "ORANGE", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer O", "m", "U11", new VereinJpa("Verein1", turnierUUID), 26.1, "GRUEN", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer P", "m", "U11", new VereinJpa("Verein3", turnierUUID), 26.4, "GELB", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer Q", "m", "U11", new VereinJpa("Verein2", turnierUUID), 26.3, "SCHWARZ", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer R", "m", "U11", new VereinJpa("Verein1", turnierUUID), 26.5, "WEISS", true, true, turnierUUID)
+            ), "Katze", 26.8, 25.8, turnierUUID),
+            new GewichtsklassenJpa("U11", "m", Arrays.asList(
+                    new WettkaempferJpa("Teilnehmer S", "m", "U11", new VereinJpa("Verein4", turnierUUID), 27.0, "BLAU", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer T", "m", "U11", new VereinJpa("Verein5", turnierUUID), 27.2, "ORANGE", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer U", "m", "U11", new VereinJpa("Verein2", turnierUUID), 27.1, "GRUEN", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer V", "m", "U11", new VereinJpa("Verein3", turnierUUID), 27.3, "GELB", true, true, turnierUUID)
+            ), "Maus", 27.8, 26.8, turnierUUID),
+            new GewichtsklassenJpa("U11", "m", Arrays.asList(
+                    new WettkaempferJpa("Teilnehmer W", "m", "U11", new VereinJpa("Verein1", turnierUUID), 28.0, "BLAU", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer X", "m", "U11", new VereinJpa("Verein4", turnierUUID), 28.2, "ORANGE", true, true, turnierUUID),
+                    new WettkaempferJpa("Teilnehmer Y", "m", "U11", new VereinJpa("Verein5", turnierUUID), 28.1, "GRUEN", true, true, turnierUUID)
+            ), "Tiger", 28.8, 27.8, turnierUUID)
     );
 
     public static List<GewichtsklassenGruppe> gwks2 = Arrays.asList(

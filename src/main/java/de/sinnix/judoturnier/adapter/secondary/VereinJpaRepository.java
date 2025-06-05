@@ -4,8 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface VereinJpaRepository extends JpaRepository<VereinJpa, String> {
-	List<VereinJpa> findAllByTurnierUUID(String turnierUuid);
+public interface VereinJpaRepository extends JpaRepository<VereinJpa, UUID> {
+	List<VereinJpa> findAllByTurnierUUID(UUID turnierUuid);
 }

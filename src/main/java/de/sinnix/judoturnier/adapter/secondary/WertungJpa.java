@@ -1,9 +1,15 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import java.util.Optional;
+
+
+import de.sinnix.judoturnier.model.Wettkaempfer;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,6 +27,7 @@ public class WertungJpa extends AbstractEntity {
 
 	// turnier
 	@OneToOne
+	@JoinColumn(name = "sieger_uuid")
 	private WettkaempferJpa sieger;
 	private Integer         punkteWettkaempfer1;
 	private Integer         strafenWettkaempfer1;
@@ -42,8 +49,8 @@ public class WertungJpa extends AbstractEntity {
 	@JoinColumn(name = "bewerter")
 	private BenutzerJpa benutzer;
 
-	public WertungJpa(String uuid, Long zeit, WettkaempferJpa sieger, Integer punkteWettkaempfer1, Integer strafenWettkaempfer1, Integer punkteWettkaempfer2, Integer strafenWettkaempfer2, Integer kampfgeistWettkaempfer1, Integer technikWettkaempfer1, Integer kampfstilWettkaempfer1, Integer vielfaltWettkaempfer1, Integer kampfgeistWettkaempfer2, Integer technikWettkaempfer2, Integer kampfstilWettkaempfer2, Integer vielfaltWettkaempfer2, BenutzerJpa benutzer) {
-		super(uuid);
+	public WertungJpa(Long zeit, WettkaempferJpa sieger, Integer punkteWettkaempfer1, Integer strafenWettkaempfer1, Integer punkteWettkaempfer2, Integer strafenWettkaempfer2, Integer kampfgeistWettkaempfer1, Integer technikWettkaempfer1, Integer kampfstilWettkaempfer1, Integer vielfaltWettkaempfer1, Integer kampfgeistWettkaempfer2, Integer technikWettkaempfer2, Integer kampfstilWettkaempfer2, Integer vielfaltWettkaempfer2, BenutzerJpa benutzer) {
+		super();
 		this.zeit = zeit;
 		this.sieger = sieger;
 		this.punkteWettkaempfer1 = punkteWettkaempfer1;
@@ -59,5 +66,23 @@ public class WertungJpa extends AbstractEntity {
 		this.kampfstilWettkaempfer2 = kampfstilWettkaempfer2;
 		this.vielfaltWettkaempfer2 = vielfaltWettkaempfer2;
 		this.benutzer = benutzer;
+	}
+
+	public void updateFrom(WertungJpa jpa, Optional<WettkaempferJpa> siegerOptionalJpa) {
+		this.zeit = jpa.getZeit();
+		this.sieger = siegerOptionalJpa.isPresent() ? siegerOptionalJpa.get() : jpa.getSieger();
+		this.punkteWettkaempfer1 = jpa.getPunkteWettkaempfer1();
+		this.strafenWettkaempfer1 = jpa.getStrafenWettkaempfer1();
+		this.punkteWettkaempfer2 = jpa.getPunkteWettkaempfer2();
+		this.strafenWettkaempfer2 = jpa.getStrafenWettkaempfer2();
+
+		this.kampfgeistWettkaempfer1 = jpa.getKampfgeistWettkaempfer1();
+		this.technikWettkaempfer1 = jpa.getTechnikWettkaempfer1();
+		this.kampfstilWettkaempfer1 = jpa.getKampfstilWettkaempfer1();
+		this.vielfaltWettkaempfer1 = jpa.getVielfaltWettkaempfer1();
+		this.kampfgeistWettkaempfer2 = jpa.getKampfgeistWettkaempfer2();
+		this.technikWettkaempfer2 = jpa.getTechnikWettkaempfer2();
+		this.kampfstilWettkaempfer2 = jpa.getKampfstilWettkaempfer2();
+		this.vielfaltWettkaempfer2 = jpa.getVielfaltWettkaempfer2();
 	}
 }

@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,7 +31,7 @@ public class EinstellungJpa {
 	public static class EinstellungId implements Serializable {
 		private String art;
 		@Column(name = "turnier_uuid", nullable = false)
-		private String turnierUUID;
+		private UUID   turnierUUID;
 
 	}
 }

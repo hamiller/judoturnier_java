@@ -2,6 +2,7 @@ package de.sinnix.judoturnier.application;
 
 import de.sinnix.judoturnier.adapter.secondary.BenutzerRepository;
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
+import de.sinnix.judoturnier.adapter.secondary.WertungRepository;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Wertung;
@@ -11,6 +12,8 @@ import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,76 +38,32 @@ public class WertungService {
 	@Autowired
 	private              TurnierRepository   turnierRepository;
 	@Autowired
+	private              WertungRepository   wertungRepository;
+	@Autowired
 	private              WettkaempferService wettkaempferService;
 	@Autowired
 	private              WettkampfService    wettkampfService;
 
 	public void speichereRandoriWertung(UUID begegnungId, int kampfgeist1, int technik1, int stil1, int vielfalt1, int kampfgeist2, int technik2, int stil2, int vielfalt2, UUID bewerterUUID) {
 		logger.info("speichereRandoriWertung: {}", begegnungId);
-		Begegnung begegnung = wettkampfService.ladeBegegnung(begegnungId);
 
 		Benutzer benutzer = benutzerRepository.findBenutzer(bewerterUUID).orElseThrow(() -> new RuntimeException("Nutzer " + bewerterUUID + " konnte nicht gefunden werden"));
-		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), benutzer);
-		if (existierendeWertung.isPresent()) {
-			logger.debug("Aktualisiere existierende Wertung");
-			var wertung = existierendeWertung.get();
-			wertung.setKampfgeistWettkaempfer1(kampfgeist1);
-			wertung.setTechnikWettkaempfer1(technik1);
-			wertung.setKampfstilWettkaempfer1(stil1);
-			wertung.setVielfaltWettkaempfer1(vielfalt1);
-			wertung.setKampfgeistWettkaempfer2(kampfgeist2);
-			wertung.setTechnikWettkaempfer2(technik2);
-			wertung.setKampfstilWettkaempfer2(stil2);
-			wertung.setVielfaltWettkaempfer2(vielfalt2);
-
-			turnierRepository.speichereBegegnung(begegnung);
-			return;
-		}
-
-		logger.debug("Erstelle neue Wertung");
-		UUID wertungId = UUID.randomUUID();
-		Wertung wertungNeu = new Wertung(wertungId, null, null, null, null, null, null,
+		Wertung wertung = new Wertung(null, null, null, null, null, null, null,
 			kampfgeist1, technik1, stil1, vielfalt1,
 			kampfgeist2, technik2, stil2, vielfalt2,
 			benutzer
 		);
-		begegnung.getWertungen().add(wertungNeu);
-		turnierRepository.speichereBegegnung(begegnung);
+		wertungRepository.speichereWertungInBegegnung(wertung, begegnungId);
 	}
 
 	public void speichereTurnierWertung(UUID begegnungId, int scoreWeiss, int scoreBlau, int penaltiesWeiss, int penaltiesBlau, String fightTime, UUID siegerUUID, UUID bewerterUUID) {
-		logger.info("Begegnung: {}, Sieger: {}, Kampfzeit: {}s", begegnungId, siegerUUID, fightTime);
-		Begegnung begegnung = wettkampfService.ladeBegegnung(begegnungId);
+		logger.info("speichereTurnierWertung: {}", begegnungId);
 
-		Benutzer benutzer = benutzerRepository.findBenutzer(bewerterUUID).orElseThrow(() -> new RuntimeException("Nutzer " + bewerterUUID + " konnte nicht gefunden werden"));
 		Wettkaempfer wettkaempferSiegerRunde = wettkaempferService.ladeKaempfer(siegerUUID).orElseThrow(() -> new RuntimeException("Wettkaempfer " + siegerUUID + " konnte nicht gefunden werden"));
-		Duration dauer = parseDuration(fightTime);
-
-		// check we actually have a correct wk
-		if (!(begegnung.getWettkaempfer1().isPresent() && begegnung.getWettkaempfer1().get().equals(wettkaempferSiegerRunde)) &&
-			!(begegnung.getWettkaempfer2().isPresent() && begegnung.getWettkaempfer2().get().equals(wettkaempferSiegerRunde)))
-			throw new RuntimeException("Der Sieger " + wettkaempferSiegerRunde.name() + " ist nicht Teil der Begegnung " + begegnungId.toString() + "!");
-
-		var existierendeWertung = wertungVonBewerter(begegnung.getWertungen(), benutzer);
-		if (existierendeWertung.isPresent()) {
-			logger.debug("Aktualisiere existierende Wertung");
-			var wertung = existierendeWertung.get();
-			wertung.setSieger(wettkaempferSiegerRunde);
-			wertung.setPunkteWettkaempferWeiss(scoreWeiss);
-			wertung.setStrafenWettkaempferWeiss(penaltiesWeiss);
-			wertung.setPunkteWettkaempferRot(scoreBlau);
-			wertung.setStrafenWettkaempferRot(penaltiesBlau);
-			wertung.setZeit(dauer);
-
-			turnierRepository.speichereBegegnung(begegnung);
-			return;
-		}
-
-		logger.debug("Erstelle neue Wertung");
-		UUID wertungId = UUID.randomUUID();
-		Wertung wertungNeu = new Wertung(wertungId,
+		Benutzer benutzer = benutzerRepository.findBenutzer(bewerterUUID).orElseThrow(() -> new RuntimeException("Nutzer " + bewerterUUID + " konnte nicht gefunden werden"));
+		Wertung wertung = new Wertung(null,
 			wettkaempferSiegerRunde,
-			dauer,
+			parseDuration(fightTime),
 			scoreWeiss,
 			penaltiesWeiss,
 			scoreBlau,
@@ -112,11 +71,16 @@ public class WertungService {
 			null, null, null, null, null, null, null, null,
 			benutzer
 		);
-		begegnung.getWertungen().add(wertungNeu);
-		// schreibe aktuelle Begegnung
-		turnierRepository.speichereBegegnung(begegnung);
+		wertungRepository.speichereWertungInBegegnung(wertung, begegnungId);
 
-		// schreibe nachfolgende Begegnungen - falls noch welche kommen (Trostrunde und nächste Runde)
+		aktualisierePaarungen(begegnungId, wettkaempferSiegerRunde);
+	}
+
+	// schreibe nachfolgende Begegnungen - falls noch welche kommen (Trostrunde und nächste Runde)
+	private void aktualisierePaarungen(UUID begegnungId, Wettkaempfer wettkaempferSiegerRunde) {
+		logger.info("updatePairings für Begegnung {}", begegnungId);
+		Begegnung begegnung = wettkampfService.ladeBegegnung(begegnungId);
+
 		Begegnung.BegegnungId aktuelleBegegnungId = begegnung.getBegegnungId();
 		var wettkampfGruppe = begegnung.getWettkampfGruppe();
 		var alleWettkampfgruppeRunden = turnierRepository.ladeWettkampfgruppeRunden(wettkampfGruppe.id(), begegnung.getTurnierUUID());
@@ -177,10 +141,6 @@ public class WertungService {
 		}
 
 		return results;
-	}
-
-	private Optional<Wertung> wertungVonBewerter(List<Wertung> wertungen, Benutzer benutzer) {
-		return wertungen.stream().filter(w -> w.getBewerter().uuid().equals(benutzer.uuid())).findFirst();
 	}
 
 	private static Duration parseDuration(String input) {

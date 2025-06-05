@@ -1,5 +1,6 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.BenutzerRolle;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Convert;
@@ -28,11 +29,22 @@ public class BenutzerJpa extends AbstractEntity {
 	@Convert(converter = BenutzerRolleListConverter.class)
 	private List<BenutzerRolle>    rollen        = new ArrayList<>();
 
-	public BenutzerJpa(String uuid, String username, String name, List<TurnierRollenJpa> turnierRollen, List<BenutzerRolle> rollen) {
-		super(uuid);
+	public BenutzerJpa(String username, String name, List<TurnierRollenJpa> turnierRollen, List<BenutzerRolle> rollen) {
+		super();
 		this.username = username;
 		this.name = name;
 		this.turnierRollen = turnierRollen;
 		this.rollen = rollen;
+	}
+
+	public void updateFrom(BenutzerJpa benutzer) {
+		if (rollen != null) {
+			rollen.clear();
+			rollen.addAll(benutzer.getRollen());
+		}
+		if (turnierRollen != null) {
+			turnierRollen.clear();
+			turnierRollen.addAll(benutzer.getTurnierRollen());
+		}
 	}
 }

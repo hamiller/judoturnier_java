@@ -11,7 +11,7 @@ public class TurnierConverter {
 
 	public Turnier convertToTurnier(TurnierJpa jpa) {
 		return new Turnier(
-			UUID.fromString(jpa.getUuid()),
+			jpa.getId(),
 			jpa.getName(),
 			jpa.getOrt(),
 			new Date(jpa.getDatum().getTime()));
@@ -19,7 +19,6 @@ public class TurnierConverter {
 
 	public TurnierJpa convertFromTurnier(Turnier turnier) {
 		TurnierJpa jpa = new TurnierJpa();
-		if (turnier.uuid() != null) jpa.setUuid(turnier.uuid().toString());
 		jpa.setName(turnier.name());
 		jpa.setOrt(turnier.ort());
 		jpa.setDatum(new java.sql.Date(turnier.datum().getTime()));

@@ -1,5 +1,6 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import de.sinnix.judoturnier.model.Begegnung;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,7 +15,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 @Data
@@ -27,11 +30,11 @@ public class BegegnungJpa extends AbstractEntity {
 	private String           rundeUUID;
 	private Integer          matteId;
 	private Integer          mattenRunde;
-	private Integer         gruppenRunde;
-	private Integer         gesamtBegegnung;
+	private Integer          gruppenRunde;
+	private Integer          gesamtBegegnung;
 	@OneToOne
 	@JoinColumn(name = "wettkaempfer1")
-	private WettkaempferJpa wettkaempfer1;
+	private WettkaempferJpa  wettkaempfer1;
 	@OneToOne
 	@JoinColumn(name = "wettkaempfer2")
 	private WettkaempferJpa  wettkaempfer2;
@@ -39,21 +42,21 @@ public class BegegnungJpa extends AbstractEntity {
 	@JoinTable(
 		name = "begegnung_wertung",
 		joinColumns = {
-			@JoinColumn(name = "begegnung_id", referencedColumnName = "uuid"),
-			@JoinColumn(name = "turnier_uuid", referencedColumnName = "turnier_uuid")
+			@JoinColumn(name = "begegnung_id", referencedColumnName = "id", nullable = false),
+			@JoinColumn(name = "turnier_uuid", referencedColumnName = "turnier_uuid", nullable = false)
 		},
 		inverseJoinColumns = @JoinColumn(name = "wertung_id")
 	)
 	private List<WertungJpa> wertungen;
-	private String           wettkampfGruppeId;
+	private UUID             wettkampfGruppeId;
 	@Column(name = "turnier_uuid", nullable = false)
-	private String           turnierUUID;
+	private UUID             turnierUUID;
 	private Integer          runde;
 	private Integer          rundenTyp;
 	private Integer          paarung;
 
-	public BegegnungJpa(String uuid, String rundeUUID, Integer matteId, Integer mattenRunde, Integer gruppenRunde, Integer gesamtBegegnung, WettkaempferJpa wettkaempfer1, WettkaempferJpa wettkaempfer2, List<WertungJpa> wertungen, String wettkampfGruppeId, String turnierUUID, Integer runde, Integer rundenTyp, Integer paarung) {
-		super(uuid);
+	public BegegnungJpa(String rundeUUID, Integer matteId, Integer mattenRunde, Integer gruppenRunde, Integer gesamtBegegnung, WettkaempferJpa wettkaempfer1, WettkaempferJpa wettkaempfer2, List<WertungJpa> wertungen, UUID wettkampfGruppeId, UUID turnierUUID, Integer runde, Integer rundenTyp, Integer paarung) {
+		super();
 		this.rundeUUID = rundeUUID;
 		this.matteId = matteId;
 		this.mattenRunde = mattenRunde;
@@ -67,5 +70,10 @@ public class BegegnungJpa extends AbstractEntity {
 		this.runde = runde;
 		this.rundenTyp = rundenTyp;
 		this.paarung = paarung;
+	}
+
+	public void updateFrom(BegegnungJpa jpa, WettkaempferJpa wettkaempfer1, WettkaempferJpa wettkaempfer2) {
+		this.wettkaempfer1 = wettkaempfer1;
+		this.wettkaempfer2 = wettkaempfer2;
 	}
 }

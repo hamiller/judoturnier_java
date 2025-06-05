@@ -4,10 +4,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface GewichtsklassenJpaRepository extends JpaRepository<GewichtsklassenJpa, String> {
-	List<GewichtsklassenJpa> findAllByTurnierUUID(String turnierUuid);
-	void deleteAllByTurnierUUID(String turnierUuid);
-	void deleteAllByAltersklasseAndTurnierUUID(String altersklasse, String turnierUuid);
+public interface GewichtsklassenJpaRepository extends JpaRepository<GewichtsklassenJpa, UUID> {
+	List<GewichtsklassenJpa> findAllByTurnierUUID(UUID turnierUuid);
+	void deleteAllByTurnierUUID(UUID turnierUuid);
+	void deleteAllByAltersklasseAndTurnierUUID(String altersklasse, UUID turnierUuid);
 }

@@ -19,7 +19,7 @@ public class WertungConverter {
 		if (jpa == null) {
 			return null;
 		}
-		return new Wertung(UUID.fromString(jpa.getUuid()),
+		return new Wertung(jpa.getId(),
 			wettkaempferConverter.convertToWettkaempfer(jpa.getSieger()),
 			toDuration(jpa.getZeit()),
 			jpa.getPunkteWettkaempfer1(),
@@ -42,7 +42,6 @@ public class WertungConverter {
 			return null;
 		}
 		WertungJpa jpa = new WertungJpa();
-		if (wertung.getUuid() != null) jpa.setUuid(wertung.getUuid().toString());
 
 		if (wertung.getSieger() != null) jpa.setSieger(wettkaempferConverter.convertFromWettkaempfer(wertung.getSieger()));
 

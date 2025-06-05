@@ -1,8 +1,8 @@
 package de.sinnix.judoturnier.application;
 
-import de.sinnix.judoturnier.adapter.secondary.BegegnungJpa;
 import de.sinnix.judoturnier.adapter.secondary.BenutzerRepository;
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
+import de.sinnix.judoturnier.adapter.secondary.WertungRepository;
 import de.sinnix.judoturnier.fixtures.MatteFixtures;
 import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.fixtures.WettkampfgruppeFixture;
@@ -11,7 +11,6 @@ import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.BenutzerRolle;
 import de.sinnix.judoturnier.model.Runde;
-import de.sinnix.judoturnier.model.TurnierRollen;
 import de.sinnix.judoturnier.model.Wertung;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
@@ -25,7 +24,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.annotation.Rollback;
+
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -33,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,6 +47,8 @@ class WertungServiceTest {
 	private static final Logger logger = LogManager.getLogger(WertungServiceTest.class);
 
 	@Mock
+	private WertungRepository   wertungRepository;
+	@Mock
 	private TurnierRepository   turnierRepository;
 	@Mock
 	private BenutzerRepository  benutzerRepository;
@@ -59,173 +61,69 @@ class WertungServiceTest {
 	private WertungService wertungService;
 
 	private final UUID     turnierUUID = MatteFixtures.turnierUUID;
-	private       Benutzer benutzer;
+	private       Benutzer kampfrichter;
 
 	@BeforeEach
 	void setUp() {
-		benutzer = new Benutzer(UUID.fromString("898a7fcf-2fad-4ec9-8b4f-5513188af291"), "user1", "Name, Vorname", List.of(), List.of(BenutzerRolle.KAMPFRICHTER));
+		kampfrichter = new Benutzer(UUID.fromString("898a7fcf-2fad-4ec9-8b4f-5513188af291"), "user1", "Name, Vorname", List.of(), List.of(BenutzerRolle.KAMPFRICHTER));
 	}
 
 	@Test
-	void testAktualisiereExistierendeRandoriWertung() {
-		UUID turnierUUID = UUID.randomUUID();
-		UUID rundeUUID = UUID.randomUUID();
-		UUID id = UUID.randomUUID();
-		List<Wertung> wertungList = new ArrayList<>();
-		Wertung alteWertung = new Wertung(UUID.randomUUID(), null, null, null, null, null, null,
-			1, 2, 3, 4, 4, 3, 2, 1,
-			benutzer
-		);
-		wertungList.add(alteWertung);
-		Begegnung.BegegnungId begegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1);
-		Begegnung begegnung = new Begegnung(id, begegnungId, rundeUUID,
-			1, 2, 3, 3,
-			WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2,
-			wertungList,
-			WettkampfgruppeFixture.gruppe1.gruppe(),
-			turnierUUID
-		);
-
-		List<Wertung> neueWertungList = new ArrayList<>();
-		Wertung neueWertung = new Wertung(alteWertung.getUuid(), null, null, null, null, null, null,
-			1, 2, 3, 4, 4, 3, 2, 1,
-			benutzer
-		);
-		neueWertungList.add(neueWertung);
-
-		when(wettkampfService.ladeBegegnung(id)).thenReturn(begegnung);
-		when(benutzerRepository.findBenutzer(benutzer.uuid())).thenReturn(Optional.of(benutzer));
-
-		wertungService.speichereRandoriWertung(id, 1, 2, 3, 4, 4, 3, 2, 1, benutzer.uuid());
-
-		ArgumentCaptor<Begegnung> argumentCaptor = ArgumentCaptor.forClass(Begegnung.class);
-		verify(turnierRepository).speichereBegegnung(argumentCaptor.capture());
-		Begegnung result = argumentCaptor.getValue();
-		assertEquals(neueWertungList, result.getWertungen());
-	}
-
-	@Test
-	void testWeitereRandoriWertung() {
-		Benutzer benutzerA = new Benutzer(UUID.randomUUID(), "username", "name", List.of(), List.of(BenutzerRolle.KAMPFRICHTER));
-		Benutzer benutzerB = new Benutzer(UUID.randomUUID(), "username", "name", List.of(), List.of(BenutzerRolle.KAMPFRICHTER));
-		UUID turnierUUID = UUID.randomUUID();
-		UUID rundeUUID = UUID.randomUUID();
-		UUID id = UUID.randomUUID();
-		List<Wertung> wertungList = new ArrayList<>();
-		Wertung alteWertung = new Wertung(UUID.randomUUID(), null, null, null, null, null, null,
-			1, 2, 3, 4, 4, 3, 2, 1,
-			benutzerA
-		);
-		wertungList.add(alteWertung);
-		Begegnung.BegegnungId begegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1);
-		Begegnung begegnung = new Begegnung(id,
-			begegnungId,
-			rundeUUID,
-			1, 2, 3, 3,
-			WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2,
-			wertungList,
-			WettkampfgruppeFixture.gruppe1.gruppe(),
-			turnierUUID
-		);
-
-		List<Wertung> neueWertungList = new ArrayList<>();
+	void speichereRandoriWertung() {
+		UUID begegnungId = UUID.randomUUID();
 		Wertung neueWertung = new Wertung(null, null, null, null, null, null, null,
 			1, 2, 3, 4, 4, 3, 2, 1,
-			benutzerB
-		);
-		neueWertungList.add(alteWertung);
-		neueWertungList.add(neueWertung);
-
-		when(wettkampfService.ladeBegegnung(id)).thenReturn(begegnung);
-		when(benutzerRepository.findBenutzer(benutzerB.uuid())).thenReturn(Optional.of(benutzerB));
-
-		wertungService.speichereRandoriWertung(id, 1, 2, 3, 4, 4, 3, 2, 1, benutzerB.uuid());
-
-		ArgumentCaptor<Begegnung> argumentCaptor = ArgumentCaptor.forClass(Begegnung.class);
-		verify(turnierRepository).speichereBegegnung(argumentCaptor.capture());
-		Begegnung result = argumentCaptor.getValue();
-		assertEquals(2, result.getWertungen().size());
-		assertEquals(benutzerA, result.getWertungen().getFirst().getBewerter());
-		assertEquals(benutzerB, result.getWertungen().get(1).getBewerter());
-	}
-
-	@Test
-	void testSpeichereNeueRandoriWertung() {
-		UUID turnierUUID = UUID.randomUUID();
-		UUID rundeUUID = UUID.randomUUID();
-		UUID id = UUID.randomUUID();
-		Begegnung.BegegnungId begegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1);
-		Begegnung begegnung = new Begegnung(id, begegnungId, rundeUUID,
-			1, 2, 3, 3,
-			WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2,
-			new ArrayList<>(),
-			WettkampfgruppeFixture.gruppe1.gruppe(),
-			turnierUUID
+			kampfrichter
 		);
 
-		when(wettkampfService.ladeBegegnung(id)).thenReturn(begegnung);
-		when(benutzerRepository.findBenutzer(benutzer.uuid())).thenReturn(Optional.of(benutzer));
+		when(benutzerRepository.findBenutzer(kampfrichter.uuid())).thenReturn(Optional.of(kampfrichter));
 
-		wertungService.speichereRandoriWertung(id, 1, 2, 3, 4, 4, 3, 2, 1, benutzer.uuid());
+		wertungService.speichereRandoriWertung(begegnungId, 1, 2, 3, 4, 4, 3, 2, 1, kampfrichter.uuid());
 
-		ArgumentCaptor<Begegnung> argumentCaptor = ArgumentCaptor.forClass(Begegnung.class);
-		verify(turnierRepository).speichereBegegnung(argumentCaptor.capture());
-		Begegnung result = argumentCaptor.getValue();
-		assertEquals(1, result.getWertungen().size());
-		assertEquals(benutzer, result.getWertungen().getFirst().getBewerter());
-		assertEquals(1, result.getWertungen().getFirst().getKampfgeistWettkaempfer1());
-		assertEquals(2, result.getWertungen().getFirst().getTechnikWettkaempfer1());
-		assertEquals(3, result.getWertungen().getFirst().getKampfstilWettkaempfer1());
-		assertEquals(4, result.getWertungen().getFirst().getVielfaltWettkaempfer1());
-		assertEquals(4, result.getWertungen().getFirst().getKampfgeistWettkaempfer2());
-		assertEquals(3, result.getWertungen().getFirst().getTechnikWettkaempfer2());
-		assertEquals(2, result.getWertungen().getFirst().getKampfstilWettkaempfer2());
-		assertEquals(1, result.getWertungen().getFirst().getVielfaltWettkaempfer2());
+		verify(wertungRepository).speichereWertungInBegegnung(neueWertung, begegnungId);
 	}
 
 	@Test
 	void speichereTurnierWertungErsterKampf() {
+		UUID begegnungId = UUID.randomUUID();
 		int scoreWeiss = 1;
 		int scoreBlau = 0;
 		int penaltiesWeiss = 0;
 		int penaltiesBlau = 0;
 		String fighttime = "02:03.54"; // entspricht 123.540ms
-		UUID siegerUuid = WettkaempferFixtures.wettkaempfer1.get().id();
-
+		Duration fighttimeDuration = Duration.ofMillis(123540);
+		Wettkaempfer sieger = WettkaempferFixtures.wettkaempferin1;
 		int aktuelleMattenRunde = 2;
 		int aktuellePaarung = 1;
 		int aktuelleGruppenRunde = 1;
 		int aktuelleGesamtRunde = 2;
-		Begegnung.BegegnungId begegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, aktuelleMattenRunde, aktuellePaarung);
-		Begegnung aktuelleBegegnung = new Begegnung(UUID.randomUUID(), begegnungId, UUID.randomUUID(),
+		Begegnung aktuelleBegegnung = new Begegnung(
+			UUID.randomUUID(),
+			new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, aktuelleMattenRunde, aktuellePaarung),
+			UUID.randomUUID(),
 			1, aktuelleMattenRunde, aktuelleGruppenRunde, aktuelleGesamtRunde,
-			WettkaempferFixtures.wettkaempfer1, WettkaempferFixtures.wettkaempfer2,
+			Optional.of(WettkaempferFixtures.wettkaempferin1), Optional.of(WettkaempferFixtures.wettkaempferin2),
 			new ArrayList<>(),
 			WettkampfgruppeFixture.gruppe1.gruppe(),
 			turnierUUID
 		);
+		Wertung neueWertung = new Wertung(null, WettkaempferFixtures.wettkaempferin1, fighttimeDuration, scoreWeiss, penaltiesWeiss, scoreBlau, penaltiesBlau,
+			null, null, null, null, null, null, null, null,
+			kampfrichter
+		);
 
-		// Teil 1
-		when(wettkampfService.ladeBegegnung(any())).thenReturn(aktuelleBegegnung);
-		when(benutzerRepository.findBenutzer(eq(benutzer.uuid()))).thenReturn(Optional.of(benutzer));
-		when(wettkaempferService.ladeKaempfer(eq(siegerUuid))).thenReturn(WettkaempferFixtures.wettkaempfer1);
-		when(turnierRepository.ladeWettkampfgruppeRunden(eq(WettkampfgruppeFixture.gruppe1.gruppe().id()), eq(turnierUUID))).thenReturn(List.of());
-
-		wertungService.speichereTurnierWertung(aktuelleBegegnung.getId(), scoreWeiss, scoreBlau, penaltiesWeiss, penaltiesBlau, fighttime, siegerUuid, benutzer.uuid());
+		when(wettkaempferService.ladeKaempfer(sieger.id())).thenReturn(Optional.of(sieger));
+		when(benutzerRepository.findBenutzer(eq(kampfrichter.uuid()))).thenReturn(Optional.of(kampfrichter));
+		when(wettkampfService.ladeBegegnung(begegnungId)).thenReturn(aktuelleBegegnung);
 
 
-		ArgumentCaptor<Begegnung> argumentCaptor = ArgumentCaptor.forClass(Begegnung.class);
-		verify(turnierRepository, times(1)).speichereBegegnung(argumentCaptor.capture());
+		wertungService.speichereTurnierWertung(begegnungId, scoreWeiss, scoreBlau, penaltiesWeiss, penaltiesBlau, fighttime, sieger.id(), kampfrichter.uuid());
 
-		Begegnung gespeichert = argumentCaptor.getAllValues().getFirst();
-		assertEquals(begegnungId, gespeichert.getBegegnungId());
-		assertEquals(1, gespeichert.getWertungen().size());
-		assertEquals(siegerUuid, gespeichert.getWertungen().getFirst().getSieger().id());
-		assertEquals(scoreWeiss, gespeichert.getWertungen().getFirst().getPunkteWettkaempferWeiss());
-		assertEquals(scoreBlau, gespeichert.getWertungen().getFirst().getPunkteWettkaempferRot());
-		assertEquals(penaltiesWeiss, gespeichert.getWertungen().getFirst().getStrafenWettkaempferWeiss());
-		assertEquals(penaltiesBlau, gespeichert.getWertungen().getFirst().getStrafenWettkaempferRot());
-		assertEquals(Duration.ofMillis(123540), gespeichert.getWertungen().getFirst().getZeit());
+		verify(wertungRepository, times(1)).speichereWertungInBegegnung(neueWertung, begegnungId);
+		verify(wettkampfService, times(1)).ladeBegegnung(begegnungId);
+		verify(turnierRepository, times(1)).ladeWettkampfgruppeRunden(aktuelleBegegnung.getWettkampfGruppe().id(), turnierUUID);
+		// keine weiteren Begegnungen
+		verify(turnierRepository, times(0)).speichereBegegnung(any());
 	}
 
 	@Test
@@ -235,7 +133,8 @@ class WertungServiceTest {
 		int penaltiesWeiss = 0;
 		int penaltiesBlau = 0;
 		String fighttime = "02:03.54"; // entspricht 123.540ms
-		UUID siegerUuid = WettkaempferFixtures.wettkaempferin2.id();
+		Duration fighttimeDuration = Duration.ofMillis(123540);
+		Wettkaempfer sieger = WettkaempferFixtures.wettkaempferin2;
 		var aktuelleBegegnungUUID = WettkampfgruppeFixture.b2UUID;
 		var aktuelleBegegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 2);
 		var naechsteBegegnungUUID = WettkampfgruppeFixture.b7UUID;
@@ -298,37 +197,30 @@ class WertungServiceTest {
 		rundenList.add(new Runde(rundeUUID2, 2, 2, 2, 1, Altersklasse.Frauen, WettkampfgruppeFixture.wettkampfGruppeFrauen.gruppe(), begegnungListRunde2));
 		rundenList.add(new Runde(rundeUUID3, 3, 3, 3, 1, Altersklasse.Frauen, WettkampfgruppeFixture.wettkampfGruppeFrauen.gruppe(), begegnungListRunde3));
 
-		// Teil 1
-		when(wettkampfService.ladeBegegnung(any())).thenReturn(begegnungListRunde1.get(1));
-		when(benutzerRepository.findBenutzer(eq(benutzer.uuid()))).thenReturn(Optional.of(benutzer));
-		when(wettkaempferService.ladeKaempfer(eq(siegerUuid))).thenReturn(Optional.ofNullable(WettkaempferFixtures.wettkaempferin2));
+		Wertung neueWertung = new Wertung(null, WettkaempferFixtures.wettkaempferin2, fighttimeDuration, scoreWeiss, penaltiesWeiss, scoreBlau, penaltiesBlau,
+			null, null, null, null, null, null, null, null,
+			kampfrichter
+		);
 
-		// Teil 2
+		when(wettkampfService.ladeBegegnung(any())).thenReturn(begegnungListRunde1.get(1));
+		when(benutzerRepository.findBenutzer(eq(kampfrichter.uuid()))).thenReturn(Optional.of(kampfrichter));
+		when(wettkaempferService.ladeKaempfer(eq(sieger.id()))).thenReturn(Optional.ofNullable(sieger));
 		when(turnierRepository.ladeWettkampfgruppeRunden(wkg.id(), turnierUUID)).thenReturn(rundenList);
 
 
-		wertungService.speichereTurnierWertung(aktuelleBegegnungUUID, scoreWeiss, scoreBlau, penaltiesWeiss, penaltiesBlau, fighttime, siegerUuid, benutzer.uuid());
+		wertungService.speichereTurnierWertung(aktuelleBegegnungUUID, scoreWeiss, scoreBlau, penaltiesWeiss, penaltiesBlau, fighttime, sieger.id(), kampfrichter.uuid());
 
+		verify(wertungRepository, times(1)).speichereWertungInBegegnung(neueWertung, aktuelleBegegnungUUID);
 
-		// Verify Teil 1
-		ArgumentCaptor<Begegnung> argumentCaptor = ArgumentCaptor.forClass(Begegnung.class);
-		verify(turnierRepository, times(3)).speichereBegegnung(argumentCaptor.capture());
-
-		Begegnung gespeichert = argumentCaptor.getAllValues().getFirst();
-		assertEquals(aktuelleBegegnungId, gespeichert.getBegegnungId());
-		assertEquals(aktuelleBegegnungUUID, gespeichert.getId());
-		assertEquals(1, gespeichert.getWertungen().size());
-		assertEquals(siegerUuid, gespeichert.getWertungen().getFirst().getSieger().id());
-		assertEquals(scoreWeiss, gespeichert.getWertungen().getFirst().getPunkteWettkaempferWeiss());
-		assertEquals(scoreBlau, gespeichert.getWertungen().getFirst().getPunkteWettkaempferRot());
-		assertEquals(penaltiesWeiss, gespeichert.getWertungen().getFirst().getStrafenWettkaempferWeiss());
-		assertEquals(penaltiesBlau, gespeichert.getWertungen().getFirst().getStrafenWettkaempferRot());
-		assertEquals(Duration.ofMillis(123540), gespeichert.getWertungen().getFirst().getZeit());
-
-		// Verify Teil 2
-		Begegnung gespeichertNext = argumentCaptor.getAllValues().get(1);
-		assertEquals(naechsteBegegnungId, gespeichertNext.getBegegnungId());
-		assertEquals(naechsteBegegnungUUID, gespeichertNext.getId());
+		ArgumentCaptor<Begegnung> begegnungCaptor = ArgumentCaptor.forClass(Begegnung.class);
+		verify(turnierRepository, times(2)).speichereBegegnung(begegnungCaptor.capture());
+		List<Begegnung> begegnungList = begegnungCaptor.getAllValues();
+		Begegnung nachfolgerGewinnerBegegnung = begegnungList.get(0);
+		assertEquals(sieger, nachfolgerGewinnerBegegnung.getWettkaempfer1().get());
+		assertEquals(Optional.empty(), nachfolgerGewinnerBegegnung.getWettkaempfer2());
+		Begegnung nachfolgerTrostBegegnung = begegnungList.get(1);
+		assertEquals(WettkaempferFixtures.wettkaempferin3, nachfolgerTrostBegegnung.getWettkaempfer1().get());
+		assertEquals(Optional.empty(), nachfolgerTrostBegegnung.getWettkaempfer2());
 	}
 
 	@Test
@@ -343,7 +235,7 @@ class WertungServiceTest {
 		 . "Jameson, Jenna" vs "Belle, Lexi" ----
 		 .
 		 .TROSTRUNDE
-		                                         |
+		 |
 		 .                                        --- "Reid, Riley" vs "Belle, Lexi"  (---> Sieger "Belle, Lexi")
 		 .
 		 */

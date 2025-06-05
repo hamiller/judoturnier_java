@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor
 @Data
@@ -27,7 +28,7 @@ public class GewichtsklassenJpa extends AbstractEntity {
 	@JoinTable(
 		name = "gewichtsklassengruppen_wettkaempfer",
 		joinColumns = {
-			@JoinColumn(name = "gewichtsklassengruppe_id", referencedColumnName = "uuid"),
+			@JoinColumn(name = "gewichtsklassengruppe_id", referencedColumnName = "id"),
 			@JoinColumn(name = "turnier_uuid", referencedColumnName = "turnier_uuid")
 		},
 		inverseJoinColumns = @JoinColumn(name = "wettkaempfer_id")
@@ -37,10 +38,10 @@ public class GewichtsklassenJpa extends AbstractEntity {
 	private Double                mingewicht;
 	private Double                maxgewicht;
 	@Column(name = "turnier_uuid", nullable = false)
-	private String                turnierUUID;
+	private UUID                  turnierUUID;
 
-	public GewichtsklassenJpa(String uuid, String altersklasse, String gruppengeschlecht, List<WettkaempferJpa> teilnehmer, String name, Double mingewicht, Double maxgewicht, String turnierUUID) {
-		super(uuid);
+	public GewichtsklassenJpa(String altersklasse, String gruppengeschlecht, List<WettkaempferJpa> teilnehmer, String name, Double mingewicht, Double maxgewicht, UUID turnierUUID) {
+		super();
 		this.altersklasse = altersklasse;
 		this.gruppengeschlecht = gruppengeschlecht;
 		this.teilnehmer = teilnehmer;
@@ -48,5 +49,14 @@ public class GewichtsklassenJpa extends AbstractEntity {
 		this.mingewicht = mingewicht;
 		this.maxgewicht = maxgewicht;
 		this.turnierUUID = turnierUUID;
+	}
+
+	public void updateFrom(GewichtsklassenJpa gewichtsklassenJpa, List<WettkaempferJpa> wettkaempferJpaList) {
+		this.altersklasse = gewichtsklassenJpa.getAltersklasse();
+		this.gruppengeschlecht = gewichtsklassenJpa.getGruppengeschlecht();
+		this.teilnehmer = wettkaempferJpaList;
+		this.name = gewichtsklassenJpa.getName();
+		this.mingewicht = gewichtsklassenJpa.getMingewicht();
+		this.maxgewicht = gewichtsklassenJpa.getMaxgewicht();
 	}
 }

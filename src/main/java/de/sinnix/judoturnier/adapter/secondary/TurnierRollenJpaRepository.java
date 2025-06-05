@@ -5,10 +5,13 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface TurnierRollenJpaRepository extends JpaRepository<TurnierRollenJpa, String> {
+public interface TurnierRollenJpaRepository extends JpaRepository<TurnierRollenJpa, UUID> {
 	@Modifying
 	@Query("DELETE FROM TurnierRollenJpa tr WHERE tr.turnierUuid = :turnierUuid")
-	void deleteAllByTurnierUuid(@Param("turnierUuid") String turnierUuid);
+	void deleteAllByTurnierUuid(@Param("turnierUuid") UUID turnierUuid);
+	Optional<TurnierRollenJpa> findAllByBenutzerIdAndTurnierUuid(UUID userId, UUID turnierUUID);
 }

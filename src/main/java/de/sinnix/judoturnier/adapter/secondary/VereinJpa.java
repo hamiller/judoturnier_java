@@ -1,5 +1,8 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import java.util.UUID;
+
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -17,11 +20,15 @@ import lombok.ToString;
 public class VereinJpa extends AbstractEntity {
 	private String name;
 	@Column(name = "turnier_uuid", nullable = false)
-	private String turnierUUID;
+	private UUID   turnierUUID;
 
-	public VereinJpa(String uuid, String name, String turnierUUID) {
-		super(uuid);
+	public VereinJpa(String name, UUID turnierUUID) {
+		super();
 		this.name = name;
 		this.turnierUUID = turnierUUID;
+	}
+
+	public void updateFrom(VereinJpa vereinJpa) {
+		this.name = vereinJpa.getName();
 	}
 }

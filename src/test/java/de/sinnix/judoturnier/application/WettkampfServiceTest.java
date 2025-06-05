@@ -1,5 +1,13 @@
 package de.sinnix.judoturnier.application;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.IntStream;
+
+
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
 import de.sinnix.judoturnier.fixtures.GewichtsklassenGruppeFixture;
 import de.sinnix.judoturnier.fixtures.MatteFixtures;
@@ -29,13 +37,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -74,6 +75,8 @@ class WettkampfServiceTest {
 
 		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
 		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);
+		ArgumentCaptor<List> gruppenCaptor = ArgumentCaptor.forClass(List.class);
+		when(turnierRepository.speichereGruppen(gruppenCaptor.capture())).thenAnswer(invocation -> gruppenCaptor.getValue());
 
 		wettkampfService.erstelleWettkampfreihenfolgeAltersklasse(Optional.empty(), turnierUUID);
 
@@ -144,6 +147,8 @@ class WettkampfServiceTest {
 
 		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
 		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);
+		ArgumentCaptor<List> gruppenCaptor = ArgumentCaptor.forClass(List.class);
+		when(turnierRepository.speichereGruppen(gruppenCaptor.capture())).thenAnswer(invocation -> gruppenCaptor.getValue());
 
 		wettkampfService.erstelleWettkampfreihenfolgeAltersklasse(Optional.empty(), turnierUUID);
 
@@ -207,6 +212,8 @@ class WettkampfServiceTest {
 
 		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
 		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);
+		ArgumentCaptor<List> gruppenCaptor = ArgumentCaptor.forClass(List.class);
+		when(turnierRepository.speichereGruppen(gruppenCaptor.capture())).thenAnswer(invocation -> gruppenCaptor.getValue());
 
 		wettkampfService.erstelleWettkampfreihenfolgeAltersklasse(Optional.empty(), turnierUUID);
 
@@ -237,6 +244,8 @@ class WettkampfServiceTest {
 
 		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
 		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);
+		ArgumentCaptor<List> gruppenCaptor = ArgumentCaptor.forClass(List.class);
+		when(turnierRepository.speichereGruppen(gruppenCaptor.capture())).thenAnswer(invocation -> gruppenCaptor.getValue());
 
 		wettkampfService.erstelleWettkampfreihenfolgeAltersklasse(Optional.empty(), turnierUUID);
 
@@ -310,6 +319,8 @@ class WettkampfServiceTest {
 
 		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
 		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);
+		ArgumentCaptor<List> gruppenCaptor = ArgumentCaptor.forClass(List.class);
+		when(turnierRepository.speichereGruppen(gruppenCaptor.capture())).thenAnswer(invocation -> gruppenCaptor.getValue());
 
 		wettkampfService.erstelleWettkampfreihenfolgeAltersklasse(Optional.empty(), turnierUUID);
 

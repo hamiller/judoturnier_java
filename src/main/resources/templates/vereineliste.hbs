@@ -37,7 +37,7 @@
         <div>
           {{#if isadmin}}
             <a href="/turnier/{{turnierid}}/vereine/{{ id }}"><span class="material-icons">edit</span></a>
-            <a href="#" onclick="deleteVerein({{ id }})"><span class="material-icons">person_remove</span></a>
+            <a href="#" onclick="deleteVerein('{{ id }}')"><span class="material-icons">person_remove</span></a>
           {{/if}}
         </div>
       </li>

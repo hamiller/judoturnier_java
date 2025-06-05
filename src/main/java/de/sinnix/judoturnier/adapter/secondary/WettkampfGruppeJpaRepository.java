@@ -5,10 +5,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface WettkampfGruppeJpaRepository extends JpaRepository<WettkampfGruppeJpa, String> {
-	List<WettkampfGruppeJpa> findAllByTurnierUUID(String turnierUuid);
-	Optional<WettkampfGruppeJpa> findByUuidAndTurnierUUID(String uuid, String turnierUuid);
-	void deleteAllByTurnierUUID(String turnierUuid);
+public interface WettkampfGruppeJpaRepository extends JpaRepository<WettkampfGruppeJpa, UUID> {
+	List<WettkampfGruppeJpa> findAllByTurnierUUID(UUID turnierUuid);
+	Optional<WettkampfGruppeJpa> findByIdAndTurnierUUID(UUID id, UUID turnierUuid);
+	void deleteAllByTurnierUUID(UUID turnierUuid);
 }

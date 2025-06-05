@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
 	id 'war'
-	id 'org.springframework.boot' version '3.3.0'
+	id 'org.springframework.boot' version '3.5.0'
 	id 'io.spring.dependency-management' version '1.1.5'
 }
 
@@ -38,20 +38,20 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-devtools'
-	implementation 'org.apache.commons:commons-lang3:3.14.0'
-	implementation 'org.apache.logging.log4j:log4j-api:2.23.1'
-	implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
+	implementation 'org.apache.commons:commons-lang3:3.17.0'
+	implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
+	implementation 'org.apache.logging.log4j:log4j-core:2.24.3'
 	implementation 'org.flywaydb:flyway-core'
 	implementation 'org.flywaydb:flyway-database-postgresql'
 	implementation 'com.github.jknack:handlebars:4.4.0'
 	implementation 'com.github.jknack:handlebars-springmvc:4.4.0'
 	implementation 'com.google.zxing:core:3.5.3'
-	implementation 'com.opencsv:opencsv:5.9', {
+	implementation 'com.opencsv:opencsv:5.11.1', {
 		exclude group: 'commons-logging', module: 'commons-logging'
 	}
 	runtimeOnly 'org.postgresql:postgresql'
-	compileOnly 'org.projectlombok:lombok:1.18.32'
-	annotationProcessor 'org.projectlombok:lombok:1.18.32'
+	compileOnly 'org.projectlombok:lombok:1.18.38'
+	annotationProcessor 'org.projectlombok:lombok:1.18.38'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

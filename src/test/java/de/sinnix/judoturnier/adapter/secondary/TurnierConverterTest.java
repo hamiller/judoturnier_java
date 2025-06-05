@@ -20,14 +20,12 @@ class TurnierConverterTest {
 	@Test
 	void testConvertToTurnier() {
 		TurnierJpa jpa = new TurnierJpa();
-		jpa.setUuid(UUID.randomUUID().toString());
 		jpa.setName("Name");
 		jpa.setOrt("Ort");
 		jpa.setDatum(new java.sql.Date(System.currentTimeMillis()));
 
 		Turnier result = turnierConverter.convertToTurnier(jpa);
 
-		assertEquals(jpa.getUuid().toString(), result.uuid().toString());
 		assertEquals(jpa.getName(), result.name());
 		assertEquals(jpa.getOrt(), result.ort());
 		assertEquals(jpa.getDatum(), result.datum());
@@ -40,7 +38,6 @@ class TurnierConverterTest {
 		TurnierJpa result = turnierConverter.convertFromTurnier(turnier);
 
 		assertNotNull(result);
-		assertEquals(turnier.uuid().toString(), result.getUuid().toString());
 		assertEquals(turnier.name(), result.getName());
 		assertEquals(turnier.ort(), result.getOrt());
 		assertEquals(turnier.datum(), result.getDatum());

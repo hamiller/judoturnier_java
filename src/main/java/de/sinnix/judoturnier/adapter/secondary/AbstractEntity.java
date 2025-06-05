@@ -1,20 +1,22 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import java.util.UUID;
+
+
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.Version;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
 @MappedSuperclass
 public abstract class AbstractEntity {
 	@Id
-	@GeneratedValue(generator = "uuid-generator")
-	@GenericGenerator(name = "uuid-generator", strategy = "de.sinnix.judoturnier.adapter.secondary.UuidGenerator")
-	private String uuid;
+	@GeneratedValue (strategy = GenerationType.UUID)
+	private UUID id;
+
+	@Version
+	private Long version = 0L;
 }

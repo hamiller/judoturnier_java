@@ -30,13 +30,12 @@ class GewichtsklassenConverterTest {
     @Test
     void convertToGewichtsklassen() {
         UUID turnierUUID = UUID.randomUUID();
-        UUID gwkUUID = UUID.randomUUID();
         var teilnehmer = WettkaempferFixtures.wettkaempferList;
         var teilnehmerJpa = WettkaempferFixtures.wettkaempferJpaList;
         when(wettkaempferConverter.convertToWettkaempferList(anyList())).thenReturn(teilnehmer);
         when(wettkaempferConverter.convertFromWettkaempferList(anyList())).thenReturn(teilnehmerJpa);
 
-        GewichtsklassenJpa jpa = new GewichtsklassenJpa(gwkUUID.toString(), "U18", "m", teilnehmerJpa, "Tiger", 12d, 123.0, turnierUUID.toString());
+        GewichtsklassenJpa jpa = new GewichtsklassenJpa("U18", "m", teilnehmerJpa, "Tiger", 12d, 123.0, turnierUUID);
         var gewichtklassen = converter.convertToGewichtsklassen(jpa);
         var converted = converter.convertFromGewichtsklassen(gewichtklassen);
 
@@ -46,13 +45,12 @@ class GewichtsklassenConverterTest {
     @Test
     void convertFromGewichtsklassen() {
         UUID turnierUUID = UUID.randomUUID();
-        UUID gwkUUID = UUID.randomUUID();
         var teilnehmer = WettkaempferFixtures.wettkaempferList;
         var teilnehmerJpa = WettkaempferFixtures.wettkaempferJpaList;
         when(wettkaempferConverter.convertToWettkaempferList(anyList())).thenReturn(teilnehmer);
         when(wettkaempferConverter.convertFromWettkaempferList(anyList())).thenReturn(teilnehmerJpa);
 
-        GewichtsklassenGruppe gewichtklassen = new GewichtsklassenGruppe(gwkUUID, Altersklasse.U18, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Adler), 12d, 133.0, turnierUUID);
+        GewichtsklassenGruppe gewichtklassen = new GewichtsklassenGruppe(null, Altersklasse.U18, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Adler), 12d, 133.0, turnierUUID);
         var jpa = converter.convertFromGewichtsklassen(gewichtklassen);
         var converted = converter.convertToGewichtsklassen(jpa);
 
@@ -62,13 +60,12 @@ class GewichtsklassenConverterTest {
     @Test
     void convertMissingFields() {
         UUID turnierUUID = UUID.randomUUID();
-        UUID gwkUUID = UUID.randomUUID();
         var teilnehmer = WettkaempferFixtures.wettkaempferList;
         var teilnehmerJpa = WettkaempferFixtures.wettkaempferJpaList;
         when(wettkaempferConverter.convertToWettkaempferList(anyList())).thenReturn(teilnehmer);
         when(wettkaempferConverter.convertFromWettkaempferList(anyList())).thenReturn(teilnehmerJpa);
 
-        GewichtsklassenGruppe gewichtklassen = new GewichtsklassenGruppe(gwkUUID, Altersklasse.U18, Optional.empty(), teilnehmer, Optional.of(RandoriGruppenName.Adler), 12d, 133.0, turnierUUID);
+        GewichtsklassenGruppe gewichtklassen = new GewichtsklassenGruppe(null, Altersklasse.U18, Optional.empty(), teilnehmer, Optional.of(RandoriGruppenName.Adler), 12d, 133.0, turnierUUID);
         var jpa = converter.convertFromGewichtsklassen(gewichtklassen);
         var converted = converter.convertToGewichtsklassen(jpa);
 

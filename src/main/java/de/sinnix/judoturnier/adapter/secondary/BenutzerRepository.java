@@ -1,6 +1,7 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
 import de.sinnix.judoturnier.model.Benutzer;
+import de.sinnix.judoturnier.model.TurnierRollen;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,41 +24,35 @@ public class BenutzerRepository {
 	@Autowired
 	private              BenutzerConverter          benutzerConverter;
 
+	@Transactional
 	public Optional<Benutzer> findBenutzer(UUID benutzerId) {
 		logger.debug("BenutzerRepository.findBenutzer {}", benutzerId);
-		return benutzerJpaRepository.findById(benutzerId.toString())
+		return benutzerJpaRepository.findById(benutzerId)
 			.map(jpa -> benutzerConverter.convertToBenutzer(jpa));
 	}
 
 	public Optional<Benutzer> findBenutzerByUsername(String username) {
 		logger.debug("BenutzerRepository.findBenutzerByUsername {}", username);
 		return benutzerJpaRepository.findByUsername(username)
-			.map(jpa -> benutzerConverter.convertToBenutzer(jpa));
+			.map(jpa -> {
+				logger.debug("Benutzer gefunden {}", jpa);
+				return benutzerConverter.convertToBenutzer(jpa);
+			});
 	}
 
+	@Transactional
 	public Benutzer save(Benutzer benutzer) {
 		logger.info("Suche nach Benutzer mit id {}", benutzer.uuid().toString());
-		Optional<BenutzerJpa> optionalBenutzerJpa = benutzerJpaRepository.findById(benutzer.uuid().toString());
+		Optional<BenutzerJpa> optionalBenutzerJpa = benutzerJpaRepository.findById(benutzer.uuid());
 
-		BenutzerJpa futureBenutzerJpa = benutzerConverter.convertFromBenutzer(benutzer);
+		BenutzerJpa futureJpa = benutzerConverter.convertFromBenutzer(benutzer);
 		if (optionalBenutzerJpa.isPresent()) {
-			BenutzerJpa currentBenutzerJpa = optionalBenutzerJpa.get();
-			logger.debug("existierenden Benutzer {} gefunden,\n schreibe neue Werte {}", currentBenutzerJpa, futureBenutzerJpa);
-			if (currentBenutzerJpa.getRollen() != null) {
-				currentBenutzerJpa.getRollen().clear();
-				currentBenutzerJpa.getRollen().addAll(futureBenutzerJpa.getRollen());
-			}
-			if (currentBenutzerJpa.getTurnierRollen() != null) {
-				currentBenutzerJpa.getTurnierRollen().clear();
-				currentBenutzerJpa.getTurnierRollen().addAll(futureBenutzerJpa.getTurnierRollen());
-			}
-			benutzerJpaRepository.save(currentBenutzerJpa);
-			return benutzer;
+			logger.info("Benutzer mit id {} gefunden, aktualisiere", benutzer.uuid().toString());
+			BenutzerJpa existingJpa = optionalBenutzerJpa.get();
+			existingJpa.updateFrom(futureJpa);
+			return benutzerConverter.convertToBenutzer(benutzerJpaRepository.save(existingJpa));
 		}
-
-		logger.info("Erstelle Benutzer neu {}", futureBenutzerJpa);
-		benutzerJpaRepository.save(futureBenutzerJpa);
-		return benutzer;
+		return benutzerConverter.convertToBenutzer(benutzerJpaRepository.save(futureJpa));
 	}
 
 	public List<Benutzer> findAll() {
@@ -68,7 +63,21 @@ public class BenutzerRepository {
 			.collect(Collectors.toList());
 	}
 
-	public void deleteTurnierRollen(UUID turnierUUID) {
-		turnierRollenJpaRepository.deleteAllByTurnierUuid(turnierUUID.toString());
+	public void addTurnierRollen(UUID userId, TurnierRollen turnierRollen, UUID turnierUUID) {
+		logger.info("Speichere TurnierRollen für Benutzer");
+		Optional<TurnierRollenJpa> optionalTurnierRollen = turnierRollenJpaRepository.findAllByBenutzerIdAndTurnierUuid(userId, turnierUUID);
+
+		if (optionalTurnierRollen.isPresent()) {
+			logger.debug("TurnierRollen existiert bereits, aktualisiere: {}", turnierRollen);
+			TurnierRollenJpa existing = optionalTurnierRollen.get();
+			existing.updateFrom(turnierRollen);
+			turnierRollenJpaRepository.save(existing);
+			return;
+		}
+
+		logger.debug("TurnierRollen wird neu angelegt: {}", turnierRollen);
+		BenutzerJpa benutzerJpa = benutzerJpaRepository.findById(userId).orElseThrow();
+		TurnierRollenJpa newTurnierRollen = new TurnierRollenJpa(benutzerJpa, turnierRollen.rollen(), turnierUUID);
+		turnierRollenJpaRepository.save(newTurnierRollen);
 	}
 }

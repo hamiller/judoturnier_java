@@ -279,7 +279,7 @@ public class TurnierController {
 				matte -> reorganize(matte.gruppenRunden()) // Value: Ergebnis der reorganize-Methode
 			));
 
-		logger.info("wettkampfreihenfolgeJeMatte: {}", wettkampfreihenfolgeJeMatte);
+		logger.trace("gefilterteMatten: {}", gefilterteMatten);
 
 		ModelAndView mav = new ModelAndView("begegnungen_normal");
 		mav.addObject("turnierid", turnierid);

@@ -1,5 +1,18 @@
 package de.sinnix.judoturnier.application;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
 import de.sinnix.judoturnier.application.algorithm.Algorithmus;
 import de.sinnix.judoturnier.application.algorithm.BesterAusDrei;
@@ -7,7 +20,6 @@ import de.sinnix.judoturnier.application.algorithm.DoppelKOSystem;
 import de.sinnix.judoturnier.application.algorithm.JederGegenJeden;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
-import de.sinnix.judoturnier.model.BegegnungenJeRunde;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Matte;
@@ -22,18 +34,6 @@ import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Transactional
 @Service
@@ -108,7 +108,7 @@ public class WettkampfService {
 	private void erstelleMatten(List<GewichtsklassenGruppe> gwks, Einstellungen einstellungen) {
 		// check gruppe auf vorhandene Daten
 		checkGruppenSindValide(gwks);
-		List<WettkampfGruppeMitBegegnungen> wettkampfGruppen = new ArrayList<>();
+		List<WettkampfGruppeMitBegegnungen> wettkampfGruppeMitBegegnungenList = new ArrayList<>();
 		for (GewichtsklassenGruppe gwk : gwks) {
 			Algorithmus algorithmus = getAlgorithmus(einstellungen, gwk);
 
@@ -119,18 +119,26 @@ public class WettkampfService {
 			for (List<Wettkaempfer> wettkaempferList : wettkaempferGruppen) {
 				var splittedGwkg = new GewichtsklassenGruppe(gwk.id(), gwk.altersKlasse(), gwk.gruppenGeschlecht(), wettkaempferList, gwk.name(), gwk.minGewicht(), gwk.maxGewicht(), gwk.turnierUUID());
 				WettkampfGruppeMitBegegnungen wettkampfGruppeMitBegegnungen = algorithmus.erstelleWettkampfGruppe(splittedGwkg);
-				wettkampfGruppen.add(wettkampfGruppeMitBegegnungen);
+				wettkampfGruppeMitBegegnungenList.add(wettkampfGruppeMitBegegnungen);
 			}
 		}
-		logger.debug("erstellte Liste der WettkampfGruppeMitBegegnungen: {}", wettkampfGruppen);
+		logger.trace("erstellte Liste der WettkampfGruppeMitBegegnungen: {}", wettkampfGruppeMitBegegnungenList);
 
 		// Speichern der Gruppen
-		turnierRepository.speichereGruppen(wettkampfGruppen.stream()
-			.map(wettkampfGruppeMitBegegnungen -> wettkampfGruppeMitBegegnungen.gruppe())
-			.toList());
+		List<WettkampfGruppe> wettkampfGruppen = wettkampfGruppeMitBegegnungenList.stream()
+			.map(WettkampfGruppeMitBegegnungen::gruppe)
+			.toList();
+		List<WettkampfGruppe> persistierteWettkampfGruppen = turnierRepository.speichereGruppen(wettkampfGruppen);
+		// IDs zurück in wettkampfGruppeMitBegegnungenList propagieren
+		List<WettkampfGruppeMitBegegnungen> aktualisierteWettkampfGruppenMitBegegnungenList = IntStream.range(0, wettkampfGruppeMitBegegnungenList.size())
+			.mapToObj(i -> new WettkampfGruppeMitBegegnungen(
+				persistierteWettkampfGruppen.get(i),
+				wettkampfGruppeMitBegegnungenList.get(i).alleRundenBegegnungen()
+			))
+			.toList();
 
 		// Erstellen aller Begegnungen
-		List<Matte> matten = erstelleGruppenReihenfolge(wettkampfGruppen, einstellungen.mattenAnzahl().anzahl(), einstellungen.wettkampfReihenfolge());
+		List<Matte> matten = erstelleGruppenReihenfolge(aktualisierteWettkampfGruppenMitBegegnungenList, einstellungen.mattenAnzahl().anzahl(), einstellungen.wettkampfReihenfolge());
 
 		// Speichern der Begegnungen
 		turnierRepository.speichereMatten(matten);

@@ -73,37 +73,22 @@ class BenutzerServiceTest {
 	@Test
 	void ordneBenutzerZuTurnier() {
 		UUID turnier1UUID = UUID.randomUUID();
-		UUID turnier2UUID = UUID.randomUUID();
 		UUID userId1 = UUID.randomUUID();
 		UUID userId2 = UUID.randomUUID();
-		System.out.println(turnier1UUID);
-		System.out.println(turnier2UUID);
 		Benutzer benutzer1 = new Benutzer(userId1,
 			"username1",
 			"name1",
-			List.of(new TurnierRollen(null, turnier2UUID, List.of(BenutzerRolle.BEOBACHTER))),
+			List.of(new TurnierRollen(null, turnier1UUID, List.of(BenutzerRolle.BEOBACHTER))),
 			List.of(BenutzerRolle.BEOBACHTER));
 		Benutzer benutzer2 = new Benutzer(userId2,
 			"username2",
 			"nam2",
-			List.of(new TurnierRollen(null, turnier2UUID, List.of(BenutzerRolle.ADMINISTRATOR, BenutzerRolle.BEOBACHTER))),
+			List.of(new TurnierRollen(null, turnier1UUID, List.of(BenutzerRolle.ADMINISTRATOR, BenutzerRolle.BEOBACHTER))),
 			List.of(BenutzerRolle.ADMINISTRATOR, BenutzerRolle.BEOBACHTER));
 		List<UUID> benutzerList = List.of(userId1, userId2);
 
-		Benutzer benutzer1Neu = new Benutzer(
-			benutzer1.uuid(),
-			benutzer1.username(),
-			benutzer1.name(),
-			List.of(new TurnierRollen(null, turnier2UUID, benutzer1.benutzerRollen()),
-					new TurnierRollen(null, turnier1UUID, benutzer1.benutzerRollen())),
-			benutzer1.benutzerRollen());
-		Benutzer benutzer2Neu = new Benutzer(
-			benutzer2.uuid(),
-			benutzer2.username(),
-			benutzer2.name(),
-			List.of(new TurnierRollen(null, turnier2UUID, benutzer2.benutzerRollen()),
-					new TurnierRollen(null, turnier1UUID, benutzer2.benutzerRollen())),
-			benutzer2.benutzerRollen());
+		TurnierRollen turnierRollen1 = new TurnierRollen(null, turnier1UUID, benutzer1.benutzerRollen());
+		TurnierRollen turnierRollen2 = new TurnierRollen(null, turnier1UUID, benutzer2.benutzerRollen());
 
 
 		when(benutzerRepository.findBenutzer(any())).thenAnswer(invocation -> {
@@ -116,12 +101,26 @@ class BenutzerServiceTest {
 		service.ordneBenutzerZuTurnier(benutzerList, turnier1UUID);
 
 		verify(benutzerRepository, times(2)).findBenutzer(any());
-		ArgumentCaptor<Benutzer> argumentCaptor = ArgumentCaptor.forClass(Benutzer.class);
-		verify(benutzerRepository, times(2)).save(argumentCaptor.capture());
-		List<Benutzer> capturedBenutzer = argumentCaptor.getAllValues();
-		assertEquals(2, capturedBenutzer.size());
-		assertEquals(benutzer1Neu, capturedBenutzer.get(0));
-		assertEquals(benutzer2Neu, capturedBenutzer.get(1));
+
+		ArgumentCaptor<UUID> argument1Captor = ArgumentCaptor.forClass(UUID.class);
+		ArgumentCaptor<TurnierRollen> argument2Captor = ArgumentCaptor.forClass(TurnierRollen.class);
+		ArgumentCaptor<UUID> argument3Captor = ArgumentCaptor.forClass(UUID.class);
+		verify(benutzerRepository, times(2)).addTurnierRollen(argument1Captor.capture(), argument2Captor.capture(), argument3Captor.capture());
+
+		List<UUID> capturedBenutzerIds = argument1Captor.getAllValues();
+		assertEquals(2, capturedBenutzerIds.size());
+		assertEquals(userId1, capturedBenutzerIds.get(0));
+		assertEquals(userId2, capturedBenutzerIds.get(1));
+
+		List<TurnierRollen> capturedTurnierRollen = argument2Captor.getAllValues();
+		assertEquals(2, capturedTurnierRollen.size());
+		assertEquals(turnierRollen1, capturedTurnierRollen.get(0));
+		assertEquals(turnierRollen2, capturedTurnierRollen.get(1));
+
+		List<UUID> capturedTurnierIds = argument3Captor.getAllValues();
+		assertEquals(2, capturedTurnierIds.size());
+		assertEquals(turnier1UUID, capturedTurnierIds.get(0));
+		assertEquals(turnier1UUID, capturedTurnierIds.get(1));
 	}
 
 	@Test

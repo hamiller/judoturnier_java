@@ -27,19 +27,19 @@ class WettkampfGruppeConverterTest {
 	@Test
 	void testConvertToWettkampfGruppe() {
 		WettkampfGruppeJpa wettkampfGruppeJpa = new WettkampfGruppeJpa();
-		wettkampfGruppeJpa.setUuid(UUID.randomUUID().toString());
+		wettkampfGruppeJpa.setId(UUID.randomUUID());
 		wettkampfGruppeJpa.setName("Gruppe A");
 		wettkampfGruppeJpa.setTyp("Team");
 		wettkampfGruppeJpa.setAltersklasse("U11");
-		wettkampfGruppeJpa.setTurnierUUID(UUID.randomUUID().toString());
+		wettkampfGruppeJpa.setTurnierUUID(UUID.randomUUID());
 
 		WettkampfGruppe wettkampfGruppe = converter.convertToWettkampfGruppe(wettkampfGruppeJpa);
 		assertNotNull(wettkampfGruppe);
-		assertEquals(wettkampfGruppeJpa.getUuid(), wettkampfGruppe.id().toString());
+		assertEquals(wettkampfGruppeJpa.getId(), wettkampfGruppe.id());
 		assertEquals(wettkampfGruppeJpa.getName(), wettkampfGruppe.name());
 		assertEquals(wettkampfGruppeJpa.getTyp(), wettkampfGruppe.typ());
 		assertEquals(wettkampfGruppeJpa.getAltersklasse(), wettkampfGruppe.altersklasse().name());
-		assertEquals(wettkampfGruppeJpa.getTurnierUUID(), wettkampfGruppe.turnierUUID().toString());
+		assertEquals(wettkampfGruppeJpa.getTurnierUUID(), wettkampfGruppe.turnierUUID());
 	}
 
 	@Test
@@ -57,10 +57,10 @@ class WettkampfGruppeConverterTest {
 
 		// Assert
 		assertNotNull(jpa);
-		assertEquals(wettkampfGruppe.id().toString(), jpa.getUuid());
+		assertEquals(null, jpa.getId());
 		assertEquals(wettkampfGruppe.name(), jpa.getName());
 		assertEquals(wettkampfGruppe.typ(), jpa.getTyp());
 		assertEquals(wettkampfGruppe.altersklasse().name(), jpa.getAltersklasse());
-		assertEquals(wettkampfGruppe.turnierUUID().toString(), jpa.getTurnierUUID());
+		assertEquals(wettkampfGruppe.turnierUUID(), jpa.getTurnierUUID());
 	}
 }

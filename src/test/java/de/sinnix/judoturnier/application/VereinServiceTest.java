@@ -48,16 +48,16 @@ class VereinServiceTest {
 		verify(vereinJpaRepository, times(3)).save(argumentCaptor.capture());
 		List<VereinJpa> capturedArguments = argumentCaptor.getAllValues();
 
-		assertEquals(null, capturedArguments.get(0).getUuid());
+		assertEquals(null, capturedArguments.get(0).getId());
 		assertEquals("Dantai Wölfersheim", capturedArguments.get(0).getName());
-		assertEquals(turnierUUID.toString(), capturedArguments.get(0).getTurnierUUID());
+		assertEquals(turnierUUID, capturedArguments.get(0).getTurnierUUID());
 
-		assertEquals(null, capturedArguments.get(1).getUuid());
+		assertEquals(null, capturedArguments.get(1).getId());
 		assertEquals("JCN Lindenfels", capturedArguments.get(1).getName());
-		assertEquals(turnierUUID.toString(), capturedArguments.get(1).getTurnierUUID());
+		assertEquals(turnierUUID, capturedArguments.get(1).getTurnierUUID());
 
-		assertEquals(null, capturedArguments.get(2).getUuid());
+		assertEquals(null, capturedArguments.get(2).getId());
 		assertEquals("1. JC Großkrotzenburg", capturedArguments.get(2).getName());
-		assertEquals(turnierUUID.toString(), capturedArguments.get(2).getTurnierUUID());
+		assertEquals(turnierUUID, capturedArguments.get(2).getTurnierUUID());
 	}
 }

@@ -33,14 +33,28 @@ public class VereinService {
 	private VereinConverter vereinConverter;
 
 	public List<Verein> holeAlleVereine(UUID turnierUUID) {
-		return vereinJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream().map(jpa -> vereinConverter.converToVerein(jpa)).collect(Collectors.toUnmodifiableList());
+		return vereinJpaRepository.findAllByTurnierUUID(turnierUUID).stream().map(jpa -> vereinConverter.converToVerein(jpa)).collect(Collectors.toUnmodifiableList());
 	}
 
 	public Verein holeVerein(UUID vereinsId, UUID turnierUUID) {
-		return vereinJpaRepository.findById(vereinsId.toString()).map(jpa -> vereinConverter.converToVerein(jpa)).orElseThrow();
+		return vereinJpaRepository.findById(vereinsId).map(jpa -> vereinConverter.converToVerein(jpa)).orElseThrow();
 	}
 
 	public Verein speichereVerein(Verein verein) {
+		logger.info("Speichere Verein");
+
+		if (verein.id() != null) {
+			var optionalVerein = vereinJpaRepository.findById(verein.id());
+			if (optionalVerein.isPresent()) {
+				logger.debug("Verein {} existiert bereits, aktualisiere", verein);
+				VereinJpa jpa = optionalVerein.get();
+				jpa.updateFrom(vereinConverter.convertFromVerein(verein));
+				jpa = vereinJpaRepository.save(jpa);
+				return vereinConverter.converToVerein(jpa);
+			}
+		}
+
+		logger.debug("Verein {} wird neu angelegt", verein);
 		VereinJpa jpa = vereinJpaRepository.save(vereinConverter.convertFromVerein(verein));
 		return vereinConverter.converToVerein(jpa);
 	}
@@ -82,12 +96,12 @@ public class VereinService {
 	}
 
 	public Optional<Verein> sucheVerein(String vereinname, UUID turnierUUID) {
-		return vereinJpaRepository.findAllByTurnierUUID(turnierUUID.toString()).stream().filter(jpa -> jpa.getName().equalsIgnoreCase(vereinname)).findFirst().map(jpa -> vereinConverter.converToVerein(jpa));
+		return vereinJpaRepository.findAllByTurnierUUID(turnierUUID).stream().filter(jpa -> jpa.getName().equalsIgnoreCase(vereinname)).findFirst().map(jpa -> vereinConverter.converToVerein(jpa));
 	}
 
 	public void loescheVerein(UUID id, UUID turnierUUID) {
 		logger.info("Loesche Verein {}", id);
-		vereinJpaRepository.deleteById(id.toString());
+		vereinJpaRepository.deleteById(id);
 		logger.info("Verein gelöscht");
 	}
 }

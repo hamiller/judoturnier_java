@@ -20,7 +20,7 @@
         <span style="position: relative">
                 <md-filled-tonal-button id="theming-anchor-{{this}}" class="theming-anchors" altersklasse="{{this}}">{{this}}</md-filled-tonal-button>
                 <md-menu id="theming-menu-{{this}}" anchor="theming-anchor-{{this}}">
-                    <md-menu-item type="button" class="renewBegegnung" id="renewBegegnung_{{this}}" altersklasse="{{this}}">Wettkampfgruppen {{this}} neu zuordnen</md-menu-item>
+                    <md-menu-item type="button" class="renewBegegnung" onclick="renewBegegnung('{{this}}'); return false;" id="renewBegegnung_{{this}}" altersklasse="{{this}}">Wettkampfgruppen {{this}} neu zuordnen</md-menu-item>
                     <md-menu-item href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches/{{this}}" target="_blank" class="">Druckansicht {{this}} Begegnungen</md-menu-item>
                     <md-menu-item href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches_inserting_data/{{this}}" target="_blank" class="">Druckansicht {{this}}
                       Wertungen-Eintragen</md-menu-item>
@@ -228,7 +228,7 @@
   }
 
   const renewBegegnung = async (data) => {
-    var altersklasse = data.target.attributes.getNamedItem("altersklasse").value;
+    var altersklasse = data;
     console.log("Altersklasse", altersklasse);
     var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in der Altersklasse\n\t" + altersklasse + "\nin Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
     if (sicher) {

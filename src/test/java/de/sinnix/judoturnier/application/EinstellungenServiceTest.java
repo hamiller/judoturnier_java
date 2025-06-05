@@ -72,11 +72,11 @@ class EinstellungenServiceTest {
 
 	@Test
 	void testLadeEinstellungen() {
-		EinstellungJpa turnierTypJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString()), "RANDORI");
-		EinstellungJpa mattenAnzahlJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(MattenAnzahl.TYP, turnierUUID.toString()), "4");
-		EinstellungJpa wettkampfReihenfolgeJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(WettkampfReihenfolge.TYP, turnierUUID.toString()), "ABWECHSELND");
-		EinstellungJpa wettkampfzeitenJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(Wettkampfzeiten.TYP, turnierUUID.toString()), wettkampfzeitenString);
-		EinstellungJpa gruppengroessenJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(Gruppengroessen.TYP, turnierUUID.toString()), gruppengroessenString);
+		EinstellungJpa turnierTypJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID), "RANDORI");
+		EinstellungJpa mattenAnzahlJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(MattenAnzahl.TYP, turnierUUID), "4");
+		EinstellungJpa wettkampfReihenfolgeJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(WettkampfReihenfolge.TYP, turnierUUID), "ABWECHSELND");
+		EinstellungJpa wettkampfzeitenJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(Wettkampfzeiten.TYP, turnierUUID), wettkampfzeitenString);
+		EinstellungJpa gruppengroessenJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(Gruppengroessen.TYP, turnierUUID), gruppengroessenString);
 
 		Gruppengroessen gruppengroessen = new Gruppengroessen(Map.of(
 			Altersklasse.U9, 6,
@@ -99,7 +99,7 @@ class EinstellungenServiceTest {
 		assertEquals(TurnierTyp.RANDORI, einstellungen.turnierTyp());
 		assertEquals(4, einstellungen.mattenAnzahl().anzahl());
 		assertEquals(WettkampfReihenfolge.ABWECHSELND, einstellungen.wettkampfReihenfolge());
-		assertEquals(turnierUUID.toString(), einstellungen.turnierUUID().toString());
+		assertEquals(turnierUUID, einstellungen.turnierUUID());
 		assertEquals(gruppengroessen, einstellungen.gruppengroessen());
 		assertEquals(wettkampfzeiten, einstellungen.wettkampfzeiten());
 	}
@@ -144,9 +144,9 @@ class EinstellungenServiceTest {
 
 	@Test
 	void testIsRandori() {
-		EinstellungJpa turnierTypJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString()), "RANDORI");
+		EinstellungJpa turnierTypJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID), "RANDORI");
 
-		when(einstellungJpaRepository.findById(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString()))).thenReturn(Optional.of(turnierTypJpa));
+		when(einstellungJpaRepository.findById(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID))).thenReturn(Optional.of(turnierTypJpa));
 
 		boolean isRandori = einstellungenService.isRandori(turnierUUID);
 
@@ -155,9 +155,9 @@ class EinstellungenServiceTest {
 
 	@Test
 	void testIsNotRandori() {
-		EinstellungJpa turnierTypJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString()), "STANDARD");
+		EinstellungJpa turnierTypJpa = new EinstellungJpa(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID), "STANDARD");
 
-		when(einstellungJpaRepository.findById(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString()))).thenReturn(Optional.of(turnierTypJpa));
+		when(einstellungJpaRepository.findById(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID))).thenReturn(Optional.of(turnierTypJpa));
 
 		boolean isRandori = einstellungenService.isRandori(turnierUUID);
 

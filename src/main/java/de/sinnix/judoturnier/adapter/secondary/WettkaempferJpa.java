@@ -1,5 +1,9 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import java.util.UUID;
+
+
+import de.sinnix.judoturnier.model.Wettkaempfer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -26,12 +30,12 @@ public class WettkaempferJpa extends AbstractEntity {
 	private Double    gewicht;
 	private String    farbe;
 	private Boolean   checked;
-	private Boolean   printed;
+	private Boolean printed;
 	@Column(name = "turnier_uuid", nullable = false)
-	private String    turnierUUID;
+	private UUID    turnierUUID;
 
-	public WettkaempferJpa(String uuid, String name, String geschlecht, String altersklasse, VereinJpa verein, Double gewicht, String farbe, Boolean checked, Boolean printed, String turnierUUID) {
-		super(uuid);
+	public WettkaempferJpa(String name, String geschlecht, String altersklasse, VereinJpa verein, Double gewicht, String farbe, Boolean checked, Boolean printed, UUID turnierUUID) {
+		super();
 		this.name = name;
 		this.geschlecht = geschlecht;
 		this.altersklasse = altersklasse;
@@ -41,5 +45,16 @@ public class WettkaempferJpa extends AbstractEntity {
 		this.checked = checked;
 		this.printed = printed;
 		this.turnierUUID = turnierUUID;
+	}
+
+	public void updateFrom(WettkaempferJpa wettkaempferJpa, VereinJpa vereinJpa) {
+		this.name = wettkaempferJpa.getName();
+		this.geschlecht = wettkaempferJpa.getGeschlecht();
+		this.altersklasse = wettkaempferJpa.getAltersklasse();
+		this.verein = vereinJpa;
+		this.gewicht = wettkaempferJpa.getGewicht();
+		this.farbe = wettkaempferJpa.getFarbe();
+		this.checked = wettkaempferJpa.getChecked();
+		this.printed = wettkaempferJpa.getPrinted();
 	}
 }

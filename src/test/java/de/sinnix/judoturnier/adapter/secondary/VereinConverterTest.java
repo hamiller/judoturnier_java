@@ -21,7 +21,8 @@ class VereinConverterTest {
     void testConvertToVerein() {
         UUID turnierUUID = UUID.randomUUID();
         UUID vereinUUID = UUID.randomUUID();
-        VereinJpa vereinJpa = new VereinJpa(vereinUUID.toString(), "Verein1", turnierUUID.toString());
+        VereinJpa vereinJpa = new VereinJpa("Verein1", turnierUUID);
+		vereinJpa.setId(vereinUUID);
 
         Verein verein = vereinConverter.converToVerein(vereinJpa);
 
@@ -40,8 +41,7 @@ class VereinConverterTest {
         VereinJpa vereinJpa = vereinConverter.convertFromVerein(verein);
 
         assertNotNull(vereinJpa);
-        assertEquals(vereinUUID.toString(), vereinJpa.getUuid());
         assertEquals("Verein1", vereinJpa.getName());
-        assertEquals(turnierUUID.toString(), vereinJpa.getTurnierUUID());
+        assertEquals(turnierUUID, vereinJpa.getTurnierUUID());
     }
 }

@@ -16,19 +16,19 @@ public class BenutzerConverter {
 	private static final Logger logger = LogManager.getLogger(BenutzerConverter.class);
 
 	public Benutzer convertToBenutzer(BenutzerJpa jpa) {
-		logger.debug("BenutzerConverter.convertToBenutzer {}", jpa);
+		logger.trace("BenutzerConverter.convertToBenutzer {}", jpa);
 		if (jpa == null) {
 			return null;
 		}
 
 		return new Benutzer(
-			UUID.fromString(jpa.getUuid()),
+			jpa.getId(),
 			jpa.getUsername(),
 			jpa.getName(),
 			jpa.getTurnierRollen().stream()
 				.map(turnierRolle -> {
-					return new TurnierRollen(UUID.fromString(turnierRolle.getUuid()),
-						UUID.fromString(turnierRolle.getTurnierUuid()),
+					return new TurnierRollen(turnierRolle.getId(),
+						turnierRolle.getTurnierUuid(),
 						turnierRolle.getRollen());
 				})
 				.collect(Collectors.toList()),
@@ -36,9 +36,8 @@ public class BenutzerConverter {
 	}
 
 	public BenutzerJpa convertFromBenutzer(Benutzer benutzer) {
-		logger.debug("BenutzerConverter.convertFromBenutzer {}", benutzer);
+		logger.trace("BenutzerConverter.convertFromBenutzer {}", benutzer);
 		BenutzerJpa jpa = new BenutzerJpa();
-		if (benutzer.uuid() != null) jpa.setUuid(benutzer.uuid().toString());
 		jpa.setUsername(benutzer.username());
 		jpa.setName(benutzer.name());
 		jpa.setTurnierRollen(convertFromTurnierRollen(benutzer.turnierRollen(), jpa));
@@ -47,15 +46,14 @@ public class BenutzerConverter {
 	}
 
 	private List<TurnierRollenJpa> convertFromTurnierRollen(List<TurnierRollen> turnierRollen, BenutzerJpa benutzer) {
-		logger.debug("BenutzerConverter.convertFromTurnierRollen {}", turnierRollen);
+		logger.trace("BenutzerConverter.convertFromTurnierRollen {}", turnierRollen);
 		if (turnierRollen == null) {
 			return new ArrayList<>();
 		}
 		return turnierRollen.stream().map(turnierRolle -> {
 				TurnierRollenJpa jpa = new TurnierRollenJpa();
-				jpa.setUuid(turnierRolle.uuid() != null ? turnierRolle.uuid().toString() : null);
 				jpa.setBenutzer(benutzer);
-				jpa.setTurnierUuid(turnierRolle.turnierId() != null ? turnierRolle.turnierId().toString() : null);
+				jpa.setTurnierUuid(turnierRolle.turnierId() != null ? turnierRolle.turnierId() : null);
 				jpa.setRollen(turnierRolle.rollen());
 				return jpa;
 			})

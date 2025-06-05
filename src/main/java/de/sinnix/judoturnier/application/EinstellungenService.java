@@ -69,7 +69,7 @@ public class EinstellungenService {
 
 	public Einstellungen ladeEinstellungen(UUID turnierUUID) {
 		logger.info("EinstellungenService ladeEinstellungen()");
-		List<EinstellungJpa> einstellungenList = einstellungJpaRepository.findAll().stream().filter(e -> e.getId().getTurnierUUID().equalsIgnoreCase(turnierUUID.toString())).toList();
+		List<EinstellungJpa> einstellungenList = einstellungJpaRepository.findAll().stream().filter(e -> e.getId().getTurnierUUID().equals(turnierUUID)).toList();
 		TurnierTyp turnierTyp = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(TurnierTyp.TYP)).findFirst().map(t -> TurnierTyp.valueOf(t.getWert())).orElse(DEFAULT_TURNIERTYP);
 		MattenAnzahl mattenAnzahl = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(MattenAnzahl.TYP)).findFirst().map(t -> new MattenAnzahl(Integer.parseInt(t.getWert()))).orElseGet(() -> DEFAULT_MATTENANZAHL);
 		WettkampfReihenfolge wettkampfReihenfolge = einstellungenList.stream().filter(e -> e.getId().getArt().equalsIgnoreCase(WettkampfReihenfolge.TYP)).findFirst().map(t -> WettkampfReihenfolge.valueOf(t.getWert())).orElseGet(() -> DEFAULT_WETTKAMPFREIHENFOLGE);
@@ -83,13 +83,13 @@ public class EinstellungenService {
 	public Einstellungen speichereTurnierEinstellungen(Einstellungen einstellungen) {
 		logger.info("EinstellungenService speichereTurnierEinstellungen()");
 		List<EinstellungJpa> jpaList = List.of(
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.turnierTyp().TYP, einstellungen.turnierUUID().toString()), einstellungen.turnierTyp().name()),
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.mattenAnzahl().TYP, einstellungen.turnierUUID().toString()), einstellungen.mattenAnzahl().anzahl().toString()),
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.wettkampfReihenfolge().TYP, einstellungen.turnierUUID().toString()), einstellungen.wettkampfReihenfolge().name()),
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.gruppengroessen().TYP, einstellungen.turnierUUID().toString()), convertFromObject(einstellungen.gruppengroessen())),
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.variablerGewichtsteil().TYP, einstellungen.turnierUUID().toString()), einstellungen.variablerGewichtsteil().variablerTeil().toString()),
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.separateAlterklassen().TYP, einstellungen.turnierUUID().toString()), einstellungen.separateAlterklassen().name()),
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.wettkampfzeiten().TYP, einstellungen.turnierUUID().toString()), convertFromObject(einstellungen.wettkampfzeiten()))
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.turnierTyp().TYP, einstellungen.turnierUUID()), einstellungen.turnierTyp().name()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.mattenAnzahl().TYP, einstellungen.turnierUUID()), einstellungen.mattenAnzahl().anzahl().toString()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.wettkampfReihenfolge().TYP, einstellungen.turnierUUID()), einstellungen.wettkampfReihenfolge().name()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.gruppengroessen().TYP, einstellungen.turnierUUID()), convertFromObject(einstellungen.gruppengroessen())),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.variablerGewichtsteil().TYP, einstellungen.turnierUUID()), einstellungen.variablerGewichtsteil().variablerTeil().toString()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.separateAlterklassen().TYP, einstellungen.turnierUUID()), einstellungen.separateAlterklassen().name()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(einstellungen.wettkampfzeiten().TYP, einstellungen.turnierUUID()), convertFromObject(einstellungen.wettkampfzeiten()))
 		);
 		logger.info("speichere {}", jpaList);
 		einstellungJpaRepository.saveAll(jpaList);
@@ -98,34 +98,34 @@ public class EinstellungenService {
 
 	public boolean isRandori(UUID turnierUUID) {
 		logger.info("Prüfe Turnierart für Turnier {}", turnierUUID);
-		EinstellungJpa.EinstellungId einstellungId = new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString());
+		EinstellungJpa.EinstellungId einstellungId = new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID);
 		TurnierTyp turnierTyp = einstellungJpaRepository.findById(einstellungId).map(typ -> TurnierTyp.valueOf(typ.getWert())).orElseThrow();
 		return turnierTyp == TurnierTyp.RANDORI;
 	}
 
 	public Integer kampfZeit(UUID turnierUUID, Altersklasse altersklasse) {
 		logger.info("Hole Kampfzeit für Turnier {} und Altersklasse {}", turnierUUID, altersklasse);
-		EinstellungJpa.EinstellungId einstellungId = new EinstellungJpa.EinstellungId(Wettkampfzeiten.TYP, turnierUUID.toString());
+		EinstellungJpa.EinstellungId einstellungId = new EinstellungJpa.EinstellungId(Wettkampfzeiten.TYP, turnierUUID);
 		Wettkampfzeiten wettkampfzeiten = einstellungJpaRepository.findById(einstellungId).map(jpa -> convertToObject(jpa.getWert(), Wettkampfzeiten.class)).orElseGet(() -> DEFAULT_WETTKAMPFZEITEN);
 		return wettkampfzeiten.altersklasseKampfzeitSekunden().get(altersklasse);
 	}
 
 	public Turnier ladeTurnierDaten(UUID turnierUUID) {
 		logger.info("Lade Turnierdaten für Turnier {}", turnierUUID);
-		TurnierJpa jpa = turnierJpaRepository.findById(turnierUUID.toString()).orElseThrow();
+		TurnierJpa jpa = turnierJpaRepository.findById(turnierUUID).orElseThrow();
 		return turnierConverter.convertToTurnier(jpa);
 	}
 
 	public Einstellungen speichereDefaultEinstellungen(UUID turnierUUID) {
 		logger.info("Erstelle Default-Einstellungen für Turnier {}", turnierUUID);
 		List<EinstellungJpa> jpaList = List.of(
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID.toString()), DEFAULT_TURNIERTYP.name()),
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(MattenAnzahl.TYP, turnierUUID.toString()), DEFAULT_MATTENANZAHL.anzahl().toString()),
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(WettkampfReihenfolge.TYP, turnierUUID.toString()), DEFAULT_WETTKAMPFREIHENFOLGE.name()),
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(Gruppengroessen.TYP, turnierUUID.toString()), convertFromObject(DEFAULT_GRUPPENGROESSEN)),
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(VariablerGewichtsteil.TYP, turnierUUID.toString()), DEFAULT_VARIABLER_GEWICHTSTEIL.variablerTeil().toString()),
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(SeparateAlterklassen.TYP, turnierUUID.toString()), DEFAULT_SEPARATE_ALTERKLASSEN.name()),
-			new EinstellungJpa(new EinstellungJpa.EinstellungId(Wettkampfzeiten.TYP, turnierUUID.toString()), convertFromObject(DEFAULT_WETTKAMPFZEITEN))
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID), DEFAULT_TURNIERTYP.name()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(MattenAnzahl.TYP, turnierUUID), DEFAULT_MATTENANZAHL.anzahl().toString()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(WettkampfReihenfolge.TYP, turnierUUID), DEFAULT_WETTKAMPFREIHENFOLGE.name()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(Gruppengroessen.TYP, turnierUUID), convertFromObject(DEFAULT_GRUPPENGROESSEN)),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(VariablerGewichtsteil.TYP, turnierUUID), DEFAULT_VARIABLER_GEWICHTSTEIL.variablerTeil().toString()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(SeparateAlterklassen.TYP, turnierUUID), DEFAULT_SEPARATE_ALTERKLASSEN.name()),
+			new EinstellungJpa(new EinstellungJpa.EinstellungId(Wettkampfzeiten.TYP, turnierUUID), convertFromObject(DEFAULT_WETTKAMPFZEITEN))
 		);
 		einstellungJpaRepository.saveAll(jpaList);
 		return ladeEinstellungen(turnierUUID);

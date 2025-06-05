@@ -54,7 +54,7 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable);
 
 		http
-			.authorizeRequests(request -> request
+			.authorizeHttpRequests((request) -> request
 				.requestMatchers("/css/**", "/js/**", "/assets/**").permitAll() // Statische Dateien erlauben
 				.requestMatchers("/").permitAll()
 				.requestMatchers("/*.ico").permitAll()

@@ -20,8 +20,8 @@ public class TurnierJpa extends AbstractEntity {
 	private String ort;
 	private Date   datum;
 
-	public TurnierJpa(String uuid, String name, String ort, Date datum) {
-		super(uuid);
+	public TurnierJpa(String name, String ort, Date datum) {
+		super();
 		this.name = name;
 		this.ort = ort;
 		this.datum = datum;

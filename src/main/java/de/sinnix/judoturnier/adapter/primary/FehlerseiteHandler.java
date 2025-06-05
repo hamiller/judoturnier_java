@@ -1,6 +1,5 @@
 package de.sinnix.judoturnier.adapter.primary;
 
-import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.OidcBenutzer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

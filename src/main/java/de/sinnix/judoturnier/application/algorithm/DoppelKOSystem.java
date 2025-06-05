@@ -59,7 +59,7 @@ public class DoppelKOSystem implements Algorithmus {
 			.collect(Collectors.toList());
 
 		WettkampfGruppe wettkampfGruppe = new WettkampfGruppe(
-			UUID.randomUUID(),
+			null,
 			gewichtsklassenGruppe.name().orElseGet(() -> RandoriGruppenName.Ameise).name(),
 			"(" + gewichtsklassenGruppe.minGewicht() + "-" + gewichtsklassenGruppe.maxGewicht() + " " + gewichtsklassenGruppe.altersKlasse() + ")",
 			gewichtsklassenGruppe.altersKlasse(),

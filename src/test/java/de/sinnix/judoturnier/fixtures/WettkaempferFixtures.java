@@ -41,8 +41,8 @@ public class WettkaempferFixtures {
     public static final UUID w19     = UUID.fromString("123e4567-e89b-12d3-a456-426614174023");
     public static final UUID w20     = UUID.fromString("123e4567-e89b-12d3-a456-426614174024");
 
-    public static WettkaempferJpa wettkaempferJpa1 = new WettkaempferJpa(w1.toString(), "Melanie", "w", "U11", new VereinJpa(v1UUID.toString(), "Verein1", turnierUUID.toString()), 55d, null, false, false, turnierUUID.toString());
-    public static WettkaempferJpa wettkaempferJpa2 = new WettkaempferJpa(w2.toString(), "Lea", "w", "U11", new VereinJpa(v1UUID.toString(), "Verein1", turnierUUID.toString()), 55d, null, false, false, turnierUUID.toString());
+    public static WettkaempferJpa wettkaempferJpa1 = new WettkaempferJpa("Melanie", "w", "U11", new VereinJpa( "Verein1", turnierUUID), 55d, null, false, false, turnierUUID);
+    public static WettkaempferJpa wettkaempferJpa2 = new WettkaempferJpa("Lea", "w", "U11", new VereinJpa( "Verein1", turnierUUID), 55d, null, false, false, turnierUUID);
 
     public static Optional<Wettkaempfer> wettkaempfer1 = Optional.of(new Wettkaempfer(w1, "Melanie", Geschlecht.w, Altersklasse.U11, new Verein(v1UUID, "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID));
     public static Optional<Wettkaempfer> wettkaempfer2 = Optional.of(new Wettkaempfer(w2, "Lea A", Geschlecht.w, Altersklasse.U11, new Verein(v1UUID, "Verein1", turnierUUID), 25.0, Optional.of(Farbe.ORANGE), true, false, turnierUUID));
@@ -64,26 +64,26 @@ public class WettkaempferFixtures {
 	public static Wettkaempfer wettkaempferin11 = new Wettkaempfer(UUID.fromString("9aa77e17-d3d3-48e9-9fae-8ab9c0b952c5"), "Dee, Sophie", Geschlecht.w, Altersklasse.Frauen, new Verein(v1UUID, "Verein1", turnierUUID), 54.0, Optional.empty(), true, false, turnierUUID);
 
     public static List<WettkaempferJpa> wettkaempferJpaList = Arrays.asList(
-            new WettkaempferJpa(w1.toString(), "Teilnehmer A", "m", "U11", new VereinJpa(v1UUID.toString(), "Verein1", turnierUUID.toString()), 25.0, "ORANGE", true, false, turnierUUID.toString()),
-            new WettkaempferJpa(w2.toString(), "Teilnehmer B", "w", "U11", new VereinJpa(v2UUID.toString(), "Verein2", turnierUUID.toString()), 26.0, "BLAU", false, true, turnierUUID.toString()),
-            new WettkaempferJpa(w3.toString(), "Teilnehmer C", "m", "U11", new VereinJpa(v3UUID.toString(), "Verein3", turnierUUID.toString()), 27.0, "GRUEN", true, true, turnierUUID.toString()),
-            new WettkaempferJpa(w4.toString(), "Teilnehmer D", "w", "U11", new VereinJpa(v4UUID.toString(), "Verein4", turnierUUID.toString()), 28.0, "GELB", false, false, turnierUUID.toString()),
-            new WettkaempferJpa(w5.toString(), "Teilnehmer E", "m", "U11", new VereinJpa(v5UUID.toString(), "Verein5", turnierUUID.toString()), 29.0, "ORANGE", true, false, turnierUUID.toString()),
-            new WettkaempferJpa(w6.toString(), "Teilnehmer F", "w", "U11", new VereinJpa(v1UUID.toString(), "Verein1", turnierUUID.toString()), 30.0, "BLAU", false, true, turnierUUID.toString()),
-            new WettkaempferJpa(w7.toString(), "Teilnehmer G", "m", "U11", new VereinJpa(v2UUID.toString(), "Verein2", turnierUUID.toString()), 26.1, "GRUEN", true, true, turnierUUID.toString()),
-            new WettkaempferJpa(w8.toString(), "Teilnehmer H", "w", "U11", new VereinJpa(v3UUID.toString(), "Verein3", turnierUUID.toString()), 32.0, "GELB", false, false, turnierUUID.toString()),
-            new WettkaempferJpa(w9.toString(), "Teilnehmer I", "m", "U11", new VereinJpa(v4UUID.toString(), "Verein4", turnierUUID.toString()), 33.0, "ORANGE", true, false, turnierUUID.toString()),
-            new WettkaempferJpa(w10.toString(), "Teilnehmer J", "w", "U11", new VereinJpa(v5UUID.toString(), "Verein5", turnierUUID.toString()), 34.0, "BLAU", false, true, turnierUUID.toString()),
-            new WettkaempferJpa(w11.toString(), "Teilnehmer K", "m", "U11", new VereinJpa(v1UUID.toString(), "Verein1", turnierUUID.toString()), 35.0, "GRUEN", true, true, turnierUUID.toString()),
-            new WettkaempferJpa(w12.toString(), "Teilnehmer L", "w", "U11", new VereinJpa(v2UUID.toString(), "Verein2", turnierUUID.toString()), 36.0, "GELB", false, false, turnierUUID.toString()),
-            new WettkaempferJpa(w13.toString(), "Teilnehmer M", "m", "U11", new VereinJpa(v3UUID.toString(), "Verein3", turnierUUID.toString()), 37.0, "ORANGE", true, false, turnierUUID.toString()),
-            new WettkaempferJpa(w14.toString(), "Teilnehmer N", "w", "U11", new VereinJpa(v4UUID.toString(), "Verein4", turnierUUID.toString()), 38.0, "BLAU", false, true, turnierUUID.toString()),
-            new WettkaempferJpa(w15.toString(), "Teilnehmer O", "m", "U11", new VereinJpa(v5UUID.toString(), "Verein5", turnierUUID.toString()), 39.0, "GRUEN", true, true, turnierUUID.toString()),
-            new WettkaempferJpa(w16.toString(), "Teilnehmer P", "w", "U11", new VereinJpa(v1UUID.toString(), "Verein1", turnierUUID.toString()), 40.0, "GELB", false, false, turnierUUID.toString()),
-            new WettkaempferJpa(w17.toString(), "Teilnehmer Q", "m", "U11", new VereinJpa(v2UUID.toString(), "Verein2", turnierUUID.toString()), 41.0, "ORANGE", true, false, turnierUUID.toString()),
-            new WettkaempferJpa(w18.toString(), "Teilnehmer R", "w", "U11", new VereinJpa(v3UUID.toString(), "Verein3", turnierUUID.toString()), 42.0, "BLAU", false, true, turnierUUID.toString()),
-            new WettkaempferJpa(w19.toString(), "Teilnehmer S", "m", "U11", new VereinJpa(v4UUID.toString(), "Verein4", turnierUUID.toString()), 43.0, "GRUEN", true, true, turnierUUID.toString()),
-            new WettkaempferJpa(w20.toString(), "Teilnehmer T", "w", "U11", new VereinJpa(v5UUID.toString(), "Verein5", turnierUUID.toString()), 44.0, "GELB", false, false, turnierUUID.toString())
+            new WettkaempferJpa("Teilnehmer A", "m", "U11", new VereinJpa( "Verein1", turnierUUID), 25.0, "ORANGE", true, false, turnierUUID),
+            new WettkaempferJpa("Teilnehmer B", "w", "U11", new VereinJpa( "Verein2", turnierUUID), 26.0, "BLAU", false, true, turnierUUID),
+            new WettkaempferJpa("Teilnehmer C", "m", "U11", new VereinJpa( "Verein3", turnierUUID), 27.0, "GRUEN", true, true, turnierUUID),
+            new WettkaempferJpa("Teilnehmer D", "w", "U11", new VereinJpa( "Verein4", turnierUUID), 28.0, "GELB", false, false, turnierUUID),
+            new WettkaempferJpa("Teilnehmer E", "m", "U11", new VereinJpa( "Verein5", turnierUUID), 29.0, "ORANGE", true, false, turnierUUID),
+            new WettkaempferJpa("Teilnehmer F", "w", "U11", new VereinJpa( "Verein1", turnierUUID), 30.0, "BLAU", false, true, turnierUUID),
+            new WettkaempferJpa("Teilnehmer G", "m", "U11", new VereinJpa( "Verein2", turnierUUID), 26.1, "GRUEN", true, true, turnierUUID),
+            new WettkaempferJpa("Teilnehmer H", "w", "U11", new VereinJpa( "Verein3", turnierUUID), 32.0, "GELB", false, false, turnierUUID),
+            new WettkaempferJpa("Teilnehmer I", "m", "U11", new VereinJpa( "Verein4", turnierUUID), 33.0, "ORANGE", true, false, turnierUUID),
+            new WettkaempferJpa("Teilnehmer J", "w", "U11", new VereinJpa( "Verein5", turnierUUID), 34.0, "BLAU", false, true, turnierUUID),
+            new WettkaempferJpa("Teilnehmer K", "m", "U11", new VereinJpa( "Verein1", turnierUUID), 35.0, "GRUEN", true, true, turnierUUID),
+            new WettkaempferJpa("Teilnehmer L", "w", "U11", new VereinJpa( "Verein2", turnierUUID), 36.0, "GELB", false, false, turnierUUID),
+            new WettkaempferJpa("Teilnehmer M", "m", "U11", new VereinJpa( "Verein3", turnierUUID), 37.0, "ORANGE", true, false, turnierUUID),
+            new WettkaempferJpa("Teilnehmer N", "w", "U11", new VereinJpa( "Verein4", turnierUUID), 38.0, "BLAU", false, true, turnierUUID),
+            new WettkaempferJpa("Teilnehmer O", "m", "U11", new VereinJpa( "Verein5", turnierUUID), 39.0, "GRUEN", true, true, turnierUUID),
+            new WettkaempferJpa("Teilnehmer P", "w", "U11", new VereinJpa( "Verein1", turnierUUID), 40.0, "GELB", false, false, turnierUUID),
+            new WettkaempferJpa("Teilnehmer Q", "m", "U11", new VereinJpa( "Verein2", turnierUUID), 41.0, "ORANGE", true, false, turnierUUID),
+            new WettkaempferJpa("Teilnehmer R", "w", "U11", new VereinJpa( "Verein3", turnierUUID), 42.0, "BLAU", false, true, turnierUUID),
+            new WettkaempferJpa("Teilnehmer S", "m", "U11", new VereinJpa( "Verein4", turnierUUID), 43.0, "GRUEN", true, true, turnierUUID),
+            new WettkaempferJpa("Teilnehmer T", "w", "U11", new VereinJpa( "Verein5", turnierUUID), 44.0, "GELB", false, false, turnierUUID)
     );
 
     public static List<Wettkaempfer> wettkaempferList = Arrays.asList(
