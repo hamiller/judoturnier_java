@@ -1,8 +1,8 @@
 package de.sinnix.judoturnier.fixtures;
 
-import de.sinnix.judoturnier.adapter.secondary.GewichtsklassenJpa;
-import de.sinnix.judoturnier.adapter.secondary.VereinJpa;
-import de.sinnix.judoturnier.adapter.secondary.WettkaempferJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.GewichtsklassenJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.VereinJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WettkaempferJpa;
 import de.sinnix.judoturnier.model.*;
 
 import java.util.Arrays;

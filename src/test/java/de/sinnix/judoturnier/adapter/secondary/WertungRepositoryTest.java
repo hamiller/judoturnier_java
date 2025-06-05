@@ -7,6 +7,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 
+import de.sinnix.judoturnier.adapter.secondary.converter.WertungConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.BegegnungJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.BenutzerJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.TurnierRollenJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WertungJpa;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.BenutzerRolle;
 import de.sinnix.judoturnier.model.TurnierRollen;
@@ -29,11 +34,11 @@ public class WertungRepositoryTest {
 	@Mock
 	private BegegnungJpaRepository begegnungJpaRepository;
 	@Mock
-	private BenutzerJpaRepository  benutzerJpaRepository;
+	private BenutzerJpaRepository benutzerJpaRepository;
 	@Mock
-	private WertungConverter       wertungConverter;
+	private WertungConverter      wertungConverter;
 	@InjectMocks
-	private WertungRepository      wertungRepository;
+	private WertungRepository     wertungRepository;
 
 	@Test
 	void neueRandoriWertung() {

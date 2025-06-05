@@ -1,5 +1,11 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import de.sinnix.judoturnier.adapter.secondary.converter.BenutzerConverter;
+import de.sinnix.judoturnier.adapter.secondary.converter.WertungConverter;
+import de.sinnix.judoturnier.adapter.secondary.converter.WettkaempferConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.VereinJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WertungJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WettkaempferJpa;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.BenutzerRolle;
@@ -37,9 +43,9 @@ class WertungConverterTest {
 
 	private static final UUID            UUID_TURNIER = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
 	private              UUID            vereinId     = UUID.randomUUID();
-	private              UUID            wkId         = UUID.randomUUID();
-	private              WettkaempferJpa wk1Jpa       = new WettkaempferJpa("Teilnehmer A", "m", "U11", new VereinJpa("Verein1", UUID_TURNIER), 25.0, "ORANGE", true, false, UUID_TURNIER);
-	private              Wettkaempfer    wk1          = new Wettkaempfer(wkId, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(vereinId, "Verein1", UUID_TURNIER), 25.0, Optional.of(Farbe.ORANGE), true, false, UUID_TURNIER);
+	private UUID            wkId   = UUID.randomUUID();
+	private WettkaempferJpa wk1Jpa = new WettkaempferJpa("Teilnehmer A", "m", "U11", new VereinJpa("Verein1", UUID_TURNIER), 25.0, "ORANGE", true, false, UUID_TURNIER);
+	private Wettkaempfer    wk1    = new Wettkaempfer(wkId, "Teilnehmer A", Geschlecht.m, Altersklasse.U11, new Verein(vereinId, "Verein1", UUID_TURNIER), 25.0, Optional.of(Farbe.ORANGE), true, false, UUID_TURNIER);
 	private              Benutzer        bewerter;
 
 	@BeforeEach

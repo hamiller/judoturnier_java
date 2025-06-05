@@ -112,7 +112,7 @@
                       (Anzahl Kämpfer: {{this.anzahlTeilnehmer}})</md-outlined-button>
                     <md-menu id="theming-menu-{{this.altersKlasse}}" anchor="theming-anchor-{{this.altersKlasse}}">
                         <md-menu-item type="button" id="renewGewichtsklasse_{{this.altersKlasse}}" class="renewGewichtsklasse" altersklasse="{{this.altersKlasse}}">Gewichtsklasse {{altersKlasse}} neu zuordnen</md-menu-item>
-                        <md-menu-item href="/turnier/{{turnierid}}/gewichtsklassen/randori_printview_groups/{{this.altersKlasse}}" target="_blank">Druckansicht {{altersKlasse}} Gruppen</md-menu-item>
+                        <md-menu-item href="/turnier/{{turnierid}}/druck/randori_printview_groups/{{this.altersKlasse}}" target="_blank">Druckansicht {{altersKlasse}} Gruppen</md-menu-item>
                         <md-menu-item href="/turnier/{{turnierid}}/qrcodes/{{this.altersKlasse}}" target="_blank">QR-Codes {{altersKlasse}}</md-menu-item>
                     </md-menu>
                 </span>
@@ -187,7 +187,7 @@
   document.body.querySelector("#renewGewichtsklassen").addEventListener("click", async function () {
     var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Gewichtsklassen und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
     if (sicher) {
-      fetch('/turnier/{{turnierid}}/gewichtsklassen-renew', {method: 'POST'})
+      fetch('/turnier/{{turnierid}}/gewichtsklassen/gewichtsklassen-renew', {method: 'POST'})
         .then(() => window.location.href = 'gewichtsklassen')
     }
   });
@@ -198,7 +198,7 @@
     console.log("Altersklasse / Geschlecht ", altersklasse, geschlecht);
     var sicher = confirm("ACHTUNG\n\nHiermit werden die Zuordnung von Wettkämpfern in der Gewichtsklasse " + altersklasse + " und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
     if (sicher) {
-      fetch('/turnier/{{turnierid}}/gewichtsklasse-renew', {method: 'POST', body: {altersklasse: altersklasse, geschlecht: geschlecht}})
+      fetch('/turnier/{{turnierid}}/gewichtsklassen/gewichtsklasse-renew', {method: 'POST', body: {altersklasse: altersklasse, geschlecht: geschlecht}})
         .then(() => window.location.href = 'gewichtsklassen')
     }
   }));

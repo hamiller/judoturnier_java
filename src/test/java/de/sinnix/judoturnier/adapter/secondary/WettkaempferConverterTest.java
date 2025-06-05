@@ -1,5 +1,9 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import de.sinnix.judoturnier.adapter.secondary.converter.VereinConverter;
+import de.sinnix.judoturnier.adapter.secondary.converter.WettkaempferConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.VereinJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WettkaempferJpa;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Farbe;
 import de.sinnix.judoturnier.model.Geschlecht;
@@ -27,11 +31,11 @@ public class WettkaempferConverterTest {
     @InjectMocks
     private WettkaempferConverter wettkaempferConverter;
 
-    private Wettkaempfer wettkaempfer;
+    private Wettkaempfer    wettkaempfer;
     private WettkaempferJpa wettkaempferJpa;
-    private Verein verein;
+    private Verein          verein;
     private VereinJpa vereinJpa;
-    private UUID turnierUUID;
+    private UUID      turnierUUID;
     private UUID vereinUUID;
     private UUID wkUUID;
 

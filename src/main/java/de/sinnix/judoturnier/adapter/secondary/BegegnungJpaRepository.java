@@ -4,8 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
+
+
+import de.sinnix.judoturnier.adapter.secondary.jpa.BegegnungJpa;
 
 @Repository
 public interface BegegnungJpaRepository extends JpaRepository<BegegnungJpa, UUID> {

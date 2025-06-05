@@ -8,6 +8,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 
+import de.sinnix.judoturnier.adapter.secondary.converter.WertungConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.BegegnungJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.BenutzerJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WertungJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WettkaempferJpa;
 import de.sinnix.judoturnier.model.Wertung;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
@@ -18,11 +23,11 @@ public class WertungRepository {
 	private static final Logger logger = LogManager.getLogger(WertungRepository.class);
 
 	@Autowired
-	private BegegnungJpaRepository    begegnungJpaRepository;
+	private BegegnungJpaRepository begegnungJpaRepository;
 	@Autowired
-	private WertungConverter          wertungConverter;
+	private WertungConverter       wertungConverter;
 	@Autowired
-	private BenutzerJpaRepository     benutzerJpaRepository;
+	private BenutzerJpaRepository  benutzerJpaRepository;
 	@Autowired
 	private WettkaempferJpaRepository wettkaempferJpaRepository;
 	@Autowired

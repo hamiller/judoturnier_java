@@ -7,6 +7,14 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+
+import de.sinnix.judoturnier.adapter.primary.dto.BegegnungDto;
+import de.sinnix.judoturnier.adapter.primary.dto.BenutzerDto;
+import de.sinnix.judoturnier.adapter.primary.dto.GruppenRundeDto;
+import de.sinnix.judoturnier.adapter.primary.dto.MatteDto;
+import de.sinnix.judoturnier.adapter.primary.dto.RundeDto;
+import de.sinnix.judoturnier.adapter.primary.dto.TurnierDto;
+import de.sinnix.judoturnier.adapter.primary.dto.WertungDto;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Matte;

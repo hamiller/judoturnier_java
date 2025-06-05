@@ -1,8 +1,8 @@
 package de.sinnix.judoturnier.adapter.primary;
 
 import com.github.jknack.handlebars.Handlebars;
+import de.sinnix.judoturnier.adapter.primary.dto.RundeDto;
 import de.sinnix.judoturnier.model.Altersklasse;
-import de.sinnix.judoturnier.model.Runde;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

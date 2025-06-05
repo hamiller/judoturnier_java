@@ -21,8 +21,8 @@
                 <md-filled-tonal-button id="theming-anchor-{{this}}" class="theming-anchors" altersklasse="{{this}}">{{this}}</md-filled-tonal-button>
                 <md-menu id="theming-menu-{{this}}" anchor="theming-anchor-{{this}}">
                     <md-menu-item type="button" class="renewBegegnung" onclick="renewBegegnung('{{this}}'); return false;" id="renewBegegnung_{{this}}" altersklasse="{{this}}">Wettkampfgruppen {{this}} neu zuordnen</md-menu-item>
-                    <md-menu-item href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches/{{this}}" target="_blank" class="">Druckansicht {{this}} Begegnungen</md-menu-item>
-                    <md-menu-item href="/turnier/{{turnierid}}/begegnungen/randori_printview_matches_inserting_data/{{this}}" target="_blank" class="">Druckansicht {{this}}
+                    <md-menu-item href="/turnier/{{turnierid}}/druck/randori_printview_matches/{{this}}" target="_blank" class="">Druckansicht {{this}} Begegnungen</md-menu-item>
+                    <md-menu-item href="/turnier/{{turnierid}}/druck/randori_printview_matches_inserting_data/{{this}}" target="_blank" class="">Druckansicht {{this}}
                       Wertungen-Eintragen</md-menu-item>
                     <md-menu-item href="/turnier/{{turnierid}}/qrcodes/{{this}}" target="_blank" class="">QR-Codes {{this}}</md-menu-item>
                 </md-menu>

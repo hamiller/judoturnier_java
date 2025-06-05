@@ -1,5 +1,8 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import de.sinnix.judoturnier.adapter.secondary.converter.WettkaempferConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.VereinJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WettkaempferJpa;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.Verein;
@@ -37,10 +40,10 @@ class WettkaempferRepositoryTest {
     @InjectMocks
     private WettkaempferRepository wettkaempferRepository;
 
-    private Wettkaempfer wettkaempfer;
+    private Wettkaempfer    wettkaempfer;
     private WettkaempferJpa wettkaempferJpa;
-	private VereinJpa vereinJpa;
-    private UUID turnierUUID;
+	private VereinJpa       vereinJpa;
+    private UUID            turnierUUID;
     private UUID wkUUID;
     private UUID vUUID;
 

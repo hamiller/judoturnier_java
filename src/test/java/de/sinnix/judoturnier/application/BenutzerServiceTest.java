@@ -1,13 +1,11 @@
 package de.sinnix.judoturnier.application;
 
-import de.sinnix.judoturnier.adapter.secondary.BenutzerJpa;
 import de.sinnix.judoturnier.adapter.secondary.BenutzerRepository;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.BenutzerRolle;
 import de.sinnix.judoturnier.model.OidcBenutzer;
 import de.sinnix.judoturnier.model.TurnierRollen;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

@@ -1,5 +1,8 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import de.sinnix.judoturnier.adapter.secondary.converter.BenutzerConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.BenutzerJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.TurnierRollenJpa;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.TurnierRollen;
 import jakarta.transaction.Transactional;
@@ -20,9 +23,9 @@ public class BenutzerRepository {
 	@Autowired
 	private              BenutzerJpaRepository      benutzerJpaRepository;
 	@Autowired
-	private              TurnierRollenJpaRepository turnierRollenJpaRepository;
+	private TurnierRollenJpaRepository turnierRollenJpaRepository;
 	@Autowired
-	private              BenutzerConverter          benutzerConverter;
+	private BenutzerConverter          benutzerConverter;
 
 	@Transactional
 	public Optional<Benutzer> findBenutzer(UUID benutzerId) {

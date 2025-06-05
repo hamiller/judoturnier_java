@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.UUID;
 
+
+import de.sinnix.judoturnier.adapter.secondary.jpa.GewichtsklassenJpa;
+
 @Repository
 public interface GewichtsklassenJpaRepository extends JpaRepository<GewichtsklassenJpa, UUID> {
 	List<GewichtsklassenJpa> findAllByTurnierUUID(UUID turnierUuid);

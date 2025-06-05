@@ -1,5 +1,21 @@
 package de.sinnix.judoturnier.adapter.primary;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
+import java.net.URI;
+import java.util.Base64;
+import java.util.List;
+import java.util.UUID;
+
+
+import de.sinnix.judoturnier.adapter.primary.dto.BegegnungDto;
 import de.sinnix.judoturnier.application.CodeGeneratorService;
 import de.sinnix.judoturnier.application.EinstellungenService;
 import de.sinnix.judoturnier.application.QRCodeGeneratorService;
@@ -11,27 +27,14 @@ import de.sinnix.judoturnier.model.OidcBenutzer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
-import java.util.Base64;
-import java.util.List;
-import java.util.UUID;
-
 @RestController
+@RequestMapping(MattenAnzeigeController.CONTROLLER_URI)
 public class MattenAnzeigeController {
-	public static final String LADE_MATTENANZEIGE_RANDORI = "/turnier/{turnierid}/mattenanzeige/randori/{matte}/{mattenrunde}";
-	public static final String LADE_MATTENANZEIGE_NORMAL  = "/turnier/{turnierid}/mattenanzeige/normal/{begegnungid}";
-	public static final String LADE_MATTENZEIT_RANDORI    = "/turnier/{turnierid}/mattenanzeige/randori/{matte}/{mattenrunde}/zeit";
-	public static final String LADE_MATTENZEIT_NORMAL     = "/turnier/{turnierid}/mattenanzeige/normal/{begegnungid}/zeit";
+	public static final String CONTROLLER_URI             = "/turnier/{turnierid}/mattenanzeige";
+	public static final String LADE_MATTENANZEIGE_RANDORI = "/randori/{matte}/{mattenrunde}";
+	public static final String LADE_MATTENZEIT_RANDORI    = "/randori/{matte}/{mattenrunde}/zeit";
+	public static final String LADE_MATTENANZEIGE_NORMAL  = "/normal/{begegnungid}";
+	public static final String LADE_MATTENZEIT_NORMAL     = "/normal/{begegnungid}/zeit";
 
 	private static final Logger logger = LogManager.getLogger(MattenAnzeigeController.class);
 
@@ -112,7 +115,7 @@ public class MattenAnzeigeController {
 		String ersteBegegnungId = begegnungen.get(0).getId().toString();
 		URI uri = ServletUriComponentsBuilder
 			.fromCurrentRequest()
-			.replacePath(WertungController.LADE_WERTUNG_RANDORI)
+			.replacePath(WertungController.CONTROLLER_URI + WertungController.WERTUNG_RANDORI)
 			.buildAndExpand(turnierid, ersteBegegnungId)
 			.toUri();
 		logger.debug("Erstellte URI: {}", uri.toASCIIString());
@@ -158,16 +161,5 @@ public class MattenAnzeigeController {
 		mav.addObject("begegnungen", List.of(begegnungDto));
 		mav.addObject("kampfzeit", kampfzeit);
 		return mav;
-	}
-
-	private String getBase64ImageGruppen(String path, String turnierid, String altersklasse, UriComponentsBuilder builder) {
-		URI uri = builder
-			.replacePath(path)
-			.buildAndExpand(turnierid, altersklasse)
-			.toUri();
-		logger.debug("Erstellte URI: {}", uri.toASCIIString());
-		byte[] pngQRCode = qrCodeGeneratorService.generateQRCode(uri.toASCIIString(), 400, 400);
-		String base64Image = Base64.getEncoder().encodeToString(pngQRCode);
-		return base64Image;
 	}
 }

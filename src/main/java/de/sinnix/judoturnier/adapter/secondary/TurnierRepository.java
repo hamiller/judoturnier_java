@@ -12,6 +12,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 
+import de.sinnix.judoturnier.adapter.secondary.converter.BegegnungConverter;
+import de.sinnix.judoturnier.adapter.secondary.converter.TurnierConverter;
+import de.sinnix.judoturnier.adapter.secondary.converter.WertungConverter;
+import de.sinnix.judoturnier.adapter.secondary.converter.WettkampfGruppeConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.BegegnungJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.TurnierJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WertungJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WettkaempferJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WettkampfGruppeJpa;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Matte;
@@ -37,15 +46,15 @@ public class TurnierRepository {
 	@Autowired
 	private WertungConverter             wertungConverter;
 	@Autowired
-	private BegegnungConverter           begegnungConverter;
+	private BegegnungConverter       begegnungConverter;
 	@Autowired
-	private WettkampfGruppeConverter     wettkampfGruppeConverter;
+	private WettkampfGruppeConverter wettkampfGruppeConverter;
 	@Autowired
-	private TurnierJpaRepository         turnierJpaRepository;
+	private TurnierJpaRepository     turnierJpaRepository;
 	@Autowired
-	private TurnierConverter             turnierConverter;
+	private TurnierConverter          turnierConverter;
 	@Autowired
-	private WettkaempferJpaRepository    wettkaempferJpaRepository;
+	private WettkaempferJpaRepository wettkaempferJpaRepository;
 
 
 	public Begegnung ladeBegegnung(UUID begegnungId) {
@@ -226,7 +235,11 @@ public class TurnierRepository {
 	public void loescheWettkaempfeMitAltersklasse(Altersklasse altersklasse, UUID turnierUUID) {
 		logger.info("loesche Wettkaempfe mit Altersklasse {}", altersklasse);
 		begegnungJpaRepository.findAllByTurnierUUID(turnierUUID).stream()
-			.filter(begegnungJpa -> begegnungJpa.getWettkaempfer1().getAltersklasse().equals(altersklasse.name()))
+			.filter(begegnungJpa -> {
+				if (begegnungJpa.getWettkaempfer1() != null) return begegnungJpa.getWettkaempfer1().getAltersklasse().equals(altersklasse.name());
+				if (begegnungJpa.getWettkaempfer2() != null) return begegnungJpa.getWettkaempfer2().getAltersklasse().equals(altersklasse.name());
+				return false;
+			})
 			.forEach(begegnungJpa -> begegnungJpaRepository.deleteById(begegnungJpa.getId()));
 	}
 

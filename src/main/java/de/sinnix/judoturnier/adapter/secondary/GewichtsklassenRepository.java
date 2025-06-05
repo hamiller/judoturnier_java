@@ -1,5 +1,8 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import de.sinnix.judoturnier.adapter.secondary.converter.GewichtsklassenConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.GewichtsklassenJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WettkaempferJpa;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Wettkaempfer;
@@ -20,9 +23,9 @@ public class GewichtsklassenRepository {
 	@Autowired
 	private GewichtsklassenJpaRepository gewichtsklassenJpaRepository;
 	@Autowired
-	private GewichtsklassenConverter  gewichtsklassenConverter;
+	private GewichtsklassenConverter     gewichtsklassenConverter;
 	@Autowired
-	private WettkaempferJpaRepository wettkaempferJpaRepository;
+	private WettkaempferJpaRepository    wettkaempferJpaRepository;
 
 	public List<GewichtsklassenGruppe> findAll(UUID turnierUUID) {
 		return gewichtsklassenJpaRepository.findAllByTurnierUUID(turnierUUID).stream()

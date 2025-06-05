@@ -1,5 +1,24 @@
 package de.sinnix.judoturnier.adapter.primary;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+import java.util.AbstractMap;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+
 import de.sinnix.judoturnier.application.EinstellungenService;
 import de.sinnix.judoturnier.application.GewichtsklassenService;
 import de.sinnix.judoturnier.model.Altersklasse;
@@ -15,26 +34,11 @@ import de.sinnix.judoturnier.model.WettkampfReihenfolge;
 import de.sinnix.judoturnier.model.Wettkampfzeiten;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
-
-import java.util.AbstractMap;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping(EinstellungenController.CONTROLLER_URI)
 public class EinstellungenController {
+	public static final String CONTROLLER_URI = "/turnier/{turnierid}/einstellungen";
 
 	private static final Logger logger = LogManager.getLogger(EinstellungenController.class);
 
@@ -43,7 +47,7 @@ public class EinstellungenController {
 	@Autowired
 	private GewichtsklassenService gewichtsklassenService;
 
-	@GetMapping("/turnier/{turnierid}/einstellungen")
+	@GetMapping
 	public ModelAndView ladeEinstellungen(@PathVariable String turnierid) {
 		logger.debug("Lade Einstellungen");
 		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
@@ -80,7 +84,7 @@ public class EinstellungenController {
 		return mav;
 	}
 
-	@PostMapping("/turnier/{turnierid}/einstellungen")
+	@PostMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView speichereTurnierEinstellungen(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
 		logger.debug("speichere Turnier-Einstellungen {}", formData);

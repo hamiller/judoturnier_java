@@ -1,5 +1,8 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import de.sinnix.judoturnier.adapter.secondary.converter.GewichtsklassenConverter;
+import de.sinnix.judoturnier.adapter.secondary.converter.WettkaempferConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.GewichtsklassenJpa;
 import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Geschlecht;

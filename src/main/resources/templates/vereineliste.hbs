@@ -14,7 +14,7 @@
 
     <div class="actions">
       {{#if isadmin}}
-        <md-outlined-button href="/turnier/{{turnierid}}/verein-neu">Weiteren Verein eintragen</md-outlined-button>
+        <md-outlined-button href="/turnier/{{turnierid}}/vereine/verein-neu">Weiteren Verein eintragen</md-outlined-button>
       {{/if}}
     </div>
   </div>
@@ -36,7 +36,7 @@
         <div class="listeneintrag-titel">{{name}}</div>
         <div>
           {{#if isadmin}}
-            <a href="/turnier/{{turnierid}}/vereine/{{ id }}"><span class="material-icons">edit</span></a>
+            <a href="/turnier/{{turnierid}}/vereine/verein/{{ id }}"><span class="material-icons">edit</span></a>
             <a href="#" onclick="deleteVerein('{{ id }}')"><span class="material-icons">person_remove</span></a>
           {{/if}}
         </div>
@@ -50,7 +50,7 @@
   const deleteVerein = async (id) => {
     var sicher = confirm("ACHTUNG\n\nHiermit wird der Verein gelöscht!\n\nSind sie sicher?");
     if (sicher) {
-      fetch("/turnier/{{turnierid}}/vereine/" + id, {method: "DELETE", redirect: 'follow'})
+      fetch("/turnier/{{turnierid}}/vereine/verein/" + id, {method: "DELETE", redirect: 'follow'})
         .then(response => {
           if (response.redirected) {
             window.location.href = response.url;

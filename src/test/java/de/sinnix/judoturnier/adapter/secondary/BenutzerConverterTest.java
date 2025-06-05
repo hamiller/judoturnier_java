@@ -1,5 +1,10 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import de.sinnix.judoturnier.adapter.secondary.converter.BenutzerConverter;
+import de.sinnix.judoturnier.adapter.secondary.converter.TurnierConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.BenutzerJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.TurnierJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.TurnierRollenJpa;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.BenutzerRolle;
 import de.sinnix.judoturnier.model.TurnierRollen;
@@ -23,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(MockitoExtension.class)
 class BenutzerConverterTest {
 	@Mock
-	private TurnierConverter turnierConverter;
+	private TurnierConverter  turnierConverter;
 	@InjectMocks
 	private BenutzerConverter converter;
 

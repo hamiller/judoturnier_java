@@ -1,5 +1,13 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import de.sinnix.judoturnier.adapter.secondary.converter.BegegnungConverter;
+import de.sinnix.judoturnier.adapter.secondary.converter.WertungConverter;
+import de.sinnix.judoturnier.adapter.secondary.converter.WettkaempferConverter;
+import de.sinnix.judoturnier.adapter.secondary.converter.WettkampfGruppeConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.BegegnungJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WertungJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WettkaempferJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WettkampfGruppeJpa;
 import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
@@ -31,7 +39,7 @@ class BegegnungConverterTest {
 	@Mock
 	private WettkaempferConverter wettkaempferConverter;
 	@Mock
-	private WertungConverter      wertungConverter;
+	private WertungConverter         wertungConverter;
 	@Mock
 	private WettkampfGruppeConverter wettkampfGruppeConverter;
 

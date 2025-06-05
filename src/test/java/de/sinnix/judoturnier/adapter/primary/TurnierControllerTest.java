@@ -1,5 +1,9 @@
 package de.sinnix.judoturnier.adapter.primary;
 
+import de.sinnix.judoturnier.adapter.primary.dto.BegegnungDto;
+import de.sinnix.judoturnier.adapter.primary.dto.GruppeTypenRundenDto;
+import de.sinnix.judoturnier.adapter.primary.dto.GruppenRundeDto;
+import de.sinnix.judoturnier.adapter.primary.dto.RundeDto;
 import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;

@@ -1,17 +1,5 @@
 package de.sinnix.judoturnier.adapter.primary;
 
-import de.sinnix.judoturnier.application.EinstellungenService;
-import de.sinnix.judoturnier.application.GewichtsklassenService;
-import de.sinnix.judoturnier.application.WettkaempferService;
-import de.sinnix.judoturnier.model.Altersklasse;
-import de.sinnix.judoturnier.model.Geschlecht;
-import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
-import de.sinnix.judoturnier.model.GewichtsklassenGruppen;
-import de.sinnix.judoturnier.model.OidcBenutzer;
-import de.sinnix.judoturnier.model.TurnierTyp;
-import jakarta.annotation.security.PermitAll;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,9 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -32,8 +20,26 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+
+import de.sinnix.judoturnier.application.EinstellungenService;
+import de.sinnix.judoturnier.application.GewichtsklassenService;
+import de.sinnix.judoturnier.application.WettkaempferService;
+import de.sinnix.judoturnier.model.Altersklasse;
+import de.sinnix.judoturnier.model.Geschlecht;
+import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
+import de.sinnix.judoturnier.model.GewichtsklassenGruppen;
+import de.sinnix.judoturnier.model.OidcBenutzer;
+import de.sinnix.judoturnier.model.TurnierTyp;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @RestController
+@RequestMapping(GewichtsklassenController.CONTROLLER_URI)
 public class GewichtsklassenController {
+	public static final String CONTROLLER_URI                       = "/turnier/{turnierid}/gewichtsklassen";
+	public static final String CREATE_SINGLE_GEWICHTSKLASSE_NEU_URI = "/gewichtsklasse-renew";
+	public static final String CREATE_ALL_GEWICHTSKLASSEN_NEU_URI   = "/gewichtsklassen-renew";
+
 	private static final Logger logger = LogManager.getLogger(GewichtsklassenController.class);
 	private static final String REGEX  = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
 
@@ -44,7 +50,7 @@ public class GewichtsklassenController {
 	@Autowired
 	private EinstellungenService   einstellungenService;
 
-	@GetMapping("/turnier/{turnierid}/gewichtsklassen")
+	@GetMapping
 	public ModelAndView ladeGewichtsklassen(@PathVariable String turnierid) {
 		logger.info("GewichtsklassenController ladeGewichtsklassen, Turnier {}", turnierid);
 
@@ -54,7 +60,8 @@ public class GewichtsklassenController {
 		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
 
 		var groupedByAge = this.groupByAge(currentGwks);
-		var groupedByFemale = this.groupByGender(currentGwks, Geschlecht.w); currentGwks.stream().filter(gruppe -> gruppe.gruppenGeschlecht().isPresent() && gruppe.gruppenGeschlecht().get() == Geschlecht.w);
+		var groupedByFemale = this.groupByGender(currentGwks, Geschlecht.w);
+		currentGwks.stream().filter(gruppe -> gruppe.gruppenGeschlecht().isPresent() && gruppe.gruppenGeschlecht().get() == Geschlecht.w);
 		var groupedByMale = this.groupByGender(currentGwks, Geschlecht.m);
 
 		logger.trace("groupedByAge: {}", groupedByAge);
@@ -80,39 +87,7 @@ public class GewichtsklassenController {
 		return mav;
 	}
 
-	@PermitAll
-	@GetMapping("/turnier/{turnierid}/gewichtsklassen/randori_printview_groups/{altersklasse}")
-	public ModelAndView ladeDruckAnsichtGruppenRandori(@PathVariable String turnierid, @PathVariable String altersklasse) {
-		logger.info("lade Druckansicht Randori-Gruppen für " + altersklasse);
-		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
-
-		var turnierUUID = UUID.fromString(turnierid);
-		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
-
-		ModelAndView mav = new ModelAndView("druckansicht_gruppen_randori");
-		mav.addObject("turnierid", turnierid);
-		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
-		mav.addObject("gruppen", currentGwks.stream().filter(gwk -> gwk.altersKlasse().name().equalsIgnoreCase(altersklasse)).toList());
-		return mav;
-	}
-
-	@PermitAll
-	@GetMapping("/turnier/{turnierid}/gewichtsklassen/turnier_printview_groups/{geschlecht}/{altersklasse}")
-	public ModelAndView ladeDruckAnsichtGruppenTurnier(@PathVariable String turnierid, @PathVariable String geschlecht, @PathVariable String altersklasse) {
-		logger.info("Lade Druckansicht für Turnier-Gruppen {}, Geschlecht {} und Altersklasse {}", turnierid, geschlecht, altersklasse);
-		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
-
-		var turnierUUID = UUID.fromString(turnierid);
-		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
-
-		ModelAndView mav = new ModelAndView("druckansicht_gruppen_turnier");
-		mav.addObject("turnierid", turnierid);
-		mav.addObject("isloggedin", oidcBenutzer.isLoggedin());
-		mav.addObject("gruppen", currentGwks.stream().filter(gwk -> gwk.altersKlasse().name().equalsIgnoreCase(altersklasse)).toList());
-		return mav;
-	}
-
-	@PostMapping("/turnier/{turnierid}/gewichtsklassen-renew")
+	@PostMapping(CREATE_ALL_GEWICHTSKLASSEN_NEU_URI)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView erstelleGewichtsklassenNeu(@PathVariable String turnierid) {
 		logger.info("erstelle Gewichtsklassen");
@@ -123,7 +98,7 @@ public class GewichtsklassenController {
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/gewichtsklassen");
 	}
 
-	@PostMapping("/turnier/{turnierid}/gewichtsklasse-renew")
+	@PostMapping(CREATE_SINGLE_GEWICHTSKLASSE_NEU_URI)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView erstelleGewichtsklasseNeu(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("erneuere Gewichtsklasse für Altersklasse und Geschlecht {}", formData);
@@ -146,7 +121,7 @@ public class GewichtsklassenController {
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/gewichtsklassen");
 	}
 
-	@PostMapping("/turnier/{turnierid}/gewichtsklassen")
+	@PostMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView speichereGewichtsklassen(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("speichere Gewichtsklassen {}", formData);

@@ -49,7 +49,7 @@
           <h2>Nutzer verwalten</h2>
           {{#if enableEditing}}
             <div class="generalcontent">
-              <form id="userForm_{{uuid}}" action="/turniere/{{uuid}}/benutzer" method="post">
+              <form id="userForm_{{uuid}}" action="/turnierverwaltung/{{uuid}}/benutzer" method="post">
                 <ul class="wettkaempferliste generalcontent">
                   <li class="einstellungliste listeneintrag listeneintrag_small">
                     <div class="listeneintrag-titel">Username</div>
@@ -92,7 +92,7 @@
     <div slot="headline">
       Neues Turnier
     </div>
-    <form slot="content" id="createturnierformular" action="/turniere" method="POST">
+    <form slot="content" id="createturnierformular" action="/turnierverwaltung" method="POST">
       <label for="id-name">Name:</label>
       <md-filled-text-field type="text" id="id-name" name="name"></md-filled-text-field>
       <label for="id-ort">Ort:</label>

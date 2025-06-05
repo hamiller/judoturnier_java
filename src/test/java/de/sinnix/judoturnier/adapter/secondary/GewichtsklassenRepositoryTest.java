@@ -1,11 +1,14 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import de.sinnix.judoturnier.adapter.secondary.converter.GewichtsklassenConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.GewichtsklassenJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.VereinJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WettkaempferJpa;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.RandoriGruppenName;
 import de.sinnix.judoturnier.model.Verein;
-import de.sinnix.judoturnier.model.Wertung;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,10 +1,5 @@
 package de.sinnix.judoturnier.adapter.primary;
 
-import de.sinnix.judoturnier.application.VereinService;
-import de.sinnix.judoturnier.model.OidcBenutzer;
-import de.sinnix.judoturnier.model.Verein;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,23 +9,34 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-
 import java.util.UUID;
 
+
+import de.sinnix.judoturnier.application.VereinService;
+import de.sinnix.judoturnier.model.OidcBenutzer;
+import de.sinnix.judoturnier.model.Verein;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @RestController
+@RequestMapping(VereinController.CONTROLLER_URI)
 public class VereinController {
+	public static final String CONTROLLER_URI    = "/turnier/{turnierid}/vereine";
+	public static final String VEREIN_URI        = "/verein/{vereinid}";
+	public static final String CREATE_VEREIN_URI = "/verein-neu";
 
 	private static final Logger logger = LogManager.getLogger(VereinController.class);
 
 	@Autowired
 	private VereinService vereinService;
 
-	@GetMapping("/turnier/{turnierid}/vereine")
+	@GetMapping
 	public ModelAndView ladeVereineListe(@PathVariable String turnierid, @RequestParam(name = "success", required = false) String id,
-								@RequestParam(name = "error", required = false) String error) {
+										 @RequestParam(name = "error", required = false) String error) {
 		logger.info("Lade Vereine...");
 		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		UUID turnierUUID = UUID.fromString(turnierid);
@@ -47,7 +53,7 @@ public class VereinController {
 		return mav;
 	}
 
-	@GetMapping("/turnier/{turnierid}/vereine/{vereinid}")
+	@GetMapping(VEREIN_URI)
 	public ModelAndView verein(@PathVariable String turnierid, @PathVariable String vereinid) {
 		logger.info("Lade Verein {}", vereinid);
 		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
@@ -65,7 +71,7 @@ public class VereinController {
 		return mav;
 	}
 
-	@PostMapping("/turnier/{turnierid}/vereine")
+	@PostMapping
 	@PreAuthorize("hasAnyRole('ROLE_AMDIN', 'ROLE_TRAINER')")
 	public ModelAndView speichereVerein(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("empfange Verein {}", formData);
@@ -84,27 +90,26 @@ public class VereinController {
 			logger.info("Verein erfolgreich angelegt {}", v.id());
 
 			if (neuerEintrag) {
-				return new ModelAndView("redirect:/turnier/" + turnierid + "/verein-neu?success=" + v.id(), formData);
+				return new ModelAndView("redirect:/turnier/" + turnierid + "/vereine/verein-neu?success=" + v.id(), formData);
 			}
 			return new ModelAndView("redirect:/turnier/" + turnierid + "/vereine?success=" + v.id(), formData);
 		} catch (Exception err) {
 			logger.error("Konnte den Verein nicht anlegen!", err);
-			return new ModelAndView("redirect:/turnier/" + turnierid + "/verein-neu", formData);
+			return new ModelAndView("redirect:/turnier/" + turnierid + "/vereine/verein-neu", formData);
 		}
 	}
 
-	@DeleteMapping("/turnier/{turnierid}/vereine/{id}")
+	@DeleteMapping(VEREIN_URI)
 	@PreAuthorize("hasAnyRole('ROLE_AMDIN', 'ROLE_TRAINER')")
-	public void loescheVerein(@PathVariable String turnierid, @PathVariable String id) {
-		logger.debug("lösche Verein {} für Turnier {}", id, turnierid);
-		vereinService.loescheVerein(UUID.fromString(id), UUID.fromString(turnierid));
+	public void loescheVerein(@PathVariable String turnierid, @PathVariable String vereinid) {
+		logger.debug("lösche Verein {} für Turnier {}", vereinid, turnierid);
+		vereinService.loescheVerein(UUID.fromString(vereinid), UUID.fromString(turnierid));
 	}
 
-	@GetMapping("/turnier/{turnierid}/verein-neu")
+	@GetMapping(CREATE_VEREIN_URI)
 	public ModelAndView leererVerein(@PathVariable String turnierid, @RequestParam(name = "success", required = false) String id, @RequestParam(name = "error", required = false) String error) {
 		logger.debug("Verein-Seite");
 		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
-		UUID turnierUUID = UUID.fromString(turnierid);
 
 		ModelAndView mav = new ModelAndView("verein");
 		mav.addObject("turnierid", turnierid);

@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
+import de.sinnix.judoturnier.adapter.secondary.jpa.WettkampfGruppeJpa;
+
 @Repository
 public interface WettkampfGruppeJpaRepository extends JpaRepository<WettkampfGruppeJpa, UUID> {
 	List<WettkampfGruppeJpa> findAllByTurnierUUID(UUID turnierUuid);

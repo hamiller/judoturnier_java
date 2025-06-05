@@ -1,5 +1,6 @@
 package de.sinnix.judoturnier.adapter.primary;
 
+import de.sinnix.judoturnier.adapter.primary.dto.BegegnungDto;
 import de.sinnix.judoturnier.application.BenutzerService;
 import de.sinnix.judoturnier.application.CodeGeneratorService;
 import de.sinnix.judoturnier.application.EinstellungenService;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -30,11 +32,11 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping(WertungController.CONTROLLER_URI)
 public class WertungController {
-	public static final String LADE_WERTUNG_RANDORI      = "/turnier/{turnierid}/begegnungen/randori/{id}";
-	public static final String LADE_WERTUNG_NORMAL       = "/turnier/{turnierid}/begegnungen/normal/{id}";
-	public static final String SPEICHERE_WERTUNG_RANDORI = "/turnier/{turnierid}/begegnungen/randori/{id}";
-	public static final String SPEICHERE_WERTUNG_NORMAL  = "/turnier/{turnierid}/begegnungen/normal/{id}";
+	public static final String CONTROLLER_URI  = "/turnier/{turnierid}/begegnungen";
+	public static final String WERTUNG_RANDORI = "/randori/{id}";
+	public static final String WERTUNG_NORMAL  = "/normal/{id}";
 
 	private static final Logger logger = LogManager.getLogger(WertungController.class);
 
@@ -51,7 +53,7 @@ public class WertungController {
 	@Autowired
 	private CodeGeneratorService codeGeneratorService;
 
-	@GetMapping(LADE_WERTUNG_RANDORI)
+	@GetMapping(WERTUNG_RANDORI)
 	public ModelAndView begegnungRandori(@PathVariable String turnierid, @PathVariable String id) {
 		logger.info("Lade Wertung für Begegnung {}", id);
 		UUID begegnungUuid = UUID.fromString(id);
@@ -82,7 +84,7 @@ public class WertungController {
 		return mav;
 	}
 
-	@GetMapping(LADE_WERTUNG_NORMAL)
+	@GetMapping(WERTUNG_NORMAL)
 	public ModelAndView begegnungTurnier(@PathVariable String turnierid, @PathVariable String id) {
 		logger.info("Lade Wertung für Begegnung {}", id);
 		UUID begegnungUuid = UUID.fromString(id);
@@ -112,7 +114,7 @@ public class WertungController {
 		return mav;
 	}
 
-	@PostMapping(SPEICHERE_WERTUNG_RANDORI)
+	@PostMapping(WERTUNG_RANDORI)
 	@PreAuthorize("hasRole('ROLE_KAMPFRICHTER')")
 	public ModelAndView speichereBegegnungRandori(@PathVariable String turnierid, @PathVariable String id, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("Speichere Wertung für Begegnung {}: {}", id, formData);
@@ -133,7 +135,7 @@ public class WertungController {
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/randori");
 	}
 
-	@PostMapping(SPEICHERE_WERTUNG_NORMAL)
+	@PostMapping(WERTUNG_NORMAL)
 	@PreAuthorize("hasRole('ROLE_KAMPFRICHTER')")
 	public ModelAndView speichereBegegnungTurnier(@PathVariable String turnierid, @PathVariable String id, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("Speichere Wertung für Begegnung {}: {}", id, formData);

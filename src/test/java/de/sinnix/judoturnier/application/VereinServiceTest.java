@@ -1,7 +1,7 @@
 package de.sinnix.judoturnier.application;
 
-import de.sinnix.judoturnier.adapter.secondary.VereinConverter;
-import de.sinnix.judoturnier.adapter.secondary.VereinJpa;
+import de.sinnix.judoturnier.adapter.secondary.converter.VereinConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.VereinJpa;
 import de.sinnix.judoturnier.adapter.secondary.VereinJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

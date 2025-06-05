@@ -2,7 +2,7 @@ package de.sinnix.judoturnier.application;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.sinnix.judoturnier.adapter.secondary.EinstellungJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.EinstellungJpa;
 import de.sinnix.judoturnier.adapter.secondary.EinstellungJpaRepository;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Einstellungen;

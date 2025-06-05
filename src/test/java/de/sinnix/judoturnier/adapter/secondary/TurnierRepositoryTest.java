@@ -6,11 +6,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
 
+import de.sinnix.judoturnier.adapter.secondary.converter.BegegnungConverter;
+import de.sinnix.judoturnier.adapter.secondary.converter.WertungConverter;
+import de.sinnix.judoturnier.adapter.secondary.converter.WettkampfGruppeConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.BegegnungJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WertungJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WettkampfGruppeJpa;
 import de.sinnix.judoturnier.fixtures.WettkaempferFixtures;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
@@ -41,11 +46,11 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TurnierRepositoryTest {
 	@Mock
-	private WertungJpaRepository         wertungJpaRepository;
+	private WertungJpaRepository   wertungJpaRepository;
 	@Mock
-	private WertungConverter             wertungConverter;
+	private WertungConverter       wertungConverter;
 	@Mock
-	private BegegnungJpaRepository       begegnungJpaRepository;
+	private BegegnungJpaRepository begegnungJpaRepository;
 	@Mock
 	private BegegnungConverter           begegnungConverter;
 	@Mock

@@ -10,6 +10,8 @@ import de.sinnix.judoturnier.model.Verein;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,9 +22,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Comparator;
@@ -32,7 +36,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping(WettkaempferController.CONTROLLER_URI)
 public class WettkaempferController {
+	public static final String CONTROLLER_URI          = "/turnier/{turnierid}/wettkaempfer";
+	public static final String KAEMPFER_URI            = "/wettkaempfer/{id}";
+	public static final String LEERER_KAEMPFER_URI     = "/wettkaempfer-neu";
+	public static final String UPLOAD_WETTKAEMPFER_URI = "/uploadWettkaempfer";
 
 	private static final Logger logger = LogManager.getLogger(WettkaempferController.class);
 
@@ -40,8 +49,10 @@ public class WettkaempferController {
 	private WettkaempferService wiegenService;
 	@Autowired
 	private VereinService       vereinService;
+	@Autowired
+	private WettkaempferService wettkaempferService;
 
-	@GetMapping("/turnier/{turnierid}/wettkaempfer")
+	@GetMapping
 	public ModelAndView ladeWettkaempferListe(@PathVariable String turnierid,
 											  @RequestParam(name = "sortingHeader", required = false) String sortingHeader,
 											  @RequestParam(name = "sortingOrder", required = false) String sortingOrder,
@@ -67,7 +78,7 @@ public class WettkaempferController {
 		return mav;
 	}
 
-	@PostMapping("/turnier/{turnierid}/wettkaempfer")
+	@PostMapping
 	@PreAuthorize("hasAnyRole('ROLE_AMDIN', 'ROLE_TRAINER')")
 	public ModelAndView speichereWettkaempfer(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
 		logger.info("empfange Wettkaempfer {}", formData);
@@ -93,7 +104,7 @@ public class WettkaempferController {
 
 		if (wettkaempfer.name().isBlank()) {
 			logger.info("Kämpfer hat keinen Namen!");
-			return new ModelAndView("redirect:/turnier/" + turnierid + "/wettkaempfer-neu?error='Name fehlt'", formData);
+			return new ModelAndView("redirect:/turnier/" + turnierid + "/wettkaempfer/wettkaempfer-neu?error='Name fehlt'", formData);
 		}
 
 		try {
@@ -101,23 +112,23 @@ public class WettkaempferController {
 			logger.info("Kämpfer erfolgreich angelegt {}", kaempfer.id());
 
 			if (neuerEintrag) {
-				return new ModelAndView("redirect:/turnier/" + turnierid + "/wettkaempfer-neu?success=" + kaempfer.id(), formData);
+				return new ModelAndView("redirect:/turnier/" + turnierid + "/wettkaempfer/wettkaempfer-neu?success=" + kaempfer.id(), formData);
 			}
 			return new ModelAndView("redirect:/turnier/" + turnierid + "/wettkaempfer?success=" + kaempfer.id(), formData);
 		} catch (Exception err) {
 			logger.error("Konnte den Kämpfer nicht anlegen!", err);
-			return new ModelAndView("redirect:/turnier/" + turnierid + "/wettkaempfer-neu", formData);
+			return new ModelAndView("redirect:/turnier/" + turnierid + "/wettkaempfer/wettkaempfer-neu", formData);
 		}
 	}
 
-	@DeleteMapping("/turnier/{turnierid}/wettkaempfer/{id}")
+	@DeleteMapping(KAEMPFER_URI)
 	@PreAuthorize("hasAnyRole('ROLE_AMDIN', 'ROLE_TRAINER')")
 	public void loescheWettkaempfer(@PathVariable String turnierid, @PathVariable String id) {
 		logger.debug("lösche Wettkaempfer {}", id);
 		wiegenService.loescheKaempfer(UUID.fromString(id));
 	}
 
-	@GetMapping("/turnier/{turnierid}/wettkaempfer/{id}")
+	@GetMapping(KAEMPFER_URI)
 	public ModelAndView ladeWettkaempfer(@PathVariable String turnierid, @PathVariable String id) {
 		logger.debug("Wettkaempfer-Seite angefragt " + id);
 		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
@@ -144,7 +155,7 @@ public class WettkaempferController {
 		return mav;
 	}
 
-	@GetMapping("/turnier/{turnierid}/wettkaempfer-neu")
+	@GetMapping(LEERER_KAEMPFER_URI)
 	public ModelAndView leererWettkaempfer(@PathVariable String turnierid, @RequestParam(name = "success", required = false) String id, @RequestParam(name = "error", required = false) String error) {
 		logger.debug("Wettkaempfer-Seite");
 
@@ -164,6 +175,16 @@ public class WettkaempferController {
 		mav.addObject("preverror", error);
 		mav.addObject("neuerEintrag", true);
 		return mav;
+	}
+
+	@PostMapping(UPLOAD_WETTKAEMPFER_URI)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ModelAndView ladeCsvWettkaempferHoch(@PathVariable String turnierid, @RequestParam("fileWettkaempfer") MultipartFile file) {
+		logger.info("Hochgeladene CSV-Datei für Wettkaempfer {}", file.getName());
+		UUID turnierUUID = UUID.fromString(turnierid);
+		wettkaempferService.speichereCSV(turnierUUID, file);
+
+		return new ModelAndView("redirect:/turnier/" + turnierid);
 	}
 
 	private static boolean notEmpty(String entry) {

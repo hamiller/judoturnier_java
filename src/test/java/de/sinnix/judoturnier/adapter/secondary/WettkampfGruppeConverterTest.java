@@ -1,5 +1,7 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import de.sinnix.judoturnier.adapter.secondary.converter.WettkampfGruppeConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WettkampfGruppeJpa;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
+
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

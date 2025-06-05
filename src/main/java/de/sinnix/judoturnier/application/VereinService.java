@@ -2,8 +2,8 @@ package de.sinnix.judoturnier.application;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
-import de.sinnix.judoturnier.adapter.secondary.VereinConverter;
-import de.sinnix.judoturnier.adapter.secondary.VereinJpa;
+import de.sinnix.judoturnier.adapter.secondary.converter.VereinConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.VereinJpa;
 import de.sinnix.judoturnier.adapter.secondary.VereinJpaRepository;
 import de.sinnix.judoturnier.model.Verein;
 import jakarta.transaction.Transactional;

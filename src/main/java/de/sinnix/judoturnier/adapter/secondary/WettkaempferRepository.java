@@ -1,5 +1,9 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import de.sinnix.judoturnier.adapter.secondary.converter.VereinConverter;
+import de.sinnix.judoturnier.adapter.secondary.converter.WettkaempferConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.VereinJpa;
+import de.sinnix.judoturnier.adapter.secondary.jpa.WettkaempferJpa;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,9 +25,9 @@ public class WettkaempferRepository {
 	@Autowired
 	private WettkaempferConverter     wettkaempferConverter;
 	@Autowired
-	private VereinConverter     vereinConverter;
+	private VereinConverter           vereinConverter;
 	@Autowired
-	private VereinJpaRepository vereinJpaRepository;
+	private VereinJpaRepository   vereinJpaRepository;
 
 	public List<Wettkaempfer> findAll(UUID turnierUUID) {
 		return wettkaempferJpaRepository.findAllByTurnierUUID(turnierUUID).stream().map(jpa -> wettkaempferConverter.convertToWettkaempfer(jpa)).collect(Collectors.toUnmodifiableList());

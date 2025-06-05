@@ -1,5 +1,7 @@
 package de.sinnix.judoturnier.adapter.secondary;
 
+import de.sinnix.judoturnier.adapter.secondary.converter.VereinConverter;
+import de.sinnix.judoturnier.adapter.secondary.jpa.VereinJpa;
 import de.sinnix.judoturnier.model.Verein;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
