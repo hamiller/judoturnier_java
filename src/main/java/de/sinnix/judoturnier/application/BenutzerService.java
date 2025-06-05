@@ -33,7 +33,7 @@ public class BenutzerService {
 
 		// TODO: Falls konfiguriert, werden Benutzer automatisch im System angelegt
 		// - das ist durch das vorgeschaltete Keycloak abgesichert, sodass nur (im Keycloak) existierende Nutzer angelegt werden
-		Optional<Benutzer> benutzer = benutzerRepository.findBenutzer(oidcBenutzer.uuid());
+		Optional<Benutzer> benutzer = benutzerRepository.findBenutzerByUsername(oidcBenutzer.username());
 		if (benutzer.isPresent()) {
 			return benutzer.get();
 		}

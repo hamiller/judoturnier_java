@@ -7,6 +7,7 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -20,7 +21,10 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Entity
-@Table(name = "benutzer")
+@Table(
+	name = "benutzer",
+	uniqueConstraints = @UniqueConstraint(columnNames = "username")
+)
 public class BenutzerJpa extends AbstractEntity {
 	private String                 username;
 	private String                 name;

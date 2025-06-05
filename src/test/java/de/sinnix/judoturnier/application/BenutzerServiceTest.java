@@ -47,7 +47,7 @@ class BenutzerServiceTest {
 		OidcBenutzer oidcBenutzer = new OidcBenutzer(userId, "username", "name", List.of(BenutzerRolle.BEOBACHTER));
 		Benutzer benutzer = new Benutzer(userId, "username", "name", List.of(), List.of(BenutzerRolle.BEOBACHTER));
 
-		when(benutzerRepository.findBenutzer(any())).thenReturn(Optional.empty());
+		when(benutzerRepository.findBenutzerByUsername(any())).thenReturn(Optional.empty());
 		when(benutzerRepository.save(any())).thenReturn(benutzer);
 
 		Benutzer result = service.holeBenutzer(oidcBenutzer);
@@ -62,7 +62,7 @@ class BenutzerServiceTest {
 		OidcBenutzer oidcBenutzer = new OidcBenutzer(userId, "username", "name", List.of(BenutzerRolle.BEOBACHTER));
 		Benutzer benutzer = new Benutzer(userId, "username", "name", List.of(), List.of(BenutzerRolle.BEOBACHTER));
 
-		when(benutzerRepository.findBenutzer(benutzer.uuid())).thenReturn(Optional.of(benutzer));
+		when(benutzerRepository.findBenutzerByUsername(benutzer.username())).thenReturn(Optional.of(benutzer));
 
 		Benutzer result = service.holeBenutzer(oidcBenutzer);
 
