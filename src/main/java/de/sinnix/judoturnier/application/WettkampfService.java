@@ -3,6 +3,7 @@ package de.sinnix.judoturnier.application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,19 +14,23 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
+import de.sinnix.judoturnier.adapter.secondary.BenutzerRepository;
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
+import de.sinnix.judoturnier.adapter.secondary.WertungRepository;
 import de.sinnix.judoturnier.application.algorithm.Algorithmus;
 import de.sinnix.judoturnier.application.algorithm.BesterAusDrei;
 import de.sinnix.judoturnier.application.algorithm.DoppelKOSystem;
 import de.sinnix.judoturnier.application.algorithm.JederGegenJeden;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
+import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.Einstellungen;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Matte;
 import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.SeparateAlterklassen;
 import de.sinnix.judoturnier.model.TurnierTyp;
+import de.sinnix.judoturnier.model.Wertung;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
 import de.sinnix.judoturnier.model.WettkampfGruppeMitBegegnungen;
@@ -43,6 +48,8 @@ public class WettkampfService {
 	private              Helpers                helpers;
 	@Autowired
 	private              TurnierRepository      turnierRepository;
+	@Autowired
+	private              WertungRepository      wertungRepository;
 	@Lazy
 	@Autowired
 	private              EinstellungenService   einstellungenService;
@@ -50,8 +57,10 @@ public class WettkampfService {
 	@Autowired
 	private              GewichtsklassenService gewichtsklassenService;
 
-	private volatile     Integer                totaleRundenAnzahl;
-	private volatile     Map<Integer, Integer>  rundenAnzahlMatte;
+	private volatile Integer               totaleRundenAnzahl;
+	private volatile Map<Integer, Integer> rundenAnzahlMatte;
+	@Autowired
+	private          BenutzerRepository    benutzerRepository;
 
 
 	public Begegnung ladeBegegnung(UUID begegnungId) {
@@ -114,7 +123,7 @@ public class WettkampfService {
 
 			// erstelle einzelne Gruppen, falls Gruppengröße beschränkt ist
 			var maxGruppenGroesse = einstellungen.gruppengroessen().altersklasseGruppengroesse().get(gwk.altersKlasse());
-			logger.debug("Maximale Gruppengröße in Altersklasse {}: {}",  gwk.altersKlasse(), maxGruppenGroesse);
+			logger.debug("Maximale Gruppengröße in Altersklasse {}: {}", gwk.altersKlasse(), maxGruppenGroesse);
 			List<List<Wettkaempfer>> wettkaempferGruppen = splitArrayToChunkSize(gwk.teilnehmer(), maxGruppenGroesse);
 			for (List<Wettkaempfer> wettkaempferList : wettkaempferGruppen) {
 				var splittedGwkg = new GewichtsklassenGruppe(gwk.id(), gwk.altersKlasse(), gwk.gruppenGeschlecht(), wettkaempferList, gwk.name(), gwk.minGewicht(), gwk.maxGewicht(), gwk.turnierUUID());
@@ -142,6 +151,52 @@ public class WettkampfService {
 
 		// Speichern der Begegnungen
 		turnierRepository.speichereMatten(matten);
+
+		checkAndUpdateFreilose(einstellungen.turnierUUID());
+	}
+
+	private void checkAndUpdateFreilose(UUID turnierUUID) {
+		List<Begegnung> alleFreilose = turnierRepository.ladeAlleBegegnungen(turnierUUID).stream()
+			.filter(begegnung -> begegnung.getGruppenRunde() == 1) // Nur die erste Runde;
+			.filter(begegnung -> begegnung.getWettkaempfer2().isEmpty() || begegnung.getWettkaempfer1().isEmpty()) // Nur Freilose
+			.collect(Collectors.toList());
+
+		Benutzer dummyKampfrichter = benutzerRepository.findBenutzerByUsername(Benutzer.ANONYMOUS_KAMPFRICHTER).orElseThrow();
+		for (Begegnung begegnung : alleFreilose) {
+			logger.info("Freilos in Begegnung {} gefunden", begegnung.getId());
+			if (begegnung.getWettkaempfer1().isEmpty() && begegnung.getWettkaempfer2().isEmpty()) {
+				logger.warn("Begegnung {} hat kein Freilos, aber keine Wettkämpfer", begegnung.getId());
+				continue;
+			}
+
+			// Freilos-Wertung aktualisieren
+			var freilos = begegnung.getWettkaempfer1();
+			var freilosWertung = new Wertung(
+				UUID.randomUUID(),
+				freilos.orElseThrow(() -> new IllegalArgumentException("Freilos nicht gefunden")),
+				Duration.ZERO,
+				0, 0, 0, 0,
+				null, null, null, null,
+				null, null, null, null,
+				dummyKampfrichter
+			);
+			logger.info("Freilos in Begegnung {} aktualisiert: {}", begegnung.getId(), freilos);
+			wertungRepository.speichereWertungInBegegnung(freilosWertung, begegnung.getId());
+
+			// Freilos in nächste Runde übernehmen
+			var wettkampfGruppe = begegnung.getWettkampfGruppe();
+			var alleWettkampfgruppeRunden = turnierRepository.ladeWettkampfgruppeRunden(wettkampfGruppe.id(), begegnung.getTurnierUUID());
+			Pair<Optional<Begegnung>, Optional<Begegnung>> nachfolger = Sortierer.nachfolgeBegegnungen(begegnung.getBegegnungId(), wettkampfGruppe, alleWettkampfgruppeRunden);
+			Optional<Begegnung> nextGewinnerBegegnungOptional = nachfolger.getLeft();
+			Begegnung nextGewinnerRunde = nextGewinnerBegegnungOptional.get();
+			if (nextGewinnerRunde.getWettkaempfer1().isEmpty()) {
+				nextGewinnerRunde.setWettkaempfer1(freilos);
+			} else if (nextGewinnerRunde.getWettkaempfer2().isEmpty()) {
+				nextGewinnerRunde.setWettkaempfer2(freilos);
+			}
+
+			turnierRepository.speichereBegegnung(nextGewinnerRunde);
+		}
 	}
 
 	private static Algorithmus getAlgorithmus(Einstellungen einstellungen, GewichtsklassenGruppe gwk) {

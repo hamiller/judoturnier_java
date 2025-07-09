@@ -26,6 +26,7 @@ ACHTUNG: Spring-Profile `local` ist erforderlich.
 ### Keycloak
 
 Falls Keycloak mit einer Fehlermeldung antwortet, sicherstellen dass Email, Vorname und Nachname gesetzt sind.
+Es muss ausserdem sichergestellt sein, das "microprofile-jwt" in den "Client Scopes" aktiviert ist. -> das wird benötigt um die Rollen aus dem Token zu extrahieren.
 
 ### DB Probleme
 

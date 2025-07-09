@@ -6,6 +6,7 @@ import java.util.UUID;
 public record Benutzer(UUID uuid, String username, String name, List<TurnierRollen> turnierRollen, List<BenutzerRolle> benutzerRollen) {
 
 	public static final String ANONYMOUS_USERNAME = "anonymous";
+	public static final String ANONYMOUS_KAMPFRICHTER = "dummy_kampfrichter";
 
 	public boolean istKampfrichter(UUID turnierId) {
 		return turnierRollen.stream()
