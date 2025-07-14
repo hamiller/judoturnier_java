@@ -115,11 +115,15 @@ public class WettkampfService {
 	}
 
 	private void erstelleMatten(List<GewichtsklassenGruppe> gwks, Einstellungen einstellungen) {
+		logger.info("Erstelle Matten für {} Gruppen", gwks.size());
+
 		// check gruppe auf vorhandene Daten
 		checkGruppenSindValide(gwks);
 		List<WettkampfGruppeMitBegegnungen> wettkampfGruppeMitBegegnungenList = new ArrayList<>();
 		for (GewichtsklassenGruppe gwk : gwks) {
 			Algorithmus algorithmus = getAlgorithmus(einstellungen, gwk);
+
+			logger.info("Nutze Algorithmus {} für Gruppe {}({})", algorithmus.getClass().getSimpleName(), gwk.id(), gwk.name());
 
 			// erstelle einzelne Gruppen, falls Gruppengröße beschränkt ist
 			var maxGruppenGroesse = einstellungen.gruppengroessen().altersklasseGruppengroesse().get(gwk.altersKlasse());
@@ -152,35 +156,35 @@ public class WettkampfService {
 		// Speichern der Begegnungen
 		turnierRepository.speichereMatten(matten);
 
-		checkAndUpdateFreilose(einstellungen.turnierUUID());
+		if (einstellungen.turnierTyp() != TurnierTyp.RANDORI) {
+			// Freilose in der ersten Runde prüfen und aktualisieren
+			checkAndUpdateFreilose(einstellungen.turnierUUID());
+		}
 	}
 
 	private void checkAndUpdateFreilose(UUID turnierUUID) {
 		List<Begegnung> alleFreilose = turnierRepository.ladeAlleBegegnungen(turnierUUID).stream()
 			.filter(begegnung -> begegnung.getGruppenRunde() == 1) // Nur die erste Runde;
-			.filter(begegnung -> begegnung.getWettkaempfer2().isEmpty() || begegnung.getWettkaempfer1().isEmpty()) // Nur Freilose
+			.filter(begegnung -> begegnung.getBegegnungId().getRundenTyp() == Begegnung.RundenTyp.GEWINNERRUNDE) // Freilose können nur in der Gewinnerunde sein
+			.filter(begegnung -> begegnung.getWettkaempfer2().isEmpty() ^ begegnung.getWettkaempfer1().isEmpty()) // XOR: nur Paarungen mit einem fehlenden Wettkämpfer
 			.collect(Collectors.toList());
 
 		Benutzer dummyKampfrichter = benutzerRepository.findBenutzerByUsername(Benutzer.ANONYMOUS_KAMPFRICHTER).orElseThrow();
 		for (Begegnung begegnung : alleFreilose) {
-			logger.info("Freilos in Begegnung {} gefunden", begegnung.getId());
-			if (begegnung.getWettkaempfer1().isEmpty() && begegnung.getWettkaempfer2().isEmpty()) {
-				logger.warn("Begegnung {} hat kein Freilos, aber keine Wettkämpfer", begegnung.getId());
-				continue;
-			}
+			logger.debug("Freilos in Begegnung {} gefunden", begegnung.getId());
 
 			// Freilos-Wertung aktualisieren
-			var freilos = begegnung.getWettkaempfer1();
+			var freilos = begegnung.getWettkaempfer1().or(() -> begegnung.getWettkaempfer2()).orElseThrow(() -> new IllegalArgumentException("Freilos nicht gefunden"));
 			var freilosWertung = new Wertung(
 				UUID.randomUUID(),
-				freilos.orElseThrow(() -> new IllegalArgumentException("Freilos nicht gefunden")),
+				freilos,
 				Duration.ZERO,
 				0, 0, 0, 0,
 				null, null, null, null,
 				null, null, null, null,
 				dummyKampfrichter
 			);
-			logger.info("Freilos in Begegnung {} aktualisiert: {}", begegnung.getId(), freilos);
+			logger.debug("Freilos in Begegnung {} aktualisiert: {}", begegnung.getId(), freilos);
 			wertungRepository.speichereWertungInBegegnung(freilosWertung, begegnung.getId());
 
 			// Freilos in nächste Runde übernehmen
@@ -190,9 +194,9 @@ public class WettkampfService {
 			Optional<Begegnung> nextGewinnerBegegnungOptional = nachfolger.getLeft();
 			Begegnung nextGewinnerRunde = nextGewinnerBegegnungOptional.get();
 			if (nextGewinnerRunde.getWettkaempfer1().isEmpty()) {
-				nextGewinnerRunde.setWettkaempfer1(freilos);
+				nextGewinnerRunde.setWettkaempfer1(Optional.of(freilos));
 			} else if (nextGewinnerRunde.getWettkaempfer2().isEmpty()) {
-				nextGewinnerRunde.setWettkaempfer2(freilos);
+				nextGewinnerRunde.setWettkaempfer2(Optional.of(freilos));
 			}
 
 			turnierRepository.speichereBegegnung(nextGewinnerRunde);
@@ -209,6 +213,11 @@ public class WettkampfService {
 		if (gwk.teilnehmer().size() <= 2) {
 			return new BesterAusDrei();
 		}
+
+		if (gwk.teilnehmer().size() <= 4) {
+			return new JederGegenJeden();
+		}
+
 		return new DoppelKOSystem();
 	}
 

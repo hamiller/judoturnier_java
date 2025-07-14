@@ -54,8 +54,8 @@ class EinstellungenServiceTest {
 		   "U15": 180,
 		   "U18": 180,
 		   "U21": 240,
-		   "Frauen": 240,
-		   "Maenner": 240
+		   "FRAUEN": 240,
+		   "MAENNER": 240
 		 }}
 		""";
 	private String gruppengroessenString = """
@@ -89,8 +89,8 @@ class EinstellungenServiceTest {
 			Altersklasse.U15, 3 * 60,
 			Altersklasse.U18, 3 * 60,
 			Altersklasse.U21, 4 * 60,
-			Altersklasse.Frauen, 4 * 60,
-			Altersklasse.Maenner, 4 * 60));
+			Altersklasse.FRAUEN, 4 * 60,
+			Altersklasse.MAENNER, 4 * 60));
 
 		when(einstellungJpaRepository.findAll()).thenReturn(List.of(turnierTypJpa, mattenAnzahlJpa, wettkampfReihenfolgeJpa, gruppengroessenJpa, wettkampfzeitenJpa));
 
@@ -114,8 +114,8 @@ class EinstellungenServiceTest {
 			Altersklasse.U15, 3 * 60,
 			Altersklasse.U18, 3 * 60,
 			Altersklasse.U21, 4 * 60,
-			Altersklasse.Frauen, 4 * 60,
-			Altersklasse.Maenner, 4 * 60)), turnierUUID);
+			Altersklasse.FRAUEN, 4 * 60,
+			Altersklasse.MAENNER, 4 * 60)), turnierUUID);
 
 		when(einstellungJpaRepository.findAll()).thenReturn(List.of());
 

@@ -23,7 +23,7 @@ public record Runde(
 			", matteId=" + matteId +
 			", altersklasse=" + altersklasse +
 			", gruppe=" + gruppe +
-			", begegnungen()=" + begegnungen.stream().map(b -> String.valueOf(b.getBegegnungId().akuellePaarung)).collect(Collectors.joining(",")) +
+			", begegnungen()=" + begegnungen.stream().map(b -> String.valueOf(b.getBegegnungId().paarungNummer)).collect(Collectors.joining(",")) +
 			'}';
 	}
 }

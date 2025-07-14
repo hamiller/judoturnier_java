@@ -49,7 +49,7 @@ public class GewichtsklassenConfiguration {
 				new AltersklasseGewicht(Altersklasse.U15, List.of(Bis34, Bis37, Bis40, Bis43, Bis46, Bis50, Bis55, Bis60, Bis66, Mehr)),
 				new AltersklasseGewicht(Altersklasse.U18, List.of(Bis46, Bis50, Bis55, Bis60, Bis66, Bis73, Bis81, Bis90, Mehr)),
 				new AltersklasseGewicht(Altersklasse.U21, List.of(Bis60, Bis66, Bis73, Bis81, Bis90, Bis100, Mehr)),
-				new AltersklasseGewicht(Altersklasse.Maenner, List.of(Bis60, Bis66, Bis73, Bis81, Bis90, Bis100, Mehr))
+				new AltersklasseGewicht(Altersklasse.MAENNER, List.of(Bis60, Bis66, Bis73, Bis81, Bis90, Bis100, Mehr))
 			)
 		),
 		new GeschlechtAltersklasse(
@@ -62,7 +62,7 @@ public class GewichtsklassenConfiguration {
 				new AltersklasseGewicht(Altersklasse.U15, List.of(Bis33, Bis36, Bis40, Bis44, Bis48, Bis52, Bis57, Bis63, Mehr)),
 				new AltersklasseGewicht(Altersklasse.U18, List.of(Bis40, Bis44, Bis48, Bis52, Bis57, Bis63, Bis70, Bis78, Mehr)),
 				new AltersklasseGewicht(Altersklasse.U21, List.of(Bis48, Bis52, Bis57, Bis63, Bis70, Bis78, Mehr)),
-				new AltersklasseGewicht(Altersklasse.Frauen, List.of(Bis48, Bis52, Bis57, Bis63, Bis70, Bis78, Mehr))
+				new AltersklasseGewicht(Altersklasse.FRAUEN, List.of(Bis48, Bis52, Bis57, Bis63, Bis70, Bis78, Mehr))
 			)
 		)
 	);

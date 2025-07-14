@@ -403,7 +403,8 @@ public class WettkampfgruppeFixture {
         ))
     );
 
-	public static WettkampfGruppeMitBegegnungen wettkampfGruppeFrauen = new WettkampfGruppeMitBegegnungen(new WettkampfGruppe(UUID.randomUUID(), "Ameise", "(58.0-62.0 Frauen)", Altersklasse.Frauen, turnierUUID),
+	// 7 Wettkämpfer in 1 Gruppe -> 11 Begegnungen (7 Gewinnerrunde, 4 Trostrunden), 5 Matten-Runden
+	public static WettkampfGruppeMitBegegnungen wettkampfGruppeFrauen = new WettkampfGruppeMitBegegnungen(new WettkampfGruppe(UUID.randomUUID(), "Ameise", "(58.0-62.0 Frauen)", Altersklasse.FRAUEN, turnierUUID),
 		Arrays.asList(
 		new BegegnungenJeRunde(Arrays.asList(
 			new Begegnung(b1UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), null, null, null, null, null,
@@ -431,7 +432,7 @@ public class WettkampfgruppeFixture {
 				Optional.empty(),
 				null, null, turnierUUID))),
 		new BegegnungenJeRunde(Arrays.asList(
-			new Begegnung(b7UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 1), null, null, null, null, null,
+			new Begegnung(b7UUID,   new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE,  2, 1), null, null, null, null, null,
 				Optional.empty(),
 				Optional.empty(),
 				null, null, turnierUUID),

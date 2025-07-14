@@ -34,19 +34,19 @@ public class Begegnung {
 
 	@Data
 	public static class BegegnungId {
-		public RundenTyp rundenTyp;
-		public int       runde;
-		public int       akuellePaarung;
+		public RundenTyp rundenTyp;		// der Typ der Runde (Gewinner- oder Verlierer-Runde)
+		public int rundenNummerDesTyps; // die Nummer der Runde des Typs (Gewinner- oder Verlierer-Runde)
+		public int paarungNummer;  		// die Nummer der Begegnung in der Runde
 
-		public BegegnungId(RundenTyp rundenTyp, int runde, int akuellePaarung) {
+		public BegegnungId(RundenTyp rundenTyp, int rundenNummerDesTyps, int paarungNummer) {
 			this.rundenTyp = rundenTyp;
-			this.runde = runde;
-			this.akuellePaarung = akuellePaarung;
+			this.rundenNummerDesTyps = rundenNummerDesTyps;
+			this.paarungNummer = paarungNummer;
 		}
 
 		@Override
 		public String toString() {
-			return (this.rundenTyp == RundenTyp.GEWINNERRUNDE ? "GewinnerRunde" : "VerliererRunde") + " Runde" + this.runde + " Begegnung" + this.akuellePaarung;
+			return (this.rundenTyp == RundenTyp.GEWINNERRUNDE ? "GewinnerRunde" : "VerliererRunde") + " TypRunde" + this.rundenNummerDesTyps + " Begegnung" + this.paarungNummer;
 		}
 	}
 

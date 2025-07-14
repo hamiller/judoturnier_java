@@ -75,9 +75,9 @@ public class BegegnungConverter {
 
 	public BegegnungJpa convertFromBegegnung(Begegnung begegnung) {
 		BegegnungJpa jpa = new BegegnungJpa();
-		jpa.setRunde(begegnung.getBegegnungId().getRunde());
+		jpa.setRunde(begegnung.getBegegnungId().getRundenNummerDesTyps());
 		jpa.setRundenTyp(begegnung.getBegegnungId().getRundenTyp().getValue());
-		jpa.setPaarung(begegnung.getBegegnungId().getAkuellePaarung());
+		jpa.setPaarung(begegnung.getBegegnungId().getPaarungNummer());
 		jpa.setRundeUUID(fromUUID(begegnung.getRundeId()));
 		jpa.setMatteId(begegnung.getMatteId());
 		jpa.setMattenRunde(begegnung.getMattenRunde());

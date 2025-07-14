@@ -84,7 +84,7 @@ public class TurnierRepository {
 			.sorted(Comparator
 				.comparing(Begegnung::getGesamtBegegnung)
 				.thenComparing(begegnung -> begegnung.getBegegnungId().rundenTyp)
-				.thenComparing(begegnung -> begegnung.getBegegnungId().akuellePaarung)
+				.thenComparing(begegnung -> begegnung.getBegegnungId().paarungNummer)
 			)
 			.toList();
 
@@ -133,7 +133,7 @@ public class TurnierRepository {
 			.sorted(Comparator
 				.comparing(Begegnung::getGesamtBegegnung)
 				.thenComparing(begegnung -> begegnung.getBegegnungId().rundenTyp)
-				.thenComparing(begegnung -> begegnung.getBegegnungId().akuellePaarung)
+				.thenComparing(begegnung -> begegnung.getBegegnungId().paarungNummer)
 			)
 			.toList();
 
@@ -201,9 +201,9 @@ public class TurnierRepository {
 
 				BegegnungJpa jpa = new BegegnungJpa();
 				jpa.setRundeUUID(rundeId.toString());
-				jpa.setRunde(begegnung.getBegegnungId().getRunde());
+				jpa.setRunde(begegnung.getBegegnungId().getRundenNummerDesTyps());
 				jpa.setRundenTyp(begegnung.getBegegnungId().getRundenTyp().getValue());
-				jpa.setPaarung(begegnung.getBegegnungId().getAkuellePaarung());
+				jpa.setPaarung(begegnung.getBegegnungId().getPaarungNummer());
 				jpa.setMatteId(matte.id());
 				jpa.setMattenRunde(runde.mattenRunde());
 				jpa.setGruppenRunde(runde.gruppenRunde());

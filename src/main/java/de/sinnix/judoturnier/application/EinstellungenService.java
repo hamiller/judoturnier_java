@@ -51,8 +51,8 @@ public class EinstellungenService {
 		Altersklasse.U15, 30,
 		Altersklasse.U18, 30,
 		Altersklasse.U21, 30,
-		Altersklasse.Frauen, 30,
-		Altersklasse.Maenner, 30));
+		Altersklasse.FRAUEN, 30,
+		Altersklasse.MAENNER, 30));
 	private static final VariablerGewichtsteil DEFAULT_VARIABLER_GEWICHTSTEIL = new VariablerGewichtsteil(0.2);
 	private static final SeparateAlterklassen  DEFAULT_SEPARATE_ALTERKLASSEN  = SeparateAlterklassen.GETRENNT;
 	private static final Wettkampfzeiten       DEFAULT_WETTKAMPFZEITEN        = new Wettkampfzeiten(Map.of(
@@ -63,8 +63,8 @@ public class EinstellungenService {
 		Altersklasse.U15, 3 * 60,
 		Altersklasse.U18, 3 * 60,
 		Altersklasse.U21, 4 * 60,
-		Altersklasse.Frauen, 4 * 60,
-		Altersklasse.Maenner, 4 * 60));
+		Altersklasse.FRAUEN, 4 * 60,
+		Altersklasse.MAENNER, 4 * 60));
 
 
 	public Einstellungen ladeEinstellungen(UUID turnierUUID) {
@@ -116,7 +116,7 @@ public class EinstellungenService {
 		return turnierConverter.convertToTurnier(jpa);
 	}
 
-	public Einstellungen speichereDefaultEinstellungen(UUID turnierUUID) {
+	public void speichereDefaultEinstellungen(UUID turnierUUID) {
 		logger.info("Erstelle Default-Einstellungen für Turnier {}", turnierUUID);
 		List<EinstellungJpa> jpaList = List.of(
 			new EinstellungJpa(new EinstellungJpa.EinstellungId(TurnierTyp.TYP, turnierUUID), DEFAULT_TURNIERTYP.name()),
@@ -128,7 +128,6 @@ public class EinstellungenService {
 			new EinstellungJpa(new EinstellungJpa.EinstellungId(Wettkampfzeiten.TYP, turnierUUID), convertFromObject(DEFAULT_WETTKAMPFZEITEN))
 		);
 		einstellungJpaRepository.saveAll(jpaList);
-		return ladeEinstellungen(turnierUUID);
 	}
 
 	private <T> String convertFromObject(T object) {

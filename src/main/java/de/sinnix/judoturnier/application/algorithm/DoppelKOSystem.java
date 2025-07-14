@@ -30,8 +30,7 @@ import java.util.stream.Collectors;
  *
  * Trostrunde:
  * 1. Runde: 2 Begegnungen (4 Verlierer aus der 1. Runde der Gewinnerrunde)
- * 2. Runde: 1 Begegnung (Gewinner aus der 1. Runde der Trostrunde gegen die Verlierer aus der 2. Runde der Gewinnerrunde)
- * 3. Runde: 1 Begegnung (Gewinner aus der 2. Runde der Trostrunde gegen den Verlierer aus der 3. Runde der Gewinnerrunde um den 3. Platz)
+ * 2. Runde: 2 Begegnung (Gewinner aus der 1. Runde der Trostrunde gegen die Verlierer aus der 2. Runde der Gewinnerrunde)
  * Das ergibt 4 Begegnungen in der Trostrunde.
  *
  *
@@ -53,7 +52,7 @@ public class DoppelKOSystem implements Algorithmus {
 		}
 		// Gruppiere nach Runde
 		List<BegegnungenJeRunde> begegnungenJeRunde = begegnungen.stream()
-			.collect(Collectors.groupingBy(begegnung -> begegnung.getBegegnungId().getRunde()))
+			.collect(Collectors.groupingBy(begegnung -> begegnung.getBegegnungId().getRundenNummerDesTyps()))
 			.values().stream()
 			.map(BegegnungenJeRunde::new)
 			.collect(Collectors.toList());

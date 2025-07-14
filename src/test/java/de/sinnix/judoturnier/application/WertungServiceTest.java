@@ -193,9 +193,9 @@ class WertungServiceTest {
 		UUID rundeUUID1 = UUID.randomUUID();
 		UUID rundeUUID2 = UUID.randomUUID();
 		UUID rundeUUID3 = UUID.randomUUID();
-		rundenList.add(new Runde(rundeUUID1, 1, 1, 1, 1, Altersklasse.Frauen, WettkampfgruppeFixture.wettkampfGruppeFrauen.gruppe(), begegnungListRunde1));
-		rundenList.add(new Runde(rundeUUID2, 2, 2, 2, 1, Altersklasse.Frauen, WettkampfgruppeFixture.wettkampfGruppeFrauen.gruppe(), begegnungListRunde2));
-		rundenList.add(new Runde(rundeUUID3, 3, 3, 3, 1, Altersklasse.Frauen, WettkampfgruppeFixture.wettkampfGruppeFrauen.gruppe(), begegnungListRunde3));
+		rundenList.add(new Runde(rundeUUID1, 1, 1, 1, 1, Altersklasse.FRAUEN, WettkampfgruppeFixture.wettkampfGruppeFrauen.gruppe(), begegnungListRunde1));
+		rundenList.add(new Runde(rundeUUID2, 2, 2, 2, 1, Altersklasse.FRAUEN, WettkampfgruppeFixture.wettkampfGruppeFrauen.gruppe(), begegnungListRunde2));
+		rundenList.add(new Runde(rundeUUID3, 3, 3, 3, 1, Altersklasse.FRAUEN, WettkampfgruppeFixture.wettkampfGruppeFrauen.gruppe(), begegnungListRunde3));
 
 		Wertung neueWertung = new Wertung(null, WettkaempferFixtures.wettkaempferin2, fighttimeDuration, scoreWeiss, penaltiesWeiss, scoreBlau, penaltiesBlau,
 			null, null, null, null, null, null, null, null,

@@ -42,14 +42,14 @@ class TurnierControllerTest {
 			UUID.fromString("cd299fb0-757b-4a42-9c59-5cc45a21ec32"),
 			"1. JC", UUID.fromString("18ebc967-8605-43de-9a15-89f26cb005cb")
 		);
-		gruppeA = new WettkampfGruppe(UUID.fromString("68be793d-f8ac-4b97-a40f-637e99da3cc4"), "Ameise", "(58.0-62.0 Frauen)", Altersklasse.Frauen, turnierUuid);
-		gruppeB = new WettkampfGruppe(UUID.fromString("c8ca628a-4de5-410a-9a31-81acf806b600"), "Giraffe", "(0.0-200.0 Frauen)", Altersklasse.Frauen, turnierUuid);
+		gruppeA = new WettkampfGruppe(UUID.fromString("68be793d-f8ac-4b97-a40f-637e99da3cc4"), "Ameise", "(58.0-62.0 Frauen)", Altersklasse.FRAUEN, turnierUuid);
+		gruppeB = new WettkampfGruppe(UUID.fromString("c8ca628a-4de5-410a-9a31-81acf806b600"), "Giraffe", "(0.0-200.0 Frauen)", Altersklasse.FRAUEN, turnierUuid);
 
 		gruppenRunden = new ArrayList<>();
 
 		GruppenRundeDto gruppenRundeDto1 = new GruppenRundeDto(List.of(
 			new RundeDto(
-				UUID.fromString("3473c2e8-3a51-4b0b-a7cb-9ffe45ecc806"), 1, 1, 3, 2, Altersklasse.Frauen, gruppeA, List.of(
+				UUID.fromString("3473c2e8-3a51-4b0b-a7cb-9ffe45ecc806"), 1, 1, 3, 2, Altersklasse.FRAUEN, gruppeA, List.of(
 				new BegegnungDto(
 					"a7e4caf0-a14f-49ac-b152-8b9b74bc50ae",
 					Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1,

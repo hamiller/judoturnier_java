@@ -73,10 +73,10 @@ public class GewichtsklassenRepositoryTest {
         when(gewichtsklassenJpaRepository.findAllByTurnierUUID(turnierUUID)).thenReturn(jpaList);
 
         var teilnehmer = List.of(
-                new Wettkaempfer(wk1Id, "Melanie", Geschlecht.w, Altersklasse.Frauen, new Verein(v1Id, "Verein1", turnierUUID), 55d, null, false, false, turnierUUID),
-                new Wettkaempfer(wk2Id, "Mira", Geschlecht.w, Altersklasse.Frauen, new Verein(v2Id, "Verein2", turnierUUID), 55d, null, false, false, turnierUUID));
-        GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(gwk1Id, Altersklasse.Frauen, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Adler), 60d, 50d, turnierUUID);
-        GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(gwk2Id, Altersklasse.Frauen, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Bär), 60d, 50d, turnierUUID);
+                new Wettkaempfer(wk1Id, "Melanie", Geschlecht.w, Altersklasse.FRAUEN, new Verein(v1Id, "Verein1", turnierUUID), 55d, null, false, false, turnierUUID),
+                new Wettkaempfer(wk2Id, "Mira", Geschlecht.w, Altersklasse.FRAUEN, new Verein(v2Id, "Verein2", turnierUUID), 55d, null, false, false, turnierUUID));
+        GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(gwk1Id, Altersklasse.FRAUEN, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Adler), 60d, 50d, turnierUUID);
+        GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(gwk2Id, Altersklasse.FRAUEN, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Bär), 60d, 50d, turnierUUID);
         when(gewichtsklassenConverter.convertToGewichtsklassen(jpa1)).thenReturn(gruppe1);
         when(gewichtsklassenConverter.convertToGewichtsklassen(jpa2)).thenReturn(gruppe2);
 
@@ -109,10 +109,10 @@ public class GewichtsklassenRepositoryTest {
         UUID gwk2Id = UUID.randomUUID();
 
         var teilnehmer = List.of(
-                new Wettkaempfer(wk1Id, "Melanie", Geschlecht.w, Altersklasse.Frauen, new Verein(v1Id, "Verein1", turnierUUID), 55d, null, false, false, turnierUUID),
-                new Wettkaempfer(wk2Id, "Mira", Geschlecht.w, Altersklasse.Frauen, new Verein(v2Id, "Verein2", turnierUUID), 55d, null, false, false, turnierUUID));
-        GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(gwk1Id, Altersklasse.Frauen, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Adler), 60d, 50d, turnierUUID);
-        GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(gwk2Id, Altersklasse.Frauen, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Bär), 60d, 50d, turnierUUID);
+                new Wettkaempfer(wk1Id, "Melanie", Geschlecht.w, Altersklasse.FRAUEN, new Verein(v1Id, "Verein1", turnierUUID), 55d, null, false, false, turnierUUID),
+                new Wettkaempfer(wk2Id, "Mira", Geschlecht.w, Altersklasse.FRAUEN, new Verein(v2Id, "Verein2", turnierUUID), 55d, null, false, false, turnierUUID));
+        GewichtsklassenGruppe gruppe1 = new GewichtsklassenGruppe(gwk1Id, Altersklasse.FRAUEN, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Adler), 60d, 50d, turnierUUID);
+        GewichtsklassenGruppe gruppe2 = new GewichtsklassenGruppe(gwk2Id, Altersklasse.FRAUEN, Optional.of(Geschlecht.w), teilnehmer, Optional.of(RandoriGruppenName.Bär), 60d, 50d, turnierUUID);
         List<GewichtsklassenGruppe> gruppenList = Arrays.asList(gruppe1, gruppe2);
 
         var teilnehmerJpa = List.of(

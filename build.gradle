@@ -8,7 +8,7 @@ plugins {
 group = 'de.sinnix'
 
 def commitCount = 'git rev-list --count HEAD'.execute().text.trim()
-version = "0.1.${commitCount}-SNAPSHOT"
+version = "0.2.${commitCount}-SNAPSHOT"
 
 java {
 	toolchain {

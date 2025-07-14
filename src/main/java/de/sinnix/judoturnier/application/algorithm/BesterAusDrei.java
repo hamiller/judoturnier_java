@@ -36,7 +36,7 @@ public class BesterAusDrei implements Algorithmus {
 
 		// Gruppiere nach Runde
 		List<BegegnungenJeRunde> begegnungenJeRunde = begegnungen.stream()
-			.collect(Collectors.groupingBy(begegnung -> begegnung.getBegegnungId().getRunde()))
+			.collect(Collectors.groupingBy(begegnung -> begegnung.getBegegnungId().getRundenNummerDesTyps()))
 			.values().stream()
 			.map(BegegnungenJeRunde::new)
 			.collect(Collectors.toList());

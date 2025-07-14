@@ -8,7 +8,6 @@ import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.Verein;
 import de.sinnix.judoturnier.model.Wettkaempfer;
-import de.sinnix.judoturnier.model.WettkampfGruppe;
 import de.sinnix.judoturnier.model.WettkampfGruppeMitBegegnungen;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -72,6 +71,6 @@ class BesterAusDreiTest {
 		int expectedSize = 3; // 3 Begegnungen maximal
 		assertEquals(expectedSize, wettkampfGruppe.alleRundenBegegnungen().stream().mapToInt(runde -> runde.begegnungenJeRunde().size()).sum());
 		assertEquals(expectedSize, wettkampfGruppe.alleRundenBegegnungen().size()); // Begegnungen aufgeteilt in die Runden
-		assertEquals(1, wettkampfGruppe.alleRundenBegegnungen().getFirst().begegnungenJeRunde().getFirst().getBegegnungId().getRunde());
+		assertEquals(1, wettkampfGruppe.alleRundenBegegnungen().getFirst().begegnungenJeRunde().getFirst().getBegegnungId().getRundenNummerDesTyps());
 	}
 }

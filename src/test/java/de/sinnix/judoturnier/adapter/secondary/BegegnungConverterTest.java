@@ -74,8 +74,8 @@ class BegegnungConverterTest {
 		begegnungJpa.setTurnierUUID(turnierUUID);
 		begegnungJpa.setWertungen(List.of());
 		begegnungJpa.setRundenTyp(begegnungId.getRundenTyp().getValue());
-		begegnungJpa.setRunde(begegnungId.getRunde());
-		begegnungJpa.setPaarung(begegnungId.getAkuellePaarung());
+		begegnungJpa.setRunde(begegnungId.getRundenNummerDesTyps());
+		begegnungJpa.setPaarung(begegnungId.getPaarungNummer());
 
 		when(wettkaempferConverter.convertToWettkaempfer(any(WettkaempferJpa.class))).thenReturn(WettkaempferFixtures.wettkaempfer1.get());
 		when(wettkampfGruppeConverter.convertToWettkampfGruppe(any())).thenReturn(new WettkampfGruppe(wkgUUID, "name", "typ", Altersklasse.U11, turnierUUID));
@@ -85,8 +85,8 @@ class BegegnungConverterTest {
 		assertTrue(result != null);
 		assertNotNull(result.getBegegnungId());
 		assertEquals(begegnungJpa.getRundenTyp(), result.getBegegnungId().getRundenTyp().getValue());
-		assertEquals(begegnungJpa.getRunde(), result.getBegegnungId().getRunde());
-		assertEquals(begegnungJpa.getPaarung(), result.getBegegnungId().getAkuellePaarung());
+		assertEquals(begegnungJpa.getRunde(), result.getBegegnungId().getRundenNummerDesTyps());
+		assertEquals(begegnungJpa.getPaarung(), result.getBegegnungId().getPaarungNummer());
 		assertEquals(begegnungJpa.getRundeUUID(), result.getRundeId().toString());
 		assertEquals(begegnungJpa.getMatteId(), result.getMatteId());
 		assertEquals(begegnungJpa.getMattenRunde(), result.getMattenRunde());
@@ -142,8 +142,8 @@ class BegegnungConverterTest {
 		begegnungJpa.setWettkampfGruppeId(wettkampfGruppeJpa.getId());
 		begegnungJpa.setTurnierUUID(turnierUUID);
 		begegnungJpa.setWertungen(List.of(wertungJpa));
-		begegnungJpa.setRunde(begegnungId.getRunde());
-		begegnungJpa.setPaarung(begegnungId.getAkuellePaarung());
+		begegnungJpa.setRunde(begegnungId.getRundenNummerDesTyps());
+		begegnungJpa.setPaarung(begegnungId.getPaarungNummer());
 		begegnungJpa.setRundenTyp(begegnungId.getRundenTyp().getValue());
 
 		assertEquals(begegnungJpa, result);

@@ -17,6 +17,50 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+
+/**
+ * Sortiert die Begegnungen in der richtigen Reihenfolge.
+ *
+ * - Siegerrunde
+ * - Runde1
+ * Kämpfer1 ---------
+ *                 1 |---------
+ * Kämpfer2 ---------          |
+ *                             |
+ *                           7 |--------- Sieger1 vs Sieger2 ------
+ * Kämpfer3 ---------          |                                   |
+ *                 2 |---------                                    |
+ * Kämpfer4 ---------                                              |
+ *                                                                 |
+ *                                                              11 |------ 1. Platz / 2. Platz
+ * Kämpfer3 ---------                                              |
+ *                 3 |---------                                    |
+ * Kämpfer4 ---------          |                                   |
+ *                             |                                   |
+ *                           8 |--------- Sieger3 vs Sieger4 ------
+ * Kämpfer3 ---------          |
+ *                 4 |---------
+ * Kämpfer4 ---------
+ *
+ *
+ *
+ * - Trostrunde
+ * - Runde2
+ *            Verlierer aus 1 ---
+ *                             5 |---------------
+ *            Verlierer aus 2 ---                |
+ *                                             9 |------------- 3. Platz
+ *                         Verlierer aus 7 ------
+ *
+ *
+ *            Verlierer aus 3 ---
+ *               vs            6 |---------------
+ *            Verlierer aus 4 ---                |
+ *                                            10 |------------- 3. Platz
+ *                         Verlierer aus 8 ------
+ *
+ * @return Nachfolgende Begegnungen. Links: Gewinnerrunde, Rechts: Trostrunde
+ */
 public class Sortierer {
 
 	private static final Logger logger = LogManager.getLogger(Sortierer.class);
@@ -44,8 +88,8 @@ public class Sortierer {
 	public static List<Begegnung> vorgaengerBegegnungen(Begegnung.BegegnungId begegnungId, WettkampfGruppe wettkampfGruppe, List<Runde> alleRunden) {
 		logger.info("Suche Vorgaenger zu Begegnung {}", begegnungId);
 		var rundeTyp = begegnungId.rundenTyp;
-		var paarungNr = begegnungId.akuellePaarung;
-		var rundeNr = begegnungId.runde;
+		var paarungNr = begegnungId.paarungNummer;
+		var rundeNr = begegnungId.rundenNummerDesTyps;
 		var rudenDerWettkmapfgruppe = alleRunden.stream().filter(runde -> runde.gruppe().equals(wettkampfGruppe)).toList();
 
 		if (rundeTyp.equals(Begegnung.RundenTyp.GEWINNERRUNDE) && rundeNr <= 1) {
@@ -88,33 +132,19 @@ public class Sortierer {
 	/**
 	 * Finde mögliche Paarungen nach dieser. Links: Gewinnerrunde, Rechts: Trostrunde
 	 *
-	 * .(Runde1, Siegerrunden, Paarung1)
-	 * .Kämpfer1 vs Kämpfer2          ---------         (Runde2, Siegerrunde, Paarung1)
-	 * .                                       |___________ Sieger1 vs Sieger2 ---------
-	 * .(Runde1, Siegerrunden, Paarung2)       |                                        |
-	 * .Kämpfer3 vs Kämpfer4          ---------                                         |          (Runde3, Siegerrunde, Paarung1)
-	 * .                                                                                |------------ Sieger5 vs Sieger6
-	 * .(Runde1, Siegerrunden, Paarung3)                                                |
-	 * .Kämpfer5 vs /                 ---------         (Runde2, Siegerrunde, Paarung2) |
-	 * .                                       |___________ Sieger3 vs Sieger4 ---------
-	 * .(Runde1, Siegerrunden, Paarung4)       |
-	 * .Kämpfer6 vs Kämpfer7          ---------
-	 *
-	 *
 	 * @return Nachfolgende Begegnungen. Links: Gewinnerrunde, Rechts: Trostrunde
 	 */
 	public static Pair<Optional<Begegnung>,Optional<Begegnung>> nachfolgeBegegnungen(Begegnung.BegegnungId begegnungId, WettkampfGruppe wettkampfGruppe, List<Runde> alleRunden) {
 		logger.info("Suche Nachfolger zu Begegnung {}", begegnungId);
-		var rundeTyp = begegnungId.rundenTyp;
-		var paarungNr = begegnungId.akuellePaarung;
-		var rundeNr = begegnungId.runde;
+		var paarungNr = begegnungId.paarungNummer;
+		var rundenNummerDesTyps = begegnungId.rundenNummerDesTyps;
 		var rudenDerWettkmapfgruppe = alleRunden.stream().filter(runde -> runde.gruppe().equals(wettkampfGruppe)).toList();
 
 		// Bilde die aktuelle paarungNr auf die kommende Runde ab:
-		var rundeNrNext = rundeNr + 1;
-		var paarungNrNext = (paarungNr + 1) / 2;
-		var nextBegegnungSiegerrunde = findeBegegnungInGruppenRunden(new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, rundeNrNext, paarungNrNext), rudenDerWettkmapfgruppe);
-		var nextBegegnungTrostrunde = findeBegegnungInGruppenRunden(new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, rundeNrNext, paarungNrNext), rudenDerWettkmapfgruppe);
+		var nextRundenNummerDesTyps = rundenNummerDesTyps + 1;
+		var nextPaarungNr = (paarungNr + 1) / 2;
+		var nextBegegnungSiegerrunde = findeBegegnungInGruppenRunden(new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, nextRundenNummerDesTyps, nextPaarungNr), rudenDerWettkmapfgruppe);
+		var nextBegegnungTrostrunde = findeBegegnungInGruppenRunden(new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, nextRundenNummerDesTyps, nextPaarungNr), rudenDerWettkmapfgruppe);
 
 		logger.info("Nächste Begegnung Gewinnerrunde (left): {}", nextBegegnungSiegerrunde);
 		logger.info("Nächste Begegnung Trostrunde (right): {}", nextBegegnungTrostrunde);
@@ -147,10 +177,14 @@ public class Sortierer {
 				Altersklasse altersKlasse = gruppe.gruppe().altersklasse();
 
 				logger.debug("Gruppe: {}", gruppe.gruppe().name());
-				Runde runde = new Runde(null, mattenRunde, gruppenRunde, rundeGesamt, matteId, altersKlasse, gruppe.gruppe(), gruppe.alleRundenBegegnungen().get(rundenNummer).begegnungenJeRunde());
-				runden.add(runde);
-				rundeGesamt++;
-				mattenRunde++;
+				List<Begegnung> begegnungenGewinnerrunde = gruppe.alleRundenBegegnungen().get(rundenNummer).begegnungenJeRunde().stream().filter(b -> b.getBegegnungId().getRundenTyp() == Begegnung.RundenTyp.GEWINNERRUNDE).toList();
+				List<Begegnung> begegnungenTrostrunde = gruppe.alleRundenBegegnungen().get(rundenNummer).begegnungenJeRunde().stream().filter(b -> b.getBegegnungId().getRundenTyp() == Begegnung.RundenTyp.TROSTRUNDE).toList();
+				if (begegnungenGewinnerrunde.size() > 0) {
+					runden.add(new Runde(null, mattenRunde++, gruppenRunde, rundeGesamt++, matteId, altersKlasse, gruppe.gruppe(), begegnungenGewinnerrunde));
+				}
+				if (begegnungenTrostrunde.size() > 0) {
+					runden.add(new Runde(null, mattenRunde++, gruppenRunde, rundeGesamt++, matteId, altersKlasse, gruppe.gruppe(), begegnungenTrostrunde));
+				}
 				gruppenRunde++;
 			}
 		}
@@ -191,10 +225,14 @@ public class Sortierer {
 				int gruppenRunde = 1;
 				for (BegegnungenJeRunde begegnungen : gruppeZuletzt.alleRundenBegegnungen()) {
 					Altersklasse altersKlasseZuletzt = gruppeZuletzt.gruppe().altersklasse();
-					Runde rundeZuletzt = new Runde(null, mattenRunde, gruppenRunde, rundeGesamt, matteId, altersKlasseZuletzt, gruppeZuletzt.gruppe(), begegnungen.begegnungenJeRunde());
-					runden.add(rundeZuletzt);
-					rundeGesamt++;
-					mattenRunde++;
+					List<Begegnung> begegnungenGewinnerrunde = begegnungen.begegnungenJeRunde().stream().filter(b -> b.getBegegnungId().getRundenTyp() == Begegnung.RundenTyp.GEWINNERRUNDE).toList();
+					List<Begegnung> begegnungenTrostrunde = begegnungen.begegnungenJeRunde().stream().filter(b -> b.getBegegnungId().getRundenTyp() == Begegnung.RundenTyp.TROSTRUNDE).toList();
+					if (begegnungenGewinnerrunde.size() > 0) {
+						runden.add(new Runde(null, mattenRunde++, gruppenRunde, rundeGesamt++, matteId, altersKlasseZuletzt, gruppeZuletzt.gruppe(), begegnungenGewinnerrunde));
+					}
+					if (begegnungenTrostrunde.size() > 0) {
+						runden.add(new Runde(null, mattenRunde++, gruppenRunde, rundeGesamt++, matteId, altersKlasseZuletzt, gruppeZuletzt.gruppe(), begegnungenTrostrunde));
+					}
 					gruppenRunde++;
 				}
 			}

@@ -78,6 +78,10 @@ public class WettkaempferService {
 		List<String[]> records = new ArrayList<>();
 		String[] headers = null;
 
+		if (file.isEmpty()) {
+			logger.error("Datei ist leer!");
+		}
+
 		// Überprüfen, ob die Datei nicht leer ist
 		if (!file.isEmpty()) {
 			try (InputStreamReader reader = new InputStreamReader(file.getInputStream());

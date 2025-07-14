@@ -12,8 +12,8 @@ public enum Altersklasse {
 	U15("U15", 5),
 	U18("U18", 6),
 	U21("U21", 7),
-	Maenner("Männer", 8),
-	Frauen("Frauen", 9),
+	MAENNER("Männer", 8),
+	FRAUEN("Frauen", 9),
 	PAUSE("Pause", 10);
 
 	private final String bezeichnung;
