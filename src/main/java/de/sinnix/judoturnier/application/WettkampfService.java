@@ -20,6 +20,8 @@ import de.sinnix.judoturnier.adapter.secondary.WertungRepository;
 import de.sinnix.judoturnier.application.algorithm.Algorithmus;
 import de.sinnix.judoturnier.application.algorithm.BesterAusDrei;
 import de.sinnix.judoturnier.application.algorithm.DoppelKOSystem;
+import de.sinnix.judoturnier.application.algorithm.DoppelKOSystemMitDoppelterTrostrunde;
+import de.sinnix.judoturnier.application.algorithm.DoppelKOSystemVorgepoolt;
 import de.sinnix.judoturnier.application.algorithm.JederGegenJeden;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
@@ -203,6 +205,15 @@ public class WettkampfService {
 		}
 	}
 
+	/**
+	 * Ermittelt den passenden Algorithmus für die Gewichtsklassen-Gruppe basierend auf den Einstellungen.
+	 *
+	 * bei 2 Teilnehmern: „Best of Three"
+	 * bis 5 Teilnehmer: Jeder gegen Jeden
+	 * 6 - 8 Teilnehmer: Vorgepooltes KO-System
+	 * ab 9 Teilnehmer: Doppel-KO-System (bis U21), KO-System mit doppelter Trostrund (Frauen/Männer)
+	 *
+	 */
 	private static Algorithmus getAlgorithmus(Einstellungen einstellungen, GewichtsklassenGruppe gwk) {
 		var turnierTyp = einstellungen.turnierTyp();
 
@@ -214,8 +225,16 @@ public class WettkampfService {
 			return new BesterAusDrei();
 		}
 
-		if (gwk.teilnehmer().size() <= 4) {
+		if (gwk.teilnehmer().size() <= 5) {
 			return new JederGegenJeden();
+		}
+
+		if (gwk.teilnehmer().size() >= 6 && gwk.teilnehmer().size() <= 8) {
+			return new DoppelKOSystemVorgepoolt();
+		}
+
+		if (gwk.altersKlasse() == Altersklasse.FRAUEN || gwk.altersKlasse() == Altersklasse.MAENNER) {
+			return new DoppelKOSystemMitDoppelterTrostrunde();
 		}
 
 		return new DoppelKOSystem();
