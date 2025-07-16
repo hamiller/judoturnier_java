@@ -62,19 +62,32 @@ public class WettkaempferServiceTest {
 	public static Wettkaempfer wettkaempfer3 = new Wettkaempfer(UUID.fromString("eaa236dc-cc3e-4df0-92c7-f9877159d8dc"), "Reid, Riley", Geschlecht.w, Altersklasse.U21, verein1, 62.0, Optional.of(Farbe.GELB), false, false, turnierUUID);
 	public static Wettkaempfer wettkaempfer4 = new Wettkaempfer(UUID.fromString("1f245095-199c-4f5a-b109-cfabb09efab3"), "Belle, Lexi", Geschlecht.w, Altersklasse.U21, verein2, 63.0, Optional.of(Farbe.ORANGE), false, false, turnierUUID);
 
-	public static Wertung wertung1 = new Wertung(UUID.fromString("b1521c63-19de-4ef3-bdfa-96d5d50c604f"), null, Duration.ZERO, 0, 0, 0, 0, 2, 2, 2, 2, 1, 1, 1, 1, kampfrichter);
-	public static Wertung wertung2 = new Wertung(UUID.fromString("68a5c197-848d-48c3-ba1f-54d3d82c0bfa"), null, Duration.ZERO, 0, 0, 0, 0, 4, 4, 4, 4, 1, 1, 1, 1, kampfrichter);
-	public static Wertung wertung3 = new Wertung(UUID.fromString("16485cd0-f45a-4fbc-895b-8d13ad7e960d"), null, Duration.ZERO, 0, 0, 0, 0, 5, 5, 5, 5, 1, 1, 1, 1, kampfrichter);
-	public static Wertung wertung4 = new Wertung(UUID.fromString("9c148628-13eb-487f-91bb-2d4f2b4876f1"), null, Duration.ZERO, 0, 0, 0, 0, 6, 6, 6, 6, 1, 1, 1, 1, kampfrichter);
-	public static Wertung wertung5 = new Wertung(UUID.fromString("6c70e666-8441-4218-9df2-32a5ee191b23"), null, Duration.ZERO, 0, 0, 0, 0, 1, 1, 1, 1, 3, 3, 3, 3, kampfrichter);
-	public static Wertung wertung6 = new Wertung(UUID.fromString("5bba6c54-e8f2-4c62-b016-dc55b9f7ed44"), null, Duration.ZERO, 0, 0, 0, 0, 1, 1, 1, 1, 3, 2, 1, 4, kampfrichter);
+	public static Wertung wertung1a = new Wertung(UUID.fromString("b1521c63-19de-4ef3-bdfa-96d5d50c604f"), null, Duration.ZERO, 0, 0, 0, 0,
+		6, 5, 2, 2, 1, 2, 1, 1, kampfrichter);
+	public static Wertung wertung1b = new Wertung(UUID.fromString("68a5c197-848d-48c3-ba1f-54d3d82c0bfa"), null, Duration.ZERO, 0, 0, 0, 0,
+		4, 4, 4, 4, 1, 1, 1, 1, kampfrichter);
+	public static Wertung wertung2a = new Wertung(UUID.fromString("16485cd0-f45a-4fbc-895b-8d13ad7e960d"), null, Duration.ZERO, 0, 0, 0, 0,
+		6, 5, 3, 3, 1, 1, 1, 1, kampfrichter);
+	public static Wertung wertung2b = new Wertung(UUID.fromString("9c148628-13eb-487f-91bb-2d4f2b4876f1"), null, Duration.ZERO, 0, 0, 0, 0,
+		1, 6, 6, 4, 3, 2, 1, 1, kampfrichter);
+	public static Wertung wertung3a = new Wertung(UUID.fromString("6c70e666-8441-4218-9df2-32a5ee191b23"), null, Duration.ZERO, 0, 0, 0, 0,
+		6, 1, 1, 1, 1, 3, 3, 1, kampfrichter);
+	public static Wertung wertung3b = new Wertung(UUID.fromString("5bba6c54-e8f2-4c62-b016-dc55b9f7ed44"), null, Duration.ZERO, 0, 0, 0, 0,
+		1, 1, 1, 1, 3, 2, 1, 4, kampfrichter);
 
-	public static Begegnung begegnung1 = new Begegnung(UUID.fromString("dc896258-6e73-45cc-8b7e-47c695957d78"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), UUID.fromString("f3002df6-5172-4048-b715-b860fffe0c66"), 1, 1, 1, 1, Optional.of(wettkaempfer4), Optional.of(wettkaempfer3), List.of(wertung1), null, turnierUUID);
-	public static Begegnung begegnung2 = new Begegnung(UUID.fromString("e6e5a7be-cae1-44de-a462-b1efbcab1d1d"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 2), UUID.fromString("f3002df6-5172-4048-b715-b860fffe0c66"), 1, 1, 1, 1, Optional.of(wettkaempfer1), Optional.of(wettkaempfer2), List.of(wertung2), null, turnierUUID);
-	public static Begegnung begegnung3 = new Begegnung(UUID.fromString("5f951bc0-7025-4bed-bb7a-488c99dc5d69"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 1), UUID.fromString("28698372-788b-4c2b-9f16-2ce1bf27543d"), 1, 2, 2, 1, Optional.of(wettkaempfer3), Optional.of(wettkaempfer2), List.of(wertung3), null, turnierUUID);
-	public static Begegnung begegnung4 = new Begegnung(UUID.fromString("5bb79609-567a-445b-ad5e-31c3f5b1fe2e"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 2), UUID.fromString("28698372-788b-4c2b-9f16-2ce1bf27543d"), 1, 2, 2, 1, Optional.of(wettkaempfer4), Optional.of(wettkaempfer1), List.of(wertung4), null, turnierUUID);
-	public static Begegnung begegnung5 = new Begegnung(UUID.fromString("06066382-5667-48db-afd6-0030151e3820"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 3, 1), UUID.fromString("2bce5622-04c8-4aab-b5e1-3dc5ef8ff391"), 1, 3, 3, 1, Optional.of(wettkaempfer1), Optional.of(wettkaempfer3), List.of(wertung5), null, turnierUUID);
-	public static Begegnung begegnung6 = new Begegnung(UUID.fromString("44be7ae3-973c-41bb-bc3f-8f773985e11e"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 3, 2), UUID.fromString("2bce5622-04c8-4aab-b5e1-3dc5ef8ff391"), 1, 3, 3, 1, Optional.of(wettkaempfer2), Optional.of(wettkaempfer4), List.of(wertung6), null, turnierUUID);
+	// Runde 1
+	public static Begegnung     begegnung1a = new Begegnung(UUID.fromString("dc896258-6e73-45cc-8b7e-47c695957d78"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), UUID.fromString("f3002df6-5172-4048-b715-b860fffe0c66"), 1, 1, 1, 1,
+		Optional.of(wettkaempfer1), Optional.of(wettkaempfer2), List.of(wertung1a), null, turnierUUID);
+	public static Begegnung     begegnung1b = new Begegnung(UUID.fromString("e6e5a7be-cae1-44de-a462-b1efbcab1d1d"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 2), UUID.fromString("f3002df6-5172-4048-b715-b860fffe0c66"), 1, 1, 1, 1,
+		Optional.of(wettkaempfer3), Optional.of(wettkaempfer4), List.of(wertung1b), null, turnierUUID);
+	public static Begegnung     begegnung2a = new Begegnung(UUID.fromString("5f951bc0-7025-4bed-bb7a-488c99dc5d69"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 1), UUID.fromString("28698372-788b-4c2b-9f16-2ce1bf27543d"), 1, 2, 2, 1,
+		Optional.of(wettkaempfer1), Optional.of(wettkaempfer4), List.of(wertung2a), null, turnierUUID);
+	public static Begegnung     begegnung2b = new Begegnung(UUID.fromString("5bb79609-567a-445b-ad5e-31c3f5b1fe2e"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 2), UUID.fromString("28698372-788b-4c2b-9f16-2ce1bf27543d"), 1, 2, 2, 1,
+		Optional.of(wettkaempfer3), Optional.of(wettkaempfer2), List.of(wertung2b), null, turnierUUID);
+	public static Begegnung     begegnung3a = new Begegnung(UUID.fromString("06066382-5667-48db-afd6-0030151e3820"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 3, 1), UUID.fromString("2bce5622-04c8-4aab-b5e1-3dc5ef8ff391"), 1, 3, 3, 1,
+		Optional.of(wettkaempfer1), Optional.of(wettkaempfer3), List.of(wertung3a), null, turnierUUID);
+	public static Begegnung     begegnung3b = new Begegnung(UUID.fromString("44be7ae3-973c-41bb-bc3f-8f773985e11e"), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 3, 2), UUID.fromString("2bce5622-04c8-4aab-b5e1-3dc5ef8ff391"), 1, 3, 3, 1,
+		Optional.of(wettkaempfer2), Optional.of(wettkaempfer4), List.of(wertung3b), null, turnierUUID);
 
 	@BeforeEach
 	void setUp() {
@@ -164,47 +177,52 @@ public class WettkaempferServiceTest {
 	void berechneGesamtWertung() {
 		when(einstellungenService.isRandori(eq(turnierUUID))).thenReturn(true);
 		when(wettkaempferRepository.findAll(eq(turnierUUID))).thenReturn(List.of(wettkaempfer1, wettkaempfer2, wettkaempfer3, wettkaempfer4));
-		when(wettkampfService.ladeAlleBegegnungen(eq(turnierUUID))).thenReturn(List.of(begegnung1, begegnung2, begegnung3, begegnung4, begegnung5, begegnung6));
+		when(wettkampfService.ladeAlleBegegnungen(eq(turnierUUID))).thenReturn(List.of(begegnung1a, begegnung1b, begegnung2a, begegnung2b, begegnung3a, begegnung3b));
 
 		Map<UUID, GesamtWertung> wertungMap = wettkaempferService.berechneGesamtWertungen(turnierUUID);
 
 		System.out.println(wertungMap);
 		assertEquals(4, wertungMap.size());
-		assertEquals(3, wertungMap.get(wettkaempfer1.id()).kampfgeistListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer1.id()).technikListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer1.id()).kampfstilListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer1.id()).vielfaltListe().size());
-		assertEquals(2, wertungMap.get(wettkaempfer1.id()).kampfgeist());
-		assertEquals(2, wertungMap.get(wettkaempfer1.id()).technik());
-		assertEquals(2, wertungMap.get(wettkaempfer1.id()).kampfstil());
-		assertEquals(2, wertungMap.get(wettkaempfer1.id()).vielfalt());
 
-		assertEquals(3, wertungMap.get(wettkaempfer2.id()).kampfgeistListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer2.id()).technikListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer2.id()).kampfstilListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer2.id()).vielfaltListe().size());
-		assertEquals(1, wertungMap.get(wettkaempfer2.id()).kampfgeist());
-		assertEquals(1, wertungMap.get(wettkaempfer2.id()).technik());
-		assertEquals(1, wertungMap.get(wettkaempfer2.id()).kampfstil());
-		assertEquals(1, wertungMap.get(wettkaempfer2.id()).vielfalt());
+		GesamtWertung wertungWettkaempfer1 = wertungMap.get(wettkaempfer1.id());
+		assertEquals(3, wertungWettkaempfer1.kampfgeistListe().size());
+		assertEquals(3, wertungWettkaempfer1.technikListe().size());
+		assertEquals(3, wertungWettkaempfer1.kampfstilListe().size());
+		assertEquals(3, wertungWettkaempfer1.vielfaltListe().size());
+		assertEquals(6, wertungWettkaempfer1.kampfgeist());
+		assertEquals(3.7, wertungWettkaempfer1.technik(), 0.1);
+		assertEquals(2, wertungWettkaempfer1.kampfstil());
+		assertEquals(2, wertungWettkaempfer1.vielfalt());
 
-		assertEquals(3, wertungMap.get(wettkaempfer3.id()).kampfgeistListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer3.id()).technikListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer3.id()).kampfstilListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer3.id()).vielfaltListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer3.id()).kampfgeist());
-		assertEquals(3, wertungMap.get(wettkaempfer3.id()).technik());
-		assertEquals(3, wertungMap.get(wettkaempfer3.id()).kampfstil());
-		assertEquals(3, wertungMap.get(wettkaempfer3.id()).vielfalt());
+		GesamtWertung wertungWettkaempfer2 = wertungMap.get(wettkaempfer2.id());
+		assertEquals(3, wertungWettkaempfer2.kampfgeistListe().size());
+		assertEquals(3, wertungWettkaempfer2.technikListe().size());
+		assertEquals(3, wertungWettkaempfer2.kampfstilListe().size());
+		assertEquals(3, wertungWettkaempfer2.vielfaltListe().size());
+		assertEquals(1.7, wertungWettkaempfer2.kampfgeist(), 0.1);
+		assertEquals(1.7, wertungWettkaempfer2.technik(), 0.1);
+		assertEquals(1, wertungWettkaempfer2.kampfstil());
+		assertEquals(1, wertungWettkaempfer2.vielfalt());
 
-		assertEquals(3, wertungMap.get(wettkaempfer4.id()).kampfgeistListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer4.id()).technikListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer4.id()).kampfstilListe().size());
-		assertEquals(3, wertungMap.get(wettkaempfer4.id()).vielfaltListe().size());
-		assertEquals(3.7, wertungMap.get(wettkaempfer4.id()).kampfgeist(), 0.1);
-		assertEquals(3.3, wertungMap.get(wettkaempfer4.id()).technik(), 0.1);
-		assertEquals(3, wertungMap.get(wettkaempfer4.id()).kampfstil());
-		assertEquals(4, wertungMap.get(wettkaempfer4.id()).vielfalt());
+		GesamtWertung wertungWettkaempfer3 = wertungMap.get(wettkaempfer3.id());
+		assertEquals(3, wertungWettkaempfer3.kampfgeistListe().size());
+		assertEquals(3, wertungWettkaempfer3.technikListe().size());
+		assertEquals(3, wertungWettkaempfer3.kampfstilListe().size());
+		assertEquals(3, wertungWettkaempfer3.vielfaltListe().size());
+		assertEquals(2, wertungWettkaempfer3.kampfgeist());
+		assertEquals(4.3, wertungWettkaempfer3.technik(), 0.1);
+		assertEquals(4.3, wertungWettkaempfer3.kampfstil(), 0.1);
+		assertEquals(3, wertungWettkaempfer3.vielfalt());
+
+		GesamtWertung wertungWettkaempfer4 = wertungMap.get(wettkaempfer4.id());
+		assertEquals(3, wertungWettkaempfer4.kampfgeistListe().size());
+		assertEquals(3, wertungWettkaempfer4.technikListe().size());
+		assertEquals(3, wertungWettkaempfer4.kampfstilListe().size());
+		assertEquals(3, wertungWettkaempfer4.vielfaltListe().size());
+		assertEquals(1.7, wertungWettkaempfer4.kampfgeist(), 0.1);
+		assertEquals(1.3, wertungWettkaempfer4.technik(), 0.1);
+		assertEquals(1, wertungWettkaempfer4.kampfstil());
+		assertEquals(2, wertungWettkaempfer4.vielfalt());
 	}
 
 	@Test

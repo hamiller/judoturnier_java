@@ -202,6 +202,8 @@ public class WettkaempferService {
 
 			GesamtWertung gesamtWertung = new GesamtWertung(kampfgeist, kampfgeistList, technik, technikList, kampfstil, kampfstilList, vielfalt, vielfaltList);
 			gesamtWertungen.put(wettkaempfer.id(), gesamtWertung);
+
+			logger.debug("Wettkaempfer {} hat Gesamtwertung: {}", wettkaempfer.name(), gesamtWertung);
 		}
 
 		return gesamtWertungen;
