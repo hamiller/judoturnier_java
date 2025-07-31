@@ -225,19 +225,28 @@ public class WettkampfService {
 			return new BesterAusDrei();
 		}
 
-		if (gwk.teilnehmer().size() <= 5) {
+		// TODO: ALTE ALGORITHMEN, KÜNFTIG AUSBAUEN
+		if (gwk.teilnehmer().size() <= 4) {
 			return new JederGegenJeden();
 		}
 
-		if (gwk.teilnehmer().size() >= 6 && gwk.teilnehmer().size() <= 8) {
-			return new DoppelKOSystemVorgepoolt();
-		}
-
-		if (gwk.altersKlasse() == Altersklasse.FRAUEN || gwk.altersKlasse() == Altersklasse.MAENNER) {
-			return new DoppelKOSystemMitDoppelterTrostrunde();
-		}
-
 		return new DoppelKOSystem();
+
+		// TODO: AB HIER DIE NEUEN, KORREKTEN ALGORITHMEN
+//
+//		if (gwk.teilnehmer().size() <= 5) {
+//			return new JederGegenJeden();
+//		}
+//
+//		if (gwk.teilnehmer().size() >= 6 && gwk.teilnehmer().size() <= 8) {
+//			return new DoppelKOSystemVorgepoolt();
+//		}
+//
+//		if (gwk.altersKlasse() == Altersklasse.FRAUEN || gwk.altersKlasse() == Altersklasse.MAENNER) {
+//			return new DoppelKOSystemMitDoppelterTrostrunde();
+//		}
+//
+//		return new DoppelKOSystem();
 	}
 
 	private List<Matte> erstelleGruppenReihenfolge(List<WettkampfGruppeMitBegegnungen> wettkampfGruppen, Integer anzahlMatten, WettkampfReihenfolge reihenfolge) {
