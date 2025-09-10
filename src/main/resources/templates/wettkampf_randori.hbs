@@ -28,23 +28,23 @@
           <div class="slider-container">
             <label>Vielfalt</label>
             <md-slider step="1" ticks min="1" max="6" oninput="updateInputValue('vielfalt1', {{id}}, this.value)"></md-slider>
-            <input {{disable enableEditing}} type="hidden" name="vielfalt1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.vielfaltWettkaempfer1}}{{/optionalFn}} />
+            <input {{disable enableEditing}} type="hidden" name="vielfalt1" required value={{#optionalDefault3 begegnung.kampfrichterWertung}}{{this.vielfaltWettkaempfer1}}{{/optionalDefault3}} />
           </div>
           <div class="slider-container">
             <label>Kampfgeist</label>
             <md-slider step="1" ticks min="1" max="6" oninput="updateInputValue('kampfgeist1', {{id}}, this.value)"></md-slider>
-            <input {{disable enableEditing}} type="hidden" name="kampfgeist1" id="kampfgeist1" required value={{#optionalFn
-              begegnung.kampfrichterWertung}}{{this.kampfgeistWettkaempfer1}}{{/optionalFn}} />
+            <input {{disable enableEditing}} type="hidden" name="kampfgeist1" id="kampfgeist1" required value={{#optionalDefault3
+              begegnung.kampfrichterWertung}}{{this.kampfgeistWettkaempfer1}}{{/optionalDefault3}} />
           </div>
           <div class="slider-container">
             <label>Technik</label>
             <md-slider step="1" ticks min="1" max="6" oninput="updateInputValue('technik1', {{id}}, this.value)"></md-slider>
-            <input {{disable enableEditing}} type="hidden" name="technik1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.technikWettkaempfer1}}{{/optionalFn}} />
+            <input {{disable enableEditing}} type="hidden" name="technik1" required value={{#optionalDefault3 begegnung.kampfrichterWertung}}{{this.technikWettkaempfer1}}{{/optionalDefault3}} />
           </div>
           <div class="slider-container">
             <label>Stil</label>
             <md-slider step="1" ticks min="1" max="6" oninput="updateInputValue('stil1', {{id}}, this.value)"></md-slider>
-            <input {{disable enableEditing}} type="hidden" name="stil1" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer1}}{{/optionalFn}} />
+            <input {{disable enableEditing}} type="hidden" name="stil1" required value={{#optionalDefault3 begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer1}}{{/optionalDefault3}} />
           </div>
           <div class="allewertungen when_mobile_toggle">
             {{#each begegnung.alleWertungen}}
@@ -71,23 +71,23 @@
           <div class="slider-container">
             <label>Vielfalt</label>
             <md-slider step="1" ticks min="1" max="6" oninput="updateInputValue('vielfalt2', {{id}}, this.value)"></md-slider>
-            <input {{disable enableEditing}} type="hidden" name="vielfalt2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.vielfaltWettkaempfer2}}{{/optionalFn}} />
+            <input {{disable enableEditing}} type="hidden" name="vielfalt2" required value={{#optionalDefault3 begegnung.kampfrichterWertung}}{{this.vielfaltWettkaempfer2}}{{/optionalDefault3}} />
           </div>
           <div class="slider-container">
             <label>Kampfgeist</label>
             <md-slider step="1" ticks min="1" max="6" oninput="updateInputValue('kampfgeist2', {{id}}, this.value)"></md-slider>
-            <input {{disable enableEditing}} type="hidden" name="kampfgeist2" required value={{#optionalFn
-              begegnung.kampfrichterWertung}}{{this.kampfgeistWettkaempfer2}}{{/optionalFn}} />
+            <input {{disable enableEditing}} type="hidden" name="kampfgeist2" required value={{#optionalDefault3
+              begegnung.kampfrichterWertung}}{{this.kampfgeistWettkaempfer2}}{{/optionalDefault3}} />
           </div>
           <div class="slider-container">
             <label>Technik</label>
             <md-slider step="1" ticks min="1" max="6" oninput="updateInputValue('technik2', {{id}}, this.value)"></md-slider>
-            <input {{disable enableEditing}} type="hidden" name="technik2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.technikWettkaempfer2}}{{/optionalFn}} />
+            <input {{disable enableEditing}} type="hidden" name="technik2" required value={{#optionalDefault3 begegnung.kampfrichterWertung}}{{this.technikWettkaempfer2}}{{/optionalDefault3}} />
           </div>
           <div class="slider-container">
             <label>Stil</label>
             <md-slider step="1" ticks min="1" max="6" oninput="updateInputValue('stil2', {{id}}, this.value)"></md-slider>
-            <input {{disable enableEditing}} type="hidden" name="stil2" required value={{#optionalFn begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer2}}{{/optionalFn}} />
+            <input {{disable enableEditing}} type="hidden" name="stil2" required value={{#optionalDefault3 begegnung.kampfrichterWertung}}{{this.kampfstilWettkaempfer2}}{{/optionalDefault3}} />
           </div>
           <div class="allewertungen when_mobile_toggle">
             {{#each begegnung.alleWertungen}}

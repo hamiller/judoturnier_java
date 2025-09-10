@@ -181,6 +181,15 @@ public class HelperSource {
 		return options.fn(optional.get());
 	}
 
+	public static Object optionalDefault3(Optional<?> optional, Options options) throws IOException {
+		logger.trace("Checking for optional... {}", optional);
+		if (optional == null || !optional.isPresent()) {
+			return "3";
+		}
+		logger.trace("return " + optional.get());
+		return options.fn(optional.get());
+	}
+
 	public static String disable(Boolean isEditable, Options options) {
 		logger.trace("isEditable {}", isEditable);
 		return isEditable ? "" : "disabled";
