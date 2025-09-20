@@ -55,6 +55,9 @@ public class BenutzerRepository {
 			existingJpa.updateFrom(futureJpa);
 			return benutzerConverter.convertToBenutzer(benutzerJpaRepository.save(existingJpa));
 		}
+
+		logger.info("neu anlegen");
+		logger.info("Benutzer: {}", futureJpa);
 		return benutzerConverter.convertToBenutzer(benutzerJpaRepository.save(futureJpa));
 	}
 
