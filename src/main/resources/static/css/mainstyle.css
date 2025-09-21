@@ -594,6 +594,10 @@ md-slider {
   margin-right: 15px;
 }
 
+.qrcode {
+  text-align: center;
+}
+
 .radio-label {
   display: flex;
   align-items: center;
