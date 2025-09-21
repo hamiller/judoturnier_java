@@ -25,6 +25,8 @@ import org.apache.logging.log4j.Logger;
 public class BaseController {
 	public static final String BASE_URI    = "/";
 	public static final String KONTAKT_URI = "/kontakt";
+	public static final String IMPRESSUM_URI = "/impressum";
+	public static final String DATENSCHUTZ_URI = "/datenschutz";
 
 	private static final Logger logger = LogManager.getLogger(BaseController.class);
 
@@ -75,5 +77,19 @@ public class BaseController {
 
 		// Erfolgsantwort zurückgeben
 		return ResponseEntity.ok("Vielen Dank für Ihre Nachricht!");
+	}
+
+	@GetMapping(IMPRESSUM_URI)
+	public ModelAndView impressumPage() {
+		logger.info("Turniere Impressum.");
+		ModelAndView mav = new ModelAndView("impressum");
+		return mav;
+	}
+
+	@GetMapping(DATENSCHUTZ_URI)
+	public ModelAndView datenschutzPage() {
+		logger.info("Turniere Datenschutz.");
+		ModelAndView mav = new ModelAndView("datenschutz");
+		return mav;
 	}
 }
