@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
+import de.sinnix.judoturnier.adapter.primary.dto.GewichtsklasseRequest;
 import de.sinnix.judoturnier.application.EinstellungenService;
 import de.sinnix.judoturnier.application.GewichtsklassenService;
 import de.sinnix.judoturnier.application.WettkaempferService;
@@ -100,15 +101,15 @@ public class GewichtsklassenController {
 
 	@PostMapping(CREATE_SINGLE_GEWICHTSKLASSE_NEU_URI)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ModelAndView erstelleGewichtsklasseNeu(@PathVariable String turnierid, @RequestBody MultiValueMap<String, String> formData) {
-		logger.info("erneuere Gewichtsklasse für Altersklasse und Geschlecht {}", formData);
-		if (formData == null || formData.isEmpty()) {
+	public ModelAndView erstelleGewichtsklasseNeu(@PathVariable String turnierid, @RequestBody GewichtsklasseRequest gewichtsklasseRequest) {
+		logger.info("erneuere Gewichtsklasse für Altersklasse und Geschlecht {}", gewichtsklasseRequest.toString());
+		if (gewichtsklasseRequest == null) {
 			throw new IllegalArgumentException();
 		}
 
 		var turnierUUID = UUID.fromString(turnierid);
-		var altersklasse = Altersklasse.valueOf(formData.getFirst("altersklasse"));
-		var geschlecht = (formData.keySet().contains("geschlecht") && formData.getFirst("geschlecht") != "") ? Geschlecht.valueOf(formData.getFirst("geschlecht")) : null;
+		var altersklasse = gewichtsklasseRequest.getAltersklasse() != null && !gewichtsklasseRequest.getAltersklasse().isEmpty() ? Altersklasse.valueOf(gewichtsklasseRequest.getAltersklasse()) : null;
+		var geschlecht = gewichtsklasseRequest.getGeschlecht() != null && !gewichtsklasseRequest.getGeschlecht().isEmpty() ? Geschlecht.valueOf(gewichtsklasseRequest.getGeschlecht()) : null;
 		var wk = (wettkaempferService.alleKaempfer(UUID.fromString(turnierid))).stream()
 			.filter(kaempfer -> kaempfer.altersklasse() == altersklasse)
 			.filter(kaempfer -> geschlecht != null ? kaempfer.geschlecht() == geschlecht : true)

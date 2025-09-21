@@ -15,7 +15,7 @@
   <form id="turniereinstellungenformular" action="/turnier/{{turnierid}}/einstellungen" method="POST">
     <div class="generalcontent">
       <h2>Einstellung für alle Klassen</h2>
-
+      <h3>Achtung: Bei einem Randori-Turnier darf die Gruppengröße der teilnehmenden Jahrgänge nicht größer als 6 sein, da sonst nicht ausreichend Farben zur Verfügung stehen!</h3>
       <div class="settingsrow">
         <div class="radio-label">
           <md-radio id="randori-radio" name="turniertyp" value="RANDORI" {{setChecked "RANDORI" turniertyp.name}}></md-radio>

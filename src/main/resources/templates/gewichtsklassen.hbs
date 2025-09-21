@@ -198,8 +198,17 @@
     console.log("Altersklasse / Geschlecht ", altersklasse, geschlecht);
     var sicher = confirm("ACHTUNG\n\nHiermit werden die Zuordnung von Wettkämpfern in der Gewichtsklasse " + altersklasse + " und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
     if (sicher) {
-      fetch('/turnier/{{turnierid}}/gewichtsklassen/gewichtsklasse-renew', {method: 'POST', body: {altersklasse: altersklasse, geschlecht: geschlecht}})
-        .then(() => window.location.href = 'gewichtsklassen')
+      fetch('/turnier/{{turnierid}}/gewichtsklassen/gewichtsklasse-renew', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          altersklasse: altersklasse,
+          geschlecht: geschlecht,
+        })
+      })
+      .then(() => window.location.href = 'gewichtsklassen')
     }
   }));
 
