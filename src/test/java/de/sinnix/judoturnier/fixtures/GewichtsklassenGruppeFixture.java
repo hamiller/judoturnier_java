@@ -58,7 +58,7 @@ public class GewichtsklassenGruppeFixture {
 			new Wettkaempfer(w2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(v2, "Verein2", turnierUUID), 24.5, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
 			new Wettkaempfer(w3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(v3, "Verein3", turnierUUID), 23.8, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
 			new Wettkaempfer(w4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(v4, "Verein4", turnierUUID), 24.2, Optional.of(Farbe.GELB), true, true, turnierUUID),
-			new Wettkaempfer(w5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(v5, "Verein5", turnierUUID), 24.4, Optional.of(Farbe.SCHWARZ), true, true, turnierUUID),
+			new Wettkaempfer(w5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(v5, "Verein5", turnierUUID), 24.4, Optional.empty(), true, true, turnierUUID),
 			new Wettkaempfer(w6, "Teilnehmer F", Geschlecht.w, Altersklasse.U11, new Verein(v2, "Verein2", turnierUUID), 24.3, Optional.of(Farbe.WEISS), true, true, turnierUUID),
 			new Wettkaempfer(w7, "Teilnehmer G", Geschlecht.w, Altersklasse.U11, new Verein(v2, "Verein2", turnierUUID), 24.3, Optional.of(Farbe.BLAU), true, true, turnierUUID),
 			new Wettkaempfer(w8, "Teilnehmer H", Geschlecht.w, Altersklasse.U11, new Verein(v2, "Verein2", turnierUUID), 24.3, Optional.of(Farbe.BRAUN), true, true, turnierUUID)
@@ -72,7 +72,7 @@ public class GewichtsklassenGruppeFixture {
                     new Wettkaempfer(w2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(v2, "Verein2", turnierUUID), 24.5, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
                     new Wettkaempfer(w3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(v3, "Verein3", turnierUUID), 23.8, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
                     new Wettkaempfer(w4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(v4, "Verein4", turnierUUID), 24.2, Optional.of(Farbe.GELB), true, true, turnierUUID),
-                    new Wettkaempfer(w5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(v5, "Verein5", turnierUUID), 24.4, Optional.of(Farbe.SCHWARZ), true, true, turnierUUID),
+                    new Wettkaempfer(w5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(v5, "Verein5", turnierUUID), 24.4, Optional.of(Farbe.BRAUN), true, true, turnierUUID),
                     new Wettkaempfer(w6, "Teilnehmer F", Geschlecht.w, Altersklasse.U11, new Verein(v2, "Verein2", turnierUUID), 24.3, Optional.of(Farbe.WEISS), true, true, turnierUUID)
             ), Optional.of(RandoriGruppenName.Antilope), 23.8, 24.5, turnierUUID),
             new GewichtsklassenGruppe(gwkg2, Altersklasse.U11, Optional.of(Geschlecht.m), Arrays.asList(
@@ -80,7 +80,7 @@ public class GewichtsklassenGruppeFixture {
                     new Wettkaempfer(w8, "Teilnehmer H", Geschlecht.m, Altersklasse.U11, new Verein(v4, "Verein4", turnierUUID), 25.2, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
                     new Wettkaempfer(w9, "Teilnehmer I", Geschlecht.w, Altersklasse.U11, new Verein(v1, "Verein1", turnierUUID), 24.9, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
                     new Wettkaempfer(w10, "Teilnehmer J", Geschlecht.m, Altersklasse.U11, new Verein(v5, "Verein5", turnierUUID), 25.1, Optional.of(Farbe.GELB), true, true, turnierUUID),
-                    new Wettkaempfer(w11, "Teilnehmer K", Geschlecht.w, Altersklasse.U11, new Verein(v3, "Verein3", turnierUUID), 25.3, Optional.of(Farbe.SCHWARZ), true, true, turnierUUID),
+                    new Wettkaempfer(w11, "Teilnehmer K", Geschlecht.w, Altersklasse.U11, new Verein(v3, "Verein3", turnierUUID), 25.3, Optional.of(Farbe.BRAUN), true, true, turnierUUID),
                     new Wettkaempfer(w12, "Teilnehmer L", Geschlecht.m, Altersklasse.U11, new Verein(v2, "Verein2", turnierUUID), 25.4, Optional.of(Farbe.WEISS), true, true, turnierUUID)
             ), Optional.of(RandoriGruppenName.Eule), 25.8, 24.8, turnierUUID),
             new GewichtsklassenGruppe(gwkg3, Altersklasse.U11, Optional.of(Geschlecht.m), Arrays.asList(
@@ -88,7 +88,7 @@ public class GewichtsklassenGruppeFixture {
                     new Wettkaempfer(w14, "Teilnehmer N", Geschlecht.m, Altersklasse.U11, new Verein(v5, "Verein5", turnierUUID), 26.2, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
                     new Wettkaempfer(w15, "Teilnehmer O", Geschlecht.m, Altersklasse.U11, new Verein(v1, "Verein1", turnierUUID), 26.1, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
                     new Wettkaempfer(w16, "Teilnehmer P", Geschlecht.w, Altersklasse.U11, new Verein(v3, "Verein3", turnierUUID), 26.4, Optional.of(Farbe.GELB), true, true, turnierUUID),
-                    new Wettkaempfer(w17, "Teilnehmer Q", Geschlecht.m, Altersklasse.U11, new Verein(v2, "Verein2", turnierUUID), 26.3, Optional.of(Farbe.SCHWARZ), true, true, turnierUUID),
+                    new Wettkaempfer(w17, "Teilnehmer Q", Geschlecht.m, Altersklasse.U11, new Verein(v2, "Verein2", turnierUUID), 26.3, Optional.of(Farbe.BRAUN), true, true, turnierUUID),
                     new Wettkaempfer(w18, "Teilnehmer R", Geschlecht.w, Altersklasse.U11, new Verein(v1, "Verein1", turnierUUID), 26.5, Optional.of(Farbe.WEISS), true, true, turnierUUID)
             ), Optional.of(RandoriGruppenName.Katze), 26.8, 25.8, turnierUUID),
             new GewichtsklassenGruppe(gwkg4, Altersklasse.U11, Optional.of(Geschlecht.m), Arrays.asList(
@@ -120,7 +120,7 @@ public class GewichtsklassenGruppeFixture {
             new Wettkaempfer(w2, "Teilnehmer B", Geschlecht.m, Altersklasse.U11, new Verein(v2, "Verein2", turnierUUID), 24.5, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
             new Wettkaempfer(w3, "Teilnehmer C", Geschlecht.m, Altersklasse.U11, new Verein(v3, "Verein3", turnierUUID), 23.8, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
             new Wettkaempfer(w4, "Teilnehmer D", Geschlecht.m, Altersklasse.U11, new Verein(v4, "Verein4", turnierUUID), 24.2, Optional.of(Farbe.GELB), true, true, turnierUUID),
-            new Wettkaempfer(w5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(v5, "Verein5", turnierUUID), 24.4, Optional.of(Farbe.SCHWARZ), true, true, turnierUUID),
+            new Wettkaempfer(w5, "Teilnehmer E", Geschlecht.m, Altersklasse.U11, new Verein(v5, "Verein5", turnierUUID), 24.4, Optional.of(Farbe.BRAUN), true, true, turnierUUID),
             new Wettkaempfer(w6, "Teilnehmer F", Geschlecht.w, Altersklasse.U11, new Verein(v2, "Verein2", turnierUUID), 24.3, Optional.of(Farbe.WEISS), true, true, turnierUUID)
         ), Optional.of(RandoriGruppenName.Antilope), 23.8, 24.5, turnierUUID),
         new GewichtsklassenGruppe(gwkg2, Altersklasse.U11, Optional.of(Geschlecht.m), Arrays.asList(
@@ -128,7 +128,7 @@ public class GewichtsklassenGruppeFixture {
             new Wettkaempfer(w8, "Teilnehmer H", Geschlecht.m, Altersklasse.U11, new Verein(v4, "Verein4", turnierUUID), 25.2, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
             new Wettkaempfer(w9, "Teilnehmer I", Geschlecht.w, Altersklasse.U11, new Verein(v1, "Verein1", turnierUUID), 24.9, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
             new Wettkaempfer(w10, "Teilnehmer J", Geschlecht.m, Altersklasse.U11, new Verein(v5, "Verein5", turnierUUID), 25.1, Optional.of(Farbe.GELB), true, true, turnierUUID),
-            new Wettkaempfer(w11, "Teilnehmer K", Geschlecht.w, Altersklasse.U11, new Verein(v3, "Verein3", turnierUUID), 25.3, Optional.of(Farbe.SCHWARZ), true, true, turnierUUID),
+            new Wettkaempfer(w11, "Teilnehmer K", Geschlecht.w, Altersklasse.U11, new Verein(v3, "Verein3", turnierUUID), 25.3, Optional.of(Farbe.BRAUN), true, true, turnierUUID),
             new Wettkaempfer(w12, "Teilnehmer L", Geschlecht.m, Altersklasse.U11, new Verein(v2, "Verein2", turnierUUID), 25.4, Optional.of(Farbe.WEISS), true, true, turnierUUID)
         ), Optional.of(RandoriGruppenName.Eule), 25.8, 24.8, turnierUUID),
         new GewichtsklassenGruppe(gwkg3, Altersklasse.U11, Optional.of(Geschlecht.m), Arrays.asList(
@@ -136,7 +136,7 @@ public class GewichtsklassenGruppeFixture {
             new Wettkaempfer(w14, "Teilnehmer N", Geschlecht.m, Altersklasse.U11, new Verein(v5, "Verein5", turnierUUID), 26.2, Optional.of(Farbe.ORANGE), true, true, turnierUUID),
             new Wettkaempfer(w15, "Teilnehmer O", Geschlecht.m, Altersklasse.U11, new Verein(v1, "Verein1", turnierUUID), 26.1, Optional.of(Farbe.GRUEN), true, true, turnierUUID),
             new Wettkaempfer(w16, "Teilnehmer P", Geschlecht.w, Altersklasse.U11, new Verein(v3, "Verein3", turnierUUID), 26.4, Optional.of(Farbe.GELB), true, true, turnierUUID),
-            new Wettkaempfer(w17, "Teilnehmer Q", Geschlecht.m, Altersklasse.U11, new Verein(v2, "Verein2", turnierUUID), 26.3, Optional.of(Farbe.SCHWARZ), true, true, turnierUUID),
+            new Wettkaempfer(w17, "Teilnehmer Q", Geschlecht.m, Altersklasse.U11, new Verein(v2, "Verein2", turnierUUID), 26.3, Optional.of(Farbe.BRAUN), true, true, turnierUUID),
             new Wettkaempfer(w18, "Teilnehmer R", Geschlecht.w, Altersklasse.U11, new Verein(v1, "Verein1", turnierUUID), 26.5, Optional.of(Farbe.WEISS), true, true, turnierUUID)
         ), Optional.of(RandoriGruppenName.Katze), 26.8, 25.8, turnierUUID),
         new GewichtsklassenGruppe(gwkg4, Altersklasse.U13, Optional.of(Geschlecht.m), Arrays.asList(
