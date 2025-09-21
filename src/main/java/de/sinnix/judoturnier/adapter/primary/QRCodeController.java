@@ -47,7 +47,7 @@ public class QRCodeController {
 	}
 
 	private String getBase64ImageGruppen(String path, String turnierid, String altersklasse, UriComponentsBuilder builder) {
-		logger.warn("QR-Code Path: {} mit turnier {} und alter {}", path, turnierid, altersklasse);
+		logger.debug("QR-Code Path: {} mit turnier {} und alter {}", path, turnierid, altersklasse);
 		URI uri = builder
 			.replacePath(path)
 			.buildAndExpand(turnierid, altersklasse)

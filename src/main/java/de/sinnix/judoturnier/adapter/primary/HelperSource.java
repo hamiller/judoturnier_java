@@ -222,7 +222,7 @@ public class HelperSource {
 				return result;
 			}
 
-			logger.warn("Konnte keinen Nutzer aus dem Authentication parsen, erstelle Dummy");
+			logger.info("Kein Nutzer im Authentication-Kontext vorhanden, nutze Dummy");
 			return new OidcBenutzer(UUID.randomUUID(), Benutzer.ANONYMOUS_USERNAME, "", List.of(BenutzerRolle.BEOBACHTER));
 		} catch (Exception e) {
 			logger.info("Nutzer konnte nicht geparsed werden! {}", authentication, e);
