@@ -109,6 +109,12 @@ public class TurnierVerwaltungController {
 			.collect(Collectors.toList());
 		benutzerService.ordneBenutzerZuTurnier(benutzerDesTurniers, turnierUUID);
 
+		List<UUID> benutzerNichtDesTurniers = formData.values().stream()
+			.filter(bz -> !bz.zugeordnetZuTurnier())
+			.map(bz -> UUID.fromString(bz.userid()))
+			.collect(Collectors.toList());
+		benutzerService.entferneBenutzerVonTurnier(benutzerNichtDesTurniers, turnierUUID);
+
 		return new ModelAndView("redirect:/turnier/" + turnierid);
 	}
 

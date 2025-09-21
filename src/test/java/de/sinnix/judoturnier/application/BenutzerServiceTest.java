@@ -151,23 +151,14 @@ class BenutzerServiceTest {
 			benutzer2.name(),
 			List.of(new TurnierRollen(null, turnier2UUID, benutzer2.benutzerRollen())),
 			benutzer2.benutzerRollen());
-
-
-		when(benutzerRepository.findBenutzer(any())).thenAnswer(invocation -> {
-			UUID userId = invocation.getArgument(0);
-			if (userId.equals(userId1)) return Optional.of(benutzer1);
-			if (userId.equals(userId2)) return Optional.of(benutzer2);
-			return Optional.empty();
-		});
-
+		
 		service.entferneBenutzerVonTurnier(benutzerList, turnier1UUID);
 
-		verify(benutzerRepository, times(2)).findBenutzer(any());
-		ArgumentCaptor<Benutzer> argumentCaptor = ArgumentCaptor.forClass(Benutzer.class);
-		verify(benutzerRepository, times(2)).save(argumentCaptor.capture());
-		List<Benutzer> capturedBenutzer = argumentCaptor.getAllValues();
+		ArgumentCaptor<UUID> argumentCaptor = ArgumentCaptor.forClass(UUID.class);
+		verify(benutzerRepository, times(2)).deleteTurnierRollen(argumentCaptor.capture(), eq(turnier1UUID));
+		List<UUID> capturedBenutzer = argumentCaptor.getAllValues();
 		assertEquals(2, capturedBenutzer.size());
-		assertEquals(benutzer1Neu, capturedBenutzer.get(0));
-		assertEquals(benutzer2Neu, capturedBenutzer.get(1));
+		assertEquals(benutzer1Neu.uuid(), capturedBenutzer.get(0));
+		assertEquals(benutzer2Neu.uuid(), capturedBenutzer.get(1));
 	}
 }

@@ -86,4 +86,15 @@ public class BenutzerRepository {
 		TurnierRollenJpa newTurnierRollen = new TurnierRollenJpa(benutzerJpa, turnierRollen.rollen(), turnierUUID);
 		turnierRollenJpaRepository.save(newTurnierRollen);
 	}
+
+	public void deleteTurnierRollen(UUID userId, UUID turnierUUID) {
+		logger.info("Lösche TurnierRollen für Benutzer {} und Turnier {}", userId, turnierUUID);
+		Optional<TurnierRollenJpa> optionalTurnierRollen = turnierRollenJpaRepository.findAllByBenutzerIdAndTurnierUuid(userId, turnierUUID);
+
+		if (optionalTurnierRollen.isPresent()) {
+			turnierRollenJpaRepository.delete(optionalTurnierRollen.get());
+		} else {
+			logger.warn("Keine TurnierRollen für Benutzer {} und Turnier {} gefunden", userId, turnierUUID);
+		}
+	}
 }

@@ -70,20 +70,7 @@ public class BenutzerService {
 	public void entferneBenutzerVonTurnier(List<UUID> benutzerIds, UUID turnierUUID) {
 		logger.info("Entferne Benutzer [{}] von Turnier {}", benutzerIds, turnierUUID);
 		for (UUID userId : benutzerIds) {
-			Optional<Benutzer> ob = benutzerRepository.findBenutzer(userId);
-			if (ob.isPresent()) {
-				Benutzer benutzer = ob.get();
-				List<TurnierRollen> updatedTurnierRollen = benutzer.turnierRollen().stream()
-					.filter(turnierRolle -> !turnierRolle.turnierId().equals(turnierUUID))
-					.toList();
-				benutzerRepository.save(new Benutzer(
-					benutzer.uuid(),
-					benutzer.username(),
-					benutzer.name(),
-					updatedTurnierRollen,
-					benutzer.benutzerRollen()
-				));
-			}
+			benutzerRepository.deleteTurnierRollen(userId, turnierUUID);
 		}
 	}
 }
