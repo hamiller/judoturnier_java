@@ -82,7 +82,9 @@ public class SecurityConfig {
 
 		http
 			.oauth2Login(oauth2 -> oauth2
-				.userInfoEndpoint(userInfo -> userInfo.userAuthoritiesMapper(userAuthoritiesMapperBean())))
+				.userInfoEndpoint(userInfo -> userInfo.userAuthoritiesMapper(userAuthoritiesMapperBean()))
+				.loginPage("/oauth2/authorization/keycloak")
+			)
 			.logout(logout -> logout
 				.addLogoutHandler(keycloakLogoutHandlerBean())
 				.invalidateHttpSession(true)
