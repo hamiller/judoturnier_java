@@ -36,40 +36,28 @@
 </div>
 <script src="/js/allgemein.js"></script>
 <script>
-  const socket = new WebSocket("/mattenanzeigews?matte=" + {{matte}});
-
-  // Verbindungsstatus prüfen
-  socket.onopen = function() {
-    console.log("WebSocket-Zeit-Verbindung hergestellt");
-  };
-
-  socket.onerror = function(error) {
-    console.error("WebSocket-Zeit-Fehler:", error);
-  };
-
-  socket.onclose = function() {
-    console.log("WebSocket-Zeit-Verbindung geschlossen");
-    // Optional: Wiederverbinden
-    setTimeout(() => location.reload(), 1000);
-  };
-
-  socket.onmessage = function (event) {
-    const command = event.data;
+  // Werte für matte und mattenrunde als JS-Variablen setzen
+  const matte = "{{matte}}";
+  const mattenrunde = "{{mattenrunde}}";
+  // WebSocket-Initialisierung mit zentralem Reconnect und Zeitstand
+  const url = "/mattenanzeigews?matte=" + matte;
+  initWebSocket(url, function(command) {
     if (command === "start") start();
     if (command === "stop") stop();
     if (command === "reset") reset();
-  };
+  });
 
   function sendCommand(command) {
     if (command === 'reset') {
       var sicher = confirm("ACHTUNG\n\nHiermit wird die Wettkampfzeit zurückgesetzt! \n\nSind sie sicher?");
       if (!sicher) return;
     }
-    socket.send(command);
+    sendCommandToSocket(command, globalSocket);
   }
 
   const COUNTDOWN = {{kampfzeit}} * 1000; // Millisekunden
-  init(COUNTDOWN);
+  // Init jetzt mit matte und mattenrunde
+  init(COUNTDOWN, matte, mattenrunde);
 </script>
 </body>
 </html>
