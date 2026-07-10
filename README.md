@@ -17,9 +17,22 @@ Für das Deployment der Anwendung auf dem Zielsystem siehe README.md in `deploym
 
 Zum lokalen testen muss das Testbed gestartet sein (also keycloak, Datenbank).
 Dazu `docker compose -f docker-compose-testbed.yml up -d` ausführen.
+Beim ersten Start importiert Keycloak automatisch den Realm `judoturnier` aus
+`keycloak-realm-export.json`. Die Datei wird im Container als
+`/opt/keycloak/data/import/judoturnier-realm.json` eingebunden und mit
+`--import-realm` geladen.
+
+Falls Keycloak bereits mit einem bestehenden Docker-Volume gestartet wurde,
+wird ein vorhandener Realm beim Start nicht überschrieben. Für ein frisches
+lokales Testbed die Container und Volumes entfernen:
+`docker compose -f docker-compose-testbed.yml down -v`
+
 Danach kann die Anwendung in der Entwicklungsumgebung gestartet werden, bzw.
-`./gradlew bootRun --args='--spring.profiles.active=local'`
+`./gradlew clean bootRun --console=plain --args='--spring.profiles.active=local'`
 ACHTUNG: Spring-Profile `local` ist erforderlich.
+
+
+Der Service ist dann unter `localhost:8080` erreichbar.
 
 
 ## Hints

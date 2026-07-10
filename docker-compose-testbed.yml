@@ -23,7 +23,7 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.7
     container_name: keycloak-judo-testbed
-    command: start-dev
+    command: start-dev --import-realm
     environment:
       KC_DB: postgres
       KC_DB_URL_HOST: db
@@ -39,3 +39,5 @@ services:
       - db
     networks:
       - net
+    volumes:
+      - ./keycloak-realm-export.json:/opt/keycloak/data/import/judoturnier-realm.json:ro
