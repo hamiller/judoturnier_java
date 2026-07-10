@@ -17,7 +17,8 @@ Für das Deployment der Anwendung auf dem Zielsystem siehe README.md in `deploym
 
 Zum lokalen testen muss das Testbed gestartet sein (also keycloak, Datenbank).
 Dazu `docker compose -f docker-compose-testbed.yml up -d` ausführen.
-Danach kann die Anwendung in der Entwicklungsumgebung gestartet werden.
+Danach kann die Anwendung in der Entwicklungsumgebung gestartet werden, bzw.
+`./gradlew bootRun --args='--spring.profiles.active=local'`
 ACHTUNG: Spring-Profile `local` ist erforderlich.
 
 

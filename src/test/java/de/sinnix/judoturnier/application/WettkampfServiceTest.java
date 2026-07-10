@@ -9,7 +9,6 @@ import java.util.UUID;
 import java.util.stream.IntStream;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import de.sinnix.judoturnier.adapter.secondary.BenutzerRepository;
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
 import de.sinnix.judoturnier.adapter.secondary.WertungRepository;
@@ -47,7 +46,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import tools.jackson.core.JacksonException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -430,7 +429,7 @@ class WettkampfServiceTest {
 			.allMatch(i -> matten.get(1).runden().get(i - 1).mattenRunde() < matten.get(1).runden().get(i).mattenRunde()));
 	}
 
-	private Begegnung deepCopyBegegnung(Begegnung original) throws JsonProcessingException {
+	private Begegnung deepCopyBegegnung(Begegnung original) throws JacksonException {
 		Begegnung b = new Begegnung();
 		b.setId(original.getId());
 		b.setBegegnungId(original.getBegegnungId());

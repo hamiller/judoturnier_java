@@ -10,7 +10,7 @@ volumes:
 
 services:
   db:
-    image: postgres:latest
+    image: postgres:17
     container_name: postgres-judo
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
@@ -48,7 +48,7 @@ services:
       - net
 
   keycloak:
-    image: quay.io/keycloak/keycloak:25.0.2
+    image: quay.io/keycloak/keycloak:26.7
     container_name: keycloak-judo
     command: start-dev
     environment:

@@ -1,6 +1,6 @@
 package de.sinnix.judoturnier.application;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import de.sinnix.judoturnier.adapter.secondary.jpa.EinstellungJpa;
 import de.sinnix.judoturnier.adapter.secondary.EinstellungJpaRepository;
 import de.sinnix.judoturnier.adapter.secondary.converter.TurnierConverter;
