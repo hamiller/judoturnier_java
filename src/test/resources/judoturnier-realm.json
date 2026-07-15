@@ -1,0 +1,175 @@
+{
+    "clients": [
+        {
+            "adminUrl": "",
+            "alwaysDisplayInConsole": false,
+            "attributes": {
+                "backchannel.logout.revoke.offline.tokens": "false",
+                "backchannel.logout.session.required": "true",
+                "client.secret.creation.time": "1720519672",
+                "display.on.consent.screen": "false",
+                "oauth2.device.authorization.grant.enabled": "false",
+                "oidc.ciba.grant.enabled": "false"
+            },
+            "authenticationFlowBindingOverrides": {},
+            "baseUrl": "",
+            "bearerOnly": false,
+            "clientAuthenticatorType": "client-secret",
+            "clientId": "judoturnier-client",
+            "consentRequired": false,
+            "description": "Judoturnier-Service",
+            "directAccessGrantsEnabled": true,
+            "enabled": true,
+            "frontchannelLogout": true,
+            "fullScopeAllowed": true,
+            "id": "399b045b-6116-471f-8f77-f42f6f0d84b2",
+            "implicitFlowEnabled": false,
+            "name": "Judoturnier-Service",
+            "nodeReRegistrationTimeout": -1,
+            "protocol": "openid-connect",
+            "publicClient": false,
+            "redirectUris": [
+                "http://localhost:8080/*",
+                "*"
+            ],
+            "rootUrl": "",
+            "secret": "the-client-secret",
+            "serviceAccountsEnabled": false,
+            "standardFlowEnabled": true,
+            "webOrigins": [
+                "http://localhost:8080",
+                "*"
+            ]
+        }
+    ],
+    "enabled": true,
+    "realm": "judoturnier",
+    "requiredCredentials": [
+        "password"
+    ],
+    "roles": {
+        "realm": [
+            {
+                "attributes": {},
+                "clientRole": false,
+                "composite": false,
+                "containerId": "6f782810-0195-471d-8d58-cfa2938398e6",
+                "description": "",
+                "id": "cda31853-2fc9-478d-8f7c-5ababc503b4c",
+                "name": "kampfrichter"
+            },
+            {
+                "attributes": {},
+                "clientRole": false,
+                "composite": false,
+                "containerId": "6f782810-0195-471d-8d58-cfa2938398e6",
+                "description": "",
+                "id": "32288e1b-292d-46b5-9767-5ce48d6dd2ae",
+                "name": "zuschauer"
+            },
+            {
+                "attributes": {},
+                "clientRole": false,
+                "composite": false,
+                "containerId": "6f782810-0195-471d-8d58-cfa2938398e6",
+                "description": "",
+                "id": "f5c41c99-3481-472b-8688-0b056b26375f",
+                "name": "trainer"
+            },
+            {
+                "attributes": {},
+                "clientRole": false,
+                "composite": false,
+                "containerId": "6f782810-0195-471d-8d58-cfa2938398e6",
+                "description": "kann alles machen im Service",
+                "id": "374b68e7-94cf-4c21-88aa-9dd1d401bd22",
+                "name": "admin"
+            }
+        ]
+    },
+    "users": [
+        {
+            "createdTimestamp": 1720599283239,
+            "credentials": [
+              {
+                "type": "password",
+                "value": "s3cr3t"
+              }
+            ],
+            "disableableCredentialTypes": [],
+            "email": "admin@localhost.de",
+            "emailVerified": true,
+            "enabled": true,
+            "firstName": "Admin",
+            "groups": [],
+            "id": "898a7fcf-2fad-4ec9-8b4f-5513188af291",
+            "lastName": "adm",
+            "notBefore": 0,
+            "realmRoles": [
+                "kampfrichter",
+                "zuschauer",
+                "default-roles-judoturnier",
+                "trainer",
+                "admin"
+            ],
+            "requiredActions": [],
+            "totp": false,
+            "username": "admin1"
+        },
+        {
+            "createdTimestamp": 1720592704389,
+            "credentials": [
+              {
+                "type": "password",
+                "value": "k1"
+              }
+            ],
+            "disableableCredentialTypes": [],
+            "email": "kampfrichter@local.de",
+            "emailVerified": true,
+            "enabled": true,
+            "firstName": "Vorname",
+            "groups": [],
+            "id": "24b37104-ba6d-48f1-9953-d577b759812a",
+            "lastName": "Nachname",
+            "notBefore": 0,
+            "realmRoles": [
+                "kampfrichter",
+                "default-roles-judoturnier"
+            ],
+            "requiredActions": [],
+            "totp": false,
+            "username": "kr1"
+        },
+        {
+            "clientRoles": {
+                "judoturnier-client": [
+                    "client_zuschauer"
+                ]
+            },
+            "createdTimestamp": 1720440677773,
+            "credentials": [
+              {
+                "type": "password",
+                "value": "nix"
+              }
+            ],
+            "disableableCredentialTypes": [],
+            "email": "user1@testmail.de",
+            "emailVerified": true,
+            "enabled": true,
+            "firstName": "Vorname",
+            "groups": [],
+            "id": "b7f3f450-d562-4613-b691-1f50477672f8",
+            "lastName": "Nachname",
+            "notBefore": 0,
+            "realmRoles": [
+                "zuschauer",
+                "default-roles-judoturnier"
+            ],
+            "requiredActions": [],
+            "totp": false,
+            "username": "user1"
+        }
+    ]
+}
