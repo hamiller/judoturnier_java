@@ -3,6 +3,7 @@ package de.sinnix.judoturnier.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -62,13 +63,13 @@ public class SecurityConfig {
 				.requestMatchers("/impressum").permitAll()
 				.requestMatchers("/datenschutz").permitAll()
 				.requestMatchers("/turnier/*/druck/**").permitAll()
-				.requestMatchers("/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 				.requestMatchers("/turnier/**").hasAnyAuthority("ROLE_ZUSCHAUER", "ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 				.requestMatchers("/turnier/*/wettkaempfer/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 				.requestMatchers("/turnier/*/vereine/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 				.requestMatchers("/turnier/*/gewichtsklassen/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 				.requestMatchers("/turnier/*/begegnungen/**").hasAnyAuthority("ROLE_ZUSCHAUER", "ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 				.requestMatchers("/turnier/*/einstellungen/**").hasAnyAuthority("ROLE_ADMIN")
+				.requestMatchers("/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_TRAINER", "ROLE_KAMPFRICHTER")
 				.anyRequest().authenticated());
 
 		http.exceptionHandling(exceptionHandling -> exceptionHandling

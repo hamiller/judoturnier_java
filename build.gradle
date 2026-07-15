@@ -60,10 +60,27 @@ dependencies {
 	testImplementation 'org.mockito:mockito-core:5.23.0'
 	testImplementation 'org.mockito:mockito-junit-jupiter:5.23.0'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	testImplementation platform('org.testcontainers:testcontainers-bom:1.21.3')
+	testImplementation 'org.springframework.boot:spring-boot-webclient'
+	testImplementation 'org.testcontainers:testcontainers'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'org.testcontainers:junit-jupiter'
+	testImplementation 'org.htmlunit:htmlunit:4.16.0'
+    testImplementation 'com.github.dasniko:testcontainers-keycloak:3.8.0'
+    testImplementation 'com.microsoft.playwright:playwright:1.55.0'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.register('playwrightInstallFirefox', JavaExec) {
+	group = 'verification'
+	description = 'Installs the Playwright Firefox browser used by integration tests.'
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'com.microsoft.playwright.CLI'
+	args 'install', 'firefox'
 }
 
 springBoot {

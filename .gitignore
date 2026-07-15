@@ -1,5 +1,6 @@
 HELP.md
 .gradle
+.cache/
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
@@ -49,3 +50,6 @@ testdaten/
 Dokumentensammlung/
 tmp/
 /INFOS.md
+/AGENTS.md
+/Bugs.md
+

@@ -8,6 +8,7 @@
     <Loggers>
         <Logger name="de.sinnix" level="debug" additivity="false"><AppenderRef ref="Console"/></Logger>
         <Logger name="org.springframework.security" level="info" additivity="false"><AppenderRef ref="Console"/></Logger>
+        <Logger name="org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger" level="info" additivity="false"><AppenderRef ref="Console"/></Logger>
 
         <Root level="info"><AppenderRef ref="Console"/></Root>
     </Loggers>
