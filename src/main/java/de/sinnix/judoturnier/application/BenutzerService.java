@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,7 +28,9 @@ public class BenutzerService {
 
 	@Transactional
 	public Benutzer holeBenutzer(OidcBenutzer oidcBenutzer) {
-		if (oidcBenutzer.username().equals(Benutzer.ANONYMOUS_USERNAME)) {
+		validiereOidcBenutzerFuerSuche(oidcBenutzer);
+
+		if (Benutzer.ANONYMOUS_USERNAME.equals(oidcBenutzer.username())) {
 			return benutzerRepository.findBenutzerByUsername(Benutzer.ANONYMOUS_USERNAME).orElseThrow(() -> new RuntimeException("Dummy Nutzer ist nicht in der Datenbank hinterlegt!"));
 		}
 
@@ -37,6 +40,8 @@ public class BenutzerService {
 		if (benutzer.isPresent()) {
 			return benutzer.get();
 		}
+
+		validiereOidcBenutzerFuerAnlage(oidcBenutzer);
 
 		logger.warn("TODO: make configureable/ausschaltbar to auto add new users");
 
@@ -48,6 +53,36 @@ public class BenutzerService {
 			oidcBenutzer.benutzerRollen());
 		logger.info("Lege Benutzer neu an {}", neuerBenutzer);
 		return benutzerRepository.save(neuerBenutzer);
+	}
+
+	private void validiereOidcBenutzerFuerSuche(OidcBenutzer oidcBenutzer) {
+		if (oidcBenutzer == null) {
+			throw new IllegalArgumentException("Benutzer kann nicht geladen werden: OIDC-Daten fehlen.");
+		}
+		if (isBlank(oidcBenutzer.username())) {
+			throw new IllegalArgumentException("Benutzer kann nicht geladen werden: OIDC-Daten unvollständig (username). Bitte Keycloak-Mapper und Benutzerprofil prüfen.");
+		}
+	}
+
+	private void validiereOidcBenutzerFuerAnlage(OidcBenutzer oidcBenutzer) {
+		List<String> fehlendeFelder = new ArrayList<>();
+		if (oidcBenutzer.uuid() == null) {
+			fehlendeFelder.add("uuid");
+		}
+		if (isBlank(oidcBenutzer.name())) {
+			fehlendeFelder.add("name");
+		}
+		if (oidcBenutzer.benutzerRollen() == null || oidcBenutzer.benutzerRollen().isEmpty() || oidcBenutzer.benutzerRollen().stream().anyMatch(Objects::isNull)) {
+			fehlendeFelder.add("rollen");
+		}
+
+		if (!fehlendeFelder.isEmpty()) {
+			throw new IllegalArgumentException("Benutzer kann nicht automatisch angelegt werden: Keycloak/OIDC-Daten unvollständig (" + String.join(", ", fehlendeFelder) + "). Bitte Keycloak-Mapper und Benutzerprofil prüfen.");
+		}
+	}
+
+	private boolean isBlank(String value) {
+		return value == null || value.isBlank();
 	}
 
 	@Transactional
