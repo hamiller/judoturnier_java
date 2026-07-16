@@ -198,7 +198,7 @@ public class GewichtsklassenServiceTest {
 		assertNotNull(result);
 		assertEquals(2, result.size());
 		assertEquals(Optional.of(Farbe.WEISS), result.get(0).teilnehmer().get(0).farbe());
-		assertEquals(Optional.of(Farbe.WEISS), result.get(0).teilnehmer().get(1).farbe());
+		assertEquals(Optional.of(Farbe.BRAUN), result.get(0).teilnehmer().get(1).farbe());
 	}
 
 	@Test
@@ -216,7 +216,7 @@ public class GewichtsklassenServiceTest {
 		assertNotNull(result);
 		assertEquals(2, result.size());
 		assertEquals(Optional.of(Farbe.WEISS), result.get(0).teilnehmer().get(0).farbe());
-		assertEquals(Optional.of(Farbe.WEISS), result.get(0).teilnehmer().get(1).farbe());
+		assertEquals(Optional.of(Farbe.BRAUN), result.get(0).teilnehmer().get(1).farbe());
 	}
 
 	@Test
@@ -235,14 +235,14 @@ public class GewichtsklassenServiceTest {
 		assertNotNull(result);
 		assertEquals(3, result.size());
 		assertEquals(Optional.of(Farbe.WEISS), result.get(0).teilnehmer().get(0).farbe());
-		assertEquals(Optional.of(Farbe.WEISS), result.get(0).teilnehmer().get(1).farbe());
+		assertEquals(Optional.of(Farbe.BRAUN), result.get(0).teilnehmer().get(1).farbe());
 		assertEquals(Optional.of(Farbe.WEISS), result.get(1).teilnehmer().get(0).farbe());
 
 		ArgumentCaptor<Wettkaempfer> argumentCaptor = ArgumentCaptor.forClass(Wettkaempfer.class);
 		verify(wettkaempferRepository, times(3)).save(argumentCaptor.capture());
 		List<Wettkaempfer> gespeicherteWettkaempfer = argumentCaptor.getAllValues();
 		assertEquals(Optional.of(Farbe.WEISS), gespeicherteWettkaempfer.get(0).farbe());
-		assertEquals(Optional.of(Farbe.WEISS), gespeicherteWettkaempfer.get(1).farbe());
+		assertEquals(Optional.of(Farbe.BRAUN), gespeicherteWettkaempfer.get(1).farbe());
 		assertEquals(Optional.of(Farbe.WEISS), gespeicherteWettkaempfer.get(2).farbe());
 	}
 
@@ -259,15 +259,15 @@ public class GewichtsklassenServiceTest {
 		assertNotNull(result);
 		assertEquals(2, result.size());
 		assertEquals(6, result.get(0).teilnehmer().size());
-		assertEquals(List.of(Optional.of(Farbe.WEISS), Optional.of(Farbe.WEISS), Optional.of(Farbe.BRAUN), Optional.of(Farbe.GELB), Optional.of(Farbe.ORANGE), Optional.of(Farbe.GRUEN)), result.get(0).teilnehmer().stream().map(Wettkaempfer::farbe).toList());
+		assertEquals(List.of(Optional.of(Farbe.WEISS), Optional.of(Farbe.BRAUN), Optional.of(Farbe.GELB), Optional.of(Farbe.ORANGE), Optional.of(Farbe.GRUEN), Optional.of(Farbe.BLAU)), result.get(0).teilnehmer().stream().map(Wettkaempfer::farbe).toList());
 	}
 
 	@Test
-	void getFarbeMappedIndexSechsAufSechsteFarbe() throws Exception {
+	void getFarbeMappedIndexFuenfAufSechsteFarbe() throws Exception {
 		Method getFarbe = GewichtsklassenService.class.getDeclaredMethod("getFarbe", int.class);
 		getFarbe.setAccessible(true);
 
-		Farbe farbe = (Farbe) getFarbe.invoke(gewichtsklassenService, 6);
+		Farbe farbe = (Farbe) getFarbe.invoke(gewichtsklassenService, 5);
 
 		assertEquals(Farbe.BLAU, farbe);
 	}

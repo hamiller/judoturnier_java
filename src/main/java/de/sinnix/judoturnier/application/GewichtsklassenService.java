@@ -313,11 +313,8 @@ public class GewichtsklassenService {
 		return gruppen;
 	}
 
-	private Farbe getFarbe(int size) {
+	private Farbe getFarbe(int index) {
 		Farbe[] farben = Farbe.values();
-		// Gruppengröße 0 wird zur ersten Gruppe und muss daher die gleiche Farbe erhalten,
-		// ausserdem muss auf den index 0-5 gemapped werden
-		int index = size == 0 ? 0 : size -1;
 		return farben[index];
 	}
 
