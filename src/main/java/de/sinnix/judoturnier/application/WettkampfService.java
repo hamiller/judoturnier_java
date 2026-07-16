@@ -18,11 +18,8 @@ import de.sinnix.judoturnier.adapter.secondary.BenutzerRepository;
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
 import de.sinnix.judoturnier.adapter.secondary.WertungRepository;
 import de.sinnix.judoturnier.application.algorithm.Algorithmus;
-import de.sinnix.judoturnier.application.algorithm.BesterAusDrei;
-import de.sinnix.judoturnier.application.algorithm.DoppelKOSystem;
-import de.sinnix.judoturnier.application.algorithm.DoppelKOSystemMitDoppelterTrostrunde;
-import de.sinnix.judoturnier.application.algorithm.DoppelKOSystemVorgepoolt;
-import de.sinnix.judoturnier.application.algorithm.JederGegenJeden;
+import de.sinnix.judoturnier.application.algorithm.AlgorithmusFactory;
+import de.sinnix.judoturnier.application.algorithm.WettkampfsystemResolver;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
@@ -37,6 +34,7 @@ import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
 import de.sinnix.judoturnier.model.WettkampfGruppeMitBegegnungen;
 import de.sinnix.judoturnier.model.WettkampfReihenfolge;
+import de.sinnix.judoturnier.model.Wettkampfsystem;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -46,6 +44,7 @@ import org.apache.logging.log4j.Logger;
 @Service
 public class WettkampfService {
 	private static final Logger                 logger = LogManager.getLogger(WettkampfService.class);
+	private static final WettkampfsystemResolver wettkampfsystemResolver = new WettkampfsystemResolver();
 	@Autowired
 	private              Helpers                helpers;
 	@Autowired
@@ -123,16 +122,21 @@ public class WettkampfService {
 		checkGruppenSindValide(gwks);
 		List<WettkampfGruppeMitBegegnungen> wettkampfGruppeMitBegegnungenList = new ArrayList<>();
 		for (GewichtsklassenGruppe gwk : gwks) {
-			Algorithmus algorithmus = getAlgorithmus(einstellungen, gwk);
-
-			logger.info("Nutze Algorithmus {} für Gruppe {}({})", algorithmus.getClass().getSimpleName(), gwk.id(), gwk.name());
-
 			// erstelle einzelne Gruppen, falls Gruppengröße beschränkt ist
 			var maxGruppenGroesse = einstellungen.gruppengroessen().altersklasseGruppengroesse().get(gwk.altersKlasse());
 			logger.debug("Maximale Gruppengröße in Altersklasse {}: {}", gwk.altersKlasse(), maxGruppenGroesse);
 			List<List<Wettkaempfer>> wettkaempferGruppen = splitArrayToChunkSize(gwk.teilnehmer(), maxGruppenGroesse);
 			for (List<Wettkaempfer> wettkaempferList : wettkaempferGruppen) {
 				var splittedGwkg = new GewichtsklassenGruppe(gwk.id(), gwk.altersKlasse(), gwk.gruppenGeschlecht(), wettkaempferList, gwk.name(), gwk.minGewicht(), gwk.maxGewicht(), gwk.turnierUUID());
+				Wettkampfsystem wettkampfsystem = wettkampfsystemResolver.resolve(einstellungen, splittedGwkg);
+
+				if (wettkampfsystem == Wettkampfsystem.KEIN_WETTKAMPF) {
+					logger.info("Kein Wettkampf für Gruppe {}({}) mit {} Teilnehmern", splittedGwkg.id(), splittedGwkg.name(), splittedGwkg.teilnehmer().size());
+					continue;
+				}
+
+				Algorithmus algorithmus = AlgorithmusFactory.from(wettkampfsystem);
+				logger.info("Nutze Wettkampfsystem {} mit Algorithmus {} für Gruppe {}({})", wettkampfsystem, algorithmus.getClass().getSimpleName(), splittedGwkg.id(), splittedGwkg.name());
 				WettkampfGruppeMitBegegnungen wettkampfGruppeMitBegegnungen = algorithmus.erstelleWettkampfGruppe(splittedGwkg);
 				wettkampfGruppeMitBegegnungenList.add(wettkampfGruppeMitBegegnungen);
 			}
@@ -203,50 +207,6 @@ public class WettkampfService {
 
 			turnierRepository.speichereBegegnung(nextGewinnerRunde);
 		}
-	}
-
-	/**
-	 * Ermittelt den passenden Algorithmus für die Gewichtsklassen-Gruppe basierend auf den Einstellungen.
-	 *
-	 * bei 2 Teilnehmern: „Best of Three"
-	 * bis 5 Teilnehmer: Jeder gegen Jeden
-	 * 6 - 8 Teilnehmer: Vorgepooltes KO-System
-	 * ab 9 Teilnehmer: Doppel-KO-System (bis U21), KO-System mit doppelter Trostrund (Frauen/Männer)
-	 *
-	 */
-	private static Algorithmus getAlgorithmus(Einstellungen einstellungen, GewichtsklassenGruppe gwk) {
-		var turnierTyp = einstellungen.turnierTyp();
-
-		if (turnierTyp == TurnierTyp.RANDORI) {
-			return new JederGegenJeden();
-		}
-
-		if (gwk.teilnehmer().size() <= 2) {
-			return new BesterAusDrei();
-		}
-
-		// TODO: ALTE ALGORITHMEN, KÜNFTIG AUSBAUEN
-		if (gwk.teilnehmer().size() <= 4) {
-			return new JederGegenJeden();
-		}
-
-		return new DoppelKOSystem();
-
-		// TODO: AB HIER DIE NEUEN, KORREKTEN ALGORITHMEN
-//
-//		if (gwk.teilnehmer().size() <= 5) {
-//			return new JederGegenJeden();
-//		}
-//
-//		if (gwk.teilnehmer().size() >= 6 && gwk.teilnehmer().size() <= 8) {
-//			return new DoppelKOSystemVorgepoolt();
-//		}
-//
-//		if (gwk.altersKlasse() == Altersklasse.FRAUEN || gwk.altersKlasse() == Altersklasse.MAENNER) {
-//			return new DoppelKOSystemMitDoppelterTrostrunde();
-//		}
-//
-//		return new DoppelKOSystem();
 	}
 
 	private List<Matte> erstelleGruppenReihenfolge(List<WettkampfGruppeMitBegegnungen> wettkampfGruppen, Integer anzahlMatten, WettkampfReihenfolge reihenfolge) {

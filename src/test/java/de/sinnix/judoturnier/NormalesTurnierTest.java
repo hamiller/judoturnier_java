@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -47,7 +45,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
@@ -110,7 +107,7 @@ public class NormalesTurnierTest {
 	}
 
 	@Test
-	public void testNormalesTurnier_FreiloseWerdenKorrektGesetzt() throws Exception {
+	public void testNormalesTurnier_ErwachseneBisFuenfKaempfenImPoolsystem() throws Exception {
 		// erstelle Gewichtsklassen
 		List<Wettkaempfer> wettkaempferList = wettkaempferService.alleKaempfer(this.turnier.uuid());
 		assertEquals(8, wettkaempferList.size(), "Es sollten 8 Wettkämpfer existieren");
@@ -126,96 +123,37 @@ public class NormalesTurnierTest {
 		wettkampfService.erstelleWettkampfreihenfolge(this.turnier.uuid());
 
 
-		// PRÜFE ob Freilose richtig gesetzt sind
+		// Prüfe, dass die kleinen Erwachsenengruppen als Pools ohne Freilose angelegt werden.
 		List<Matte> wettkampfreihenfolgeJeMatte = turnierService.ladeWettkampfreihenfolge(this.turnier.uuid());
 		assertEquals(1, wettkampfreihenfolgeJeMatte.size(), "Es sollte nur eine Matte existieren");
 
 		Matte matte = wettkampfreihenfolgeJeMatte.getFirst();
-		Set<UUID> gruppenIds = matte.runden().stream().map(Runde::gruppe).map(WettkampfGruppe::id).collect(Collectors.toSet());
+		var gruppenIds = matte.runden().stream().map(Runde::gruppe).map(WettkampfGruppe::id).collect(Collectors.toSet());
 		assertEquals(2, gruppenIds.size(), "Es sollten genau 2 verschiedene Gruppen sein");
 
-		Map<UUID, Long> begegnungenProGruppe = matte.runden().stream()
-			.flatMap(r -> r.begegnungen().stream().map(Begegnung::getWettkampfGruppe))
+		var erwarteteBegegnungen = gwks.stream()
+			.filter(gwk -> !gwk.teilnehmer().isEmpty())
+			.mapToInt(gwk -> gwk.teilnehmer().size() * (gwk.teilnehmer().size() - 1) / 2)
+			.sum();
+		var echteBegegnungen = matte.runden().stream()
+			.flatMap(runde -> runde.begegnungen().stream())
+			.filter(begegnung -> begegnung.getWettkaempfer1().isPresent() && begegnung.getWettkaempfer2().isPresent())
+			.toList();
+		assertEquals(erwarteteBegegnungen, echteBegegnungen.size(), "Poolsysteme müssen n*(n-1)/2 echte Begegnungen erzeugen");
+
+		var begegnungenProGruppe = echteBegegnungen.stream()
+			.map(Begegnung::getWettkampfGruppe)
 			.map(WettkampfGruppe::id)
 			.collect(Collectors.groupingBy(gid -> gid, Collectors.counting()));
 		assertEquals(2, begegnungenProGruppe.size(), "Es sollten genau zwei Gruppen existieren");
-		assertTrue(begegnungenProGruppe.containsValue(3L), "Eine Gruppe sollte 3 Begegnungen haben");
-		assertTrue(begegnungenProGruppe.containsValue(11L), "Eine Gruppe sollte 11 Begegnungen haben");
-
-		UUID grosseWettkampfGruppe = begegnungenProGruppe.entrySet().stream()
-			.filter(entry -> entry.getValue().equals(11L))
-			.map(Map.Entry::getKey)
-			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("Keine Gruppe mit 11 Begegnungen gefunden"));
-		UUID kleineWettkampfGruppe = begegnungenProGruppe.entrySet().stream()
-			.filter(entry -> entry.getValue().equals(3L))
-			.map(Map.Entry::getKey)
-			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("Keine Gruppe mit 3 Begegnungen gefunden"));
-
-		UUID startGruppeId = null;
-		for (int mattenRunde = 1; mattenRunde <= matte.runden().size(); mattenRunde++) {
-			var runde = matte.runden().get(mattenRunde - 1);
-			logger.debug("Runde der Matte: {}", mattenRunde);
-			logger.debug("Runde der Gruppe '{}': {}", runde.gruppe().id(), runde.gruppenRunde());
-
-			assertTrue(kleineWettkampfGruppe == runde.gruppe().id() || grosseWettkampfGruppe == runde.gruppe().id(), "Die Runde sollte entweder zur kleinen oder großen Wettkampfgruppe gehören");
-			assertNotEquals(runde.gruppe().id(), startGruppeId, "Die Gruppen sollten abwechselnd kämpfen");
-			startGruppeId = runde.gruppe().id();
-
-			for (Begegnung begegnung : runde.begegnungen()) {
-				logger.debug("  Begegnung: {} - {} vs {}", begegnung.getBegegnungId(), begegnung.getWettkaempfer1().map(Wettkaempfer::name), begegnung.getWettkaempfer2().map(Wettkaempfer::name));
-			}
-
-			if (kleineWettkampfGruppe == runde.gruppe().id()) {
-				assertEquals(1, runde.begegnungen().size(), "Die kleine Gruppe sollte immer nur eine Begegnung haben, wegen Jeder-Gegen-Jeden");
-				assertTrue(runde.begegnungen().get(0).getWettkaempfer1().isPresent(), "Die Begegnung sollte einen Wettkämpfer 1 haben");
-				assertTrue(runde.begegnungen().get(0).getWettkaempfer2().isPresent(), "Die Begegnung sollte einen Wettkämpfer 2 haben");
-				assertEquals(Begegnung.RundenTyp.GEWINNERRUNDE, runde.begegnungen().get(0).getBegegnungId().rundenTyp, "Die Begegnung der kleinen Gruppe sollte eine Gewinnerrunde sein");
-			}
-
-			if (grosseWettkampfGruppe == runde.gruppe().id()) {
-				assertTrue(runde.gruppenRunde() == 1 || runde.gruppenRunde() == 2 || runde.gruppenRunde() == 3, "Die große Gruppe sollte in einer von 3 Runden sein");
-
-				if (runde.gruppenRunde() == 1) {
-					assertEquals(6, runde.begegnungen().size(), "Die erste Runde der großen Gruppe sollte 6 Begegnungen haben");
-					assertEquals(Begegnung.RundenTyp.GEWINNERRUNDE, runde.begegnungen().get(0).getBegegnungId().rundenTyp, "Die Begegnung der großen Gruppe sollte eine Gewinnerrunde sein");
-					assertEquals(Begegnung.RundenTyp.GEWINNERRUNDE, runde.begegnungen().get(1).getBegegnungId().rundenTyp, "Die Begegnung der großen Gruppe sollte eine Gewinnerrunde sein");
-					assertEquals(Begegnung.RundenTyp.GEWINNERRUNDE, runde.begegnungen().get(2).getBegegnungId().rundenTyp, "Die Begegnung der großen Gruppe sollte eine Gewinnerrunde sein");
-					assertEquals(Begegnung.RundenTyp.GEWINNERRUNDE, runde.begegnungen().get(3).getBegegnungId().rundenTyp, "Die Begegnung der großen Gruppe sollte eine Gewinnerrunde sein");
-					assertEquals(Begegnung.RundenTyp.TROSTRUNDE, runde.begegnungen().get(4).getBegegnungId().rundenTyp, "Die Begegnung der großen Gruppe sollte eine Trostrunde sein");
-					assertEquals(Begegnung.RundenTyp.TROSTRUNDE, runde.begegnungen().get(5).getBegegnungId().rundenTyp, "Die Begegnung der großen Gruppe sollte eine Trostrunde sein");
-
-					assertTrue(runde.begegnungen().get(0).getWettkaempfer1().isPresent(), "Wettkämpfer 1 der ersten Begegnung sollte vorhanden sein");
-					assertTrue(runde.begegnungen().get(0).getWettkaempfer2().isEmpty(), "Die erste Begegnung der großen Gruppe sollte ein Freilos haben");
-					assertTrue(runde.begegnungen().get(1).getWettkaempfer1().isPresent(), "Wettkämpfer 1 der zweiten Begegnung sollte vorhanden sein");
-					assertTrue(runde.begegnungen().get(1).getWettkaempfer2().isEmpty(), "Die zweite Begegnung der großen Gruppe sollte ein Freilos haben");
-					assertTrue(runde.begegnungen().get(2).getWettkaempfer1().isPresent(), "Wettkämpfer 1 der dritten Begegnung sollte vorhanden sein");
-					assertTrue(runde.begegnungen().get(2).getWettkaempfer2().isEmpty(), "Die dritte Begegnung der großen Gruppe sollte ein Freilos haben");
-					assertTrue(runde.begegnungen().get(3).getWettkaempfer1().isPresent(), "Wettkämpfer 1 der vierten Begegnung sollte vorhanden sein");
-					assertTrue(runde.begegnungen().get(3).getWettkaempfer2().isPresent(), "Wettkämpfer 2 der vierten Begegnung sollte vorhanden sein");
-				}
-				if (runde.gruppenRunde() == 2) {
-					assertEquals(4, runde.begegnungen().size(), "Die zweite Runde der großen Gruppe sollte 4 Begegnungen haben");
-					assertEquals(Begegnung.RundenTyp.GEWINNERRUNDE, runde.begegnungen().get(0).getBegegnungId().rundenTyp, "Die Begegnung der großen Gruppe sollte eine Gewinnerrunde sein");
-					assertEquals(Begegnung.RundenTyp.GEWINNERRUNDE, runde.begegnungen().get(1).getBegegnungId().rundenTyp, "Die Begegnung der großen Gruppe sollte eine Gewinnerrunde sein");
-					assertEquals(Begegnung.RundenTyp.TROSTRUNDE, runde.begegnungen().get(2).getBegegnungId().rundenTyp, "Die Begegnung der großen Gruppe sollte eine Trostrunde sein");
-					assertEquals(Begegnung.RundenTyp.TROSTRUNDE, runde.begegnungen().get(3).getBegegnungId().rundenTyp, "Die Begegnung der großen Gruppe sollte eine Trostrunde sein");
-
-					assertTrue(runde.begegnungen().get(0).getWettkaempfer1().isPresent(), "Wettkämpfer 1 der ersten Begegnung sollte vorhanden sein");
-					assertTrue(runde.begegnungen().get(0).getWettkaempfer2().isPresent(), "Wettkämpfer 2 der ersten Begegnung sollte vorhanden sein");
-					assertTrue(runde.begegnungen().get(1).getWettkaempfer1().isPresent(), "Wettkämpfer 1 der zweiten Begegnung sollte vorhanden sein");
-					assertTrue(runde.begegnungen().get(1).getWettkaempfer2().isEmpty(), "Die zweite Begegnung der großen Gruppe sollte noch offen sein");
-				}
-				if (runde.gruppenRunde() == 3) {
-					assertEquals(1, runde.begegnungen().size(), "Die dritte Runde der großen Gruppe sollte 1 Begegnung haben");
-					assertEquals(Begegnung.RundenTyp.GEWINNERRUNDE, runde.begegnungen().get(0).getBegegnungId().rundenTyp, "Die Begegnung der großen Gruppe sollte eine Gewinnerrunde sein");
-					assertTrue(runde.begegnungen().get(0).getWettkaempfer1().isEmpty(), "Die erste Begegnung der großen Gruppe sollte noch offen sein");
-					assertTrue(runde.begegnungen().get(0).getWettkaempfer2().isEmpty(), "Die erste Begegnung der großen Gruppe sollte noch offen sein");
-				}
-			}
-
-		}
+		assertTrue(begegnungenProGruppe.containsValue(3L), "Die Dreiergruppe sollte 3 echte Begegnungen haben");
+		assertTrue(begegnungenProGruppe.containsValue(10L), "Die Fünfergruppe sollte 10 echte Begegnungen haben");
+		assertTrue(matte.runden().stream()
+			.flatMap(runde -> runde.begegnungen().stream())
+			.allMatch(begegnung -> begegnung.getBegegnungId().rundenTyp == Begegnung.RundenTyp.GEWINNERRUNDE), "Poolsysteme haben nur Gewinnerrunden");
+		assertTrue(matte.runden().stream()
+			.flatMap(runde -> runde.begegnungen().stream())
+			.noneMatch(begegnung -> begegnung.getWettkaempfer1().isEmpty() ^ begegnung.getWettkaempfer2().isEmpty()), "Poolsysteme dürfen keine Freilose enthalten");
 	}
 
 }

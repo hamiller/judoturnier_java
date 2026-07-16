@@ -84,8 +84,8 @@ class WettkampfServiceTest {
 
 	@Test
 	void testErstelleWettkampfreihenfolgeAltersklasseRandori() {
-		List<GewichtsklassenGruppe> gewichtsklassenGruppen = GewichtsklassenGruppeFixture.gewichtsklassenGruppen;
-		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroessen(Map.of(Altersklasse.U9, 6, Altersklasse.U11, 6)), new VariablerGewichtsteil(0.2), SeparateAlterklassen.ZUSAMMEN, new Wettkampfzeiten(Map.of()), turnierUUID);
+		List<GewichtsklassenGruppe> gewichtsklassenGruppen = GewichtsklassenGruppeFixture.gewichtsklassenGruppenU15;
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroessen(Map.of(Altersklasse.U15, 6)), new VariablerGewichtsteil(0.2), SeparateAlterklassen.ZUSAMMEN, new Wettkampfzeiten(Map.of()), turnierUUID);
 
 		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
 		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);
@@ -163,8 +163,8 @@ class WettkampfServiceTest {
 
 		   B11: Runde 3 Gewinnerrunde
 		 */
-		List<GewichtsklassenGruppe> gewichtsklassenGruppen = GewichtsklassenGruppeFixture.gewichtsklassenGruppe8Teilnehmer;
-		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(1), reihenfolge, new Gruppengroessen(Map.of(Altersklasse.U9, 6, Altersklasse.U11, 50)), new VariablerGewichtsteil(0.2), SeparateAlterklassen.GETRENNT, new Wettkampfzeiten(Map.of()), turnierUUID);
+		List<GewichtsklassenGruppe> gewichtsklassenGruppen = gewichtsklassenGruppe8TeilnehmerFrauen();
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(1), reihenfolge, new Gruppengroessen(Map.of(Altersklasse.FRAUEN, 50)), new VariablerGewichtsteil(0.2), SeparateAlterklassen.GETRENNT, new Wettkampfzeiten(Map.of()), turnierUUID);
 		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
 		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);
 		ArgumentCaptor<List> gruppenCaptor = ArgumentCaptor.forClass(List.class);
@@ -255,7 +255,7 @@ class WettkampfServiceTest {
 	void testErstelleWettkampfreihenfolgeAltersklasseNormalErweitertTeilnehmerMitFreilos(WettkampfReihenfolge reihenfolge) {
 		/*
 		 1 Gruppe
-		   Gruppe1: 5 Teilnehmer, wird auf 8 Teilnehmer erweitert
+		   Gruppe1: 6 Teilnehmer, wird auf 8 Teilnehmer erweitert
 		   11 Begegnungen:
 		   B1, B2, B3, B4: Runde 1 Gewinnerrunde
 
@@ -273,13 +273,14 @@ class WettkampfServiceTest {
 				WettkaempferFixtures.wettkaempferin2,
 				WettkaempferFixtures.wettkaempferin3,
 				WettkaempferFixtures.wettkaempferin4,
-				WettkaempferFixtures.wettkaempferin5), Optional.empty(), 58.0, 62.0, turnierUUID));
+				WettkaempferFixtures.wettkaempferin5,
+				WettkaempferFixtures.wettkaempferin6), Optional.empty(), 58.0, 62.0, turnierUUID));
 		WettkampfGruppe wettkampfGruppe = WettkampfgruppeFixture.gruppe1.gruppe();
 		List<Begegnung> initialeBegegnungen = Arrays.asList(
 			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1), UUID.randomUUID(), 1, 1, 1, 1, Optional.of(WettkaempferFixtures.wettkaempferin1), Optional.empty(), List.of(), wettkampfGruppe, turnierUUID),
 			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 2), UUID.randomUUID(), 1, 1, 1, 2, Optional.of(WettkaempferFixtures.wettkaempferin2), Optional.empty(), List.of(), wettkampfGruppe, turnierUUID),
-			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 3), UUID.randomUUID(), 1, 1, 1, 3, Optional.of(WettkaempferFixtures.wettkaempferin3), Optional.empty(), List.of(), wettkampfGruppe, turnierUUID),
-			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 4), UUID.randomUUID(), 1, 1, 1, 4, Optional.of(WettkaempferFixtures.wettkaempferin4), Optional.of(WettkaempferFixtures.wettkaempferin5), List.of(), wettkampfGruppe, turnierUUID),
+			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 3), UUID.randomUUID(), 1, 1, 1, 3, Optional.of(WettkaempferFixtures.wettkaempferin3), Optional.of(WettkaempferFixtures.wettkaempferin4), List.of(), wettkampfGruppe, turnierUUID),
+			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 4), UUID.randomUUID(), 1, 1, 1, 4, Optional.of(WettkaempferFixtures.wettkaempferin5), Optional.of(WettkaempferFixtures.wettkaempferin6), List.of(), wettkampfGruppe, turnierUUID),
 			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, 1, 1), UUID.randomUUID(), 1, 2, 1, 5, Optional.empty(), Optional.empty(), List.of(), wettkampfGruppe, turnierUUID),
 			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, 1, 2), UUID.randomUUID(), 1, 2, 1, 6, Optional.empty(), Optional.empty(), List.of(), wettkampfGruppe, turnierUUID),
 			new Begegnung(UUID.randomUUID(), new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 1), UUID.randomUUID(), 1, 3, 2, 7, Optional.empty(), Optional.empty(), List.of(), wettkampfGruppe, turnierUUID),
@@ -319,8 +320,8 @@ class WettkampfServiceTest {
 
 
 		// Prüfe
-		verify(wertungRepository, times(3)).speichereWertungInBegegnung(any(), any());
-		assertEquals(3, freilose.size(), "Es sollten 3 Freilose gespeichert werden");
+		verify(wertungRepository, times(2)).speichereWertungInBegegnung(any(), any());
+		assertEquals(2, freilose.size(), "Es sollten 2 Freilose gespeichert werden");
 
 		var freilos1 = freilose.get(0);
 		assertTrue(freilos1.getWettkaempfer1().isPresent(), "Wettkaempfer sollte ein Freilos haben");
@@ -332,11 +333,50 @@ class WettkampfServiceTest {
 		assertTrue(freilos2.getWettkaempfer2().isPresent(), "Wettkaempfer sollte mit anderem Freilos kombiniert werden");
 		assertEquals(WettkaempferFixtures.wettkaempferin1, freilos2.getWettkaempfer1().get(), "Wettkaempferin 1 erwartet");
 		assertEquals(WettkaempferFixtures.wettkaempferin2, freilos2.getWettkaempfer2().get(), "Wettkaempferin 2 erwartet");
+	}
 
-		var freilos3 = freilose.get(2);
-		assertTrue(freilos3.getWettkaempfer1().isPresent(), "Wettkaempfer sollte ein Freilos haben");
-		assertTrue(freilos3.getWettkaempfer2().isEmpty(), "Dies sollte ein Freilos sein");
-		assertEquals(WettkaempferFixtures.wettkaempferin3, freilos3.getWettkaempfer1().get(), "Wettkaempferin 1 erwartet");
+	@Test
+	void testErstelleWettkampfreihenfolgeAltersklasseNormal6TeilnehmerErzeugtZweiFreilose() {
+		List<GewichtsklassenGruppe> gewichtsklassenGruppen = List.of(
+			new GewichtsklassenGruppe(GewichtsklassenGruppeFixture.gwkg1, Altersklasse.FRAUEN, Optional.of(Geschlecht.w), List.of(
+				WettkaempferFixtures.wettkaempferin1,
+				WettkaempferFixtures.wettkaempferin2,
+				WettkaempferFixtures.wettkaempferin3,
+				WettkaempferFixtures.wettkaempferin4,
+				WettkaempferFixtures.wettkaempferin5,
+				WettkaempferFixtures.wettkaempferin6), Optional.empty(), 58.0, 62.0, turnierUUID));
+
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(1), WettkampfReihenfolge.ABWECHSELND, new Gruppengroessen(Map.of(Altersklasse.FRAUEN, 8)), new VariablerGewichtsteil(0.2), SeparateAlterklassen.GETRENNT, new Wettkampfzeiten(Map.of()), turnierUUID);
+		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
+		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);
+		ArgumentCaptor<List> gruppenCaptor = ArgumentCaptor.forClass(List.class);
+		when(turnierRepository.speichereGruppen(gruppenCaptor.capture())).thenAnswer(invocation -> gruppenCaptor.getValue());
+		when(turnierRepository.ladeAlleBegegnungen(turnierUUID)).thenReturn(List.of());
+		when(benutzerRepository.findBenutzerByUsername(Benutzer.ANONYMOUS_KAMPFRICHTER)).thenReturn(Optional.of(BenutzerFixtures.DUMMY_KAMPFRICHTER));
+
+		wettkampfService.erstelleWettkampfreihenfolgeAltersklasse(Optional.empty(), turnierUUID);
+
+		ArgumentCaptor<List<Matte>> argumentCaptor = ArgumentCaptor.forClass(List.class);
+		verify(turnierRepository, times(1)).speichereMatten(argumentCaptor.capture());
+		List<Begegnung> begegnungen = argumentCaptor.getValue().stream()
+			.flatMap(matte -> matte.runden().stream())
+			.flatMap(runde -> runde.begegnungen().stream())
+			.toList();
+		List<Begegnung> ersteGewinnerrunde = begegnungen.stream()
+			.filter(begegnung -> begegnung.getBegegnungId().rundenTyp == Begegnung.RundenTyp.GEWINNERRUNDE)
+			.filter(begegnung -> begegnung.getBegegnungId().rundenNummerDesTyps == 1)
+			.toList();
+
+		assertEquals(11, begegnungen.size(), "6 Teilnehmerinnen müssen auf einen 8er-Doppel-KO-Baum mit 11 Begegnungen erweitert werden");
+		assertEquals(4, ersteGewinnerrunde.size(), "Die erste Gewinnerrunde im 8er-Baum muss 4 Begegnungen haben");
+		assertEquals(2, ersteGewinnerrunde.stream().filter(this::istFreilos).count(), "Bei 6 Teilnehmerinnen müssen genau 2 Freilose entstehen");
+		assertEquals(2, ersteGewinnerrunde.stream()
+			.filter(begegnung -> begegnung.getWettkaempfer1().isPresent() && begegnung.getWettkaempfer2().isPresent())
+			.count(), "Die übrigen 2 Begegnungen der ersten Gewinnerrunde müssen echte Kämpfe sein");
+		assertEquals(0, begegnungen.stream()
+			.filter(begegnung -> begegnung.getBegegnungId().rundenTyp != Begegnung.RundenTyp.GEWINNERRUNDE || begegnung.getBegegnungId().rundenNummerDesTyps != 1)
+			.filter(this::istFreilos)
+			.count(), "Freilose dürfen nur in der ersten Gewinnerrunde erzeugt werden");
 	}
 
 	@Test
@@ -366,7 +406,7 @@ class WettkampfServiceTest {
 
 	@Test
 	void testErstelleWettkampfreihenfolgeAltersklasseNormal2() {
-		List<GewichtsklassenGruppe> gewichtsklassenGruppen = GewichtsklassenGruppeFixture.gewichtsklassenGruppen;
+		List<GewichtsklassenGruppe> gewichtsklassenGruppen = gewichtsklassenGruppenFrauen(GewichtsklassenGruppeFixture.gewichtsklassenGruppenU15);
 		// 5 Gruppen
 		//   Gruppe1: 6 Teilnehmer => wird auf 8 erweitert. 11 Begegnungen - doppelt KO
 		//   Gruppe2: 6 Teilnehmer => wird auf 8 erweitert. 11 Begegnungen - doppelt KO
@@ -374,7 +414,7 @@ class WettkampfServiceTest {
 		//   Gruppe4: 4 Teilnehmer => bleibt bei 4.          6 Begegnungen - jeder gegen jeden
 		//   Gruppe5: 3 Teilnehmer => bleibt bei 3.          3 Begegnungen - jeder gegen jeden
 
-		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroessen(Map.of(Altersklasse.U9, 6, Altersklasse.U11, 50)), new VariablerGewichtsteil(0.2), SeparateAlterklassen.GETRENNT, new Wettkampfzeiten(Map.of()), turnierUUID);
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.STANDARD, new MattenAnzahl(2), WettkampfReihenfolge.ABWECHSELND, new Gruppengroessen(Map.of(Altersklasse.FRAUEN, 50)), new VariablerGewichtsteil(0.2), SeparateAlterklassen.GETRENNT, new Wettkampfzeiten(Map.of()), turnierUUID);
 
 		when(einstellungenService.ladeEinstellungen(turnierUUID)).thenReturn(einstellungen);
 		when(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID)).thenReturn(gewichtsklassenGruppen);
@@ -448,5 +488,45 @@ class WettkampfServiceTest {
 
 	private Wettkaempfer copyWettkaempfer(Wettkaempfer w) {
 		return new Wettkaempfer(w.id(), w.name(), w.geschlecht(), w.altersklasse(), w.verein(), w.gewicht(), w.farbe(), w.checked(), w.printed(), w.turnierUUID());
+	}
+
+	private boolean istFreilos(Begegnung begegnung) {
+		return begegnung.getWettkaempfer1().isPresent() ^ begegnung.getWettkaempfer2().isPresent();
+	}
+
+	private List<GewichtsklassenGruppe> gewichtsklassenGruppe8TeilnehmerFrauen() {
+		return gewichtsklassenGruppenFrauen(GewichtsklassenGruppeFixture.gewichtsklassenGruppe8Teilnehmer);
+	}
+
+	private List<GewichtsklassenGruppe> gewichtsklassenGruppenFrauen(List<GewichtsklassenGruppe> gruppen) {
+		return gruppen.stream()
+			.map(gruppe -> new GewichtsklassenGruppe(
+				gruppe.id(),
+				Altersklasse.FRAUEN,
+				Optional.of(Geschlecht.w),
+				gruppe.teilnehmer().stream()
+					.map(this::wettkaempferin)
+					.toList(),
+				gruppe.name(),
+				gruppe.minGewicht(),
+				gruppe.maxGewicht(),
+				gruppe.turnierUUID()
+			))
+			.toList();
+	}
+
+	private Wettkaempfer wettkaempferin(Wettkaempfer wettkaempfer) {
+		return new Wettkaempfer(
+			wettkaempfer.id(),
+			wettkaempfer.name(),
+			Geschlecht.w,
+			Altersklasse.FRAUEN,
+			wettkaempfer.verein(),
+			wettkaempfer.gewicht(),
+			wettkaempfer.farbe(),
+			wettkaempfer.checked(),
+			wettkaempfer.printed(),
+			wettkaempfer.turnierUUID()
+		);
 	}
 }

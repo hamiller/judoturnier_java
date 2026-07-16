@@ -4,6 +4,7 @@ import de.sinnix.judoturnier.adapter.secondary.GewichtsklassenRepository;
 import de.sinnix.judoturnier.adapter.secondary.WettkaempferRepository;
 import de.sinnix.judoturnier.config.GewichtsklassenConfiguration;
 import de.sinnix.judoturnier.model.Altersklasse;
+import de.sinnix.judoturnier.model.DomainException;
 import de.sinnix.judoturnier.model.Farbe;
 import de.sinnix.judoturnier.model.Geschlecht;
 import de.sinnix.judoturnier.model.Gewichtsklasse;
@@ -94,7 +95,7 @@ public class GewichtsklassenService {
 
 			for (List<Wettkaempfer> wks : wettkaempferNachAlter) {
 				var gruppenGroesse = einstellungen.gruppengroessen().altersklasseGruppengroesse().get(wks.get(0).altersklasse());
-				if (gruppenGroesse > Farbe.values().length) throw new Exception("Randori-Turniere dürfen maximal 6 Teilnehmer pro Gruppe haben!");
+				if (gruppenGroesse > Farbe.values().length) throw new DomainException("Randori-Turniere dürfen maximal 6 Teilnehmer pro Gruppe haben! Prüfen sie die Einstellungen der Gruppengröße der genutzten Altersklassen.");
 				int numGroups = (wks.size() + gruppenGroesse - 1) / gruppenGroesse;
 				gruppenNamen = gruppenNamen.subList(numGroups, gruppenNamen.size());
 				result.addAll(erstelleGewichtsklassenGruppenRandori(wks, aktuelleGruppenNamen, gruppenGroesse, turnierUUID));

@@ -3,12 +3,14 @@ package de.sinnix.judoturnier.adapter.primary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ import de.sinnix.judoturnier.model.TurnierTyp;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import tools.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping(GewichtsklassenController.CONTROLLER_URI)
@@ -51,6 +54,8 @@ public class GewichtsklassenController {
 	private GewichtsklassenService gewichtsklassenService;
 	@Autowired
 	private EinstellungenService   einstellungenService;
+	@Autowired
+	private ObjectMapper           objectMapper;
 
 	@GetMapping
 	public ModelAndView ladeGewichtsklassen(@PathVariable String turnierid) {
@@ -100,9 +105,19 @@ public class GewichtsklassenController {
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/gewichtsklassen");
 	}
 
-	@PostMapping(CREATE_SINGLE_GEWICHTSKLASSE_NEU_URI)
+	@PostMapping(value = CREATE_SINGLE_GEWICHTSKLASSE_NEU_URI, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ModelAndView erstelleGewichtsklasseNeu(@PathVariable String turnierid, @RequestBody GewichtsklasseRequest gewichtsklasseRequest) throws Exception {
+		return erneuereGewichtsklasse(turnierid, gewichtsklasseRequest);
+	}
+
+	@PostMapping(value = CREATE_SINGLE_GEWICHTSKLASSE_NEU_URI, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ModelAndView erstelleGewichtsklasseNeuForm(@PathVariable String turnierid, @RequestParam String gewichtsklasseRequest) throws Exception {
+		return erneuereGewichtsklasse(turnierid, objectMapper.readValue(gewichtsklasseRequest, GewichtsklasseRequest.class));
+	}
+
+	private ModelAndView erneuereGewichtsklasse(String turnierid, GewichtsklasseRequest gewichtsklasseRequest) throws Exception {
 		logger.info("erneuere Gewichtsklasse für Altersklasse und Geschlecht {}", gewichtsklasseRequest.toString());
 		var turnierUUID = UUID.fromString(turnierid);
 		var altersklasse = gewichtsklasseRequest.getAltersklasse() != null && !gewichtsklasseRequest.getAltersklasse().isEmpty() ? Altersklasse.valueOf(gewichtsklasseRequest.getAltersklasse()) : null;

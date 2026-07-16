@@ -1,5 +1,6 @@
 package de.sinnix.judoturnier.adapter.primary;
 
+import de.sinnix.judoturnier.model.DomainException;
 import de.sinnix.judoturnier.model.OidcBenutzer;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +23,15 @@ public class FehlerseiteHandler {
 		logger.error("Ein Fehler ist aufgetreten", ex);
 		ModelAndView mav = new ModelAndView("error");
 		mav.addObject("fehlerart", "Allgemeiner Fehler");
+		return mav;
+	}
+
+	// Allgemeine Ausnahmebehandlung
+	@ExceptionHandler(DomainException.class)
+	public ModelAndView handleDomainException(DomainException ex) {
+		logger.error("Ein Fehler ist aufgetreten", ex);
+		ModelAndView mav = new ModelAndView("error");
+		mav.addObject("fehlerart", ex.getMessage());
 		return mav;
 	}
 

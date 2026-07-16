@@ -145,6 +145,11 @@
       {{/if}}
     </div>
   </form>
+
+  <form id="renewGewichtsklassenForm" action="/turnier/{{turnierid}}/gewichtsklassen/gewichtsklassen-renew" method="POST"></form>
+  <form id="renewGewichtsklasseForm" action="/turnier/{{turnierid}}/gewichtsklassen/gewichtsklasse-renew" method="POST">
+    <input type="hidden" name="gewichtsklasseRequest" id="gewichtsklasseRequest"/>
+  </form>
 </div>
 
 {{> footer}}
@@ -187,8 +192,7 @@
   document.body.querySelector("#renewGewichtsklassen").addEventListener("click", async function () {
     var sicher = confirm("ACHTUNG\n\nHiermit werden alle bisherigen Zuordnung von Wettkämpfern in Gewichtsklassen und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
     if (sicher) {
-      fetch('/turnier/{{turnierid}}/gewichtsklassen/gewichtsklassen-renew', {method: 'POST'})
-        .then(() => window.location.href = 'gewichtsklassen')
+      document.getElementById("renewGewichtsklassenForm").submit();
     }
   });
 
@@ -198,17 +202,11 @@
     console.log("Altersklasse / Geschlecht ", altersklasse, geschlecht);
     var sicher = confirm("ACHTUNG\n\nHiermit werden die Zuordnung von Wettkämpfern in der Gewichtsklasse " + altersklasse + " und alle Wettkampf-Begegnungen gelöscht! \n\nSind sie sicher?");
     if (sicher) {
-      fetch('/turnier/{{turnierid}}/gewichtsklassen/gewichtsklasse-renew', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          altersklasse: altersklasse,
-          geschlecht: geschlecht,
-        })
-      })
-      .then(() => window.location.href = 'gewichtsklassen')
+      document.getElementById("gewichtsklasseRequest").value = JSON.stringify({
+        altersklasse: altersklasse,
+        geschlecht: geschlecht,
+      });
+      document.getElementById("renewGewichtsklasseForm").submit();
     }
   }));
 
