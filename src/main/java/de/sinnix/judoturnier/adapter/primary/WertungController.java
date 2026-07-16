@@ -143,14 +143,21 @@ public class WertungController {
 		OidcBenutzer benutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		UUID begegnungId = UUID.fromString(id);
 
-		var scoreWeiss = Integer.parseInt(formData.get("score_weiss").getFirst());
-		var penaltiesWeiss = Integer.parseInt(formData.get("penalties_weiss").getFirst());
-		var scoreBlau = Integer.parseInt(formData.get("score_blau").getFirst());
-		var penaltiesBlau = Integer.parseInt(formData.get("penalties_blau").getFirst());
+		var scoreWeiss = parseIntOrZero(formData.getFirst("score_weiss"));
+		var penaltiesWeiss = parseIntOrZero(formData.getFirst("penalties_weiss"));
+		var scoreBlau = parseIntOrZero(formData.getFirst("score_blau"));
+		var penaltiesBlau = parseIntOrZero(formData.getFirst("penalties_blau"));
 		var fightTime = formData.get("fightTime").getFirst();
 		var sieger = UUID.fromString(formData.get("sieger").getFirst());
 
 		wertungService.speichereTurnierWertung(begegnungId, scoreWeiss, scoreBlau, penaltiesWeiss, penaltiesBlau, fightTime, sieger, benutzer.uuid());
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/normal");
+	}
+
+	static int parseIntOrZero(String value) {
+		if (value == null || value.isBlank()) {
+			return 0;
+		}
+		return Integer.parseInt(value);
 	}
 }
