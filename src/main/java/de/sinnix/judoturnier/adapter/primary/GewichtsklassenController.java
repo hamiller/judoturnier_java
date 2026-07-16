@@ -91,7 +91,7 @@ public class GewichtsklassenController {
 
 	@PostMapping(CREATE_ALL_GEWICHTSKLASSEN_NEU_URI)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ModelAndView erstelleGewichtsklassenNeu(@PathVariable String turnierid) {
+	public ModelAndView erstelleGewichtsklassenNeu(@PathVariable String turnierid) throws Exception {
 		logger.info("erstelle Gewichtsklassen");
 		var wks = wettkaempferService.alleKaempfer(UUID.fromString(turnierid));
 		var gwks = gewichtsklassenService.teileInGewichtsklassen(wks, UUID.fromString(turnierid));
@@ -102,12 +102,8 @@ public class GewichtsklassenController {
 
 	@PostMapping(CREATE_SINGLE_GEWICHTSKLASSE_NEU_URI)
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ModelAndView erstelleGewichtsklasseNeu(@PathVariable String turnierid, @RequestBody GewichtsklasseRequest gewichtsklasseRequest) {
+	public ModelAndView erstelleGewichtsklasseNeu(@PathVariable String turnierid, @RequestBody GewichtsklasseRequest gewichtsklasseRequest) throws Exception {
 		logger.info("erneuere Gewichtsklasse für Altersklasse und Geschlecht {}", gewichtsklasseRequest.toString());
-		if (gewichtsklasseRequest == null) {
-			throw new IllegalArgumentException();
-		}
-
 		var turnierUUID = UUID.fromString(turnierid);
 		var altersklasse = gewichtsklasseRequest.getAltersklasse() != null && !gewichtsklasseRequest.getAltersklasse().isEmpty() ? Altersklasse.valueOf(gewichtsklasseRequest.getAltersklasse()) : null;
 		var geschlecht = gewichtsklasseRequest.getGeschlecht() != null && !gewichtsklasseRequest.getGeschlecht().isEmpty() ? Geschlecht.valueOf(gewichtsklasseRequest.getGeschlecht()) : null;

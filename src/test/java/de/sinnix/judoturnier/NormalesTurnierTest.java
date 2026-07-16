@@ -110,7 +110,7 @@ public class NormalesTurnierTest {
 	}
 
 	@Test
-	public void testNormalesTurnier_FreiloseWerdenKorrektGesetzt() {
+	public void testNormalesTurnier_FreiloseWerdenKorrektGesetzt() throws Exception {
 		// erstelle Gewichtsklassen
 		List<Wettkaempfer> wettkaempferList = wettkaempferService.alleKaempfer(this.turnier.uuid());
 		assertEquals(8, wettkaempferList.size(), "Es sollten 8 Wettkämpfer existieren");

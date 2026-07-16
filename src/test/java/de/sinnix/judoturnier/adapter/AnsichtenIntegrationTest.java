@@ -384,9 +384,14 @@ public class AnsichtenIntegrationTest extends AbstractIntegrationTest {
 	}
 
 	private void erstelleGewichtsklassenUndBegegnungen(UUID turnierId) {
-		List<GewichtsklassenGruppe> gewichtsklassenGruppen = gewichtsklassenService.teileInGewichtsklassen(wettkaempferService.alleKaempfer(turnierId), turnierId).stream()
-			.filter(gruppe -> !gruppe.teilnehmer().isEmpty())
-			.toList();
+		List<GewichtsklassenGruppe> gewichtsklassenGruppen;
+		try {
+			gewichtsklassenGruppen = gewichtsklassenService.teileInGewichtsklassen(wettkaempferService.alleKaempfer(turnierId), turnierId).stream()
+				.filter(gruppe -> !gruppe.teilnehmer().isEmpty())
+				.toList();
+		} catch (Exception e) {
+			throw new IllegalStateException("Gewichtsklassen fuer Integrationstest konnten nicht erstellt werden.", e);
+		}
 		gewichtsklassenService.speichere(gewichtsklassenGruppen);
 		wettkampfService.erstelleWettkampfreihenfolge(turnierId);
 	}
