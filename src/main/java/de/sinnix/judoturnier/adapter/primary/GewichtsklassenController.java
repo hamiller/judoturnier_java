@@ -31,6 +31,7 @@ import de.sinnix.judoturnier.model.GewichtsklassenGruppe;
 import de.sinnix.judoturnier.model.GewichtsklassenGruppen;
 import de.sinnix.judoturnier.model.OidcBenutzer;
 import de.sinnix.judoturnier.model.TurnierTyp;
+import de.sinnix.judoturnier.model.Wettkaempfer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -58,7 +59,7 @@ public class GewichtsklassenController {
 		OidcBenutzer oidcBenutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		var turnierUUID = UUID.fromString(turnierid);
 		var wks = wettkaempferService.alleKaempfer(turnierUUID);
-		var currentGwks = gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID);
+		var currentGwks = sortiereTeilnehmerNachGewicht(gewichtsklassenService.ladeGewichtsklassenGruppen(turnierUUID));
 
 		var groupedByAge = this.groupByAge(currentGwks);
 		var groupedByFemale = this.groupByGender(currentGwks, Geschlecht.w);
@@ -170,9 +171,28 @@ public class GewichtsklassenController {
 
 	private List<GewichtsklassenGruppen> groupByGender(List<GewichtsklassenGruppe> gwk, Geschlecht geschlecht) {
 		// Filtern nach Geschlecht
-		List<GewichtsklassenGruppe> groupeByGender = gwk.stream().filter(gruppe -> gruppe.gruppenGeschlecht().isPresent() && gruppe.gruppenGeschlecht().get().equals(geschlecht)).collect(Collectors.toList());
+		List<GewichtsklassenGruppe> groupeByGender = gwk.stream()
+			.filter(gruppe -> gruppe.gruppenGeschlecht().isPresent() && gruppe.gruppenGeschlecht().get().equals(geschlecht))
+			.collect(Collectors.toList());
 		// Gruppieren nach Alter
 		return groupByAge(groupeByGender);
+	}
+
+	private List<GewichtsklassenGruppe> sortiereTeilnehmerNachGewicht(List<GewichtsklassenGruppe> gruppen) {
+		return gruppen.stream()
+			.map(gruppe -> new GewichtsklassenGruppe(
+				gruppe.id(),
+				gruppe.altersKlasse(),
+				gruppe.gruppenGeschlecht(),
+				gruppe.teilnehmer().stream()
+					.sorted(Comparator.comparing(Wettkaempfer::gewicht))
+					.toList(),
+				gruppe.name(),
+				gruppe.minGewicht(),
+				gruppe.maxGewicht(),
+				gruppe.turnierUUID()
+			))
+			.toList();
 	}
 
 }
