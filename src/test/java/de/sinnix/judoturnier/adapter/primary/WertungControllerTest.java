@@ -17,4 +17,11 @@ class WertungControllerTest {
 	void parseIntOrZeroKeepsSubmittedValues() {
 		assertEquals(2, WertungController.parseIntOrZero("2"));
 	}
+
+	@Test
+	void parseShidoLimitsValuesToThree() {
+		assertEquals(0, WertungController.parseShido("-1"));
+		assertEquals(2, WertungController.parseShido("2"));
+		assertEquals(3, WertungController.parseShido("4"));
+	}
 }

@@ -4,24 +4,190 @@
   <title>Judo-Turniersoftware</title>
   <link rel="stylesheet" href="/css/interface.css">
   <link rel="stylesheet" href="/css/mainstyle.css">
+  <style>
+    body {
+      margin: 0;
+      background: #ffffff;
+      color: #006b78;
+      font-family: Arial, sans-serif;
+    }
+
+    .display-shell {
+      padding: 16px 14px 24px;
+    }
+
+    .display-title {
+      margin: 0 0 26px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .match-display {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 42px minmax(0, 1fr);
+      align-items: start;
+      gap: 18px;
+      width: 100%;
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    .fighter-display {
+      min-width: 0;
+    }
+
+    .fighter-name {
+      display: block;
+      min-height: 22px;
+      padding: 3px 8px;
+      font-size: 17px;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .fighter-name.weiss {
+      background: #f7f7ff;
+      color: #006b78;
+    }
+
+    .fighter-name.blau {
+      background: #2f6edc;
+      color: #ffffff;
+    }
+
+    .score-table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+      margin-top: 10px;
+      color: #17313a;
+      font-size: 20px;
+    }
+
+    .score-table th,
+    .score-table td {
+      height: 38px;
+      border: 2px solid #007987;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .score-table th {
+      background: #e9f7f9;
+      font-size: 16px;
+    }
+
+    .penalties {
+      display: grid;
+      grid-template-columns: repeat(4, 44px);
+      gap: 8px;
+      margin-top: 10px;
+      justify-content: center;
+    }
+
+    .penalty-box {
+      height: 34px;
+      border: 2px solid #007987;
+      background: #ffffff;
+      color: #17313a;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .penalty-box.active {
+      background: #ffdc3c;
+    }
+
+    .vs-label {
+      padding-top: 5px;
+      text-align: center;
+      font-size: 14px;
+      color: #006b78;
+    }
+
+    #timer-container {
+      margin-top: 34px;
+      text-align: center;
+    }
+
+    #timer-display {
+      margin: 0;
+      font-size: clamp(64px, 13vw, 140px);
+      line-height: 1;
+      color: #006b78;
+      letter-spacing: 0;
+    }
+
+    #timer-display.negative {
+      color: #b00020;
+    }
+  </style>
 </head>
 <body>
-<h1>Matte {{matte}} - Runde {{mattenrunde}}</h1>
-<div id="timer-container">
-  <h1 id="timer-display" class="centered-horizontal"></h1>
-</div>
-<div>
+<div class="display-shell">
+<h1 class="display-title">Matte {{matte}} - Runde {{mattenrunde}}</h1>
   {{#with begegnung}}
-    <div class="listeneintrag vs"> {{akuellePaarung}}
-      <div class="wettkaempfer name">
-        <label class="WEISS">{{wettkaempfer1.name}}</label>
+    <div class="match-display">
+      <div class="fighter-display">
+        <span class="fighter-name weiss">{{wettkaempfer1.name}}</span>
+        <table class="score-table" aria-label="Wertungen weiss">
+          <thead>
+          <tr>
+            <th>I</th>
+            <th>W</th>
+            <th>Y</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td id="display_ippon_weiss">{{#optionalFn kampfrichterWertung}}{{this.ipponWettkaempferWeiss}}{{/optionalFn}}</td>
+            <td id="display_wazari_weiss">{{#optionalFn kampfrichterWertung}}{{this.wazariWettkaempferWeiss}}{{/optionalFn}}</td>
+            <td id="display_yuko_weiss">{{#optionalFn kampfrichterWertung}}{{this.yukoWettkaempferWeiss}}{{/optionalFn}}</td>
+          </tr>
+          </tbody>
+        </table>
+        <div class="penalties" aria-label="Strafen weiss">
+          <div id="display_shido_weiss_1" class="penalty-box">S</div>
+          <div id="display_shido_weiss_2" class="penalty-box">S</div>
+          <div id="display_shido_weiss_3" class="penalty-box">S</div>
+          <div id="display_hansoku_make_weiss" class="penalty-box">H</div>
+        </div>
       </div>
-      <div class="center">vs</div>
-      <div class="wettkaempfer name">
-        <label class="BLAU">{{wettkaempfer2.name}}</label>
+      <div class="vs-label">vs</div>
+      <div class="fighter-display">
+        <span class="fighter-name blau">{{wettkaempfer2.name}}</span>
+        <table class="score-table" aria-label="Wertungen blau">
+          <thead>
+          <tr>
+            <th>I</th>
+            <th>W</th>
+            <th>Y</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td id="display_ippon_blau">{{#optionalFn kampfrichterWertung}}{{this.ipponWettkaempferRot}}{{/optionalFn}}</td>
+            <td id="display_wazari_blau">{{#optionalFn kampfrichterWertung}}{{this.wazariWettkaempferRot}}{{/optionalFn}}</td>
+            <td id="display_yuko_blau">{{#optionalFn kampfrichterWertung}}{{this.yukoWettkaempferRot}}{{/optionalFn}}</td>
+          </tr>
+          </tbody>
+        </table>
+        <div class="penalties" aria-label="Strafen blau">
+          <div id="display_shido_blau_1" class="penalty-box">S</div>
+          <div id="display_shido_blau_2" class="penalty-box">S</div>
+          <div id="display_shido_blau_3" class="penalty-box">S</div>
+          <div id="display_hansoku_make_blau" class="penalty-box">H</div>
+        </div>
       </div>
     </div>
   {{/with}}
+<div id="timer-container">
+  <h1 id="timer-display" class="centered-horizontal"></h1>
+</div>
 </div>
 <script>
   const COUNTDOWN = {{kampfzeit}} * 1000; // Millisekunden
@@ -69,6 +235,43 @@
     updateTimer();
   }
 
+  const numberOrZero = (value) => {
+    if (value === null || value === undefined || value === "") return "0";
+    return String(value);
+  }
+
+  const setScore = (id, value) => {
+    const element = document.getElementById(id);
+    if (element) element.textContent = numberOrZero(value);
+  }
+
+  const setPenaltyState = (id, active) => {
+    const element = document.getElementById(id);
+    if (!element) return;
+    element.classList.toggle("active", active);
+  }
+
+  const applyWertung = (wertung) => {
+    setScore("display_ippon_weiss", wertung.ippon_weiss);
+    setScore("display_wazari_weiss", wertung.wazari_weiss);
+    setScore("display_yuko_weiss", wertung.yuko_weiss);
+    setScore("display_ippon_blau", wertung.ippon_blau);
+    setScore("display_wazari_blau", wertung.wazari_blau);
+    setScore("display_yuko_blau", wertung.yuko_blau);
+
+    const shidoWeiss = Math.max(0, Math.min(3, parseInt(wertung.shido_weiss || "0", 10) || 0));
+    const shidoBlau = Math.max(0, Math.min(3, parseInt(wertung.shido_blau || "0", 10) || 0));
+    const hansokuMakeWeiss = wertung.hansoku_make_weiss === true || wertung.hansoku_make_weiss === "true" || shidoWeiss >= 3;
+    const hansokuMakeBlau = wertung.hansoku_make_blau === true || wertung.hansoku_make_blau === "true" || shidoBlau >= 3;
+
+    [1, 2, 3].forEach((index) => {
+      setPenaltyState("display_shido_weiss_" + index, index <= shidoWeiss);
+      setPenaltyState("display_shido_blau_" + index, index <= shidoBlau);
+    });
+    setPenaltyState("display_hansoku_make_weiss", hansokuMakeWeiss);
+    setPenaltyState("display_hansoku_make_blau", hansokuMakeBlau);
+  }
+
   const socket = new WebSocket("/mattenanzeigews?matte=" +{{matte}});
 
   socket.onmessage = function (event) {
@@ -76,8 +279,28 @@
     if (command === "start") start();
     if (command === "stop") stop();
     if (command === "reset") reset();
+    try {
+      const message = JSON.parse(command);
+      if (message.type === "wertung") {
+        applyWertung(message);
+      }
+    } catch (e) {
+      // Timer-Kommandos sind einfache Strings.
+    }
   };
 
+  applyWertung({
+    ippon_weiss: "{{#with begegnung}}{{#optionalFn kampfrichterWertung}}{{this.ipponWettkaempferWeiss}}{{/optionalFn}}{{/with}}",
+    wazari_weiss: "{{#with begegnung}}{{#optionalFn kampfrichterWertung}}{{this.wazariWettkaempferWeiss}}{{/optionalFn}}{{/with}}",
+    yuko_weiss: "{{#with begegnung}}{{#optionalFn kampfrichterWertung}}{{this.yukoWettkaempferWeiss}}{{/optionalFn}}{{/with}}",
+    shido_weiss: "{{#with begegnung}}{{#optionalFn kampfrichterWertung}}{{this.shidoWettkaempferWeiss}}{{/optionalFn}}{{/with}}",
+    hansoku_make_weiss: "{{#with begegnung}}{{#optionalFn kampfrichterWertung}}{{this.hansokuMakeWettkaempferWeiss}}{{/optionalFn}}{{/with}}",
+    ippon_blau: "{{#with begegnung}}{{#optionalFn kampfrichterWertung}}{{this.ipponWettkaempferRot}}{{/optionalFn}}{{/with}}",
+    wazari_blau: "{{#with begegnung}}{{#optionalFn kampfrichterWertung}}{{this.wazariWettkaempferRot}}{{/optionalFn}}{{/with}}",
+    yuko_blau: "{{#with begegnung}}{{#optionalFn kampfrichterWertung}}{{this.yukoWettkaempferRot}}{{/optionalFn}}{{/with}}",
+    shido_blau: "{{#with begegnung}}{{#optionalFn kampfrichterWertung}}{{this.shidoWettkaempferRot}}{{/optionalFn}}{{/with}}",
+    hansoku_make_blau: "{{#with begegnung}}{{#optionalFn kampfrichterWertung}}{{this.hansokuMakeWettkaempferRot}}{{/optionalFn}}{{/with}}"
+  });
   updateTimer();
 </script>
 </body>

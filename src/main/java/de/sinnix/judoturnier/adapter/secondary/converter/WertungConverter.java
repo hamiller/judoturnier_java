@@ -22,10 +22,16 @@ public class WertungConverter {
 		return new Wertung(jpa.getId(),
 			wettkaempferConverter.convertToWettkaempfer(jpa.getSieger()),
 			toDuration(jpa.getZeit()),
-			jpa.getPunkteWettkaempfer1(),
-			jpa.getStrafenWettkaempfer1(),
-			jpa.getPunkteWettkaempfer2(),
-			jpa.getStrafenWettkaempfer2(),
+			jpa.getIpponWettkaempfer1(),
+			jpa.getWazariWettkaempfer1(),
+			jpa.getYukoWettkaempfer1(),
+			jpa.getShidoWettkaempfer1(),
+			jpa.getHansokuMakeWettkaempfer1(),
+			jpa.getIpponWettkaempfer2(),
+			jpa.getWazariWettkaempfer2(),
+			jpa.getYukoWettkaempfer2(),
+			jpa.getShidoWettkaempfer2(),
+			jpa.getHansokuMakeWettkaempfer2(),
 			jpa.getKampfgeistWettkaempfer1(),
 			jpa.getTechnikWettkaempfer1(),
 			jpa.getKampfstilWettkaempfer1(),
@@ -47,10 +53,16 @@ public class WertungConverter {
 
 		// Turnier
 		jpa.setZeit(fromDuration(wertung.getZeit()));
-		jpa.setPunkteWettkaempfer1(wertung.getPunkteWettkaempferWeiss());
-		jpa.setStrafenWettkaempfer1(wertung.getStrafenWettkaempferWeiss());
-		jpa.setPunkteWettkaempfer2(wertung.getPunkteWettkaempferRot());
-		jpa.setStrafenWettkaempfer2(wertung.getStrafenWettkaempferRot());
+		jpa.setIpponWettkaempfer1(wertung.getIpponWettkaempferWeiss());
+		jpa.setWazariWettkaempfer1(wertung.getWazariWettkaempferWeiss());
+		jpa.setYukoWettkaempfer1(wertung.getYukoWettkaempferWeiss());
+		jpa.setShidoWettkaempfer1(wertung.getShidoWettkaempferWeiss());
+		jpa.setHansokuMakeWettkaempfer1(wertung.getHansokuMakeWettkaempferWeiss());
+		jpa.setIpponWettkaempfer2(wertung.getIpponWettkaempferRot());
+		jpa.setWazariWettkaempfer2(wertung.getWazariWettkaempferRot());
+		jpa.setYukoWettkaempfer2(wertung.getYukoWettkaempferRot());
+		jpa.setShidoWettkaempfer2(wertung.getShidoWettkaempferRot());
+		jpa.setHansokuMakeWettkaempfer2(wertung.getHansokuMakeWettkaempferRot());
 
 		// Randori
 		jpa.setKampfgeistWettkaempfer1(wertung.getKampfgeistWettkaempfer1());

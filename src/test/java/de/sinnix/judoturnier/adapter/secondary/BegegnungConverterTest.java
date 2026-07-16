@@ -118,10 +118,16 @@ class BegegnungConverterTest {
 		WertungJpa wertungJpa = new WertungJpa();
 		wertungJpa.setZeit(wertung.getZeit().getSeconds());
 		wertungJpa.setSieger(WettkaempferFixtures.wettkaempferJpa1);
-		wertungJpa.setPunkteWettkaempfer1(1);
-		wertungJpa.setStrafenWettkaempfer1(0);
-		wertungJpa.setPunkteWettkaempfer2(0);
-		wertungJpa.setStrafenWettkaempfer2(1);
+		wertungJpa.setIpponWettkaempfer1(1);
+		wertungJpa.setWazariWettkaempfer1(0);
+		wertungJpa.setYukoWettkaempfer1(0);
+		wertungJpa.setShidoWettkaempfer1(0);
+		wertungJpa.setHansokuMakeWettkaempfer1(false);
+		wertungJpa.setIpponWettkaempfer2(0);
+		wertungJpa.setWazariWettkaempfer2(0);
+		wertungJpa.setYukoWettkaempfer2(0);
+		wertungJpa.setShidoWettkaempfer2(1);
+		wertungJpa.setHansokuMakeWettkaempfer2(false);
 
 		when(wettkaempferConverter.convertFromWettkaempfer(WettkaempferFixtures.wettkaempfer1.get())).thenReturn(WettkaempferFixtures.wettkaempferJpa1);
 		when(wettkaempferConverter.convertFromWettkaempfer(WettkaempferFixtures.wettkaempfer2.get())).thenReturn(WettkaempferFixtures.wettkaempferJpa2);

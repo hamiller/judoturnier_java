@@ -143,14 +143,20 @@ public class WertungController {
 		OidcBenutzer benutzer = HelperSource.extractOidcBenutzer(SecurityContextHolder.getContext().getAuthentication());
 		UUID begegnungId = UUID.fromString(id);
 
-		var scoreWeiss = parseIntOrZero(formData.getFirst("score_weiss"));
-		var penaltiesWeiss = parseIntOrZero(formData.getFirst("penalties_weiss"));
-		var scoreBlau = parseIntOrZero(formData.getFirst("score_blau"));
-		var penaltiesBlau = parseIntOrZero(formData.getFirst("penalties_blau"));
+		var ipponWeiss = parseIntOrZero(formData.getFirst("ippon_weiss"));
+		var wazariWeiss = parseIntOrZero(formData.getFirst("wazari_weiss"));
+		var yukoWeiss = parseIntOrZero(formData.getFirst("yuko_weiss"));
+		var shidoWeiss = parseShido(formData.getFirst("shido_weiss"));
+		var hansokuMakeWeiss = parseBooleanOrFalse(formData.getFirst("hansoku_make_weiss"));
+		var ipponBlau = parseIntOrZero(formData.getFirst("ippon_blau"));
+		var wazariBlau = parseIntOrZero(formData.getFirst("wazari_blau"));
+		var yukoBlau = parseIntOrZero(formData.getFirst("yuko_blau"));
+		var shidoBlau = parseShido(formData.getFirst("shido_blau"));
+		var hansokuMakeBlau = parseBooleanOrFalse(formData.getFirst("hansoku_make_blau"));
 		var fightTime = formData.get("fightTime").getFirst();
 		var sieger = UUID.fromString(formData.get("sieger").getFirst());
 
-		wertungService.speichereTurnierWertung(begegnungId, scoreWeiss, scoreBlau, penaltiesWeiss, penaltiesBlau, fightTime, sieger, benutzer.uuid());
+		wertungService.speichereTurnierWertung(begegnungId, ipponWeiss, wazariWeiss, yukoWeiss, shidoWeiss, hansokuMakeWeiss, ipponBlau, wazariBlau, yukoBlau, shidoBlau, hansokuMakeBlau, fightTime, sieger, benutzer.uuid());
 		return new ModelAndView("redirect:/turnier/" + turnierid + "/begegnungen/normal");
 	}
 
@@ -159,5 +165,13 @@ public class WertungController {
 			return 0;
 		}
 		return Integer.parseInt(value);
+	}
+
+	static int parseShido(String value) {
+		return Math.max(0, Math.min(3, parseIntOrZero(value)));
+	}
+
+	static boolean parseBooleanOrFalse(String value) {
+		return Boolean.parseBoolean(value);
 	}
 }

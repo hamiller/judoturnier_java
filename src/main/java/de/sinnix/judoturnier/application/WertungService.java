@@ -56,7 +56,20 @@ public class WertungService {
 		wertungRepository.speichereWertungInBegegnung(wertung, begegnungId);
 	}
 
-	public void speichereTurnierWertung(UUID begegnungId, int scoreWeiss, int scoreBlau, int penaltiesWeiss, int penaltiesBlau, String fightTime, UUID siegerUUID, UUID bewerterUUID) {
+	public void speichereTurnierWertung(UUID begegnungId,
+	                                    int ipponWeiss,
+	                                    int wazariWeiss,
+	                                    int yukoWeiss,
+	                                    int shidoWeiss,
+	                                    boolean hansokuMakeWeiss,
+	                                    int ipponBlau,
+	                                    int wazariBlau,
+	                                    int yukoBlau,
+	                                    int shidoBlau,
+	                                    boolean hansokuMakeBlau,
+	                                    String fightTime,
+	                                    UUID siegerUUID,
+	                                    UUID bewerterUUID) {
 		logger.info("speichereTurnierWertung: {}", begegnungId);
 
 		Wettkaempfer wettkaempferSiegerRunde = wettkaempferService.ladeKaempfer(siegerUUID).orElseThrow(() -> new RuntimeException("Wettkaempfer " + siegerUUID + " konnte nicht gefunden werden"));
@@ -64,10 +77,16 @@ public class WertungService {
 		Wertung wertung = new Wertung(null,
 			wettkaempferSiegerRunde,
 			parseDuration(fightTime),
-			scoreWeiss,
-			penaltiesWeiss,
-			scoreBlau,
-			penaltiesBlau,
+			ipponWeiss,
+			wazariWeiss,
+			yukoWeiss,
+			shidoWeiss,
+			hansokuMakeWeiss || shidoWeiss >= 3,
+			ipponBlau,
+			wazariBlau,
+			yukoBlau,
+			shidoBlau,
+			hansokuMakeBlau || shidoBlau >= 3,
 			null, null, null, null, null, null, null, null,
 			benutzer
 		);

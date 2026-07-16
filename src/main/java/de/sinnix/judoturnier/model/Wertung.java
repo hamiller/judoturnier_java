@@ -19,15 +19,21 @@ import java.util.UUID;
 public class Wertung {
 	private UUID uuid;
 
-	// turnie;
+	// turnier
 	private Wettkaempfer sieger;
 	private Duration zeit;
-	private Integer punkteWettkaempferWeiss;
-	private Integer strafenWettkaempferWeiss;
-	private Integer punkteWettkaempferRot;
-	private Integer strafenWettkaempferRot;
+	private Integer ipponWettkaempferWeiss;
+	private Integer wazariWettkaempferWeiss;
+	private Integer yukoWettkaempferWeiss;
+	private Integer shidoWettkaempferWeiss;
+	private Boolean hansokuMakeWettkaempferWeiss;
+	private Integer ipponWettkaempferRot;
+	private Integer wazariWettkaempferRot;
+	private Integer yukoWettkaempferRot;
+	private Integer shidoWettkaempferRot;
+	private Boolean hansokuMakeWettkaempferRot;
 
-	// randor;
+	// randori
 	private Integer kampfgeistWettkaempfer1;
 	private Integer technikWettkaempfer1;
 	private Integer kampfstilWettkaempfer1;
@@ -40,4 +46,28 @@ public class Wertung {
 
 	@ToString.Exclude
 	private Benutzer bewerter;
+
+	public Wertung(UUID uuid,
+	               Wettkaempfer sieger,
+	               Duration zeit,
+	               Integer punkteWettkaempferWeiss,
+	               Integer strafenWettkaempferWeiss,
+	               Integer punkteWettkaempferRot,
+	               Integer strafenWettkaempferRot,
+	               Integer kampfgeistWettkaempfer1,
+	               Integer technikWettkaempfer1,
+	               Integer kampfstilWettkaempfer1,
+	               Integer vielfaltWettkaempfer1,
+	               Integer kampfgeistWettkaempfer2,
+	               Integer technikWettkaempfer2,
+	               Integer kampfstilWettkaempfer2,
+	               Integer vielfaltWettkaempfer2,
+	               Benutzer bewerter) {
+		this(uuid, sieger, zeit,
+			0, 0, punkteWettkaempferWeiss, strafenWettkaempferWeiss, strafenWettkaempferWeiss != null && strafenWettkaempferWeiss >= 3,
+			0, 0, punkteWettkaempferRot, strafenWettkaempferRot, strafenWettkaempferRot != null && strafenWettkaempferRot >= 3,
+			kampfgeistWettkaempfer1, technikWettkaempfer1, kampfstilWettkaempfer1, vielfaltWettkaempfer1,
+			kampfgeistWettkaempfer2, technikWettkaempfer2, kampfstilWettkaempfer2, vielfaltWettkaempfer2,
+			bewerter);
+	}
 }

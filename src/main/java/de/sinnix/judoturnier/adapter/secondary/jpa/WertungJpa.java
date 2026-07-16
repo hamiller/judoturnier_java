@@ -26,10 +26,16 @@ public class WertungJpa extends AbstractEntity {
 	@OneToOne
 	@JoinColumn(name = "sieger_uuid")
 	private WettkaempferJpa sieger;
-	private Integer         punkteWettkaempfer1;
-	private Integer         strafenWettkaempfer1;
-	private Integer         punkteWettkaempfer2;
-	private Integer         strafenWettkaempfer2;
+	private Integer         ipponWettkaempfer1;
+	private Integer         wazariWettkaempfer1;
+	private Integer         yukoWettkaempfer1;
+	private Integer         shidoWettkaempfer1;
+	private Boolean         hansokuMakeWettkaempfer1;
+	private Integer         ipponWettkaempfer2;
+	private Integer         wazariWettkaempfer2;
+	private Integer         yukoWettkaempfer2;
+	private Integer         shidoWettkaempfer2;
+	private Boolean         hansokuMakeWettkaempfer2;
 
 	// randori
 	private Integer kampfgeistWettkaempfer1;
@@ -46,14 +52,20 @@ public class WertungJpa extends AbstractEntity {
 	@JoinColumn(name = "bewerter")
 	private BenutzerJpa benutzer;
 
-	public WertungJpa(Long zeit, WettkaempferJpa sieger, Integer punkteWettkaempfer1, Integer strafenWettkaempfer1, Integer punkteWettkaempfer2, Integer strafenWettkaempfer2, Integer kampfgeistWettkaempfer1, Integer technikWettkaempfer1, Integer kampfstilWettkaempfer1, Integer vielfaltWettkaempfer1, Integer kampfgeistWettkaempfer2, Integer technikWettkaempfer2, Integer kampfstilWettkaempfer2, Integer vielfaltWettkaempfer2, BenutzerJpa benutzer) {
+	public WertungJpa(Long zeit, WettkaempferJpa sieger, Integer ipponWettkaempfer1, Integer wazariWettkaempfer1, Integer yukoWettkaempfer1, Integer shidoWettkaempfer1, Boolean hansokuMakeWettkaempfer1, Integer ipponWettkaempfer2, Integer wazariWettkaempfer2, Integer yukoWettkaempfer2, Integer shidoWettkaempfer2, Boolean hansokuMakeWettkaempfer2, Integer kampfgeistWettkaempfer1, Integer technikWettkaempfer1, Integer kampfstilWettkaempfer1, Integer vielfaltWettkaempfer1, Integer kampfgeistWettkaempfer2, Integer technikWettkaempfer2, Integer kampfstilWettkaempfer2, Integer vielfaltWettkaempfer2, BenutzerJpa benutzer) {
 		super();
 		this.zeit = zeit;
 		this.sieger = sieger;
-		this.punkteWettkaempfer1 = punkteWettkaempfer1;
-		this.strafenWettkaempfer1 = strafenWettkaempfer1;
-		this.punkteWettkaempfer2 = punkteWettkaempfer2;
-		this.strafenWettkaempfer2 = strafenWettkaempfer2;
+		this.ipponWettkaempfer1 = ipponWettkaempfer1;
+		this.wazariWettkaempfer1 = wazariWettkaempfer1;
+		this.yukoWettkaempfer1 = yukoWettkaempfer1;
+		this.shidoWettkaempfer1 = shidoWettkaempfer1;
+		this.hansokuMakeWettkaempfer1 = hansokuMakeWettkaempfer1;
+		this.ipponWettkaempfer2 = ipponWettkaempfer2;
+		this.wazariWettkaempfer2 = wazariWettkaempfer2;
+		this.yukoWettkaempfer2 = yukoWettkaempfer2;
+		this.shidoWettkaempfer2 = shidoWettkaempfer2;
+		this.hansokuMakeWettkaempfer2 = hansokuMakeWettkaempfer2;
 		this.kampfgeistWettkaempfer1 = kampfgeistWettkaempfer1;
 		this.technikWettkaempfer1 = technikWettkaempfer1;
 		this.kampfstilWettkaempfer1 = kampfstilWettkaempfer1;
@@ -68,10 +80,16 @@ public class WertungJpa extends AbstractEntity {
 	public void updateFrom(WertungJpa jpa, Optional<WettkaempferJpa> siegerOptionalJpa) {
 		this.zeit = jpa.getZeit();
 		this.sieger = siegerOptionalJpa.isPresent() ? siegerOptionalJpa.get() : jpa.getSieger();
-		this.punkteWettkaempfer1 = jpa.getPunkteWettkaempfer1();
-		this.strafenWettkaempfer1 = jpa.getStrafenWettkaempfer1();
-		this.punkteWettkaempfer2 = jpa.getPunkteWettkaempfer2();
-		this.strafenWettkaempfer2 = jpa.getStrafenWettkaempfer2();
+		this.ipponWettkaempfer1 = jpa.getIpponWettkaempfer1();
+		this.wazariWettkaempfer1 = jpa.getWazariWettkaempfer1();
+		this.yukoWettkaempfer1 = jpa.getYukoWettkaempfer1();
+		this.shidoWettkaempfer1 = jpa.getShidoWettkaempfer1();
+		this.hansokuMakeWettkaempfer1 = jpa.getHansokuMakeWettkaempfer1();
+		this.ipponWettkaempfer2 = jpa.getIpponWettkaempfer2();
+		this.wazariWettkaempfer2 = jpa.getWazariWettkaempfer2();
+		this.yukoWettkaempfer2 = jpa.getYukoWettkaempfer2();
+		this.shidoWettkaempfer2 = jpa.getShidoWettkaempfer2();
+		this.hansokuMakeWettkaempfer2 = jpa.getHansokuMakeWettkaempfer2();
 
 		this.kampfgeistWettkaempfer1 = jpa.getKampfgeistWettkaempfer1();
 		this.technikWettkaempfer1 = jpa.getTechnikWettkaempfer1();

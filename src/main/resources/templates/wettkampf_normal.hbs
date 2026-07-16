@@ -37,10 +37,29 @@
           <label>{{begegnung.wettkaempfer1.verein.name}}</label>
         </div>
         <span class="row">
-          <div class="weiss"><label>Wertung weiss:</label><input type="number" id="score_weiss" name="score_weiss" value="{{#optionalFn begegnung.kampfrichterWertung}}{{this.punkteWettkaempferWeiss}}{{/optionalFn}}" /><br/></div>
+          <div class="weiss"><label>Ippon weiss:</label><input type="number" min="0" id="ippon_weiss" name="ippon_weiss" value="{{#optionalFn begegnung.kampfrichterWertung}}{{this.ipponWettkaempferWeiss}}{{/optionalFn}}" /><br/></div>
         </span>
         <span class="row">
-          <div class="weiss"><label>Strafen weiss:</label><input type="number" id="penalties_weiss" name="penalties_weiss" value="{{#optionalFn begegnung.kampfrichterWertung}}{{this.strafenWettkaempferWeiss}}{{/optionalFn}}" /></div>
+          <div class="weiss"><label>Wazari weiss:</label><input type="number" min="0" id="wazari_weiss" name="wazari_weiss" value="{{#optionalFn begegnung.kampfrichterWertung}}{{this.wazariWettkaempferWeiss}}{{/optionalFn}}" /></div>
+        </span>
+        <span class="row">
+          <div class="weiss"><label>Yuko weiss:</label><input type="number" min="0" id="yuko_weiss" name="yuko_weiss" value="{{#optionalFn begegnung.kampfrichterWertung}}{{this.yukoWettkaempferWeiss}}{{/optionalFn}}" /></div>
+        </span>
+        <span class="row">
+          <div class="weiss">
+            <label>Shido weiss:</label>
+            <input type="hidden" id="shido_weiss" name="shido_weiss" value="{{#optionalFn begegnung.kampfrichterWertung}}{{this.shidoWettkaempferWeiss}}{{/optionalFn}}" />
+            <label><input type="checkbox" class="shido_weiss" onchange="updateShido('weiss')" />1</label>
+            <label><input type="checkbox" class="shido_weiss" onchange="updateShido('weiss')" />2</label>
+            <label><input type="checkbox" class="shido_weiss" onchange="updateShido('weiss')" />3</label>
+          </div>
+        </span>
+        <span class="row">
+          <div class="weiss">
+            <label>Hansoku Make weiss:</label>
+            <input type="hidden" id="hansoku_make_weiss" name="hansoku_make_weiss" value="{{#if begegnung.kampfrichterWertung}}{{#optionalFn begegnung.kampfrichterWertung}}{{this.hansokuMakeWettkaempferWeiss}}{{/optionalFn}}{{else}}false{{/if}}" />
+            <input type="checkbox" id="hansoku_make_weiss_checkbox" onchange="updateHansokuMake('weiss')" {{#optionalFn begegnung.kampfrichterWertung}}{{#if this.hansokuMakeWettkaempferWeiss}}checked{{/if}}{{/optionalFn}} />
+          </div>
         </span>
       </div>
       <div class="ergebnis_eintrag blau half-width">
@@ -55,10 +74,29 @@
           <label>{{begegnung.wettkaempfer2.verein.name}}</label>
         </div>
         <span class="row">
-          <div class="blau"><label>Wertung blau:</label><input type="number" id="score_blau" name="score_blau" value="{{#optionalFn begegnung.kampfrichterWertung}}{{this.punkteWettkaempferRot}}{{/optionalFn}}" /></div>
+          <div class="blau"><label>Ippon blau:</label><input type="number" min="0" id="ippon_blau" name="ippon_blau" value="{{#optionalFn begegnung.kampfrichterWertung}}{{this.ipponWettkaempferRot}}{{/optionalFn}}" /></div>
         </span>
         <span class="row">
-          <div class="blau"><label>Strafen blau:</label><input type="number" id="penalties_blau" name="penalties_blau" value="{{#optionalFn begegnung.kampfrichterWertung}}{{this.strafenWettkaempferRot}}{{/optionalFn}}" /><br/></div>
+          <div class="blau"><label>Wazari blau:</label><input type="number" min="0" id="wazari_blau" name="wazari_blau" value="{{#optionalFn begegnung.kampfrichterWertung}}{{this.wazariWettkaempferRot}}{{/optionalFn}}" /></div>
+        </span>
+        <span class="row">
+          <div class="blau"><label>Yuko blau:</label><input type="number" min="0" id="yuko_blau" name="yuko_blau" value="{{#optionalFn begegnung.kampfrichterWertung}}{{this.yukoWettkaempferRot}}{{/optionalFn}}" /></div>
+        </span>
+        <span class="row">
+          <div class="blau">
+            <label>Shido blau:</label>
+            <input type="hidden" id="shido_blau" name="shido_blau" value="{{#optionalFn begegnung.kampfrichterWertung}}{{this.shidoWettkaempferRot}}{{/optionalFn}}" />
+            <label><input type="checkbox" class="shido_blau" onchange="updateShido('blau')" />1</label>
+            <label><input type="checkbox" class="shido_blau" onchange="updateShido('blau')" />2</label>
+            <label><input type="checkbox" class="shido_blau" onchange="updateShido('blau')" />3</label>
+          </div>
+        </span>
+        <span class="row">
+          <div class="blau">
+            <label>Hansoku Make blau:</label>
+            <input type="hidden" id="hansoku_make_blau" name="hansoku_make_blau" value="{{#if begegnung.kampfrichterWertung}}{{#optionalFn begegnung.kampfrichterWertung}}{{this.hansokuMakeWettkaempferRot}}{{/optionalFn}}{{else}}false{{/if}}" />
+            <input type="checkbox" id="hansoku_make_blau_checkbox" onchange="updateHansokuMake('blau')" {{#optionalFn begegnung.kampfrichterWertung}}{{#if this.hansokuMakeWettkaempferRot}}checked{{/if}}{{/optionalFn}} />
+          </div>
         </span>
       </div>
       <div class="ergebnis_eintrag full-width">
@@ -189,6 +227,34 @@
     }
   }
 
+  const inputValue = (id) => {
+    const input = document.getElementById(id);
+    if (!input || input.value.trim() === "") {
+      return "0";
+    }
+    return input.value;
+  }
+
+  const currentWertungMessage = () => ({
+    type: "wertung",
+    ippon_weiss: inputValue("ippon_weiss"),
+    wazari_weiss: inputValue("wazari_weiss"),
+    yuko_weiss: inputValue("yuko_weiss"),
+    shido_weiss: inputValue("shido_weiss"),
+    hansoku_make_weiss: document.getElementById("hansoku_make_weiss")?.value || "false",
+    ippon_blau: inputValue("ippon_blau"),
+    wazari_blau: inputValue("wazari_blau"),
+    yuko_blau: inputValue("yuko_blau"),
+    shido_blau: inputValue("shido_blau"),
+    hansoku_make_blau: document.getElementById("hansoku_make_blau")?.value || "false"
+  })
+
+  const sendWertungUpdate = () => {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify(currentWertungMessage()));
+    }
+  }
+
   const openTimerWindow = (begegnungid) => {
     const matte = {{matteid}};
     const mattenRunde = {{mattenrunde}};
@@ -212,6 +278,7 @@
 
     socket.onopen = function () {
       console.log("Verbunden mit WebSocket, Matte ", matte);
+      sendWertungUpdate();
     };
 
     socket.onclose = function () {
@@ -232,22 +299,90 @@
   }
 
   const validateForm = (event) => {
-    var a1 = document.getElementById("score_weiss").value;
-    var a2 = document.getElementById("penalties_weiss").value;
-    var b1 = document.getElementById("score_blau").value;
-    var b2 = document.getElementById("penalties_blau").value;
+    var a1 = document.getElementById("ippon_weiss").value;
+    var a2 = document.getElementById("wazari_weiss").value;
+    var a3 = document.getElementById("yuko_weiss").value;
+    var b1 = document.getElementById("ippon_blau").value;
+    var b2 = document.getElementById("wazari_blau").value;
+    var b3 = document.getElementById("yuko_blau").value;
     var c1 = document.getElementById("fightTime").value;
     var c2 = document.querySelector('input[name="sieger"]:checked');
-    return (a1 != "/" && a2 != "/" && b1 != "/" && b2 != "/" && c1 != "/" && c2);
+    return (a1 != "/" && a2 != "/" && a3 != "/" && b1 != "/" && b2 != "/" && b3 != "/" && c1 != "/" && c2);
   }
 
   const defaultEmptyNumberFields = () => {
-    ["score_weiss", "penalties_weiss", "score_blau", "penalties_blau"].forEach((id) => {
+    ["ippon_weiss", "wazari_weiss", "yuko_weiss", "ippon_blau", "wazari_blau", "yuko_blau", "shido_weiss", "shido_blau"].forEach((id) => {
       const input = document.getElementById(id);
       if (input && input.value.trim() === "") {
         input.value = "0";
       }
     });
+  }
+
+  const setWinnerForHansokuMake = (farbe) => {
+    const winner = farbe === "weiss" ? document.getElementById("sieger_blau") : document.getElementById("sieger_weiss");
+    if (winner) {
+      winner.checked = true;
+    }
+  }
+
+  const updateHansokuMake = (farbe) => {
+    const checkbox = document.getElementById("hansoku_make_" + farbe + "_checkbox");
+    const input = document.getElementById("hansoku_make_" + farbe);
+    if (!checkbox || !input) return;
+
+    const shidoCount = parseInt(document.getElementById("shido_" + farbe)?.value || "0", 10) || 0;
+    if (shidoCount >= 3 && !checkbox.checked) {
+      checkbox.checked = true;
+      checkbox.dataset.autoHansokuMake = "true";
+      input.value = "true";
+      setWinnerForHansokuMake(farbe);
+      sendWertungUpdate();
+      return;
+    }
+
+    checkbox.dataset.autoHansokuMake = "false";
+    input.value = checkbox.checked ? "true" : "false";
+    if (checkbox.checked) {
+      setWinnerForHansokuMake(farbe);
+    }
+    sendWertungUpdate();
+  }
+
+  const updateShido = (farbe) => {
+    const shidoBoxes = Array.from(document.querySelectorAll(".shido_" + farbe));
+    const count = shidoBoxes.filter((checkbox) => checkbox.checked).length;
+    const shidoInput = document.getElementById("shido_" + farbe);
+    const hansokuMakeInput = document.getElementById("hansoku_make_" + farbe);
+    const hansokuMakeCheckbox = document.getElementById("hansoku_make_" + farbe + "_checkbox");
+
+    if (shidoInput) {
+      shidoInput.value = String(count);
+    }
+
+    if (!hansokuMakeInput || !hansokuMakeCheckbox) return;
+
+    if (count >= 3) {
+      hansokuMakeCheckbox.checked = true;
+      hansokuMakeCheckbox.dataset.autoHansokuMake = "true";
+      hansokuMakeInput.value = "true";
+      setWinnerForHansokuMake(farbe);
+    } else if (hansokuMakeCheckbox.dataset.autoHansokuMake === "true") {
+      hansokuMakeCheckbox.checked = false;
+      hansokuMakeCheckbox.dataset.autoHansokuMake = "false";
+      hansokuMakeInput.value = "false";
+    }
+    sendWertungUpdate();
+  }
+
+  const initializeShido = (farbe) => {
+    const shidoInput = document.getElementById("shido_" + farbe);
+    const shidoCount = Math.max(0, Math.min(3, parseInt(shidoInput?.value || "0", 10) || 0));
+    const shidoBoxes = Array.from(document.querySelectorAll(".shido_" + farbe));
+    shidoBoxes.forEach((checkbox, index) => {
+      checkbox.checked = index < shidoCount;
+    });
+    updateShido(farbe);
   }
 
   const save = async (event) => {
@@ -265,6 +400,12 @@
   };
 
   updateTimer();
+  initializeShido("weiss");
+  initializeShido("blau");
+  ["ippon_weiss", "wazari_weiss", "yuko_weiss", "ippon_blau", "wazari_blau", "yuko_blau"].forEach((id) => {
+    const input = document.getElementById(id);
+    if (input) input.addEventListener("input", sendWertungUpdate);
+  });
 </script>
 </body>
 </html>

@@ -107,7 +107,9 @@ class WertungServiceTest {
 			WettkampfgruppeFixture.gruppe1.gruppe(),
 			turnierUUID
 		);
-		Wertung neueWertung = new Wertung(null, WettkaempferFixtures.wettkaempferin1, fighttimeDuration, scoreWeiss, penaltiesWeiss, scoreBlau, penaltiesBlau,
+		Wertung neueWertung = new Wertung(null, WettkaempferFixtures.wettkaempferin1, fighttimeDuration,
+			scoreWeiss, 0, 0, penaltiesWeiss, false,
+			scoreBlau, 0, 0, penaltiesBlau, false,
 			null, null, null, null, null, null, null, null,
 			kampfrichter
 		);
@@ -117,13 +119,45 @@ class WertungServiceTest {
 		when(wettkampfService.ladeBegegnung(begegnungId)).thenReturn(aktuelleBegegnung);
 
 
-		wertungService.speichereTurnierWertung(begegnungId, scoreWeiss, scoreBlau, penaltiesWeiss, penaltiesBlau, fighttime, sieger.id(), kampfrichter.uuid());
+		wertungService.speichereTurnierWertung(begegnungId, scoreWeiss, 0, 0, penaltiesWeiss, false, scoreBlau, 0, 0, penaltiesBlau, false, fighttime, sieger.id(), kampfrichter.uuid());
 
 		verify(wertungRepository, times(1)).speichereWertungInBegegnung(neueWertung, begegnungId);
 		verify(wettkampfService, times(1)).ladeBegegnung(begegnungId);
 		verify(turnierRepository, times(1)).ladeWettkampfgruppeRunden(aktuelleBegegnung.getWettkampfGruppe().id(), turnierUUID);
 		// keine weiteren Begegnungen
 		verify(turnierRepository, times(0)).speichereBegegnung(any());
+	}
+
+	@Test
+	void speichereTurnierWertungSetztHansokuMakeBeiDreiShido() {
+		UUID begegnungId = UUID.randomUUID();
+		String fighttime = "02:03.54";
+		Duration fighttimeDuration = Duration.ofMillis(123540);
+		Wettkaempfer sieger = WettkaempferFixtures.wettkaempferin2;
+		Begegnung aktuelleBegegnung = new Begegnung(
+			UUID.randomUUID(),
+			new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1),
+			UUID.randomUUID(),
+			1, 1, 1, 1,
+			Optional.of(WettkaempferFixtures.wettkaempferin1), Optional.of(WettkaempferFixtures.wettkaempferin2),
+			new ArrayList<>(),
+			WettkampfgruppeFixture.gruppe1.gruppe(),
+			turnierUUID
+		);
+		Wertung neueWertung = new Wertung(null, sieger, fighttimeDuration,
+			0, 0, 0, 3, true,
+			0, 0, 0, 0, false,
+			null, null, null, null, null, null, null, null,
+			kampfrichter
+		);
+
+		when(wettkaempferService.ladeKaempfer(sieger.id())).thenReturn(Optional.of(sieger));
+		when(benutzerRepository.findBenutzer(eq(kampfrichter.uuid()))).thenReturn(Optional.of(kampfrichter));
+		when(wettkampfService.ladeBegegnung(begegnungId)).thenReturn(aktuelleBegegnung);
+
+		wertungService.speichereTurnierWertung(begegnungId, 0, 0, 0, 3, false, 0, 0, 0, 0, false, fighttime, sieger.id(), kampfrichter.uuid());
+
+		verify(wertungRepository, times(1)).speichereWertungInBegegnung(neueWertung, begegnungId);
 	}
 
 	@Test
@@ -197,7 +231,9 @@ class WertungServiceTest {
 		rundenList.add(new Runde(rundeUUID2, 2, 2, 2, 1, Altersklasse.FRAUEN, WettkampfgruppeFixture.wettkampfGruppeFrauen.gruppe(), begegnungListRunde2));
 		rundenList.add(new Runde(rundeUUID3, 3, 3, 3, 1, Altersklasse.FRAUEN, WettkampfgruppeFixture.wettkampfGruppeFrauen.gruppe(), begegnungListRunde3));
 
-		Wertung neueWertung = new Wertung(null, WettkaempferFixtures.wettkaempferin2, fighttimeDuration, scoreWeiss, penaltiesWeiss, scoreBlau, penaltiesBlau,
+		Wertung neueWertung = new Wertung(null, WettkaempferFixtures.wettkaempferin2, fighttimeDuration,
+			scoreWeiss, 0, 0, penaltiesWeiss, false,
+			scoreBlau, 0, 0, penaltiesBlau, false,
 			null, null, null, null, null, null, null, null,
 			kampfrichter
 		);
@@ -208,7 +244,7 @@ class WertungServiceTest {
 		when(turnierRepository.ladeWettkampfgruppeRunden(wkg.id(), turnierUUID)).thenReturn(rundenList);
 
 
-		wertungService.speichereTurnierWertung(aktuelleBegegnungUUID, scoreWeiss, scoreBlau, penaltiesWeiss, penaltiesBlau, fighttime, sieger.id(), kampfrichter.uuid());
+		wertungService.speichereTurnierWertung(aktuelleBegegnungUUID, scoreWeiss, 0, 0, penaltiesWeiss, false, scoreBlau, 0, 0, penaltiesBlau, false, fighttime, sieger.id(), kampfrichter.uuid());
 
 		verify(wertungRepository, times(1)).speichereWertungInBegegnung(neueWertung, aktuelleBegegnungUUID);
 

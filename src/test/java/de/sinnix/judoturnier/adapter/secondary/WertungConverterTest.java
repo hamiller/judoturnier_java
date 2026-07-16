@@ -59,10 +59,16 @@ class WertungConverterTest {
 		jpa.setId(UUID.randomUUID());
 		jpa.setSieger(wk1Jpa);
 		jpa.setZeit(180_000_000_000l); // 3 Minuten
-		jpa.setPunkteWettkaempfer1(1);
-		jpa.setPunkteWettkaempfer2(0);
-		jpa.setStrafenWettkaempfer1(0);
-		jpa.setStrafenWettkaempfer2(1);
+		jpa.setIpponWettkaempfer1(1);
+		jpa.setWazariWettkaempfer1(0);
+		jpa.setYukoWettkaempfer1(2);
+		jpa.setShidoWettkaempfer1(0);
+		jpa.setHansokuMakeWettkaempfer1(false);
+		jpa.setIpponWettkaempfer2(0);
+		jpa.setWazariWettkaempfer2(1);
+		jpa.setYukoWettkaempfer2(0);
+		jpa.setShidoWettkaempfer2(1);
+		jpa.setHansokuMakeWettkaempfer2(true);
 
 		when(wettkaempferConverter.convertToWettkaempfer(wk1Jpa)).thenReturn(wk1);
 
@@ -71,10 +77,16 @@ class WertungConverterTest {
 		assertEquals(wertung.getUuid(), jpa.getId());
 		assertEquals(wertung.getSieger(), wk1);
 		assertEquals(wertung.getZeit(), Duration.of(3l, ChronoUnit.MINUTES));
-		assertEquals(wertung.getPunkteWettkaempferWeiss(), jpa.getPunkteWettkaempfer1());
-		assertEquals(wertung.getPunkteWettkaempferRot(), jpa.getPunkteWettkaempfer2());
-		assertEquals(wertung.getStrafenWettkaempferWeiss(), jpa.getStrafenWettkaempfer1());
-		assertEquals(wertung.getStrafenWettkaempferRot(), jpa.getStrafenWettkaempfer2());
+		assertEquals(wertung.getIpponWettkaempferWeiss(), jpa.getIpponWettkaempfer1());
+		assertEquals(wertung.getWazariWettkaempferWeiss(), jpa.getWazariWettkaempfer1());
+		assertEquals(wertung.getYukoWettkaempferWeiss(), jpa.getYukoWettkaempfer1());
+		assertEquals(wertung.getShidoWettkaempferWeiss(), jpa.getShidoWettkaempfer1());
+		assertEquals(wertung.getHansokuMakeWettkaempferWeiss(), jpa.getHansokuMakeWettkaempfer1());
+		assertEquals(wertung.getIpponWettkaempferRot(), jpa.getIpponWettkaempfer2());
+		assertEquals(wertung.getWazariWettkaempferRot(), jpa.getWazariWettkaempfer2());
+		assertEquals(wertung.getYukoWettkaempferRot(), jpa.getYukoWettkaempfer2());
+		assertEquals(wertung.getShidoWettkaempferRot(), jpa.getShidoWettkaempfer2());
+		assertEquals(wertung.getHansokuMakeWettkaempferRot(), jpa.getHansokuMakeWettkaempfer2());
 	}
 
 	@Test
@@ -85,8 +97,14 @@ class WertungConverterTest {
 			Duration.of(3l, ChronoUnit.MINUTES),
 			1,
 			0,
+			2,
+			0,
+			false,
 			0,
 			1,
+			0,
+			1,
+			true,
 			null, null, null, null, null, null, null, null,
 			bewerter
 		);
@@ -98,10 +116,16 @@ class WertungConverterTest {
 
 		assertEquals(jpa.getSieger(), wk1Jpa);
 		assertEquals(jpa.getZeit(), 180_000_000_000l);
-		assertEquals(jpa.getPunkteWettkaempfer1(), wertung.getPunkteWettkaempferWeiss());
-		assertEquals(jpa.getPunkteWettkaempfer2(), wertung.getPunkteWettkaempferRot());
-		assertEquals(jpa.getStrafenWettkaempfer1(), wertung.getStrafenWettkaempferWeiss());
-		assertEquals(jpa.getStrafenWettkaempfer2(), wertung.getStrafenWettkaempferRot());
+		assertEquals(jpa.getIpponWettkaempfer1(), wertung.getIpponWettkaempferWeiss());
+		assertEquals(jpa.getWazariWettkaempfer1(), wertung.getWazariWettkaempferWeiss());
+		assertEquals(jpa.getYukoWettkaempfer1(), wertung.getYukoWettkaempferWeiss());
+		assertEquals(jpa.getShidoWettkaempfer1(), wertung.getShidoWettkaempferWeiss());
+		assertEquals(jpa.getHansokuMakeWettkaempfer1(), wertung.getHansokuMakeWettkaempferWeiss());
+		assertEquals(jpa.getIpponWettkaempfer2(), wertung.getIpponWettkaempferRot());
+		assertEquals(jpa.getWazariWettkaempfer2(), wertung.getWazariWettkaempferRot());
+		assertEquals(jpa.getYukoWettkaempfer2(), wertung.getYukoWettkaempferRot());
+		assertEquals(jpa.getShidoWettkaempfer2(), wertung.getShidoWettkaempferRot());
+		assertEquals(jpa.getHansokuMakeWettkaempfer2(), wertung.getHansokuMakeWettkaempferRot());
 	}
 
 	@Test
