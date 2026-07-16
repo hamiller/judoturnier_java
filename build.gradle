@@ -61,6 +61,8 @@ dependencies {
 	testImplementation 'org.mockito:mockito-junit-jupiter:5.23.0'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
 	testImplementation platform('org.testcontainers:testcontainers-bom:1.21.3')
 	testImplementation 'org.springframework.boot:spring-boot-webclient'
 	testImplementation 'org.testcontainers:testcontainers'

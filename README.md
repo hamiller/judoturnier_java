@@ -12,6 +12,14 @@ Für das Vorbereiten des Zielsystems siehe README.md in `provisioning`.
 
 Für das Deployment der Anwendung auf dem Zielsystem siehe README.md in `deployment`.
 
+## Development
+
+Einmal den Service starten:
+`./gradlew bootRun --console=plain --args='--spring.profiles.active=local`
+
+Einmal die Überwachen mit hotreload starten:
+`./gradlew compileJava processResources --continuous --console=plain`
+
 
 ## Lokales Testen
 
