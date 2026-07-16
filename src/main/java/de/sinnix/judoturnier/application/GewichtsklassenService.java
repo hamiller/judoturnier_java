@@ -72,7 +72,7 @@ public class GewichtsklassenService {
 			.collect(Collectors.toList());
 	}
 
-	public List<GewichtsklassenGruppe> teileInGewichtsklassen(List<Wettkaempfer> wettkaempferListe, UUID turnierUUID) {
+	public List<GewichtsklassenGruppe> teileInGewichtsklassen(List<Wettkaempfer> wettkaempferListe, UUID turnierUUID) throws Exception {
 		logger.info("Erstelle Gewichtsklassen...");
 
 		var einstellungen = einstellungenService.ladeEinstellungen(turnierUUID);
@@ -94,6 +94,7 @@ public class GewichtsklassenService {
 
 			for (List<Wettkaempfer> wks : wettkaempferNachAlter) {
 				var gruppenGroesse = einstellungen.gruppengroessen().altersklasseGruppengroesse().get(wks.get(0).altersklasse());
+				if (gruppenGroesse > Farbe.values().length) throw new Exception("Randori-Turniere dürfen maximal 6 Teilnehmer pro Gruppe haben!");
 				int numGroups = (wks.size() + gruppenGroesse - 1) / gruppenGroesse;
 				gruppenNamen = gruppenNamen.subList(numGroups, gruppenNamen.size());
 				result.addAll(erstelleGewichtsklassenGruppenRandori(wks, aktuelleGruppenNamen, gruppenGroesse, turnierUUID));
@@ -293,15 +294,14 @@ public class GewichtsklassenService {
 		List<Wettkaempfer> aktuelleGruppe = new ArrayList<>();
 
 		for (Wettkaempfer kaempfer : wettkaempfer) {
-			Farbe farbe = getFarbe(aktuelleGruppe.size());
-			Wettkaempfer farbigerKaempfer = new Wettkaempfer(kaempfer.id(), kaempfer.name(), kaempfer.geschlecht(), kaempfer.altersklasse(), kaempfer.verein(), kaempfer.gewicht(), Optional.of(farbe), kaempfer.checked(), kaempfer.printed(), turnierUUID);
-			if (aktuelleGruppe.size() < gruppenGroesse) {
-				aktuelleGruppe.add(farbigerKaempfer);
-			} else {
+			if (aktuelleGruppe.size() == gruppenGroesse) {
 				gruppen.add(aktuelleGruppe);
 				aktuelleGruppe = new ArrayList<>();
-				aktuelleGruppe.add(farbigerKaempfer);
 			}
+
+			Farbe farbe = getFarbe(aktuelleGruppe.size());
+			Wettkaempfer farbigerKaempfer = new Wettkaempfer(kaempfer.id(), kaempfer.name(), kaempfer.geschlecht(), kaempfer.altersklasse(), kaempfer.verein(), kaempfer.gewicht(), Optional.of(farbe), kaempfer.checked(), kaempfer.printed(), turnierUUID);
+			aktuelleGruppe.add(farbigerKaempfer);
 			logger.trace("Name {}, Farbe {}", farbigerKaempfer.name(), farbigerKaempfer.farbe());
 			wettkaempferRepository.save(farbigerKaempfer);
 		}
@@ -313,8 +313,11 @@ public class GewichtsklassenService {
 		return gruppen;
 	}
 
-	private Farbe getFarbe(int index) {
+	private Farbe getFarbe(int size) {
 		Farbe[] farben = Farbe.values();
+		// Gruppengröße 0 wird zur ersten Gruppe und muss daher die gleiche Farbe erhalten,
+		// ausserdem muss auf den index 0-5 gemapped werden
+		int index = size == 0 ? 0 : size -1;
 		return farben[index];
 	}
 

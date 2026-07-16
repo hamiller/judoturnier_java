@@ -26,6 +26,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -183,7 +184,7 @@ public class GewichtsklassenServiceTest {
 	}
 
 	@Test
-	void testTeileInGewichtsklassenRandoriAbwechselnd() {
+	void testTeileInGewichtsklassenRandoriAbwechselnd() throws Exception {
 		UUID uuid = UUID.randomUUID();
 		List<Wettkaempfer> wettkaempferListe = new ArrayList<>();
 		wettkaempferListe.add(new Wettkaempfer(wk1UUID, "Wettkaempfer 1", Geschlecht.m, Altersklasse.U11, new Verein(v1UUID, "Verein 1", uuid), 25.0, Optional.empty(), false, false, uuid));
@@ -196,10 +197,12 @@ public class GewichtsklassenServiceTest {
 
 		assertNotNull(result);
 		assertEquals(2, result.size());
+		assertEquals(Optional.of(Farbe.WEISS), result.get(0).teilnehmer().get(0).farbe());
+		assertEquals(Optional.of(Farbe.WEISS), result.get(0).teilnehmer().get(1).farbe());
 	}
 
 	@Test
-	void testTeileInGewichtsklassenRandoriAlle() {
+	void testTeileInGewichtsklassenRandoriAlle() throws Exception {
 		UUID uuid = UUID.randomUUID();
 		List<Wettkaempfer> wettkaempferListe = new ArrayList<>();
 		wettkaempferListe.add(new Wettkaempfer(wk1UUID, "Wettkaempfer 1", Geschlecht.m, Altersklasse.U11, new Verein(v1UUID, "Verein 1", uuid), 25.0, Optional.empty(), false, false, uuid));
@@ -212,10 +215,65 @@ public class GewichtsklassenServiceTest {
 
 		assertNotNull(result);
 		assertEquals(2, result.size());
+		assertEquals(Optional.of(Farbe.WEISS), result.get(0).teilnehmer().get(0).farbe());
+		assertEquals(Optional.of(Farbe.WEISS), result.get(0).teilnehmer().get(1).farbe());
 	}
 
 	@Test
-	void testTeileInGewichtsklassenNormalesTurnierFuerUeberU13() {
+	void testTeileInGewichtsklassenRandoriStartetFarbenProGruppeNeu() throws Exception {
+		UUID uuid = UUID.randomUUID();
+		List<Wettkaempfer> wettkaempferListe = new ArrayList<>();
+		wettkaempferListe.add(new Wettkaempfer(wk1UUID, "Wettkaempfer 1", Geschlecht.m, Altersklasse.U11, new Verein(v1UUID, "Verein 1", uuid), 25.0, Optional.empty(), false, false, uuid));
+		wettkaempferListe.add(new Wettkaempfer(wk2UUID, "Wettkaempfer 2", Geschlecht.w, Altersklasse.U11, new Verein(v2UUID, "Verein 2", uuid), 27.0, Optional.empty(), false, false, uuid));
+		wettkaempferListe.add(new Wettkaempfer(wk3UUID, "Wettkaempfer 3", Geschlecht.m, Altersklasse.U11, new Verein(v3UUID, "Verein 3", uuid), 29.0, Optional.empty(), false, false, uuid));
+
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ALLE, new Gruppengroessen(Map.of(Altersklasse.U9, 2, Altersklasse.U11, 2)), new VariablerGewichtsteil(5.0), SeparateAlterklassen.ZUSAMMEN, new Wettkampfzeiten(Map.of()), uuid);
+		when(einstellungenService.ladeEinstellungen(any())).thenReturn(einstellungen);
+
+		List<GewichtsklassenGruppe> result = gewichtsklassenService.teileInGewichtsklassen(wettkaempferListe, uuid);
+
+		assertNotNull(result);
+		assertEquals(3, result.size());
+		assertEquals(Optional.of(Farbe.WEISS), result.get(0).teilnehmer().get(0).farbe());
+		assertEquals(Optional.of(Farbe.WEISS), result.get(0).teilnehmer().get(1).farbe());
+		assertEquals(Optional.of(Farbe.WEISS), result.get(1).teilnehmer().get(0).farbe());
+
+		ArgumentCaptor<Wettkaempfer> argumentCaptor = ArgumentCaptor.forClass(Wettkaempfer.class);
+		verify(wettkaempferRepository, times(3)).save(argumentCaptor.capture());
+		List<Wettkaempfer> gespeicherteWettkaempfer = argumentCaptor.getAllValues();
+		assertEquals(Optional.of(Farbe.WEISS), gespeicherteWettkaempfer.get(0).farbe());
+		assertEquals(Optional.of(Farbe.WEISS), gespeicherteWettkaempfer.get(1).farbe());
+		assertEquals(Optional.of(Farbe.WEISS), gespeicherteWettkaempfer.get(2).farbe());
+	}
+
+	@Test
+	void testTeileInGewichtsklassenRandoriNutztGruppengroesseAlsFarbindex() throws Exception {
+		UUID uuid = UUID.randomUUID();
+		List<Wettkaempfer> wettkaempferListe = randoriWettkaempferListe(uuid, 6);
+
+		Einstellungen einstellungen = new Einstellungen(TurnierTyp.RANDORI, new MattenAnzahl(2), WettkampfReihenfolge.ALLE, new Gruppengroessen(Map.of(Altersklasse.U9, 2, Altersklasse.U11, 6)), new VariablerGewichtsteil(5.0), SeparateAlterklassen.ZUSAMMEN, new Wettkampfzeiten(Map.of()), uuid);
+		when(einstellungenService.ladeEinstellungen(any())).thenReturn(einstellungen);
+
+		List<GewichtsklassenGruppe> result = gewichtsklassenService.teileInGewichtsklassen(wettkaempferListe, uuid);
+
+		assertNotNull(result);
+		assertEquals(2, result.size());
+		assertEquals(6, result.get(0).teilnehmer().size());
+		assertEquals(List.of(Optional.of(Farbe.WEISS), Optional.of(Farbe.WEISS), Optional.of(Farbe.BRAUN), Optional.of(Farbe.GELB), Optional.of(Farbe.ORANGE), Optional.of(Farbe.GRUEN)), result.get(0).teilnehmer().stream().map(Wettkaempfer::farbe).toList());
+	}
+
+	@Test
+	void getFarbeMappedIndexSechsAufSechsteFarbe() throws Exception {
+		Method getFarbe = GewichtsklassenService.class.getDeclaredMethod("getFarbe", int.class);
+		getFarbe.setAccessible(true);
+
+		Farbe farbe = (Farbe) getFarbe.invoke(gewichtsklassenService, 6);
+
+		assertEquals(Farbe.BLAU, farbe);
+	}
+
+	@Test
+	void testTeileInGewichtsklassenNormalesTurnierFuerUeberU13() throws Exception {
 		// Fixe Gewichtsklassen bei U13 und aufwärts
 		UUID uuid = UUID.randomUUID();
 		List<Wettkaempfer> wettkaempferListe = new ArrayList<>();
@@ -253,7 +311,7 @@ public class GewichtsklassenServiceTest {
 	}
 
 	@Test
-	void testTeileInGewichtsklassenNormalesTurnierFuerUnterU13() {
+	void testTeileInGewichtsklassenNormalesTurnierFuerUnterU13() throws Exception {
 		// Es gibt keine fixen Gewichtsklassen bei unter U13
 		UUID uuid = UUID.randomUUID();
 		List<Wettkaempfer> wettkaempferListe = new ArrayList<>();
@@ -286,5 +344,13 @@ public class GewichtsklassenServiceTest {
 		assertEquals(Altersklasse.U9, result.get(1).altersKlasse());
 		assertEquals(29.0, result.get(1).minGewicht());
 		assertEquals(31.0, result.get(1).maxGewicht());
+	}
+
+	private List<Wettkaempfer> randoriWettkaempferListe(UUID turnierUUID, int anzahl) {
+		List<Wettkaempfer> wettkaempferListe = new ArrayList<>();
+		for (int i = 0; i < anzahl; i++) {
+			wettkaempferListe.add(new Wettkaempfer(UUID.randomUUID(), "Wettkaempfer " + (i + 1), Geschlecht.m, Altersklasse.U11, new Verein(UUID.randomUUID(), "Verein " + (i + 1), turnierUUID), 25.0 + i, Optional.empty(), false, false, turnierUUID));
+		}
+		return wettkaempferListe;
 	}
 }

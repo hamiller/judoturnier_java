@@ -3,6 +3,9 @@ package de.sinnix.judoturnier.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
@@ -19,6 +23,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +37,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import tools.jackson.databind.ObjectMapper;
 
 @Configuration
 @EnableWebSecurity
@@ -45,8 +52,37 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public GrantedAuthoritiesMapper userAuthoritiesMapperBean() {
+	public GrantedAuthoritiesMapperImpl userAuthoritiesMapperBean() {
 		return new GrantedAuthoritiesMapperImpl();
+	}
+
+	public OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService() {
+		OidcUserService delegate = new OidcUserService();
+		GrantedAuthoritiesMapperImpl authoritiesMapper = new GrantedAuthoritiesMapperImpl();
+		ObjectMapper objectMapper = new ObjectMapper();
+		return userRequest -> {
+			OidcUser oidcUser = delegate.loadUser(userRequest);
+			Set<GrantedAuthority> mappedAuthorities = new HashSet<>(authoritiesMapper.mapAuthorities(oidcUser.getAuthorities()));
+			mappedAuthorities.addAll(authoritiesMapper.convertClaims(readAccessTokenClaims(userRequest, objectMapper)));
+			return new DefaultOidcUser(mappedAuthorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
+		};
+	}
+
+	private Map<String, Object> readAccessTokenClaims(OidcUserRequest userRequest, ObjectMapper objectMapper) {
+		try {
+			String accessToken = userRequest.getAccessToken().getTokenValue();
+			String[] tokenParts = accessToken.split("\\.");
+			if (tokenParts.length < 2) {
+				logger.warn("Access Token hat kein JWT-Format.");
+				return Map.of();
+			}
+
+			String payload = new String(Base64.getUrlDecoder().decode(tokenParts[1]), StandardCharsets.UTF_8);
+			return objectMapper.readValue(payload, Map.class);
+		} catch (Exception e) {
+			logger.warn("Access Token konnte nicht zum Rollen-Mapping gelesen werden.", e);
+			return Map.of();
+		}
 	}
 
 	@Bean
@@ -83,7 +119,7 @@ public class SecurityConfig {
 
 		http
 			.oauth2Login(oauth2 -> oauth2
-				.userInfoEndpoint(userInfo -> userInfo.userAuthoritiesMapper(userAuthoritiesMapperBean()))
+				.userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcUserService()))
 				.loginPage("/oauth2/authorization/keycloak")
 			)
 			.logout(logout -> logout
@@ -105,23 +141,43 @@ public class SecurityConfig {
 			authorities.forEach(authority -> {
 				if (OidcUserAuthority.class.isInstance(authority)) {
 					final var oidcUserAuthority = (OidcUserAuthority) authority;
-					mappedAuthorities.addAll(convert(oidcUserAuthority.getIdToken().getClaims()));
+					mappedAuthorities.addAll(convertClaims(oidcUserAuthority.getIdToken().getClaims()));
 				}
 				else if (OAuth2UserAuthority.class.isInstance(authority)) {
 					logger.warn("Received OAuth2UserAuthority user authorities for authority: {}", authority);
+				}
+				else {
+					mappedAuthorities.add(authority);
 				}
 			});
 
 			return mappedAuthorities;
 		};
 
-		private Collection<GrantedAuthority> convert(Map<String, Object> claims) {
-			if (Objects.nonNull(claims)) {
-				List<String> roles = (List<String>) claims.get("groups");
-				logger.debug("converting groups to roles: {}", roles);
-				if (Objects.nonNull(roles)) {
-					return roles.stream().map(rn -> new SimpleGrantedAuthority("ROLE_" + rn.toUpperCase())).collect(Collectors.toList());
-				}
+		Collection<GrantedAuthority> convertClaims(Map<String, Object> claims) {
+			if (Objects.isNull(claims)) {
+				return List.of();
+			}
+
+			Set<String> roles = new HashSet<>();
+			roles.addAll(extractRoles(claims.get("groups")));
+
+			if (claims.get("realm_access") instanceof Map<?, ?> realmAccess) {
+				roles.addAll(extractRoles(realmAccess.get("roles")));
+			}
+
+			logger.debug("converting roles to authorities: {}", roles);
+			return roles.stream()
+				.map(rn -> new SimpleGrantedAuthority("ROLE_" + rn.toUpperCase()))
+				.collect(Collectors.toList());
+		}
+
+		private List<String> extractRoles(Object claim) {
+			if (claim instanceof Collection<?> roles) {
+				return roles.stream()
+					.filter(String.class::isInstance)
+					.map(String.class::cast)
+					.toList();
 			}
 			return List.of();
 		}

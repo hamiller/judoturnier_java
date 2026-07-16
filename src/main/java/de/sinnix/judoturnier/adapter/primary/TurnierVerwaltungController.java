@@ -104,13 +104,13 @@ public class TurnierVerwaltungController {
 		}
 
 		List<UUID> benutzerDesTurniers = formData.values().stream()
-			.filter(bz -> bz.zugeordnetZuTurnier())
+			.filter(BenutzerZuordnungDto::istZugeordnetZuTurnier)
 			.map(bz -> UUID.fromString(bz.userid()))
 			.collect(Collectors.toList());
 		benutzerService.ordneBenutzerZuTurnier(benutzerDesTurniers, turnierUUID);
 
 		List<UUID> benutzerNichtDesTurniers = formData.values().stream()
-			.filter(bz -> !bz.zugeordnetZuTurnier())
+			.filter(bz -> !bz.istZugeordnetZuTurnier())
 			.map(bz -> UUID.fromString(bz.userid()))
 			.collect(Collectors.toList());
 		benutzerService.entferneBenutzerVonTurnier(benutzerNichtDesTurniers, turnierUUID);

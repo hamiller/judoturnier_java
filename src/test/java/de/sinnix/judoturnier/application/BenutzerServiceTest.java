@@ -55,6 +55,32 @@ class BenutzerServiceTest {
 	}
 
 	@Test
+	void benutzerNichtAnlegenWennKeycloakKeineRollenUebermittelt() {
+		OidcBenutzer oidcBenutzer = new OidcBenutzer(UUID.randomUUID(), "username", "name", List.of());
+
+		when(benutzerRepository.findBenutzerByUsername(oidcBenutzer.username())).thenReturn(Optional.empty());
+
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.holeBenutzer(oidcBenutzer));
+
+		assertTrue(exception.getMessage().contains("Keycloak/OIDC-Daten unvollständig"));
+		assertTrue(exception.getMessage().contains("rollen"));
+		verify(benutzerRepository, times(0)).save(any());
+	}
+
+	@Test
+	void benutzerNichtAnlegenWennKeycloakProfildatenFehlen() {
+		OidcBenutzer oidcBenutzer = new OidcBenutzer(null, "username", "", List.of(BenutzerRolle.BEOBACHTER));
+
+		when(benutzerRepository.findBenutzerByUsername(oidcBenutzer.username())).thenReturn(Optional.empty());
+
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.holeBenutzer(oidcBenutzer));
+
+		assertTrue(exception.getMessage().contains("uuid"));
+		assertTrue(exception.getMessage().contains("name"));
+		verify(benutzerRepository, times(0)).save(any());
+	}
+
+	@Test
 	void benutzerNichtAnlegenWennExistent() {
 		UUID userId = UUID.randomUUID();
 		OidcBenutzer oidcBenutzer = new OidcBenutzer(userId, "username", "name", List.of(BenutzerRolle.BEOBACHTER));
