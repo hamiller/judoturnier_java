@@ -27,22 +27,31 @@ import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("componenttest")
 @Transactional
 public abstract class AbstractIntegrationTest {
 
+	private static final String KEYCLOAK_IMAGE        = "quay.io/keycloak/keycloak:26.7";
+	private static final long   KEYCLOAK_MEMORY_LIMIT = 768L * 1024 * 1024;
+	private static final String CLIENT_SECRET         = "the-client-secret";
+
 	@LocalServerPort
 	int port;
 	static               Playwright             playwright;
 	static               Browser                browser;
 	static               PostgreSQLContainer<?> postgres      = new PostgreSQLContainer<>("postgres:17").withReuse(reuseContainers());
-	static               KeycloakContainer      keycloak      = new KeycloakContainer("quay.io/keycloak/keycloak:26.7")
+	static               KeycloakContainer      keycloak      = new KeycloakContainer(KEYCLOAK_IMAGE)
 		.withRealmImportFile("/judoturnier-realm.json")
-		.withStartupTimeout(Duration.ofMinutes(2))
+		.withRamPercentage(50, 70)
+		.withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withMemory(KEYCLOAK_MEMORY_LIMIT))
+		.waitingFor(Wait.forHttp("/realms/judoturnier/.well-known/openid-configuration")
+			.forPort(8080)
+			.forStatusCode(200)
+			.withStartupTimeout(Duration.ofMinutes(5)))
 		.withReuse(reuseContainers());
-	private static final String                 CLIENT_SECRET = "the-client-secret";
 
 	private static boolean reuseContainers() {
 		return !Boolean.parseBoolean(System.getenv("CI"));
