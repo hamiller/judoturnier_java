@@ -14,6 +14,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
 import java.util.Collections;
 
 
@@ -36,9 +37,16 @@ public abstract class AbstractIntegrationTest {
 	int port;
 	static               Playwright             playwright;
 	static               Browser                browser;
-	static               PostgreSQLContainer<?> postgres      = new PostgreSQLContainer<>("postgres:17").withReuse(true);
-	static               KeycloakContainer      keycloak      = new KeycloakContainer().withRealmImportFile("/judoturnier-realm.json").withReuse(true);
+	static               PostgreSQLContainer<?> postgres      = new PostgreSQLContainer<>("postgres:17").withReuse(reuseContainers());
+	static               KeycloakContainer      keycloak      = new KeycloakContainer("quay.io/keycloak/keycloak:26.7")
+		.withRealmImportFile("/judoturnier-realm.json")
+		.withStartupTimeout(Duration.ofMinutes(2))
+		.withReuse(reuseContainers());
 	private static final String                 CLIENT_SECRET = "the-client-secret";
+
+	private static boolean reuseContainers() {
+		return !Boolean.parseBoolean(System.getenv("CI"));
+	}
 
 
 	@DynamicPropertySource
