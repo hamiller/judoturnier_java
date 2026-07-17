@@ -13,8 +13,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -52,8 +54,18 @@ public class DoppelKOSystem implements Algorithmus {
 		}
 		// Gruppiere nach Runde
 		List<BegegnungenJeRunde> begegnungenJeRunde = begegnungen.stream()
-			.collect(Collectors.groupingBy(begegnung -> begegnung.getBegegnungId().getRundenNummerDesTyps()))
-			.values().stream()
+			.collect(Collectors.groupingBy(
+				begegnung -> begegnung.getBegegnungId().getRundenNummerDesTyps(),
+				TreeMap::new,
+				Collectors.toList()
+			))
+			.values()
+			.stream()
+			.map(runde -> runde.stream()
+				.sorted(Comparator
+					.comparing((Begegnung begegnung) -> begegnung.getBegegnungId().getRundenTyp().getValue())
+					.thenComparing(begegnung -> begegnung.getBegegnungId().getPaarungNummer()))
+				.toList())
 			.map(BegegnungenJeRunde::new)
 			.collect(Collectors.toList());
 
@@ -125,7 +137,7 @@ public class DoppelKOSystem implements Algorithmus {
 	}
 
 	/**
-	 * Erstellt Begegnungen mit Freiloses, d.h. einzelne Kämpfer haben keinen Gegner. Die ist erforderlich um einen ausgeglichenen Baum zu erhalten:
+	 * Erstellt Begegnungen mit Freilosen, d.h. einzelne Kämpfer haben keinen Gegner. Dies ist erforderlich um einen ausgeglichenen Baum zu erhalten:
 	 * Das Finale ist eine Begegnung, das Halbfinale zwei Begegnungen, Vierltelfinale vier Begegnungen usw.
 	 */
 	private static List<Pair<Optional<Wettkaempfer>, Optional<Wettkaempfer>>> freilosMarkierung(List<Wettkaempfer> wettkaempfer, int gesamtRunden) {
@@ -136,25 +148,47 @@ public class DoppelKOSystem implements Algorithmus {
 		int anzahlPaarungenRunde1 = (int) Math.pow(2, gesamtRunden - 1);
 		logger.trace("Paarungen Runde 1: {}", anzahlPaarungenRunde1);
 
-		List<Wettkaempfer> erweiterteListe = new ArrayList<>(wettkaempfer);
+		List<Integer> losnummern = offizielleLosnummernReihenfolge(anzahlPaarungenRunde1 * 2);
+		logger.trace("Losnummern-Reihenfolge: {}", losnummern);
 
-		// wir starten erst mit dem zweiten Eintrag, der erste Kämpfer ist nie ein Freilos
-		int insertPosition = 1;
-		// Füge null an jeder zweiten Stelle ein, bis die Ziel-Länge erreicht ist
-		while (erweiterteListe.size() < anzahlPaarungenRunde1 * 2) {
-			erweiterteListe.add(insertPosition, null);
-			insertPosition += 2;
-		}
-		logger.trace("Erweitert auf {} Teilnehmer - erweiterteListe: {}", erweiterteListe.size(), erweiterteListe);
-
-		// Erstelle die Paarungen
-		for (int i = 0; i < anzahlPaarungenRunde1 * 2; i += 2) {
-			Optional<Wettkaempfer> wettkaempfer1 = Optional.ofNullable(erweiterteListe.get(i));
-			Optional<Wettkaempfer> wettkaempfer2 = Optional.ofNullable(erweiterteListe.get(i + 1));
+		for (int i = 0; i < losnummern.size(); i += 2) {
+			Optional<Wettkaempfer> wettkaempfer1 = wettkaempferMitLosnummer(wettkaempfer, losnummern.get(i));
+			Optional<Wettkaempfer> wettkaempfer2 = wettkaempferMitLosnummer(wettkaempfer, losnummern.get(i + 1));
 			paarungen.add(new ImmutablePair<>(wettkaempfer1, wettkaempfer2));
 		}
 
 		return paarungen;
+	}
+
+	private static Optional<Wettkaempfer> wettkaempferMitLosnummer(List<Wettkaempfer> wettkaempfer, int losnummer) {
+		if (losnummer > wettkaempfer.size()) {
+			return Optional.empty();
+		}
+		return Optional.of(wettkaempfer.get(losnummer - 1));
+	}
+
+	/**
+	 * Baut die offizielle Doppel-KO-Losnummernreihenfolge rekursiv aus der jeweils kleineren Liste.
+	 * Beispiel: Aus der 4er-Liste [1, 3, 2, 4] entsteht die 8er-Liste, indem nach jeder Losnummer
+	 * der gegenüberliegende Platz aus der zweiten Listenhälfte eingefügt wird:
+	 * [1, 5, 3, 7, 2, 6, 4, 8]. Daraus ergeben sich die Paarungen 1-5, 3-7, 2-6, 4-8.
+	 * Freilose entstehen später automatisch, wenn eine Losnummer größer als die Teilnehmerzahl ist.
+	 */
+	private static List<Integer> offizielleLosnummernReihenfolge(int listenGroesse) {
+		if (listenGroesse < 2 || Integer.bitCount(listenGroesse) != 1) {
+			throw new IllegalArgumentException("Doppel-KO-Listen müssen eine Zweierpotenz als Größe haben: " + listenGroesse);
+		}
+		if (listenGroesse == 2) {
+			return List.of(1, 2);
+		}
+
+		List<Integer> kleinereListe = offizielleLosnummernReihenfolge(listenGroesse / 2);
+		List<Integer> result = new ArrayList<>(listenGroesse);
+		for (Integer losnummer : kleinereListe) {
+			result.add(losnummer);
+			result.add(losnummer + (listenGroesse / 2));
+		}
+		return result;
 	}
 
 	// Abkürzung, um eine Spiel-ID zu erstellen, da KO-Turniere sehr spezifisch bezüglich der Positionen sind
