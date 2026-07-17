@@ -103,9 +103,8 @@ public class WertungService {
 		Begegnung.BegegnungId aktuelleBegegnungId = begegnung.getBegegnungId();
 		var wettkampfGruppe = begegnung.getWettkampfGruppe();
 		var alleWettkampfgruppeRunden = turnierRepository.ladeWettkampfgruppeRunden(wettkampfGruppe.id(), begegnung.getTurnierUUID());
-		Pair<Optional<Begegnung>, Optional<Begegnung>> nachfolger = Sortierer.nachfolgeBegegnungen(aktuelleBegegnungId, wettkampfGruppe, alleWettkampfgruppeRunden);
-		Optional<Begegnung> nextGewinnerBegegnungOptional = nachfolger.getLeft();
-		Optional<Begegnung> nextTrostBegegnungOptional = nachfolger.getRight();
+		Sortierer.NachfolgeBelegung nachfolger = Sortierer.nachfolgeBelegungen(begegnung, wettkaempferSiegerRunde, wettkampfGruppe, alleWettkampfgruppeRunden);
+		Optional<Begegnung> nextGewinnerBegegnungOptional = nachfolger.gewinnerBegegnung();
 
 		if (nextGewinnerBegegnungOptional.isPresent()) {
 			Begegnung nextGewinnerRunde = nextGewinnerBegegnungOptional.get();
@@ -114,15 +113,13 @@ public class WertungService {
 			else if (nextGewinnerRunde.getWettkaempfer2().isEmpty()) nextGewinnerRunde.setWettkaempfer2(Optional.of(wettkaempferSiegerRunde));
 			turnierRepository.speichereBegegnung(nextGewinnerRunde);
 		}
-		if (nextTrostBegegnungOptional.isPresent()) {
-			Begegnung nextTrostRunde = nextTrostBegegnungOptional.get();
+		for (Sortierer.TrostBelegung trostBelegung : nachfolger.trostBelegungen()) {
+			Begegnung nextTrostRunde = trostBelegung.begegnung();
 			logger.warn("nächste TrostRunde: {}", nextTrostRunde);
-			Optional<Wettkaempfer> wettkaempferTrostRunde = findeVerlierer(begegnung, wettkaempferSiegerRunde);
-			if (wettkaempferTrostRunde.isPresent()) {
-				if (nextTrostRunde.getWettkaempfer1().isEmpty()) nextTrostRunde.setWettkaempfer1(Optional.of(wettkaempferTrostRunde.get()));
-				else if (nextTrostRunde.getWettkaempfer2().isEmpty()) nextTrostRunde.setWettkaempfer2(Optional.of(wettkaempferTrostRunde.get()));
-				turnierRepository.speichereBegegnung(nextTrostRunde);
-			}
+			Wettkaempfer wettkaempferTrostRunde = trostBelegung.wettkaempfer();
+			if (nextTrostRunde.getWettkaempfer1().isEmpty()) nextTrostRunde.setWettkaempfer1(Optional.of(wettkaempferTrostRunde));
+			else if (nextTrostRunde.getWettkaempfer2().isEmpty()) nextTrostRunde.setWettkaempfer2(Optional.of(wettkaempferTrostRunde));
+			turnierRepository.speichereBegegnung(nextTrostRunde);
 		}
 	}
 
@@ -180,13 +177,12 @@ public class WertungService {
 	}
 
 	private Optional<Wettkaempfer> findeVerlierer(Begegnung begegnung, Wettkaempfer sieger) {
-		if (begegnung.getWettkaempfer1().isPresent() && sieger.equals(begegnung.getWettkaempfer1())) {
-			if (begegnung.getWettkaempfer2().isPresent()) {
-				return begegnung.getWettkaempfer2();
-			}
-			return Optional.empty();
+		if (begegnung.getWettkaempfer1().filter(sieger::equals).isPresent()) {
+			return begegnung.getWettkaempfer2();
 		}
-
-		return begegnung.getWettkaempfer2();
+		if (begegnung.getWettkaempfer2().filter(sieger::equals).isPresent()) {
+			return begegnung.getWettkaempfer1();
+		}
+		return Optional.empty();
 	}
 }

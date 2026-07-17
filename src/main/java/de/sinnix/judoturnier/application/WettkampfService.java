@@ -18,8 +18,7 @@ import de.sinnix.judoturnier.adapter.secondary.BenutzerRepository;
 import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
 import de.sinnix.judoturnier.adapter.secondary.WertungRepository;
 import de.sinnix.judoturnier.application.algorithm.Algorithmus;
-import de.sinnix.judoturnier.application.algorithm.AlgorithmusFactory;
-import de.sinnix.judoturnier.application.algorithm.WettkampfsystemResolver;
+import de.sinnix.judoturnier.application.algorithm.KampfsystemAlgorithmusResolver;
 import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
@@ -34,7 +33,6 @@ import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
 import de.sinnix.judoturnier.model.WettkampfGruppeMitBegegnungen;
 import de.sinnix.judoturnier.model.WettkampfReihenfolge;
-import de.sinnix.judoturnier.model.Wettkampfsystem;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -44,7 +42,7 @@ import org.apache.logging.log4j.Logger;
 @Service
 public class WettkampfService {
 	private static final Logger                 logger = LogManager.getLogger(WettkampfService.class);
-	private static final WettkampfsystemResolver wettkampfsystemResolver = new WettkampfsystemResolver();
+	private static final KampfsystemAlgorithmusResolver kampfsystemAlgorithmusResolver = new KampfsystemAlgorithmusResolver();
 	@Autowired
 	private              Helpers                helpers;
 	@Autowired
@@ -128,15 +126,14 @@ public class WettkampfService {
 			List<List<Wettkaempfer>> wettkaempferGruppen = splitArrayToChunkSize(gwk.teilnehmer(), maxGruppenGroesse);
 			for (List<Wettkaempfer> wettkaempferList : wettkaempferGruppen) {
 				var splittedGwkg = new GewichtsklassenGruppe(gwk.id(), gwk.altersKlasse(), gwk.gruppenGeschlecht(), wettkaempferList, gwk.name(), gwk.minGewicht(), gwk.maxGewicht(), gwk.turnierUUID());
-				Wettkampfsystem wettkampfsystem = wettkampfsystemResolver.resolve(einstellungen, splittedGwkg);
 
-				if (wettkampfsystem == Wettkampfsystem.KEIN_WETTKAMPF) {
+				if (splittedGwkg.teilnehmer().size() <= 1) {
 					logger.info("Kein Wettkampf für Gruppe {}({}) mit {} Teilnehmern", splittedGwkg.id(), splittedGwkg.name(), splittedGwkg.teilnehmer().size());
 					continue;
 				}
 
-				Algorithmus algorithmus = AlgorithmusFactory.from(wettkampfsystem);
-				logger.info("Nutze Wettkampfsystem {} mit Algorithmus {} für Gruppe {}({})", wettkampfsystem, algorithmus.getClass().getSimpleName(), splittedGwkg.id(), splittedGwkg.name());
+				Algorithmus algorithmus = kampfsystemAlgorithmusResolver.resolve(einstellungen, splittedGwkg);
+				logger.info("Nutze Algorithmus {} für Gruppe {}({})", algorithmus.getClass().getSimpleName(), splittedGwkg.id(), splittedGwkg.name());
 				WettkampfGruppeMitBegegnungen wettkampfGruppeMitBegegnungen = algorithmus.erstelleWettkampfGruppe(splittedGwkg);
 				wettkampfGruppeMitBegegnungenList.add(wettkampfGruppeMitBegegnungen);
 			}
