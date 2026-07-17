@@ -2,6 +2,7 @@ package de.sinnix.judoturnier.application;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -124,14 +125,14 @@ class WettkampfServiceTest {
 		assertEquals(4, matten.getFirst().runden().get(3).rundeGesamt());
 
 		// Anzahl der Begegnungen auf Matte 1
-		assertEquals(45, matten.getFirst().runden().stream().mapToInt(r -> r.begegnungen().size()).sum());
+		assertEquals(45, anzahlKampfBegegnungen(matten.getFirst()));
 
 		// Anzahl der Begegnungen auf Matte 1
-		assertEquals(9, matten.get(1).runden().stream().mapToInt(r -> r.begegnungen().size()).sum());
+		assertEquals(9, anzahlKampfBegegnungen(matten.get(1)));
 
 
 		// da Jeder-gegen-Jeden nur je Gruppe gilt, muss die Anzahl für jede Gruppe separat geprüft werden
-		int anzahlBegegnungen = matten.stream().mapToInt(m -> m.runden().stream().mapToInt(r -> r.begegnungen().size()).sum()).sum();
+		int anzahlBegegnungen = anzahlKampfBegegnungen(matten);
 		int berechneteBegegnungen = 0;
 		for (GewichtsklassenGruppe gruppe : gewichtsklassenGruppen) {
 			var n = gruppe.teilnehmer().size();
@@ -145,6 +146,7 @@ class WettkampfServiceTest {
 			.allMatch(i -> matten.getFirst().runden().get(i - 1).mattenRunde() < matten.getFirst().runden().get(i).mattenRunde()));
 		assertTrue(IntStream.range(1, matten.get(1).runden().size())
 			.allMatch(i -> matten.get(1).runden().get(i - 1).mattenRunde() < matten.get(1).runden().get(i).mattenRunde()));
+		assertMindestensZweiRundenPauseJeGruppe(matten);
 	}
 
 	@ParameterizedTest
@@ -183,10 +185,12 @@ class WettkampfServiceTest {
 		assertEquals(1, matten.size(), "Es sollte nur eine Matte geben");
 		assertEquals(1, gewichtsklassenGruppen.size(), "Es sollte nur eine GewichtsklassenGruppe geben");
 		assertEquals(8, gewichtsklassenGruppen.stream().mapToInt(g -> g.teilnehmer().size()).sum(), "Es sollten 8 Teilnehmer in der Gruppe sein");
-		assertEquals(11, matten.stream().mapToInt(m -> m.runden().stream().mapToInt(r -> r.begegnungen().size()).sum()).sum(), "Es sollten 11 Begegnungen auf der Matte sein");
-		assertEquals(5, matten.getFirst().runden().size(), "Es sollten 5 Runden geben (3 Gewinnerrunden, 2 Trostrunden)");
+		assertEquals(11, anzahlKampfBegegnungen(matten), "Es sollten 11 echte Begegnungen auf der Matte sein");
+		assertEquals(13, matten.getFirst().runden().size(), "Es sollten 5 Kampfrunden und 8 Pausen geben");
+		List<Runde> kampfRunden = kampfRunden(matten.getFirst());
+		assertEquals(5, kampfRunden.size(), "Es sollten 5 Kampfrunden geben (3 Gewinnerrunden, 2 Trostrunden)");
 
-		var ersteRunde = matten.getFirst().runden().get(0); // 1. Runde für Gruppe, 1. Runde auf der Matte, 1. Runde ingesamt, Gewinnerrunde
+		var ersteRunde = kampfRunden.get(0); // 1. Runde für Gruppe, 1. Runde auf der Matte, 1. Runde ingesamt, Gewinnerrunde
 		assertEquals(1, ersteRunde.gruppenRunde(), "GruppenRunde sollte 1 sein");
 		assertEquals(1, ersteRunde.mattenRunde(), "MattenRunde sollte 1 sein");
 		assertEquals(1, ersteRunde.rundeGesamt(), "RundeGesamt sollte 1 sein");
@@ -204,10 +208,10 @@ class WettkampfServiceTest {
 		assertTrue(ersteRunde.begegnungen().get(3).getWettkaempfer1().isPresent(), "Wettkaempfer 1 sollte vorhanden sein");
 		assertTrue(ersteRunde.begegnungen().get(3).getWettkaempfer2().isPresent(), "Wettkaempfer 2 sollte vorhanden sein");
 
-		var zweiteRunde = matten.getFirst().runden().get(1); // 1. Runde für Gruppe, 2. Runde auf der Matte, 2. Runde ingesamt, Trostrunde
+		var zweiteRunde = kampfRunden.get(1); // 1. Runde für Gruppe, 4. Runde auf der Matte, 4. Runde ingesamt, Trostrunde
 		assertEquals(1, zweiteRunde.gruppenRunde(), "GruppenRunde sollte 1 sein");
-		assertEquals(2, zweiteRunde.mattenRunde(), "MattenRunde sollte 2 sein");
-		assertEquals(2, zweiteRunde.rundeGesamt(), "RundeGesamt sollte 2 sein");
+		assertEquals(4, zweiteRunde.mattenRunde(), "MattenRunde sollte 4 sein");
+		assertEquals(4, zweiteRunde.rundeGesamt(), "RundeGesamt sollte 4 sein");
 		assertEquals(2, zweiteRunde.begegnungen().size(), "Anzahl der Begegnungen in dieser Runde sollte 2 sein");
 		assertEquals(Begegnung.RundenTyp.TROSTRUNDE, zweiteRunde.begegnungen().get(0).getBegegnungId().rundenTyp, "Begegnung 1 sollte eine Trostrunden sein");
 		assertTrue(zweiteRunde.begegnungen().get(0).getWettkaempfer1().isEmpty(), "Trostrunde sollte leer sein");
@@ -216,10 +220,10 @@ class WettkampfServiceTest {
 		assertTrue(zweiteRunde.begegnungen().get(1).getWettkaempfer1().isEmpty(), "Trostrunde sollte leer sein");
 		assertTrue(zweiteRunde.begegnungen().get(1).getWettkaempfer2().isEmpty(), "Trostrunde sollte leer sein");
 
-		var dritteRunde = matten.getFirst().runden().get(2); // 2. Runde für Gruppe, 3. Runde auf der Matte, 3. Runde ingesamt, Gewinnerrunde
+		var dritteRunde = kampfRunden.get(2); // 2. Runde für Gruppe, 7. Runde auf der Matte, 7. Runde ingesamt, Gewinnerrunde
 		assertEquals(2, dritteRunde.gruppenRunde(), "GruppenRunde sollte 2 sein");
-		assertEquals(3, dritteRunde.mattenRunde(), "MattenRunde sollte 3 sein");
-		assertEquals(3, dritteRunde.rundeGesamt(), "RundeGesamt sollte 3 sein");
+		assertEquals(7, dritteRunde.mattenRunde(), "MattenRunde sollte 7 sein");
+		assertEquals(7, dritteRunde.rundeGesamt(), "RundeGesamt sollte 7 sein");
 		assertEquals(2, dritteRunde.begegnungen().size(), "Anzahl der Begegnungen in dieser Runde sollte 2 sein");
 		assertEquals(Begegnung.RundenTyp.GEWINNERRUNDE, dritteRunde.begegnungen().get(0).getBegegnungId().rundenTyp, "Begegnung 1 sollte eine Gewinnerrunde sein");
 		assertTrue(dritteRunde.begegnungen().get(0).getWettkaempfer1().isEmpty(), "Wettkaempfer 1 sollte leer sein");
@@ -228,10 +232,10 @@ class WettkampfServiceTest {
 		assertTrue(dritteRunde.begegnungen().get(1).getWettkaempfer1().isEmpty(), "Wettkaempfer 1 sollte leer sein");
 		assertTrue(dritteRunde.begegnungen().get(1).getWettkaempfer2().isEmpty(), "Wettkaempfer 2 sollte leer sein");
 
-		var vierteRunde = matten.getFirst().runden().get(3); // 2. Runde für Gruppe, 4. Runde auf der Matte, 4. Runde ingesamt, Trostrunde
+		var vierteRunde = kampfRunden.get(3); // 2. Runde für Gruppe, 10. Runde auf der Matte, 10. Runde ingesamt, Trostrunde
 		assertEquals(2, vierteRunde.gruppenRunde(), "GruppenRunde sollte 2 sein");
-		assertEquals(4, vierteRunde.mattenRunde(), "MattenRunde sollte 4 sein");
-		assertEquals(4, vierteRunde.rundeGesamt(), "RundeGesamt sollte 4 sein");
+		assertEquals(10, vierteRunde.mattenRunde(), "MattenRunde sollte 10 sein");
+		assertEquals(10, vierteRunde.rundeGesamt(), "RundeGesamt sollte 10 sein");
 		assertEquals(2, vierteRunde.begegnungen().size(), "Anzahl der Begegnungen in dieser Runde sollte 2 sein");
 		assertEquals(Begegnung.RundenTyp.TROSTRUNDE, vierteRunde.begegnungen().get(0).getBegegnungId().rundenTyp, "Begegnung 1 sollte eine Trostrunden sein");
 		assertTrue(vierteRunde.begegnungen().get(0).getWettkaempfer1().isEmpty(), "Trostrunde sollte leer sein");
@@ -240,14 +244,15 @@ class WettkampfServiceTest {
 		assertTrue(vierteRunde.begegnungen().get(1).getWettkaempfer1().isEmpty(), "Trostrunde sollte leer sein");
 		assertTrue(vierteRunde.begegnungen().get(1).getWettkaempfer2().isEmpty(), "Trostrunde sollte leer sein");
 
-		var fuenfteRunde = matten.getFirst().runden().get(4); // 3. Runde für Gruppe, 5. Runde auf der Matte, 5. Runde ingesamt, letzte Gewinnerrunde
+		var fuenfteRunde = kampfRunden.get(4); // 3. Runde für Gruppe, 13. Runde auf der Matte, 13. Runde ingesamt, letzte Gewinnerrunde
 		assertEquals(3, fuenfteRunde.gruppenRunde(), "GruppenRunde sollte 3 sein");
-		assertEquals(5, fuenfteRunde.mattenRunde(), "MattenRunde sollte 5 sein");
-		assertEquals(5, fuenfteRunde.rundeGesamt(), "RundeGesamt sollte 5 sein");
+		assertEquals(13, fuenfteRunde.mattenRunde(), "MattenRunde sollte 13 sein");
+		assertEquals(13, fuenfteRunde.rundeGesamt(), "RundeGesamt sollte 13 sein");
 		assertEquals(1, fuenfteRunde.begegnungen().size(), "Anzahl der Begegnungen in dieser Runde sollte 1 (Finale) sein");
 		assertEquals(Begegnung.RundenTyp.GEWINNERRUNDE, fuenfteRunde.begegnungen().get(0).getBegegnungId().rundenTyp, "Begegnung 1 sollte eine Gewinnerrunde sein");
 		assertTrue(fuenfteRunde.begegnungen().get(0).getWettkaempfer1().isEmpty(), "Wettkaempfer 1 sollte leer sein");
 		assertTrue(fuenfteRunde.begegnungen().get(0).getWettkaempfer2().isEmpty(), "Wettkaempfer 2 sollte leer sein");
+		assertMindestensZweiRundenPauseJeGruppe(matten);
 	}
 
 	@ParameterizedTest
@@ -358,8 +363,8 @@ class WettkampfServiceTest {
 
 		ArgumentCaptor<List<Matte>> argumentCaptor = ArgumentCaptor.forClass(List.class);
 		verify(turnierRepository, times(1)).speichereMatten(argumentCaptor.capture());
-		List<Begegnung> begegnungen = argumentCaptor.getValue().stream()
-			.flatMap(matte -> matte.runden().stream())
+		List<Matte> matten = argumentCaptor.getValue();
+		List<Begegnung> begegnungen = kampfRunden(matten).stream()
 			.flatMap(runde -> runde.begegnungen().stream())
 			.toList();
 		List<Begegnung> ersteGewinnerrunde = begegnungen.stream()
@@ -377,6 +382,7 @@ class WettkampfServiceTest {
 			.filter(begegnung -> begegnung.getBegegnungId().rundenTyp != Begegnung.RundenTyp.GEWINNERRUNDE || begegnung.getBegegnungId().rundenNummerDesTyps != 1)
 			.filter(this::istFreilos)
 			.count(), "Freilose dürfen nur in der ersten Gewinnerrunde erzeugt werden");
+		assertMindestensZweiRundenPauseJeGruppe(matten);
 	}
 
 	@Test
@@ -395,13 +401,17 @@ class WettkampfServiceTest {
 		ArgumentCaptor<List<Matte>> argumentCaptor = ArgumentCaptor.forClass(List.class);
 		verify(turnierRepository, times(2)).speichereMatten(argumentCaptor.capture());
 		List<List<Matte>> mattenListe = argumentCaptor.getAllValues();
-		System.out.println(mattenListe);
 
-		Integer erwarteteRundeGesamt = 21;
+		Integer erwarteteRundeGesamt = mattenListe.stream()
+			.mapToInt(matten -> matten.stream()
+				.mapToInt(matte -> matte.runden().size())
+				.sum())
+			.sum();
 
 		assertEquals(2, mattenListe.size());
 		assertEquals(erwarteteRundeGesamt, mattenListe.stream().mapToInt(matten -> matten.stream().mapToInt(matte -> matte.runden().size()).sum()).sum());
 		assertEquals(erwarteteRundeGesamt, mattenListe.getLast().getLast().runden().getLast().rundeGesamt());
+		mattenListe.forEach(this::assertMindestensZweiRundenPauseJeGruppe);
 	}
 
 	@Test
@@ -437,7 +447,7 @@ class WettkampfServiceTest {
 		// Anzahl Teilnehmer insgesamt
 		assertEquals(25, gewichtsklassenGruppen.stream().mapToInt(g -> g.teilnehmer().size()).sum());
 		// Anzahl aller Begegnungen
-		assertEquals(42, matten.stream().mapToInt(m -> m.runden().stream().mapToInt(r -> r.begegnungen().size()).sum()).sum());
+		assertEquals(42, anzahlKampfBegegnungen(matten));
 
 		// 1. Runde für Gruppe A, 1. Runde auf der Matte, 1. Runde ingesamt
 		assertEquals(1, matten.getFirst().runden().getFirst().mattenRunde());
@@ -451,22 +461,24 @@ class WettkampfServiceTest {
 		assertEquals(3, matten.getFirst().runden().get(2).mattenRunde());
 		assertEquals(1, matten.getFirst().runden().get(2).gruppenRunde());
 		assertEquals(3, matten.getFirst().runden().get(2).rundeGesamt());
-		// 2. Runde für Gruppe A, 4. Runde auf der Matte, 4. Runde ingesamt
+		// Trostrunde der 1. Runde für Gruppe A, 4. Runde auf der Matte, 4. Runde ingesamt
 		assertEquals(4, matten.getFirst().runden().get(3).mattenRunde());
-		assertEquals(2, matten.getFirst().runden().get(3).gruppenRunde());
+		assertEquals(1, matten.getFirst().runden().get(3).gruppenRunde());
 		assertEquals(4, matten.getFirst().runden().get(3).rundeGesamt());
+		assertEquals(Begegnung.RundenTyp.TROSTRUNDE, matten.getFirst().runden().get(3).begegnungen().getFirst().getBegegnungId().rundenTyp);
 
 		// Anzahl der Begegnungen auf Matte 1
-		assertEquals(33, matten.getFirst().runden().stream().mapToInt(r -> r.begegnungen().size()).sum());
+		assertEquals(33, anzahlKampfBegegnungen(matten.getFirst()));
 
 		// Anzahl der Begegnungen auf Matte 2
-		assertEquals(9, matten.get(1).runden().stream().mapToInt(r -> r.begegnungen().size()).sum());
+		assertEquals(9, anzahlKampfBegegnungen(matten.get(1)));
 
 		// Die MattenRunde wird immer erhöht
 		assertTrue(IntStream.range(1, matten.getFirst().runden().size())
 			.allMatch(i -> matten.getFirst().runden().get(i - 1).mattenRunde() < matten.getFirst().runden().get(i).mattenRunde()));
 		assertTrue(IntStream.range(1, matten.get(1).runden().size())
 			.allMatch(i -> matten.get(1).runden().get(i - 1).mattenRunde() < matten.get(1).runden().get(i).mattenRunde()));
+		assertMindestensZweiRundenPauseJeGruppe(matten);
 	}
 
 	private Begegnung deepCopyBegegnung(Begegnung original) throws JacksonException {
@@ -484,6 +496,40 @@ class WettkampfServiceTest {
 		b.setWettkampfGruppe(original.getWettkampfGruppe());
 		b.setTurnierUUID(original.getTurnierUUID());
 		return b;
+	}
+
+	private List<Runde> kampfRunden(List<Matte> matten) {
+		return matten.stream()
+			.flatMap(matte -> kampfRunden(matte).stream())
+			.toList();
+	}
+
+	private List<Runde> kampfRunden(Matte matte) {
+		return matte.runden().stream()
+			.filter(runde -> !runde.istPause())
+			.toList();
+	}
+
+	private int anzahlKampfBegegnungen(List<Matte> matten) {
+		return kampfRunden(matten).stream()
+			.mapToInt(runde -> runde.begegnungen().size())
+			.sum();
+	}
+
+	private int anzahlKampfBegegnungen(Matte matte) {
+		return kampfRunden(matte).stream()
+			.mapToInt(runde -> runde.begegnungen().size())
+			.sum();
+	}
+
+	private void assertMindestensZweiRundenPauseJeGruppe(List<Matte> matten) {
+		Map<WettkampfGruppe,Integer> letzteMattenRundeJeGruppe = new HashMap<>();
+		for (Runde runde : kampfRunden(matten)) {
+			Integer letzteMattenRunde = letzteMattenRundeJeGruppe.put(runde.gruppe(), runde.mattenRunde());
+			if (letzteMattenRunde != null) {
+				assertTrue(runde.mattenRunde() - letzteMattenRunde - 1 >= 2);
+			}
+		}
 	}
 
 	private Wettkaempfer copyWettkaempfer(Wettkaempfer w) {

@@ -32,6 +32,13 @@ public class Begegnung {
 	private WettkampfGruppe        wettkampfGruppe;
 	private UUID                   turnierUUID;
 
+	public boolean istPausenMarker() {
+		return begegnungId != null &&
+			begegnungId.paarungNummer == 0 &&
+			(wettkaempfer1 == null || wettkaempfer1.isEmpty()) &&
+			(wettkaempfer2 == null || wettkaempfer2.isEmpty());
+	}
+
 	@Data
 	public static class BegegnungId {
 		public RundenTyp rundenTyp;		// der Typ der Runde (Gewinner- oder Verlierer-Runde)

@@ -108,7 +108,7 @@ public class DtosConverter {
 	}
 
 	public static RundeDto convertFromRunde(Runde runde) {
-		var begegnungDtoList = convertFromBegegnungen(runde.begegnungen());
+		var begegnungDtoList = runde.istPause() ? List.<BegegnungDto>of() : convertFromBegegnungen(runde.begegnungen());
 		return new RundeDto(runde.rundeId(), runde.mattenRunde(), runde.gruppenRunde(), runde.rundeGesamt(), runde.matteId(), runde.altersklasse(), runde.gruppe(), begegnungDtoList);
 	}
 

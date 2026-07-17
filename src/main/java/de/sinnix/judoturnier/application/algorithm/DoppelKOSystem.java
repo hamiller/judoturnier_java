@@ -90,10 +90,8 @@ public class DoppelKOSystem implements Algorithmus {
 		logger.debug("Teilnehmer dieser Gruppe: {}", teilnehmerAnzahl);
 		logger.debug("Gesamtrunden dieser Gruppe: {}", gesamtRunden);
 
-		List<Wettkaempfer> gemischteTeilnehmer = mischeTeilnehmer(teilnehmer);
-
 		// in der ersten Runde müssen eventuell Freilose erstellt werden, sodass im weiteren Turnierverlauf ein ausgeglichener Baum entsteht
-		List<Pair<Optional<Wettkaempfer>, Optional<Wettkaempfer>>> paarungenRunde1 = freilosMarkierung(gemischteTeilnehmer, gesamtRunden);
+		List<Pair<Optional<Wettkaempfer>, Optional<Wettkaempfer>>> paarungenRunde1 = freilosMarkierung(teilnehmer, gesamtRunden);
 		logger.debug("Paarungen: {}", paarungenRunde1.size());
 
 		// erste Gewinner-Runde zur Initialisierung der Spieler
@@ -116,7 +114,7 @@ public class DoppelKOSystem implements Algorithmus {
 		logger.trace("Jetzt haben wir {} Begegnungen", result.size());
 
 		// leere Trost-Runden
-		// TODO: die Trostrunde darf erst später beginnen, damit nicht die ausgeschiedenen Kämpfer sofort wieder dran sind...
+		// Hier wird nur der Turnierbaum erzeugt; die zeitliche Kampfplanung erfolgt nachgelagert.
 		var trostrunden = (2* (gesamtRunden-1) ) -2;
 		logger.trace("Anzahl Trostrunden: {}", trostrunden);
 		for (int aktuelleRunde = 1; aktuelleRunde <= trostrunden; aktuelleRunde++) {
@@ -129,11 +127,6 @@ public class DoppelKOSystem implements Algorithmus {
 		}
 		logger.trace("Jetzt haben wir {} Begegnungen", result.size());
 		return result;
-	}
-
-	private static List<Wettkaempfer> mischeTeilnehmer(List<Wettkaempfer> teilnehmer) {
-		// TODO
-		return teilnehmer;
 	}
 
 	/**

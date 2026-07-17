@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -69,15 +70,12 @@ public class Sortierer {
 	private static final int DEFAULT_MAX_RUNDEN = 100;
 
 	private int mattenRunde;
-	private int gruppe1Runde;
-	private int gruppe2Runde;
-	private int gruppe3Runde;
 	private int rundeGesamt;
 
+	private record GeplanteRunde(int gruppenRunde, List<Begegnung> begegnungen) {
+	}
+
 	public Sortierer(Integer rundeGesamt, Integer mattenRunde) {
-		this.gruppe1Runde = 1;
-		this.gruppe2Runde = 1;
-		this.gruppe3Runde = 1;
 		this.mattenRunde = mattenRunde;
 		this.rundeGesamt = rundeGesamt;
 	}
@@ -162,32 +160,7 @@ public class Sortierer {
 	 */
 	public Pair<Integer, List<Runde>> erstelleReihenfolgeMitAllenGruppenJeDurchgang(List<WettkampfGruppeMitBegegnungen> gruppen, Integer matteId) {
 		logger.info("erstelle Reihenfolge -mit allen Gruppen je Durchgang- für Matte {}...", matteId);
-		List<Runde> runden = new ArrayList<>();
-		int gruppenRunde = 1;
-		for (int rundenNummer = 0; rundenNummer < DEFAULT_MAX_RUNDEN; rundenNummer++) {
-			for (int gruppenNr = 0; gruppenNr < gruppen.size(); gruppenNr++) {
-				WettkampfGruppeMitBegegnungen gruppe = gruppen.get(gruppenNr);
-
-				if (gruppe.alleRundenBegegnungen().size() - 1 < rundenNummer) {
-					// wir sind hier fertig
-					break;
-				}
-
-				// hole Altersklasse der Gruppe
-				Altersklasse altersKlasse = gruppe.gruppe().altersklasse();
-
-				logger.debug("Gruppe: {}", gruppe.gruppe().name());
-				List<Begegnung> begegnungenGewinnerrunde = gruppe.alleRundenBegegnungen().get(rundenNummer).begegnungenJeRunde().stream().filter(b -> b.getBegegnungId().getRundenTyp() == Begegnung.RundenTyp.GEWINNERRUNDE).toList();
-				List<Begegnung> begegnungenTrostrunde = gruppe.alleRundenBegegnungen().get(rundenNummer).begegnungenJeRunde().stream().filter(b -> b.getBegegnungId().getRundenTyp() == Begegnung.RundenTyp.TROSTRUNDE).toList();
-				if (begegnungenGewinnerrunde.size() > 0) {
-					runden.add(new Runde(null, mattenRunde++, gruppenRunde, rundeGesamt++, matteId, altersKlasse, gruppe.gruppe(), begegnungenGewinnerrunde));
-				}
-				if (begegnungenTrostrunde.size() > 0) {
-					runden.add(new Runde(null, mattenRunde++, gruppenRunde, rundeGesamt++, matteId, altersKlasse, gruppe.gruppe(), begegnungenTrostrunde));
-				}
-				gruppenRunde++;
-			}
-		}
+		List<Runde> runden = planeMitPausen(gruppen, matteId);
 		return new ImmutablePair(rundeGesamt, runden);
 	}
 
@@ -201,8 +174,7 @@ public class Sortierer {
 		// gerade Anzahl an Gruppen -> 2 Gruppen je Matte
 		if (gruppen.size() % 2 == 0) {
 			logger.info("Gerade Anzahl an Gruppen ({})", gruppen.size());
-			var result = gruppiereAbwechselndPaare(gruppen, matteId);
-			runden.addAll(result);
+			runden.addAll(gruppiereAbwechselndPaare(gruppen, matteId));
 		}
 		// ungerade Anzahl an Gruppen -> 2 Gruppen je Matte und einmal 3 Gruppen je Matte
 		else {
@@ -212,29 +184,13 @@ public class Sortierer {
 				// behandle die letzten 3 Gruppen separat und gruppiere zuerst die anderen Gruppen
 				List<WettkampfGruppeMitBegegnungen> letztenDreiGruppen = gruppen.subList(gruppen.size() - 3, gruppen.size());
 				List<WettkampfGruppeMitBegegnungen> andereGruppen = gruppen.subList(0, gruppen.size() - 3);
-				var result = gruppiereAbwechselndPaare(andereGruppen, matteId);
-				runden.addAll(result);
+				runden.addAll(gruppiereAbwechselndPaare(andereGruppen, matteId));
 
 				// jetzt die letzten drei Gruppen
-				result = gruppiereAbwechselndTrios(letztenDreiGruppen, matteId);
-				runden.addAll(result);
+				runden.addAll(gruppiereAbwechselndTrios(letztenDreiGruppen, matteId));
 			} else {
 				logger.info("Es existiert nur eine Gruppe, daher fügen wir diese komplett hinzu");
-				WettkampfGruppeMitBegegnungen gruppeZuletzt = gruppen.get(gruppen.size() - 1);
-				logger.debug("Gruppe {}", gruppeZuletzt);
-				int gruppenRunde = 1;
-				for (BegegnungenJeRunde begegnungen : gruppeZuletzt.alleRundenBegegnungen()) {
-					Altersklasse altersKlasseZuletzt = gruppeZuletzt.gruppe().altersklasse();
-					List<Begegnung> begegnungenGewinnerrunde = begegnungen.begegnungenJeRunde().stream().filter(b -> b.getBegegnungId().getRundenTyp() == Begegnung.RundenTyp.GEWINNERRUNDE).toList();
-					List<Begegnung> begegnungenTrostrunde = begegnungen.begegnungenJeRunde().stream().filter(b -> b.getBegegnungId().getRundenTyp() == Begegnung.RundenTyp.TROSTRUNDE).toList();
-					if (begegnungenGewinnerrunde.size() > 0) {
-						runden.add(new Runde(null, mattenRunde++, gruppenRunde, rundeGesamt++, matteId, altersKlasseZuletzt, gruppeZuletzt.gruppe(), begegnungenGewinnerrunde));
-					}
-					if (begegnungenTrostrunde.size() > 0) {
-						runden.add(new Runde(null, mattenRunde++, gruppenRunde, rundeGesamt++, matteId, altersKlasseZuletzt, gruppeZuletzt.gruppe(), begegnungenTrostrunde));
-					}
-					gruppenRunde++;
-				}
+				runden.addAll(planeMitPausen(gruppen, matteId));
 			}
 		}
 		return new ImmutablePair(rundeGesamt, runden);
@@ -243,110 +199,131 @@ public class Sortierer {
 	private List<Runde> gruppiereAbwechselndPaare(List<WettkampfGruppeMitBegegnungen> gruppen, Integer matteId) {
 		List<Runde> runden = new ArrayList<>();
 		for (int gruppenNr = 0; gruppenNr < gruppen.size(); gruppenNr += 2) {
-			WettkampfGruppeMitBegegnungen gruppe1 = gruppen.get(gruppenNr);
-			WettkampfGruppeMitBegegnungen gruppe2 = gruppen.get(gruppenNr + 1);
-			Altersklasse altersKlasse1 = gruppe1.gruppe().altersklasse();
-			Altersklasse altersKlasse2 = gruppe2.gruppe().altersklasse();
-
-			// Abwechselnd die Begegnungen der gruppe1 und gruppe2 nehmen und der Matte hinzufügen
-			int maxAnzahlBegegnungen = Math.max(gruppe1.alleRundenBegegnungen().size(), gruppe2.alleRundenBegegnungen().size());
-			for (int g = 0; g < maxAnzahlBegegnungen; g++) {
-				if (gruppe1.alleRundenBegegnungen().size() > g) {
-					Runde runde1 = new Runde(null, mattenRunde, gruppe1Runde, rundeGesamt, matteId, altersKlasse1, gruppe1.gruppe(), gruppe1.alleRundenBegegnungen().get(g).begegnungenJeRunde());
-					runden.add(runde1);
-					gruppe1Runde++;
-					rundeGesamt++;
-					mattenRunde++;
-				} else {
-					// Gruppe 1 hat keine Teilnehmer mehr, wir fügen daher einen Dummy (Pause) ein
-					logger.info("Gruppe 1 (von 2) ist leer, füge Dummy ein");
-					runden.add(dummyRunde(altersKlasse1, gruppe1.gruppe(), gruppe1Runde));
-					gruppe1Runde++;
-					rundeGesamt++;
-					mattenRunde++;
-				}
-
-				if (gruppe2.alleRundenBegegnungen().size() > g) {
-					Runde runde2 = new Runde(null, mattenRunde, gruppe2Runde, rundeGesamt, matteId, altersKlasse2, gruppe2.gruppe(), gruppe2.alleRundenBegegnungen().get(g).begegnungenJeRunde());
-					runden.add(runde2);
-					gruppe2Runde++;
-					rundeGesamt++;
-					mattenRunde++;
-				} else {
-					// Gruppe 2 hat keine Teilnehmer mehr, wir fügen daher einen Dummy (Pause) ein - es sei denn, dass dies die letzte Runde wäre, dann ist eine Pause am Ende unnötig
-					if (g == maxAnzahlBegegnungen - 1) {
-						logger.info("Gruppe 2 (von 2) ist leer, aber wir sind fertig und stoppen hier");
-						break;
-					}
-					logger.info("Gruppe 2 (von 2) ist leer, füge Dummy ein");
-					runden.add(dummyRunde(altersKlasse2, gruppe2.gruppe(), gruppe2Runde));
-					gruppe2Runde++;
-					rundeGesamt++;
-					mattenRunde++;
-				}
-
-
-			}
+			runden.addAll(planeMitPausen(gruppen.subList(gruppenNr, gruppenNr + 2), matteId));
 		}
 		return runden;
 	}
 
-	private Runde dummyRunde(Altersklasse altersKlasse, WettkampfGruppe gruppe, Integer gruppenRunde) {
+	private Runde dummyRunde(Integer matteId, WettkampfGruppe gruppe, Integer gruppenRunde) {
 		logger.info("erstelle Pause");
 		Begegnung pausenBegegnung = new Begegnung();
-		pausenBegegnung.setBegegnungId(new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, mattenRunde, gruppenRunde));
+		pausenBegegnung.setBegegnungId(new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, gruppenRunde, 0));
 		pausenBegegnung.setWettkaempfer1(Optional.empty());
 		pausenBegegnung.setWettkaempfer2(Optional.empty());
 		pausenBegegnung.setTurnierUUID(gruppe.turnierUUID());
-		return new Runde(null, mattenRunde, gruppenRunde, rundeGesamt, null, altersKlasse, gruppe, List.of(pausenBegegnung));
+		return new Runde(null, mattenRunde, gruppenRunde, rundeGesamt, matteId, Altersklasse.PAUSE, gruppe, List.of(pausenBegegnung));
 	}
 
 	private List<Runde> gruppiereAbwechselndTrios(List<WettkampfGruppeMitBegegnungen> gruppen, Integer matteId) {
 		logger.debug("gruppiere Matte {}", matteId);
+		return planeMitPausen(gruppen, matteId);
+	}
+
+	/**
+	 * Plant die Runden gruppenweise und erzwingt vor der nächsten Runde derselben Gruppe mindestens zwei Mattenrunden Pause.
+	 * Gibt es nicht genug andere Gruppenrunden, werden explizite Pausenrunden eingefügt; jede Pause steht für eine Wettkampfzeit.
+	 */
+	private List<Runde> planeMitPausen(List<WettkampfGruppeMitBegegnungen> gruppen, Integer matteId) {
 		List<Runde> runden = new ArrayList<>();
-		WettkampfGruppeMitBegegnungen gruppe1 = gruppen.get(0);
-		WettkampfGruppeMitBegegnungen gruppe2 = gruppen.get(1);
-		WettkampfGruppeMitBegegnungen gruppe3 = gruppen.get(2);
-		Altersklasse altersKlasse1 = gruppe1.gruppe().altersklasse();
-		Altersklasse altersKlasse2 = gruppe2.gruppe().altersklasse();
-		Altersklasse altersKlasse3 = gruppe3.gruppe().altersklasse();
+		if (gruppen.isEmpty()) {
+			return runden;
+		}
 
-		// Abwechselnd die Begegnungen der gruppe1 und gruppe2 nehmen und der Matte hinzufügen
-		for (int r = 0; r < Math.max(gruppe1.alleRundenBegegnungen().size(), Math.max(gruppe2.alleRundenBegegnungen().size(), gruppe3.alleRundenBegegnungen().size())); r++) {
-			if (gruppe1.alleRundenBegegnungen().size() > r) {
-				Runde runde1 = new Runde(null, mattenRunde, gruppe1Runde, rundeGesamt, matteId, altersKlasse1, gruppe1.gruppe(), gruppe1.alleRundenBegegnungen().get(r).begegnungenJeRunde());
-				runden.add(runde1);
-				gruppe1Runde++;
-				rundeGesamt++;
-				mattenRunde++;
-			} else {
-				// Gruppe 1 hat keine Teilnehmer mehr, wir fügen daher einen Dummy (zB Pause) ein
-				logger.info("Gruppe 1 (von 3) ist leer, füge Dummy ein");
+		List<List<GeplanteRunde>> geplanteRundenJeGruppe = gruppen.stream()
+			.map(this::geplanteRunden)
+			.toList();
+		int[] naechsteRundeJeGruppe = new int[gruppen.size()];
+		int[] letzteMattenRundeJeGruppe = new int[gruppen.size()];
+		Arrays.fill(letzteMattenRundeJeGruppe, Integer.MIN_VALUE);
+		int naechsteGruppe = 0;
+		int sicherheitsZaehler = 0;
+
+		while (hatOffeneRunden(geplanteRundenJeGruppe, naechsteRundeJeGruppe)) {
+			if (sicherheitsZaehler++ > DEFAULT_MAX_RUNDEN * Math.max(1, gruppen.size())) {
+				throw new IllegalStateException("Konnte keine gültige Kampfplanung mit Pausen erzeugen.");
 			}
 
-			if (gruppe2.alleRundenBegegnungen().size() > r) {
-				Runde runde2 = new Runde(null, mattenRunde, gruppe2Runde, rundeGesamt, matteId, altersKlasse2, gruppe2.gruppe(), gruppe2.alleRundenBegegnungen().get(r).begegnungenJeRunde());
-				runden.add(runde2);
-				gruppe2Runde++;
-				rundeGesamt++;
-				mattenRunde++;
-			} else {
-				// Gruppe 2 hat keine Teilnehmer mehr, wir fügen daher einen Dummy (zB Pause) ein
-				logger.info("Gruppe 2 (von 3) ist leer, füge Dummy ein");
+			int gruppenIndex = findePlanbareGruppe(geplanteRundenJeGruppe, naechsteRundeJeGruppe, letzteMattenRundeJeGruppe, naechsteGruppe);
+			if (gruppenIndex >= 0) {
+				WettkampfGruppeMitBegegnungen gruppe = gruppen.get(gruppenIndex);
+				GeplanteRunde geplanteRunde = geplanteRundenJeGruppe.get(gruppenIndex).get(naechsteRundeJeGruppe[gruppenIndex]);
+				runden.add(runde(matteId, gruppe.gruppe().altersklasse(), gruppe.gruppe(), geplanteRunde));
+				letzteMattenRundeJeGruppe[gruppenIndex] = mattenRunde - 1;
+				naechsteRundeJeGruppe[gruppenIndex]++;
+				naechsteGruppe = (gruppenIndex + 1) % gruppen.size();
+				continue;
 			}
 
-			if (gruppe3.alleRundenBegegnungen().size() > r) {
-				Runde runde3 = new Runde(null, mattenRunde, gruppe3Runde, rundeGesamt, matteId, altersKlasse3, gruppe3.gruppe(), gruppe3.alleRundenBegegnungen().get(r).begegnungenJeRunde());
-				runden.add(runde3);
-				gruppe3Runde++;
-				rundeGesamt++;
-				mattenRunde++;
-			} else {
-				// Gruppe 3 hat keine Teilnehmer mehr, wir fügen daher einen Dummy (zB Pause) ein
-				logger.info("Gruppe 3 (von 3) ist leer, füge Dummy ein");
+			gruppenIndex = findeNaechsteOffeneGruppe(geplanteRundenJeGruppe, naechsteRundeJeGruppe, naechsteGruppe);
+			WettkampfGruppeMitBegegnungen gruppe = gruppen.get(gruppenIndex);
+			GeplanteRunde naechsteGeplanteRunde = geplanteRundenJeGruppe.get(gruppenIndex).get(naechsteRundeJeGruppe[gruppenIndex]);
+			runden.add(dummyRunde(matteId, gruppe.gruppe(), naechsteGeplanteRunde.gruppenRunde()));
+			rundeGesamt++;
+			mattenRunde++;
+			naechsteGruppe = (gruppenIndex + 1) % gruppen.size();
+		}
+
+		return runden;
+	}
+
+	private List<GeplanteRunde> geplanteRunden(WettkampfGruppeMitBegegnungen gruppe) {
+		List<GeplanteRunde> result = new ArrayList<>();
+		int gruppenRunde = 1;
+		for (BegegnungenJeRunde begegnungen : gruppe.alleRundenBegegnungen()) {
+			result.addAll(geplanteRunden(begegnungen, gruppenRunde));
+			gruppenRunde++;
+		}
+		return result;
+	}
+
+	private List<GeplanteRunde> geplanteRunden(BegegnungenJeRunde begegnungen, int gruppenRunde) {
+		List<GeplanteRunde> result = new ArrayList<>();
+		List<Begegnung> begegnungenGewinnerrunde = begegnungen.begegnungenJeRunde().stream().filter(b -> b.getBegegnungId().getRundenTyp() == Begegnung.RundenTyp.GEWINNERRUNDE).toList();
+		List<Begegnung> begegnungenTrostrunde = begegnungen.begegnungenJeRunde().stream().filter(b -> b.getBegegnungId().getRundenTyp() == Begegnung.RundenTyp.TROSTRUNDE).toList();
+		if (!begegnungenGewinnerrunde.isEmpty()) {
+			result.add(new GeplanteRunde(gruppenRunde, begegnungenGewinnerrunde));
+		}
+		if (!begegnungenTrostrunde.isEmpty()) {
+			result.add(new GeplanteRunde(gruppenRunde, begegnungenTrostrunde));
+		}
+		return result;
+	}
+
+	private Runde runde(Integer matteId, Altersklasse altersKlasse, WettkampfGruppe gruppe, GeplanteRunde geplanteRunde) {
+		return new Runde(null, mattenRunde++, geplanteRunde.gruppenRunde(), rundeGesamt++, matteId, altersKlasse, gruppe, geplanteRunde.begegnungen());
+	}
+
+	private boolean hatOffeneRunden(List<List<GeplanteRunde>> geplanteRundenJeGruppe, int[] naechsteRundeJeGruppe) {
+		for (int i = 0; i < geplanteRundenJeGruppe.size(); i++) {
+			if (naechsteRundeJeGruppe[i] < geplanteRundenJeGruppe.get(i).size()) {
+				return true;
 			}
 		}
-		return runden;
+		return false;
+	}
+
+	private int findePlanbareGruppe(List<List<GeplanteRunde>> geplanteRundenJeGruppe, int[] naechsteRundeJeGruppe, int[] letzteMattenRundeJeGruppe, int startIndex) {
+		for (int offset = 0; offset < geplanteRundenJeGruppe.size(); offset++) {
+			int gruppenIndex = (startIndex + offset) % geplanteRundenJeGruppe.size();
+			if (naechsteRundeJeGruppe[gruppenIndex] < geplanteRundenJeGruppe.get(gruppenIndex).size() && hatAusreichendPause(letzteMattenRundeJeGruppe[gruppenIndex])) {
+				return gruppenIndex;
+			}
+		}
+		return -1;
+	}
+
+	private int findeNaechsteOffeneGruppe(List<List<GeplanteRunde>> geplanteRundenJeGruppe, int[] naechsteRundeJeGruppe, int startIndex) {
+		for (int offset = 0; offset < geplanteRundenJeGruppe.size(); offset++) {
+			int gruppenIndex = (startIndex + offset) % geplanteRundenJeGruppe.size();
+			if (naechsteRundeJeGruppe[gruppenIndex] < geplanteRundenJeGruppe.get(gruppenIndex).size()) {
+				return gruppenIndex;
+			}
+		}
+		throw new IllegalStateException("Keine offene Gruppe gefunden.");
+	}
+
+	private boolean hatAusreichendPause(int letzteMattenRundeDerGruppe) {
+		return letzteMattenRundeDerGruppe == Integer.MIN_VALUE || mattenRunde - letzteMattenRundeDerGruppe - 1 >= PAUSEN;
 	}
 
 	public List<Begegnung> sortiereBegegnungen(List<Begegnung> begegnungen) {

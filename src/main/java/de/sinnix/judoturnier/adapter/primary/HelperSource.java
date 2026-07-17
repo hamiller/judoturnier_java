@@ -8,6 +8,7 @@ import de.sinnix.judoturnier.adapter.primary.dto.WertungDto;
 import de.sinnix.judoturnier.application.CodeGeneratorService;
 import de.sinnix.judoturnier.model.Benutzer;
 import de.sinnix.judoturnier.model.BenutzerRolle;
+import de.sinnix.judoturnier.model.Altersklasse;
 import de.sinnix.judoturnier.model.OidcBenutzer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -37,6 +38,10 @@ public class HelperSource {
 	public static boolean istGleich(Object o1, Object o2) {
 		logger.trace("istGleich {} == {}", o1, o2);
 		return o1 == null ? o2 == null : o1.equals(o2);
+	}
+
+	public static boolean istPause(Object altersklasse) {
+		return Altersklasse.PAUSE.equals(altersklasse) || Altersklasse.PAUSE.name().equals(String.valueOf(altersklasse));
 	}
 
 	public static String ifCond(Object v1, Object v2, String trueResult, String falseResult) {

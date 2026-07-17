@@ -13,6 +13,10 @@ public record Runde(
 	Altersklasse altersklasse,
 	WettkampfGruppe gruppe,
 	List<Begegnung> begegnungen) {
+	public boolean istPause() {
+		return Altersklasse.PAUSE.equals(altersklasse);
+	}
+
 	@Override
 	public String toString() {
 		return "Runde{" +

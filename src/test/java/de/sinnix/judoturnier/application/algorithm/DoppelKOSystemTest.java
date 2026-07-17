@@ -351,8 +351,8 @@ class DoppelKOSystemTest {
 	}
 
 	/**
-	 * // TODO: Implementieren
-	 * Sonderfall, weil Teilnehmer der Trostrunde wieder in den Kampf um Platz 1 einsteigen
+	 * Deaktiviert, weil 32er-Listen je nach Verband/Systemvariante abweichen können
+	 * und dieser Test noch alte Erwartungswerte für eine andere Trostrundenstruktur enthält.
 	 */
 	@Test
 	@Disabled
