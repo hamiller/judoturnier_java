@@ -293,25 +293,6 @@ public class AnsichtenIntegrationTest extends AbstractIntegrationTest {
 		return page;
 	}
 
-	private BrowserContext login(String username, String password) {
-		BrowserContext context = browser.newContext(new Browser.NewContextOptions());
-		Page page = context.newPage();
-
-		page.navigate(url("/oauth2/authorization/keycloak"), new Page.NavigateOptions().setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
-		page.locator("#username").fill(username);
-		page.locator("#password").fill(password);
-		page.locator("#kc-login").click();
-
-		page.waitForURL(url("/**"));
-		assertTrue(page.locator("body").textContent().contains("Sie sind angemeldet als " + username));
-		page.close();
-		return context;
-	}
-
-	private String url(String path) {
-		return "http://localhost:" + port + path;
-	}
-
 	private SeedData seedData() {
 		if (seedData != null) {
 			return seedData;

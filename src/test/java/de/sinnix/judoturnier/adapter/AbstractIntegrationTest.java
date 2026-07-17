@@ -16,11 +16,17 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.options.WaitUntilState;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 import jakarta.transaction.Transactional;
 import org.apache.http.client.utils.URIBuilder;
@@ -37,6 +43,8 @@ public abstract class AbstractIntegrationTest {
 	private static final String KEYCLOAK_IMAGE        = "quay.io/keycloak/keycloak:26.7";
 	private static final long   KEYCLOAK_MEMORY_LIMIT = 768L * 1024 * 1024;
 	private static final String CLIENT_SECRET         = "the-client-secret";
+	private static final double PLAYWRIGHT_TIMEOUT_MS = 120_000;
+	private static final Map<String, String> AUTHENTICATED_STORAGE_STATES = new ConcurrentHashMap<>();
 
 	@LocalServerPort
 	int port;
@@ -118,5 +126,45 @@ public abstract class AbstractIntegrationTest {
 		return jsonParser.parseMap(result)
 			.get("access_token")
 			.toString();
+	}
+
+	protected BrowserContext login(String username, String password) {
+		String storageState = AUTHENTICATED_STORAGE_STATES.computeIfAbsent(port + ":" + username, key -> createAuthenticatedStorageState(username, password));
+		BrowserContext context = browser.newContext(new Browser.NewContextOptions().setStorageState(storageState));
+		configureTimeouts(context);
+		return context;
+	}
+
+	protected String url(String path) {
+		return "http://localhost:" + port + path;
+	}
+
+	private String createAuthenticatedStorageState(String username, String password) {
+		try (BrowserContext context = browser.newContext(new Browser.NewContextOptions())) {
+			configureTimeouts(context);
+			Page page = context.newPage();
+
+			page.navigate(url("/oauth2/authorization/keycloak"), new Page.NavigateOptions()
+				.setWaitUntil(WaitUntilState.DOMCONTENTLOADED)
+				.setTimeout(PLAYWRIGHT_TIMEOUT_MS));
+			page.locator("#username").fill(username);
+			page.locator("#password").fill(password);
+			page.locator("#kc-login").click(new Locator.ClickOptions().setTimeout(PLAYWRIGHT_TIMEOUT_MS));
+
+			page.waitForURL(url("/**"), new Page.WaitForURLOptions()
+				.setWaitUntil(WaitUntilState.DOMCONTENTLOADED)
+				.setTimeout(PLAYWRIGHT_TIMEOUT_MS));
+
+			String bodyText = page.locator("body").textContent();
+			if (!bodyText.contains("Sie sind angemeldet als " + username)) {
+				throw new IllegalStateException("Login fuer " + username + " fehlgeschlagen. Body: " + bodyText);
+			}
+			return context.storageState();
+		}
+	}
+
+	private void configureTimeouts(BrowserContext context) {
+		context.setDefaultTimeout(PLAYWRIGHT_TIMEOUT_MS);
+		context.setDefaultNavigationTimeout(PLAYWRIGHT_TIMEOUT_MS);
 	}
 }
