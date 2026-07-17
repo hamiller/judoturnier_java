@@ -32,14 +32,16 @@
         {{#each gruppenRunden}}
           <div class="table">
             {{#each runde as |runden rundenindex|}}
-              {{#each begegnungen}}
+              {{#if (istPause runden.altersklasse)}}
                 <div class="table-row">
-                  {{#if (istGleich wettkaempfer1.name null)}}
-                    <div class="gruppentitel_2">
-                      Pause<br>
-                      (Ansonsten wäre nun Gruppe {{runden.gruppe.name}} an der Reihe)
-                    </div>
-                  {{else}}
+                  <div class="gruppentitel_2">
+                    Pause<br>
+                    (Ansonsten wäre nun Gruppe {{runden.gruppe.name}} an der Reihe)
+                  </div>
+                </div>
+              {{else}}
+                {{#each begegnungen}}
+                  <div class="table-row">
                     <div class="table-cell column1">
                       {{#if (istGleich @rundenindex 0)}}
                         <div class="gruppentitel_2">
@@ -53,9 +55,9 @@
                     <div class="table-cell columnVS">vs</div>
                     <div class="table-cell columnName wettkaempfer_name {{wettkaempfer2.farbe.get}}">{{wettkaempfer2.name}}</div>
                     <div class="table-cell columnVerein">({{wettkaempfer2.verein.name}})</div>
-                  {{/if}}
-                </div>
-              {{/each}}
+                  </div>
+                {{/each}}
+              {{/if}}
             {{/each}}
           </div>
         {{/each}}

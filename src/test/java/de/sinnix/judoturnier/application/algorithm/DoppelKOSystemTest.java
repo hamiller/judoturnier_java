@@ -117,6 +117,10 @@ class DoppelKOSystemTest {
 		assertEquals(new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 4), wettkampfGruppe.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(3).getBegegnungId());
 		assertEquals(new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, 1, 1), wettkampfGruppe.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(4).getBegegnungId());
 		assertEquals(new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, 1, 2), wettkampfGruppe.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(5).getBegegnungId());
+		assertPaarung(wettkampfGruppe, 0, 0, "Teilnehmer A", "Teilnehmer E");
+		assertPaarung(wettkampfGruppe, 0, 1, "Teilnehmer C", "-");
+		assertPaarung(wettkampfGruppe, 0, 2, "Teilnehmer B", "Teilnehmer F");
+		assertPaarung(wettkampfGruppe, 0, 3, "Teilnehmer D", "-");
 
 		// Runde 2 sind 2 Begegnungen (Halbfinale) in der Siegerrunde plus 2 Begegnung in der Verliererrunde
 		assertEquals(2+2, wettkampfGruppe.alleRundenBegegnungen().get(1).begegnungenJeRunde().size());
@@ -169,6 +173,10 @@ class DoppelKOSystemTest {
 		assertEquals(new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 4), wettkampfGruppe.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(3).getBegegnungId());
 		assertEquals(new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, 1, 1), wettkampfGruppe.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(4).getBegegnungId());
 		assertEquals(new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, 1, 2), wettkampfGruppe.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(5).getBegegnungId());
+		assertPaarung(wettkampfGruppe, 0, 0, "Teilnehmer A", "Teilnehmer E");
+		assertPaarung(wettkampfGruppe, 0, 1, "Teilnehmer C", "Teilnehmer G");
+		assertPaarung(wettkampfGruppe, 0, 2, "Teilnehmer B", "Teilnehmer F");
+		assertPaarung(wettkampfGruppe, 0, 3, "Teilnehmer D", "Teilnehmer H");
 
 		// Runde 2 sind 2 Begegnungen (Halbfinale) in der Siegerrunde plus 2 Begegnung in der Verliererrunde
 		assertEquals(2+2, wettkampfGruppe.alleRundenBegegnungen().get(1).begegnungenJeRunde().size());
@@ -229,6 +237,14 @@ class DoppelKOSystemTest {
 		assertEquals(new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, 1, 2), wettkampfGruppe.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(9).getBegegnungId());
 		assertEquals(new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, 1, 3), wettkampfGruppe.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(10).getBegegnungId());
 		assertEquals(new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, 1, 4), wettkampfGruppe.alleRundenBegegnungen().get(0).begegnungenJeRunde().get(11).getBegegnungId());
+		assertPaarung(wettkampfGruppe, 0, 0, "Teilnehmer A", "Teilnehmer I");
+		assertPaarung(wettkampfGruppe, 0, 1, "Teilnehmer E", "-");
+		assertPaarung(wettkampfGruppe, 0, 2, "Teilnehmer C", "-");
+		assertPaarung(wettkampfGruppe, 0, 3, "Teilnehmer G", "-");
+		assertPaarung(wettkampfGruppe, 0, 4, "Teilnehmer B", "Teilnehmer J");
+		assertPaarung(wettkampfGruppe, 0, 5, "Teilnehmer F", "-");
+		assertPaarung(wettkampfGruppe, 0, 6, "Teilnehmer D", "-");
+		assertPaarung(wettkampfGruppe, 0, 7, "Teilnehmer H", "-");
 
 		// Runde 2 sind 4 Begegnungen plus 4 Dummy-Begegnung für die Trostrunde
 		assertEquals(4+4, wettkampfGruppe.alleRundenBegegnungen().get(1).begegnungenJeRunde().size());
@@ -335,8 +351,8 @@ class DoppelKOSystemTest {
 	}
 
 	/**
-	 * // TODO: Implementieren
-	 * Sonderfall, weil Teilnehmer der Trostrunde wieder in den Kampf um Platz 1 einsteigen
+	 * Deaktiviert, weil 32er-Listen je nach Verband/Systemvariante abweichen können
+	 * und dieser Test noch alte Erwartungswerte für eine andere Trostrundenstruktur enthält.
 	 */
 	@Test
 	@Disabled
@@ -409,6 +425,12 @@ class DoppelKOSystemTest {
 
 		var teilnehmer = List.of(4, 6, 8, 16, 32);
 		teilnehmer.forEach(t -> logger.debug("{} Teilnehmer - Gewinnerrunden: {}, Trostrunden: {}", t, calcGewinnerRunden.applyAsInt(t), calcTrostRunden.applyAsInt(t)));
+	}
+
+	private void assertPaarung(WettkampfGruppeMitBegegnungen wettkampfGruppe, int rundeIndex, int begegnungIndex, String wettkaempfer1, String wettkaempfer2) {
+		Begegnung begegnung = wettkampfGruppe.alleRundenBegegnungen().get(rundeIndex).begegnungenJeRunde().get(begegnungIndex);
+		assertEquals(wettkaempfer1, begegnung.getWettkaempfer1().map(Wettkaempfer::name).orElse("-"));
+		assertEquals(wettkaempfer2, begegnung.getWettkaempfer2().map(Wettkaempfer::name).orElse("-"));
 	}
 
 }

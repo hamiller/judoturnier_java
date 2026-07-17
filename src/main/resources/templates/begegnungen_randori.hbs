@@ -71,7 +71,7 @@
             {{#each runde}}
               <div id="{{rundeId}}" class="runde"></div>
               <div class="listeneintrag-header">
-                {{#if (istGleich altersklasse null)}}
+                {{#if (istPause altersklasse)}}
                   <div class="listeneintrag-titel pause">PAUSE</div>
                 {{else}}
                   <div class="listeneintrag-titel">{{gruppe.name}} ({{altersklasse}}) - {{calculateRundenCode rundeId}}</div>
@@ -82,10 +82,10 @@
                 {{/if}}
               </div>
 
-              {{#each begegnungen}}
-                {{#if (istGleich wettkaempfer1.name null)}}
-                  <div class="listeneintrag">(Ansonsten wäre nun Gruppe {{../gruppe.name}} an der Reihe)</div>
-                {{else}}
+              {{#if (istPause altersklasse)}}
+                <div class="listeneintrag">(Ansonsten wäre nun Gruppe {{gruppe.name}} an der Reihe)</div>
+              {{else}}
+                {{#each begegnungen}}
                   <a href="/turnier/{{turnierid}}/begegnungen/randori/{{begegnungId}}">
                     <div class="listeneintrag vs {{wertungVorhanden alleWertungen}}">
                       <div class="wettkaempfer name {{#optional wettkaempfer1.farbe}}{{wettkaempfer1.farbe.get}}{{/optional}}">{{wettkaempfer1.name}}</div>
@@ -95,12 +95,12 @@
                       <div>({{wettkaempfer2.verein.name}})</div>
                     </div>
                   </a>
-                {{/if}}
 
-                {{#if @last}}
-                  <md-divider inset class="begegnngen_spacer"></md-divider>
-                {{/if}}
-              {{/each}}
+                  {{#if @last}}
+                    <md-divider inset class="begegnngen_spacer"></md-divider>
+                  {{/if}}
+                {{/each}}
+              {{/if}}
             {{/each}}
           {{/each}}
         </div>
@@ -285,4 +285,3 @@
 </body>
 
 </html>
-

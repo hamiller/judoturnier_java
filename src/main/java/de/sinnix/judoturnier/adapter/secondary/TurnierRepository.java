@@ -67,7 +67,10 @@ public class TurnierRepository {
 	public List<Begegnung> ladeAlleBegegnungen(UUID turnierId) {
 		List<BegegnungJpa> begegnungenJpa = begegnungJpaRepository.findAllByTurnierUUID(turnierId);
 		List<WettkampfGruppeJpa> wettkampfGruppeJpaList = wettkampfGruppeJpaRepository.findAll();
-		return begegnungenJpa.stream().map(begegnungJpa -> begegnungConverter.convertToBegegnung(begegnungJpa, wettkampfGruppeJpaList)).toList();
+		return begegnungenJpa.stream()
+			.map(begegnungJpa -> begegnungConverter.convertToBegegnung(begegnungJpa, wettkampfGruppeJpaList))
+			.filter(begegnung -> !begegnung.istPausenMarker())
+			.toList();
 	}
 
 	public void speichereWertung(Wertung wertung) {
@@ -109,8 +112,8 @@ public class TurnierRepository {
 			Integer gruppenRunde = ersteBegegnung.getGruppenRunde();
 			Integer rundeGesamt = ersteBegegnung.getGesamtBegegnung();
 			Integer matteId = ersteBegegnung.getMatteId();
-			Altersklasse altersklasse = ersteBegegnung.getWettkaempfer1().isPresent() ? ersteBegegnung.getWettkaempfer1().get().altersklasse() : Altersklasse.PAUSE;
 			WettkampfGruppe gruppe = ersteBegegnung.getWettkampfGruppe();
+			Altersklasse altersklasse = altersklasseFuerRunde(ersteBegegnung, gruppe);
 
 			// Erstelle eine neue Runde
 			Runde runde = new Runde(rundeId, mattenRunde, gruppenRunde, rundeGesamt, matteId, altersklasse, gruppe, begegnungenInRunde);
@@ -130,6 +133,7 @@ public class TurnierRepository {
 		var begegnungenList = begegnungenJpaList.stream()
 			.filter(jpa -> jpa.getWettkampfGruppeId().equals(wettkampfgruppeUUID))
 			.map(jpa -> begegnungConverter.convertToBegegnung(jpa, wettkampfGruppeJpa))
+			.filter(begegnung -> !begegnung.istPausenMarker())
 			.sorted(Comparator
 				.comparing(Begegnung::getGesamtBegegnung)
 				.thenComparing(begegnung -> begegnung.getBegegnungId().rundenTyp)
@@ -158,14 +162,27 @@ public class TurnierRepository {
 			Integer gruppenRunde = ersteBegegnung.getGruppenRunde();
 			Integer rundeGesamt = ersteBegegnung.getGesamtBegegnung();
 			Integer matteId = ersteBegegnung.getMatteId();
-			Altersklasse altersklasse = ersteBegegnung.getWettkaempfer1().isPresent() ? ersteBegegnung.getWettkaempfer1().get().altersklasse() : Altersklasse.PAUSE;
 			WettkampfGruppe gruppe = ersteBegegnung.getWettkampfGruppe();
+			Altersklasse altersklasse = altersklasseFuerRunde(ersteBegegnung, gruppe);
 
 			// Erstelle eine neue Runde
 			rundenList.add(new Runde(rundeId, mattenRunde, gruppenRunde, rundeGesamt, matteId, altersklasse, gruppe, begegnungenInRunde));
 		}
 
 		return rundenList;
+	}
+
+	private Altersklasse altersklasseFuerRunde(Begegnung ersteBegegnung, WettkampfGruppe gruppe) {
+		if (ersteBegegnung.istPausenMarker()) {
+			return Altersklasse.PAUSE;
+		}
+		if (ersteBegegnung.getWettkaempfer1().isPresent()) {
+			return ersteBegegnung.getWettkaempfer1().get().altersklasse();
+		}
+		if (ersteBegegnung.getWettkaempfer2().isPresent()) {
+			return ersteBegegnung.getWettkaempfer2().get().altersklasse();
+		}
+		return gruppe.altersklasse();
 	}
 
 	@Transactional

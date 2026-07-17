@@ -62,26 +62,30 @@
           {{#each gruppenRunden}}
             {{#each runde}}
               <div class="listeneintrag-header">
-                {{#if (istGleich altersklasse null)}}
+                {{#if (istPause altersklasse)}}
                   <div class="listeneintrag-titel pause">PAUSE</div>
                 {{else}}
                   <div class="listeneintrag-titel">{{gruppe.typ}}</div>
                 {{/if}}
               </div>
 
-              {{#each begegnungen}}
-                <div class="">Typ {{rundenTyp}} Runde {{runde}} Paarung {{akuellePaarung}}</div>
+              {{#if (istPause altersklasse)}}
+                <div class="listeneintrag">(Ansonsten wäre nun Gruppe {{gruppe.name}} an der Reihe)</div>
+              {{else}}
+                {{#each begegnungen}}
+                  <div class="">Typ {{rundenTyp}} Runde {{runde}} Paarung {{akuellePaarung}}</div>
 
-                <a href="/turnier/{{turnierid}}/begegnungen/normal/{{begegnungId}}">
-                  <div class="listeneintrag vs {{wertungVorhanden alleWertungen}}">
-                    <div class="wettkaempfer name weiss">{{wettkaempfer1.name}}</div>
-                    <div>({{wettkaempfer1.verein.name}})</div>
-                    <div class="center">vs</div>
-                    <div class="wettkaempfer name rot">{{wettkaempfer2.name}}</div>
-                    <div>({{wettkaempfer2.verein.name}})</div>
-                  </div>
-                </a>
-              {{/each}}
+                  <a href="/turnier/{{turnierid}}/begegnungen/normal/{{begegnungId}}">
+                    <div class="listeneintrag vs {{wertungVorhanden alleWertungen}}">
+                      <div class="wettkaempfer name weiss">{{wettkaempfer1.name}}</div>
+                      <div>({{wettkaempfer1.verein.name}})</div>
+                      <div class="center">vs</div>
+                      <div class="wettkaempfer name rot">{{wettkaempfer2.name}}</div>
+                      <div>({{wettkaempfer2.verein.name}})</div>
+                    </div>
+                  </a>
+                {{/each}}
+              {{/if}}
             {{/each}}
           {{/each}}
         </div>
