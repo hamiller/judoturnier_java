@@ -1,4 +1,5 @@
 stages:
+  - build_ci_image
   - build
   - create_image
   - deploy
@@ -22,44 +23,39 @@ variables:
   DOCKER_IMAGE_LOCAL_DIR: "$CI_PROJECT_DIR/build/docker_artifacts"
   DOCKER_IMAGE_REMOTE_DIR: "/tmp"
   APP_TARGET_DIR: "/opt/springboot-app"
+  CI_BUILD_IMAGE: "$CI_REGISTRY_IMAGE/ci-build:gradle-9.6.1-jdk21-noble"
+  TERM: "dumb"
+  GRADLE_OPTS: "-Dorg.gradle.console=plain"
 
-build-app:
-  stage: build
-  image: gradle:9.6.1-jdk21-noble
+build-gitlabci-image:
+  stage: build_ci_image
+  image: docker:latest
+  when: manual
+  allow_failure: true
   services:
     - name: docker:dind
   variables:
     DOCKER_HOST: "tcp://docker:2375"
     DOCKER_TLS_CERTDIR: ""
   script:
-    - |
-      apt-get update
-      apt-get install -y --no-install-recommends \
-        libxcb-shm0 \
-        libx11-xcb1 \
-        libx11-6 \
-        libxcb1 \
-        libxext6 \
-        libxrandr2 \
-        libxcomposite1 \
-        libxcursor1 \
-        libxdamage1 \
-        libxfixes3 \
-        libxi6 \
-        libgtk-3-0t64 \
-        libpangocairo-1.0-0 \
-        libpango-1.0-0 \
-        libatk1.0-0t64 \
-        libcairo-gobject2 \
-        libcairo2 \
-        libgdk-pixbuf-2.0-0 \
-        libglib2.0-0t64 \
-        libxrender1 \
-        libasound2t64 \
-        libdbus-1-3
-      rm -rf /var/lib/apt/lists/*
-    - ./gradlew playwrightInstallFirefox
-    - PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 ./gradlew clean test bootJar
+    - echo "Login to GitLab Container Registry..."
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
+    - docker build --pull -f Dockerfile-gitlabci -t "$CI_BUILD_IMAGE" .
+    - docker push "$CI_BUILD_IMAGE"
+  tags:
+    - default-docker-runner
+
+build-app:
+  stage: build
+  image: "$CI_BUILD_IMAGE"
+  services:
+    - name: docker:dind
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - ./gradlew --console=plain playwrightInstallFirefox
+    - PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 ./gradlew --console=plain --no-daemon test bootJar
   tags:
     - default-docker-runner
   artifacts:
