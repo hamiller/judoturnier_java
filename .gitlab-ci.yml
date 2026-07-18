@@ -34,7 +34,7 @@ variables:
 
 build-gitlabci-image:
   stage: build_ci_image
-  image: docker:latest
+  image: docker:28.5.2-cli
   when: manual
   allow_failure: true
   script:
@@ -47,7 +47,7 @@ build-gitlabci-image:
 
 preload-test-images:
   stage: preload_test_images
-  image: docker:latest
+  image: docker:28.5.2-cli
   script:
     - docker info
     - |
@@ -62,8 +62,8 @@ preload-test-images:
           echo "$(date -Iseconds) Finished pulling Docker image $image"
         fi
       }
-      preload_image postgres:17
-      preload_image quay.io/keycloak/keycloak:26.7
+      preload_image postgres:17.10
+      preload_image quay.io/keycloak/keycloak:26.7.0
   tags:
     - default-docker-runner
 
@@ -89,7 +89,7 @@ build-app:
 
 create-image:
   stage: create_image
-  image: docker:latest
+  image: docker:28.5.2-cli
   script:
     - echo "Login to GitLab Container Registry..."
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
@@ -106,7 +106,7 @@ create-image:
 
 deploy-app:
   stage: deploy
-  image: docker:latest
+  image: docker:28.5.2-cli
   when: manual
   variables:
     LOCAL_IMAGE_PATH: "/tmp/$APP_NAME.tar"

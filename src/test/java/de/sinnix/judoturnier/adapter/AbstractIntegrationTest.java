@@ -42,7 +42,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 @Transactional
 public abstract class AbstractIntegrationTest {
 
-	private static final String KEYCLOAK_IMAGE        = "quay.io/keycloak/keycloak:26.7";
+	private static final String KEYCLOAK_IMAGE        = "quay.io/keycloak/keycloak:26.7.0";
 	private static final long   KEYCLOAK_MEMORY_LIMIT = 768L * 1024 * 1024;
 	private static final String CLIENT_SECRET         = "the-client-secret";
 	private static final double PLAYWRIGHT_ACTION_TIMEOUT_MS     = 15_000;
@@ -54,7 +54,7 @@ public abstract class AbstractIntegrationTest {
 	int port;
 	static               Playwright             playwright;
 	static               Browser                browser;
-	static               PostgreSQLContainer<?> postgres      = new PostgreSQLContainer<>("postgres:17").withReuse(reuseContainers());
+	static               PostgreSQLContainer<?> postgres      = new PostgreSQLContainer<>("postgres:17.10").withReuse(reuseContainers());
 	static               KeycloakContainer      keycloak      = new KeycloakContainer(KEYCLOAK_IMAGE)
 		.withRealmImportFile("/judoturnier-realm.json")
 		.withRamPercentage(50, 70)

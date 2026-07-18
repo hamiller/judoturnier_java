@@ -7,7 +7,7 @@ volumes:
 
 services:
   db:
-    image: postgres:17
+    image: postgres:17.10
     container_name: postgres-judo-testbed
     environment:
       POSTGRES_USER: username
@@ -21,7 +21,7 @@ services:
       - ./init-db:/docker-entrypoint-initdb.d
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.7
+    image: quay.io/keycloak/keycloak:26.7.0
     container_name: keycloak-judo-testbed
     command: start-dev --import-realm
     environment:

@@ -1,5 +1,5 @@
 # First stage, build the custom JRE
-FROM docker.io/library/eclipse-temurin:21-jdk-alpine AS jre-builder
+FROM docker.io/library/eclipse-temurin:21.0.11_10-jdk-alpine-3.23 AS jre-builder
 
 # Install binutils, required by jlink
 RUN apk update &&  \
@@ -16,7 +16,7 @@ RUN $JAVA_HOME/bin/jlink \
          --output /optimized-jdk-21
 
 # Second stage, Use the custom JRE and build the app image
-FROM alpine:latest
+FROM alpine:3.24.1
 
 # Fix: Install glibc (benötigt für Java)
 RUN apk add --no-cache libc6-compat

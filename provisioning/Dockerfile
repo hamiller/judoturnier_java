@@ -1,5 +1,5 @@
 # Use the official certbot image as the base
-FROM certbot/certbot:latest
+FROM certbot/certbot:v5.7.0
 
 # Install certbot and the certbot-dns-hetzner plugin
 RUN pip install certbot certbot-dns-hetzner
