@@ -54,8 +54,7 @@ build-app:
     DOCKER_HOST: "tcp://docker:2375"
     DOCKER_TLS_CERTDIR: ""
   script:
-    - ./gradlew --console=plain playwrightInstallFirefox
-    - PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 ./gradlew --console=plain --no-daemon test bootJar
+    - ./gradlew --console=plain --no-daemon test bootJar
   tags:
     - default-docker-runner
   artifacts:

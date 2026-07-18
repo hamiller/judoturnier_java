@@ -18,6 +18,7 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 import com.microsoft.playwright.Browser;
@@ -45,6 +46,7 @@ public abstract class AbstractIntegrationTest {
 	private static final String CLIENT_SECRET         = "the-client-secret";
 	private static final double PLAYWRIGHT_TIMEOUT_MS = 120_000;
 	private static final Map<String, String> AUTHENTICATED_STORAGE_STATES = new ConcurrentHashMap<>();
+	private static final AtomicBoolean SHUTDOWN_HOOK_REGISTERED = new AtomicBoolean(false);
 
 	@LocalServerPort
 	int port;
@@ -77,25 +79,24 @@ public abstract class AbstractIntegrationTest {
 	}
 
 	@BeforeAll
-	static void beforeAll() {
-		postgres.start();
-		keycloak.start();
-
-		playwright = Playwright.create();
-		browser = playwright.firefox().launch(new BrowserType.LaunchOptions().setHeadless(true));
+	static synchronized void beforeAll() {
+		long startedAt = System.nanoTime();
+		startContainer("PostgreSQL", postgres);
+		startContainer("Keycloak", keycloak);
+		if (playwright == null) {
+			playwright = timed("Playwright.create", Playwright::create);
+		}
+		if (browser == null || !browser.isConnected()) {
+			browser = timed("Firefox launch", () -> playwright.firefox().launch(new BrowserType.LaunchOptions().setHeadless(true)));
+		}
+		registerShutdownHook();
+		logDuration("Integration test setup", startedAt);
 	}
 
 	@AfterAll
 	static void afterAll() {
-		// Spring caches the application context across subclasses. Stopping these
-		// containers here would leave the cached DataSource pointing to a dead port.
-
-		if (browser != null) {
-			browser.close();
-		}
-		if (playwright != null) {
-			playwright.close();
-		}
+		// Spring caches the application context across subclasses. The shared
+		// containers and browser stay alive until the test JVM exits.
 	}
 
 	public String getKampfrichterToken() {
@@ -144,9 +145,7 @@ public abstract class AbstractIntegrationTest {
 			configureTimeouts(context);
 			Page page = context.newPage();
 
-			page.navigate(url("/oauth2/authorization/keycloak"), new Page.NavigateOptions()
-				.setWaitUntil(WaitUntilState.DOMCONTENTLOADED)
-				.setTimeout(PLAYWRIGHT_TIMEOUT_MS));
+			navigateToLogin(page, username);
 			page.locator("#username").fill(username);
 			page.locator("#password").fill(password);
 			page.locator("#kc-login").click(new Locator.ClickOptions().setTimeout(PLAYWRIGHT_TIMEOUT_MS));
@@ -166,5 +165,60 @@ public abstract class AbstractIntegrationTest {
 	private void configureTimeouts(BrowserContext context) {
 		context.setDefaultTimeout(PLAYWRIGHT_TIMEOUT_MS);
 		context.setDefaultNavigationTimeout(PLAYWRIGHT_TIMEOUT_MS);
+	}
+
+	private void navigateToLogin(Page page, String username) {
+		RuntimeException lastFailure = null;
+		for (int attempt = 1; attempt <= 2; attempt++) {
+			try {
+				page.navigate(url("/oauth2/authorization/keycloak"), new Page.NavigateOptions()
+					.setWaitUntil(WaitUntilState.DOMCONTENTLOADED)
+					.setTimeout(PLAYWRIGHT_TIMEOUT_MS));
+				return;
+			} catch (RuntimeException e) {
+				lastFailure = e;
+				System.out.println("Login navigation for " + username + " failed on attempt " + attempt + ": " + e.getMessage());
+				page.waitForTimeout(1_000);
+			}
+		}
+		throw lastFailure;
+	}
+
+	private static void startContainer(String name, org.testcontainers.containers.GenericContainer<?> container) {
+		if (container.isRunning()) {
+			System.out.println(name + " container already running.");
+			return;
+		}
+		timed(name + " container start", () -> {
+			container.start();
+			return null;
+		});
+	}
+
+	private static <T> T timed(String label, java.util.function.Supplier<T> action) {
+		long startedAt = System.nanoTime();
+		try {
+			return action.get();
+		} finally {
+			logDuration(label, startedAt);
+		}
+	}
+
+	private static void logDuration(String label, long startedAt) {
+		long millis = Duration.ofNanos(System.nanoTime() - startedAt).toMillis();
+		System.out.println(label + " took " + millis + " ms.");
+	}
+
+	private static void registerShutdownHook() {
+		if (SHUTDOWN_HOOK_REGISTERED.compareAndSet(false, true)) {
+			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				if (browser != null && browser.isConnected()) {
+					browser.close();
+				}
+				if (playwright != null) {
+					playwright.close();
+				}
+			}));
+		}
 	}
 }

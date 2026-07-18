@@ -75,6 +75,7 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	dependsOn("playwrightInstallFirefox")
 	jvmArgs("-XX:+EnableDynamicAgentLoading", "-Xshare:off")
 
 	testLogging {
@@ -83,6 +84,16 @@ tasks.named('test') {
 		showCauses true
 		showExceptions true
 		showStackTraces true
+	}
+
+	onOutput { descriptor, event ->
+		if (event.message.contains(" container start took ")
+			|| event.message.contains("Integration test setup took ")
+			|| event.message.contains("Playwright.create took ")
+			|| event.message.contains("Firefox launch took ")
+			|| event.message.contains("Login navigation for ")) {
+			logger.lifecycle(event.message.trim())
+		}
 	}
 
 	afterSuite { desc, result ->
