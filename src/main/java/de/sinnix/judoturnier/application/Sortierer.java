@@ -144,15 +144,57 @@ public class Sortierer {
 		var rundenNummerDesTyps = begegnungId.rundenNummerDesTyps;
 		var rudenDerWettkmapfgruppe = alleRunden.stream().filter(runde -> runde.gruppe().equals(wettkampfGruppe)).toList();
 
-		// Bilde die aktuelle paarungNr auf die kommende Runde ab:
-		var nextRundenNummerDesTyps = rundenNummerDesTyps + 1;
-		var nextPaarungNr = (paarungNr + 1) / 2;
-		var nextBegegnungSiegerrunde = findeBegegnungInGruppenRunden(new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, nextRundenNummerDesTyps, nextPaarungNr), rudenDerWettkmapfgruppe);
-		var nextBegegnungTrostrunde = findeBegegnungInGruppenRunden(new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, nextRundenNummerDesTyps, nextPaarungNr), rudenDerWettkmapfgruppe);
+		Optional<Begegnung> nextBegegnungSiegerrunde = Optional.empty();
+		Optional<Begegnung> nextBegegnungTrostrunde = Optional.empty();
+		if (begegnungId.rundenTyp == Begegnung.RundenTyp.GEWINNERRUNDE) {
+			var nextRundenNummerDesTyps = rundenNummerDesTyps + 1;
+			var nextPaarungNr = (paarungNr + 1) / 2;
+			nextBegegnungSiegerrunde = findeBegegnungInGruppenRunden(new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, nextRundenNummerDesTyps, nextPaarungNr), rudenDerWettkmapfgruppe);
+
+			var nextTrostRundenNummerDesTyps = trostRundenNummerNachGewinnerrunde(rundenNummerDesTyps);
+			var nextTrostPaarungNr = trostPaarungNachGewinnerrunde(rundenNummerDesTyps, paarungNr);
+			nextBegegnungTrostrunde = findeBegegnungInGruppenRunden(new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, nextTrostRundenNummerDesTyps, nextTrostPaarungNr), rudenDerWettkmapfgruppe);
+		}
+		else if (begegnungId.rundenTyp == Begegnung.RundenTyp.TROSTRUNDE) {
+			var nextRundenNummerDesTyps = rundenNummerDesTyps + 1;
+			var nextPaarungNr = trostPaarungNachTrostrunde(rudenDerWettkmapfgruppe, rundenNummerDesTyps, paarungNr);
+			nextBegegnungTrostrunde = findeBegegnungInGruppenRunden(new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, nextRundenNummerDesTyps, nextPaarungNr), rudenDerWettkmapfgruppe);
+		}
 
 		logger.info("Nächste Begegnung Gewinnerrunde (left): {}", nextBegegnungSiegerrunde);
 		logger.info("Nächste Begegnung Trostrunde (right): {}", nextBegegnungTrostrunde);
 		return new ImmutablePair(nextBegegnungSiegerrunde, nextBegegnungTrostrunde);
+	}
+
+	private static int trostRundenNummerNachGewinnerrunde(int gewinnerRundenNummer) {
+		if (gewinnerRundenNummer == 1) {
+			return 1;
+		}
+		return 2 * (gewinnerRundenNummer - 1);
+	}
+
+	private static int trostPaarungNachGewinnerrunde(int gewinnerRundenNummer, int paarungNr) {
+		if (gewinnerRundenNummer == 1) {
+			return (paarungNr + 1) / 2;
+		}
+		return paarungNr;
+	}
+
+	private static int trostPaarungNachTrostrunde(List<Runde> rundenDerWettkmapfgruppe, int rundenNummerDesTyps, int paarungNr) {
+		int anzahlAktuelleTrostrunde = anzahlBegegnungen(rundenDerWettkmapfgruppe, Begegnung.RundenTyp.TROSTRUNDE, rundenNummerDesTyps);
+		int anzahlNaechsteTrostrunde = anzahlBegegnungen(rundenDerWettkmapfgruppe, Begegnung.RundenTyp.TROSTRUNDE, rundenNummerDesTyps + 1);
+		if (anzahlNaechsteTrostrunde > 0 && anzahlNaechsteTrostrunde < anzahlAktuelleTrostrunde) {
+			return (paarungNr + 1) / 2;
+		}
+		return paarungNr;
+	}
+
+	private static int anzahlBegegnungen(List<Runde> rundenDerWettkmapfgruppe, Begegnung.RundenTyp rundenTyp, int rundenNummerDesTyps) {
+		return (int) rundenDerWettkmapfgruppe.stream()
+			.flatMap(runde -> runde.begegnungen().stream())
+			.filter(begegnung -> begegnung.getBegegnungId().getRundenTyp() == rundenTyp)
+			.filter(begegnung -> begegnung.getBegegnungId().getRundenNummerDesTyps() == rundenNummerDesTyps)
+			.count();
 	}
 
 	public static NachfolgeBelegung nachfolgeBelegungen(Begegnung begegnung, Wettkaempfer sieger, WettkampfGruppe wettkampfGruppe, List<Runde> alleRunden) {
@@ -163,9 +205,14 @@ public class Sortierer {
 
 		Pair<Optional<Begegnung>, Optional<Begegnung>> nachfolger = nachfolgeBegegnungen(begegnung.getBegegnungId(), wettkampfGruppe, alleRunden);
 		List<TrostBelegung> trostBelegungen = new ArrayList<>();
-		Optional<Wettkaempfer> verlierer = findeVerlierer(begegnung, sieger);
-		if (nachfolger.getRight().isPresent() && verlierer.isPresent()) {
-			trostBelegungen.add(new TrostBelegung(nachfolger.getRight().get(), verlierer.get()));
+		if (nachfolger.getRight().isPresent()) {
+			if (begegnung.getBegegnungId().rundenTyp == Begegnung.RundenTyp.GEWINNERRUNDE) {
+				findeVerlierer(begegnung, sieger)
+					.ifPresent(verlierer -> trostBelegungen.add(new TrostBelegung(nachfolger.getRight().get(), verlierer)));
+			}
+			else if (begegnung.getBegegnungId().rundenTyp == Begegnung.RundenTyp.TROSTRUNDE) {
+				trostBelegungen.add(new TrostBelegung(nachfolger.getRight().get(), sieger));
+			}
 		}
 		return new NachfolgeBelegung(nachfolger.getLeft(), trostBelegungen);
 	}

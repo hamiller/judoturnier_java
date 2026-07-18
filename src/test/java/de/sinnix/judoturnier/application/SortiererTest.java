@@ -292,7 +292,12 @@ class SortiererTest {
 		var sieger = begegnung.getLeft().get();
 		var verlierer = begegnung.getRight().get();
 		assertEquals(WettkampfgruppeFixture.b7UUID, sieger.getId());
-		assertEquals(WettkampfgruppeFixture.b9UUID, verlierer.getId());
+		assertEquals(WettkampfgruppeFixture.b5UUID, verlierer.getId());
+
+		Pair<Optional<Begegnung>,Optional<Begegnung>> trostNachfolger = Sortierer.nachfolgeBegegnungen(verlierer.getBegegnungId(), wettkampfGruppe1.gruppe(), rundenAllerWettkampfgruppen);
+		assertTrue(trostNachfolger.getLeft().isEmpty());
+		assertTrue(trostNachfolger.getRight().isPresent());
+		assertEquals(WettkampfgruppeFixture.b9UUID, trostNachfolger.getRight().get().getId());
 	}
 
 	@Test

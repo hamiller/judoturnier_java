@@ -240,6 +240,7 @@ class WertungServiceTest {
 
 		when(wettkampfService.ladeBegegnung(any())).thenReturn(begegnungListRunde1.get(1));
 		when(benutzerRepository.findBenutzer(eq(kampfrichter.uuid()))).thenReturn(Optional.of(kampfrichter));
+		when(benutzerRepository.findBenutzerByUsername(Benutzer.ANONYMOUS_KAMPFRICHTER)).thenReturn(Optional.of(kampfrichter));
 		when(wettkaempferService.ladeKaempfer(eq(sieger.id()))).thenReturn(Optional.ofNullable(sieger));
 		when(turnierRepository.ladeWettkampfgruppeRunden(wkg.id(), turnierUUID)).thenReturn(rundenList);
 
@@ -247,16 +248,127 @@ class WertungServiceTest {
 		wertungService.speichereTurnierWertung(aktuelleBegegnungUUID, scoreWeiss, 0, 0, penaltiesWeiss, false, scoreBlau, 0, 0, penaltiesBlau, false, fighttime, sieger.id(), kampfrichter.uuid());
 
 		verify(wertungRepository, times(1)).speichereWertungInBegegnung(neueWertung, aktuelleBegegnungUUID);
+		verify(wertungRepository, times(2)).speichereWertungInBegegnung(any(), any());
 
 		ArgumentCaptor<Begegnung> begegnungCaptor = ArgumentCaptor.forClass(Begegnung.class);
-		verify(turnierRepository, times(2)).speichereBegegnung(begegnungCaptor.capture());
+		verify(turnierRepository, times(3)).speichereBegegnung(begegnungCaptor.capture());
 		List<Begegnung> begegnungList = begegnungCaptor.getAllValues();
 		Begegnung nachfolgerGewinnerBegegnung = begegnungList.get(0);
+		assertEquals(WettkampfgruppeFixture.b7UUID, nachfolgerGewinnerBegegnung.getId());
 		assertEquals(sieger, nachfolgerGewinnerBegegnung.getWettkaempfer1().get());
 		assertEquals(Optional.empty(), nachfolgerGewinnerBegegnung.getWettkaempfer2());
 		Begegnung nachfolgerTrostBegegnung = begegnungList.get(1);
+		assertEquals(WettkampfgruppeFixture.b5UUID, nachfolgerTrostBegegnung.getId());
 		assertEquals(WettkaempferFixtures.wettkaempferin3, nachfolgerTrostBegegnung.getWettkaempfer1().get());
 		assertEquals(Optional.empty(), nachfolgerTrostBegegnung.getWettkaempfer2());
+		Begegnung freilosNachfolgerTrostBegegnung = begegnungList.get(2);
+		assertEquals(WettkampfgruppeFixture.b9UUID, freilosNachfolgerTrostBegegnung.getId());
+		assertEquals(WettkaempferFixtures.wettkaempferin3, freilosNachfolgerTrostBegegnung.getWettkaempfer1().get());
+		assertEquals(Optional.empty(), freilosNachfolgerTrostBegegnung.getWettkaempfer2());
+	}
+
+	@Test
+	void speichereTurnierWertungTrostrundeSetztSiegerInNaechsteTrostrunde() {
+		int scoreWeiss = 1;
+		int scoreBlau = 0;
+		int penaltiesWeiss = 0;
+		int penaltiesBlau = 0;
+		String fighttime = "02:03.54";
+		Duration fighttimeDuration = Duration.ofMillis(123540);
+		Wettkaempfer sieger = WettkaempferFixtures.wettkaempferin3;
+		var aktuelleBegegnungUUID = WettkampfgruppeFixture.b5UUID;
+		var aktuelleBegegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, 1, 1);
+
+		WettkampfGruppe wkg = WettkampfgruppeFixture.wettkampfGruppeFrauen.gruppe();
+		Begegnung aktuelleBegegnung = new Begegnung(aktuelleBegegnungUUID, aktuelleBegegnungId, null, null, null, null, null,
+			Optional.of(WettkaempferFixtures.wettkaempferin2),
+			Optional.of(WettkaempferFixtures.wettkaempferin3),
+			new ArrayList<>(), wkg, turnierUUID);
+		Begegnung naechsteTrostrunde = new Begegnung(WettkampfgruppeFixture.b9UUID, new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, 2, 1), null, null, null, null, null,
+			Optional.empty(),
+			Optional.empty(),
+			new ArrayList<>(), wkg, turnierUUID);
+		List<Runde> rundenList = List.of(
+			new Runde(UUID.randomUUID(), 1, 1, 1, 1, Altersklasse.FRAUEN, wkg, List.of(aktuelleBegegnung)),
+			new Runde(UUID.randomUUID(), 2, 2, 2, 1, Altersklasse.FRAUEN, wkg, List.of(naechsteTrostrunde))
+		);
+		Wertung neueWertung = new Wertung(null, sieger, fighttimeDuration,
+			scoreWeiss, 0, 0, penaltiesWeiss, false,
+			scoreBlau, 0, 0, penaltiesBlau, false,
+			null, null, null, null, null, null, null, null,
+			kampfrichter
+		);
+
+		when(wettkampfService.ladeBegegnung(aktuelleBegegnungUUID)).thenReturn(aktuelleBegegnung);
+		when(benutzerRepository.findBenutzer(eq(kampfrichter.uuid()))).thenReturn(Optional.of(kampfrichter));
+		when(wettkaempferService.ladeKaempfer(eq(sieger.id()))).thenReturn(Optional.of(sieger));
+		when(turnierRepository.ladeWettkampfgruppeRunden(wkg.id(), turnierUUID)).thenReturn(rundenList);
+
+		wertungService.speichereTurnierWertung(aktuelleBegegnungUUID, scoreWeiss, 0, 0, penaltiesWeiss, false, scoreBlau, 0, 0, penaltiesBlau, false, fighttime, sieger.id(), kampfrichter.uuid());
+
+		verify(wertungRepository, times(1)).speichereWertungInBegegnung(neueWertung, aktuelleBegegnungUUID);
+		ArgumentCaptor<Begegnung> begegnungCaptor = ArgumentCaptor.forClass(Begegnung.class);
+		verify(turnierRepository, times(1)).speichereBegegnung(begegnungCaptor.capture());
+		Begegnung gespeicherteTrostrunde = begegnungCaptor.getValue();
+		assertEquals(WettkampfgruppeFixture.b9UUID, gespeicherteTrostrunde.getId());
+		assertEquals(sieger, gespeicherteTrostrunde.getWettkaempfer1().get());
+		assertEquals(Optional.empty(), gespeicherteTrostrunde.getWettkaempfer2());
+	}
+
+	@Test
+	void speichereTurnierWertungErsteTrostrundeWartetOhneFreilosVorgaengerAufZweitenVerlierer() {
+		int scoreWeiss = 1;
+		int scoreBlau = 0;
+		int penaltiesWeiss = 0;
+		int penaltiesBlau = 0;
+		String fighttime = "02:03.54";
+		Duration fighttimeDuration = Duration.ofMillis(123540);
+		Wettkaempfer sieger = WettkaempferFixtures.wettkaempferin1;
+		var aktuelleBegegnungUUID = WettkampfgruppeFixture.b1UUID;
+		var aktuelleBegegnungId = new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 1);
+
+		WettkampfGruppe wkg = WettkampfgruppeFixture.wettkampfGruppeFrauen.gruppe();
+		Begegnung aktuelleBegegnung = new Begegnung(aktuelleBegegnungUUID, aktuelleBegegnungId, null, null, null, null, null,
+			Optional.of(WettkaempferFixtures.wettkaempferin1),
+			Optional.of(WettkaempferFixtures.wettkaempferin2),
+			new ArrayList<>(), wkg, turnierUUID);
+		Begegnung zweiteGewinnerrundenBegegnung = new Begegnung(WettkampfgruppeFixture.b2UUID, new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, 2), null, null, null, null, null,
+			Optional.of(WettkaempferFixtures.wettkaempferin3),
+			Optional.of(WettkaempferFixtures.wettkaempferin4),
+			new ArrayList<>(), wkg, turnierUUID);
+		Begegnung naechsteGewinnerrunde = new Begegnung(WettkampfgruppeFixture.b7UUID, new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 2, 1), null, null, null, null, null,
+			Optional.empty(),
+			Optional.empty(),
+			new ArrayList<>(), wkg, turnierUUID);
+		Begegnung ersteTrostrunde = new Begegnung(WettkampfgruppeFixture.b5UUID, new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, 1, 1), null, null, null, null, null,
+			Optional.empty(),
+			Optional.empty(),
+			new ArrayList<>(), wkg, turnierUUID);
+		List<Runde> rundenList = List.of(
+			new Runde(UUID.randomUUID(), 1, 1, 1, 1, Altersklasse.FRAUEN, wkg, List.of(aktuelleBegegnung, zweiteGewinnerrundenBegegnung, ersteTrostrunde)),
+			new Runde(UUID.randomUUID(), 2, 2, 2, 1, Altersklasse.FRAUEN, wkg, List.of(naechsteGewinnerrunde))
+		);
+		Wertung neueWertung = new Wertung(null, sieger, fighttimeDuration,
+			scoreWeiss, 0, 0, penaltiesWeiss, false,
+			scoreBlau, 0, 0, penaltiesBlau, false,
+			null, null, null, null, null, null, null, null,
+			kampfrichter
+		);
+
+		when(wettkampfService.ladeBegegnung(aktuelleBegegnungUUID)).thenReturn(aktuelleBegegnung);
+		when(benutzerRepository.findBenutzer(eq(kampfrichter.uuid()))).thenReturn(Optional.of(kampfrichter));
+		when(wettkaempferService.ladeKaempfer(eq(sieger.id()))).thenReturn(Optional.of(sieger));
+		when(turnierRepository.ladeWettkampfgruppeRunden(wkg.id(), turnierUUID)).thenReturn(rundenList);
+
+		wertungService.speichereTurnierWertung(aktuelleBegegnungUUID, scoreWeiss, 0, 0, penaltiesWeiss, false, scoreBlau, 0, 0, penaltiesBlau, false, fighttime, sieger.id(), kampfrichter.uuid());
+
+		verify(wertungRepository, times(1)).speichereWertungInBegegnung(neueWertung, aktuelleBegegnungUUID);
+		ArgumentCaptor<Begegnung> begegnungCaptor = ArgumentCaptor.forClass(Begegnung.class);
+		verify(turnierRepository, times(2)).speichereBegegnung(begegnungCaptor.capture());
+		List<Begegnung> gespeicherteBegegnungen = begegnungCaptor.getAllValues();
+		assertEquals(WettkampfgruppeFixture.b7UUID, gespeicherteBegegnungen.get(0).getId());
+		assertEquals(WettkampfgruppeFixture.b5UUID, gespeicherteBegegnungen.get(1).getId());
+		assertEquals(WettkaempferFixtures.wettkaempferin2, gespeicherteBegegnungen.get(1).getWettkaempfer1().get());
 	}
 
 	@Test

@@ -5,6 +5,7 @@ import de.sinnix.judoturnier.adapter.secondary.TurnierRepository;
 import de.sinnix.judoturnier.adapter.secondary.WertungRepository;
 import de.sinnix.judoturnier.model.Begegnung;
 import de.sinnix.judoturnier.model.Benutzer;
+import de.sinnix.judoturnier.model.Runde;
 import de.sinnix.judoturnier.model.Wertung;
 import de.sinnix.judoturnier.model.Wettkaempfer;
 import de.sinnix.judoturnier.model.WettkampfGruppe;
@@ -117,10 +118,82 @@ public class WertungService {
 			Begegnung nextTrostRunde = trostBelegung.begegnung();
 			logger.warn("nächste TrostRunde: {}", nextTrostRunde);
 			Wettkaempfer wettkaempferTrostRunde = trostBelegung.wettkaempfer();
-			if (nextTrostRunde.getWettkaempfer1().isEmpty()) nextTrostRunde.setWettkaempfer1(Optional.of(wettkaempferTrostRunde));
-			else if (nextTrostRunde.getWettkaempfer2().isEmpty()) nextTrostRunde.setWettkaempfer2(Optional.of(wettkaempferTrostRunde));
+			trageWettkaempferEin(nextTrostRunde, wettkaempferTrostRunde);
+			turnierRepository.speichereBegegnung(nextTrostRunde);
+			aktualisiereTrostrundenFreilos(nextTrostRunde, wettkampfGruppe, alleWettkampfgruppeRunden);
+		}
+	}
+
+	private void aktualisiereTrostrundenFreilos(Begegnung begegnung, WettkampfGruppe wettkampfGruppe, List<Runde> alleWettkampfgruppeRunden) {
+		if (!istErsteTrostrunde(begegnung)
+			|| !hatGenauEinenWettkaempfer(begegnung)
+			|| hatWertungen(begegnung)
+			|| !hatFreilosVorgaengerInErsterGewinnerrunde(begegnung, alleWettkampfgruppeRunden)) {
+			return;
+		}
+
+		Wettkaempfer freilosSieger = begegnung.getWettkaempfer1().or(() -> begegnung.getWettkaempfer2()).orElseThrow();
+		Benutzer dummyKampfrichter = benutzerRepository.findBenutzerByUsername(Benutzer.ANONYMOUS_KAMPFRICHTER).orElseThrow();
+		Wertung freilosWertung = freilosWertung(freilosSieger, dummyKampfrichter);
+		wertungRepository.speichereWertungInBegegnung(freilosWertung, begegnung.getId());
+		if (begegnung.getWertungen() == null) {
+			begegnung.setWertungen(new ArrayList<>());
+		}
+		begegnung.getWertungen().add(freilosWertung);
+
+		Sortierer.NachfolgeBelegung nachfolger = Sortierer.nachfolgeBelegungen(begegnung, freilosSieger, wettkampfGruppe, alleWettkampfgruppeRunden);
+		for (Sortierer.TrostBelegung trostBelegung : nachfolger.trostBelegungen()) {
+			Begegnung nextTrostRunde = trostBelegung.begegnung();
+			trageWettkaempferEin(nextTrostRunde, trostBelegung.wettkaempfer());
 			turnierRepository.speichereBegegnung(nextTrostRunde);
 		}
+	}
+
+	private Wertung freilosWertung(Wettkaempfer freilosSieger, Benutzer dummyKampfrichter) {
+		return new Wertung(
+			UUID.randomUUID(),
+			freilosSieger,
+			Duration.ZERO,
+			0, 0, 0, 0,
+			null, null, null, null,
+			null, null, null, null,
+			dummyKampfrichter
+		);
+	}
+
+	private boolean istErsteTrostrunde(Begegnung begegnung) {
+		return begegnung.getBegegnungId().getRundenTyp() == Begegnung.RundenTyp.TROSTRUNDE
+			&& begegnung.getBegegnungId().getRundenNummerDesTyps() == 1;
+	}
+
+	private boolean hatFreilosVorgaengerInErsterGewinnerrunde(Begegnung begegnung, List<Runde> alleWettkampfgruppeRunden) {
+		int paarung = begegnung.getBegegnungId().getPaarungNummer();
+		int ersteGewinnerrundenPaarung = (paarung - 1) * 2 + 1;
+		int zweiteGewinnerrundenPaarung = ersteGewinnerrundenPaarung + 1;
+		return List.of(ersteGewinnerrundenPaarung, zweiteGewinnerrundenPaarung).stream()
+			.map(paarungNr -> findeBegegnung(alleWettkampfgruppeRunden, new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, 1, paarungNr)))
+			.flatMap(Optional::stream)
+			.anyMatch(this::hatGenauEinenWettkaempfer);
+	}
+
+	private Optional<Begegnung> findeBegegnung(List<Runde> runden, Begegnung.BegegnungId begegnungId) {
+		return runden.stream()
+			.flatMap(runde -> runde.begegnungen().stream())
+			.filter(begegnung -> begegnung.getBegegnungId().equals(begegnungId))
+			.findFirst();
+	}
+
+	private boolean hatGenauEinenWettkaempfer(Begegnung begegnung) {
+		return begegnung.getWettkaempfer1().isPresent() ^ begegnung.getWettkaempfer2().isPresent();
+	}
+
+	private boolean hatWertungen(Begegnung begegnung) {
+		return begegnung.getWertungen() != null && !begegnung.getWertungen().isEmpty();
+	}
+
+	private void trageWettkaempferEin(Begegnung begegnung, Wettkaempfer wettkaempfer) {
+		if (begegnung.getWettkaempfer1().isEmpty()) begegnung.setWettkaempfer1(Optional.of(wettkaempfer));
+		else if (begegnung.getWettkaempfer2().isEmpty()) begegnung.setWettkaempfer2(Optional.of(wettkaempfer));
 	}
 
 	public Map<Wettkaempfer, Integer> berechnePlatzierungen(UUID turnierUUID) {
