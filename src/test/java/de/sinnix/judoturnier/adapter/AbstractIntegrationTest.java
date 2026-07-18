@@ -15,6 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,7 +45,8 @@ public abstract class AbstractIntegrationTest {
 	private static final String KEYCLOAK_IMAGE        = "quay.io/keycloak/keycloak:26.7";
 	private static final long   KEYCLOAK_MEMORY_LIMIT = 768L * 1024 * 1024;
 	private static final String CLIENT_SECRET         = "the-client-secret";
-	private static final double PLAYWRIGHT_TIMEOUT_MS = 120_000;
+	private static final double PLAYWRIGHT_ACTION_TIMEOUT_MS     = 15_000;
+	private static final double PLAYWRIGHT_NAVIGATION_TIMEOUT_MS = 45_000;
 	private static final Map<String, String> AUTHENTICATED_STORAGE_STATES = new ConcurrentHashMap<>();
 	private static final AtomicBoolean SHUTDOWN_HOOK_REGISTERED = new AtomicBoolean(false);
 
@@ -148,11 +150,11 @@ public abstract class AbstractIntegrationTest {
 			navigateToLogin(page, username);
 			page.locator("#username").fill(username);
 			page.locator("#password").fill(password);
-			page.locator("#kc-login").click(new Locator.ClickOptions().setTimeout(PLAYWRIGHT_TIMEOUT_MS));
+			page.locator("#kc-login").click(new Locator.ClickOptions().setTimeout(PLAYWRIGHT_ACTION_TIMEOUT_MS));
 
 			page.waitForURL(url("/**"), new Page.WaitForURLOptions()
 				.setWaitUntil(WaitUntilState.DOMCONTENTLOADED)
-				.setTimeout(PLAYWRIGHT_TIMEOUT_MS));
+				.setTimeout(PLAYWRIGHT_NAVIGATION_TIMEOUT_MS));
 
 			String bodyText = page.locator("body").textContent();
 			if (!bodyText.contains("Sie sind angemeldet als " + username)) {
@@ -163,8 +165,8 @@ public abstract class AbstractIntegrationTest {
 	}
 
 	private void configureTimeouts(BrowserContext context) {
-		context.setDefaultTimeout(PLAYWRIGHT_TIMEOUT_MS);
-		context.setDefaultNavigationTimeout(PLAYWRIGHT_TIMEOUT_MS);
+		context.setDefaultTimeout(PLAYWRIGHT_ACTION_TIMEOUT_MS);
+		context.setDefaultNavigationTimeout(PLAYWRIGHT_NAVIGATION_TIMEOUT_MS);
 	}
 
 	private void navigateToLogin(Page page, String username) {
@@ -173,7 +175,7 @@ public abstract class AbstractIntegrationTest {
 			try {
 				page.navigate(url("/oauth2/authorization/keycloak"), new Page.NavigateOptions()
 					.setWaitUntil(WaitUntilState.DOMCONTENTLOADED)
-					.setTimeout(PLAYWRIGHT_TIMEOUT_MS));
+					.setTimeout(PLAYWRIGHT_NAVIGATION_TIMEOUT_MS));
 				return;
 			} catch (RuntimeException e) {
 				lastFailure = e;
@@ -186,9 +188,10 @@ public abstract class AbstractIntegrationTest {
 
 	private static void startContainer(String name, org.testcontainers.containers.GenericContainer<?> container) {
 		if (container.isRunning()) {
-			System.out.println(name + " container already running.");
+			System.out.println(Instant.now() + " " + name + " container already running.");
 			return;
 		}
+		System.out.println(Instant.now() + " Starting " + name + " container.");
 		timed(name + " container start", () -> {
 			container.start();
 			return null;

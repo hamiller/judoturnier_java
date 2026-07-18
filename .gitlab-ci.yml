@@ -1,5 +1,6 @@
 stages:
   - build_ci_image
+  - preload_test_images
   - build
   - create_image
   - deploy
@@ -19,6 +20,8 @@ variables:
   GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
   PLAYWRIGHT_BROWSERS_PATH: "$CI_PROJECT_DIR/.cache/ms-playwright"
   PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT: "120000"
+  TESTCONTAINERS_PULL_TIMEOUT: "600"
+  TESTCONTAINERS_PULL_PAUSE_TIMEOUT: "120"
   APP_NAME: "judoturnier_java"
   DOCKER_IMAGE_NAME: "$APP_NAME:latest"
   DOCKER_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
@@ -42,6 +45,28 @@ build-gitlabci-image:
   tags:
     - default-docker-runner
 
+preload-test-images:
+  stage: preload_test_images
+  image: docker:latest
+  script:
+    - docker info
+    - |
+      preload_image() {
+        image="$1"
+        echo "$(date -Iseconds) Checking Docker image $image"
+        if docker image inspect "$image" >/dev/null 2>&1; then
+          echo "$(date -Iseconds) Docker image $image already present"
+        else
+          echo "$(date -Iseconds) Pulling Docker image $image"
+          docker pull "$image"
+          echo "$(date -Iseconds) Finished pulling Docker image $image"
+        fi
+      }
+      preload_image postgres:17
+      preload_image quay.io/keycloak/keycloak:26.7
+  tags:
+    - default-docker-runner
+
 build-app:
   stage: build
   image: "$CI_BUILD_IMAGE"
@@ -59,6 +84,8 @@ build-app:
       - build/test-results/test/
     reports:
       junit: build/test-results/test/TEST-*.xml
+  needs:
+    - job: preload-test-images
 
 create-image:
   stage: create_image
