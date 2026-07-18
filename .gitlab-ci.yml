@@ -15,7 +15,7 @@ default:
 
 variables:
   DOCKER_HOST: "unix:///var/run/docker.sock"
-  TESTCONTAINERS_HOST_OVERRIDE: "host.docker.internal"
+  TESTCONTAINERS_HOST_OVERRIDE: "172.17.0.1"
   GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
   PLAYWRIGHT_BROWSERS_PATH: "$CI_PROJECT_DIR/.cache/ms-playwright"
   PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT: "120000"
@@ -34,11 +34,6 @@ build-gitlabci-image:
   image: docker:latest
   when: manual
   allow_failure: true
-  services:
-    - name: docker:dind
-  variables:
-    DOCKER_HOST: "tcp://docker:2375"
-    DOCKER_TLS_CERTDIR: ""
   script:
     - echo "Login to GitLab Container Registry..."
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
@@ -68,10 +63,6 @@ build-app:
 create-image:
   stage: create_image
   image: docker:latest
-  services:
-    - name: docker:dind
-  variables:
-    DOCKER_TLS_CERTDIR: ""
   script:
     - echo "Login to GitLab Container Registry..."
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_JOB_TOKEN" "$CI_REGISTRY"
@@ -90,10 +81,7 @@ deploy-app:
   stage: deploy
   image: docker:latest
   when: manual
-  services:
-    - name: docker:dind
   variables:
-    DOCKER_TLS_CERTDIR: ""
     LOCAL_IMAGE_PATH: "/tmp/$APP_NAME.tar"
   before_script:
     - echo "Login to GitLab Container Registry..."
