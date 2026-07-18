@@ -75,6 +75,12 @@ public class Sortierer {
 	private record GeplanteRunde(int gruppenRunde, List<Begegnung> begegnungen) {
 	}
 
+	public record TrostBelegung(Begegnung begegnung, Wettkaempfer wettkaempfer) {
+	}
+
+	public record NachfolgeBelegung(Optional<Begegnung> gewinnerBegegnung, List<TrostBelegung> trostBelegungen) {
+	}
+
 	public Sortierer(Integer rundeGesamt, Integer mattenRunde) {
 		this.mattenRunde = mattenRunde;
 		this.rundeGesamt = rundeGesamt;
@@ -147,6 +153,182 @@ public class Sortierer {
 		logger.info("Nächste Begegnung Gewinnerrunde (left): {}", nextBegegnungSiegerrunde);
 		logger.info("Nächste Begegnung Trostrunde (right): {}", nextBegegnungTrostrunde);
 		return new ImmutablePair(nextBegegnungSiegerrunde, nextBegegnungTrostrunde);
+	}
+
+	public static NachfolgeBelegung nachfolgeBelegungen(Begegnung begegnung, Wettkaempfer sieger, WettkampfGruppe wettkampfGruppe, List<Runde> alleRunden) {
+		var rundenDerWettkampfgruppe = alleRunden.stream().filter(runde -> runde.gruppe().equals(wettkampfGruppe)).toList();
+		if (istKoSystemMitDoppelterTrostrunde(rundenDerWettkampfgruppe)) {
+			return nachfolgeBelegungenKoSystemMitDoppelterTrostrunde(begegnung, sieger, rundenDerWettkampfgruppe);
+		}
+
+		Pair<Optional<Begegnung>, Optional<Begegnung>> nachfolger = nachfolgeBegegnungen(begegnung.getBegegnungId(), wettkampfGruppe, alleRunden);
+		List<TrostBelegung> trostBelegungen = new ArrayList<>();
+		Optional<Wettkaempfer> verlierer = findeVerlierer(begegnung, sieger);
+		if (nachfolger.getRight().isPresent() && verlierer.isPresent()) {
+			trostBelegungen.add(new TrostBelegung(nachfolger.getRight().get(), verlierer.get()));
+		}
+		return new NachfolgeBelegung(nachfolger.getLeft(), trostBelegungen);
+	}
+
+	private static NachfolgeBelegung nachfolgeBelegungenKoSystemMitDoppelterTrostrunde(Begegnung begegnung, Wettkaempfer sieger, List<Runde> rundenDerWettkampfgruppe) {
+		Begegnung.BegegnungId begegnungId = begegnung.getBegegnungId();
+		int gewinnerRunden = maxRunde(Begegnung.RundenTyp.GEWINNERRUNDE, rundenDerWettkampfgruppe);
+		int viertelFinalRunde = gewinnerRunden - 2;
+		int viertelTrostEnde = viertelFinalRunde + viertelFinalRunde - 2;
+		int haelftenTrostRunde = viertelTrostEnde + 1;
+		int bronzeRunde = haelftenTrostRunde + 1;
+
+		Optional<Begegnung> gewinnerBegegnung = Optional.empty();
+		List<TrostBelegung> trostBelegungen = new ArrayList<>();
+
+		if (begegnungId.rundenTyp == Begegnung.RundenTyp.GEWINNERRUNDE) {
+			if (begegnungId.rundenNummerDesTyps < gewinnerRunden) {
+				gewinnerBegegnung = findeBegegnungInGruppenRunden(
+					new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, begegnungId.rundenNummerDesTyps + 1, (begegnungId.paarungNummer + 1) / 2),
+					rundenDerWettkampfgruppe
+				);
+			}
+
+			if (begegnungId.rundenNummerDesTyps == viertelFinalRunde) {
+				List<Wettkaempfer> verliererAufDemPfad = verliererAufGewinnerPfad(begegnung, sieger, rundenDerWettkampfgruppe);
+				trostBelegungen.addAll(trostBelegungenFuerViertel(begegnungId.paarungNummer, verliererAufDemPfad, viertelFinalRunde, viertelTrostEnde, haelftenTrostRunde, rundenDerWettkampfgruppe));
+			}
+			else if (begegnungId.rundenNummerDesTyps == gewinnerRunden - 1) {
+				Optional<Wettkaempfer> verlierer = findeVerlierer(begegnung, sieger);
+				Optional<Begegnung> bronzeBegegnung = findeBegegnungInGruppenRunden(
+					new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, bronzeRunde, begegnungId.paarungNummer),
+					rundenDerWettkampfgruppe
+				);
+				if (verlierer.isPresent() && bronzeBegegnung.isPresent()) {
+					trostBelegungen.add(new TrostBelegung(bronzeBegegnung.get(), verlierer.get()));
+				}
+			}
+			return new NachfolgeBelegung(gewinnerBegegnung, trostBelegungen);
+		}
+
+		if (begegnungId.rundenTyp == Begegnung.RundenTyp.TROSTRUNDE) {
+			Optional<Begegnung> naechsteTrostBegegnung = Optional.empty();
+			if (begegnungId.rundenNummerDesTyps < viertelTrostEnde && begegnungId.paarungNummer <= 4) {
+				naechsteTrostBegegnung = findeBegegnungInGruppenRunden(
+					new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, begegnungId.rundenNummerDesTyps + 1, begegnungId.paarungNummer),
+					rundenDerWettkampfgruppe
+				);
+			}
+			else if (begegnungId.rundenNummerDesTyps == viertelTrostEnde && begegnungId.paarungNummer <= 4) {
+				naechsteTrostBegegnung = findeBegegnungInGruppenRunden(
+					new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, haelftenTrostRunde, (begegnungId.paarungNummer + 1) / 2),
+					rundenDerWettkampfgruppe
+				);
+			}
+			else if (begegnungId.rundenNummerDesTyps == haelftenTrostRunde) {
+				int bronzePaarung = begegnungId.paarungNummer == 1 ? 2 : 1;
+				naechsteTrostBegegnung = findeBegegnungInGruppenRunden(
+					new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, bronzeRunde, bronzePaarung),
+					rundenDerWettkampfgruppe
+				);
+			}
+
+			if (naechsteTrostBegegnung.isPresent()) {
+				trostBelegungen.add(new TrostBelegung(naechsteTrostBegegnung.get(), sieger));
+			}
+		}
+
+		return new NachfolgeBelegung(Optional.empty(), trostBelegungen);
+	}
+
+	private static List<TrostBelegung> trostBelegungenFuerViertel(int viertel, List<Wettkaempfer> verliererAufDemPfad, int viertelFinalRunde, int viertelTrostEnde, int haelftenTrostRunde, List<Runde> rundenDerWettkampfgruppe) {
+		if (verliererAufDemPfad.isEmpty()) {
+			return List.of();
+		}
+
+		if (verliererAufDemPfad.size() == 1) {
+			Optional<Begegnung> haelftenTrostBegegnung = findeBegegnungInGruppenRunden(
+				new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, haelftenTrostRunde, (viertel + 1) / 2),
+				rundenDerWettkampfgruppe
+			);
+			return haelftenTrostBegegnung
+				.map(begegnung -> List.of(new TrostBelegung(begegnung, verliererAufDemPfad.getFirst())))
+				.orElseGet(List::of);
+		}
+
+		List<TrostBelegung> result = new ArrayList<>();
+		int ersteGenutzteTrostRunde = viertelTrostEnde - (verliererAufDemPfad.size() - 2);
+		ersteGenutzteTrostRunde = Math.max(viertelFinalRunde, ersteGenutzteTrostRunde);
+		for (int i = 0; i < verliererAufDemPfad.size(); i++) {
+			int runde = i < 2 ? ersteGenutzteTrostRunde : ersteGenutzteTrostRunde + i - 1;
+			Optional<Begegnung> trostBegegnung = findeBegegnungInGruppenRunden(
+				new Begegnung.BegegnungId(Begegnung.RundenTyp.TROSTRUNDE, runde, viertel),
+				rundenDerWettkampfgruppe
+			);
+			if (trostBegegnung.isPresent()) {
+				result.add(new TrostBelegung(trostBegegnung.get(), verliererAufDemPfad.get(i)));
+			}
+		}
+		return result;
+	}
+
+	private static List<Wettkaempfer> verliererAufGewinnerPfad(Begegnung begegnung, Wettkaempfer sieger, List<Runde> rundenDerWettkampfgruppe) {
+		List<Wettkaempfer> result = new ArrayList<>();
+		Begegnung aktuelleBegegnung = begegnung;
+
+		while (aktuelleBegegnung != null) {
+			findeVerlierer(aktuelleBegegnung, sieger).ifPresent(verlierer -> result.add(0, verlierer));
+			int vorherigeRunde = aktuelleBegegnung.getBegegnungId().rundenNummerDesTyps - 1;
+			if (vorherigeRunde < 1) {
+				break;
+			}
+
+			int paarung1 = (aktuelleBegegnung.getBegegnungId().paarungNummer - 1) * 2 + 1;
+			int paarung2 = paarung1 + 1;
+			Optional<Begegnung> vorherigeBegegnung = List.of(paarung1, paarung2).stream()
+				.map(paarung -> findeBegegnungInGruppenRunden(new Begegnung.BegegnungId(Begegnung.RundenTyp.GEWINNERRUNDE, vorherigeRunde, paarung), rundenDerWettkampfgruppe))
+				.flatMap(Optional::stream)
+				.filter(kandidat -> enthaeltWettkaempfer(kandidat, sieger))
+				.findFirst();
+
+			aktuelleBegegnung = vorherigeBegegnung.orElse(null);
+		}
+
+		return result;
+	}
+
+	private static boolean enthaeltWettkaempfer(Begegnung begegnung, Wettkaempfer wettkaempfer) {
+		return begegnung.getWettkaempfer1().filter(wettkaempfer::equals).isPresent()
+			|| begegnung.getWettkaempfer2().filter(wettkaempfer::equals).isPresent();
+	}
+
+	private static Optional<Wettkaempfer> findeVerlierer(Begegnung begegnung, Wettkaempfer sieger) {
+		if (begegnung.getWettkaempfer1().filter(sieger::equals).isPresent()) {
+			return begegnung.getWettkaempfer2();
+		}
+		if (begegnung.getWettkaempfer2().filter(sieger::equals).isPresent()) {
+			return begegnung.getWettkaempfer1();
+		}
+		return Optional.empty();
+	}
+
+	private static boolean istKoSystemMitDoppelterTrostrunde(List<Runde> rundenDerWettkampfgruppe) {
+		int gewinnerRunden = maxRunde(Begegnung.RundenTyp.GEWINNERRUNDE, rundenDerWettkampfgruppe);
+		int ersteTrostRunde = minRunde(Begegnung.RundenTyp.TROSTRUNDE, rundenDerWettkampfgruppe);
+		return gewinnerRunden >= 5 && ersteTrostRunde == gewinnerRunden - 2;
+	}
+
+	private static int maxRunde(Begegnung.RundenTyp rundenTyp, List<Runde> runden) {
+		return runden.stream()
+			.flatMap(runde -> runde.begegnungen().stream())
+			.filter(begegnung -> begegnung.getBegegnungId().rundenTyp == rundenTyp)
+			.mapToInt(begegnung -> begegnung.getBegegnungId().rundenNummerDesTyps)
+			.max()
+			.orElse(0);
+	}
+
+	private static int minRunde(Begegnung.RundenTyp rundenTyp, List<Runde> runden) {
+		return runden.stream()
+			.flatMap(runde -> runde.begegnungen().stream())
+			.filter(begegnung -> begegnung.getBegegnungId().rundenTyp == rundenTyp)
+			.mapToInt(begegnung -> begegnung.getBegegnungId().rundenNummerDesTyps)
+			.min()
+			.orElse(0);
 	}
 
 	private static Optional<Begegnung> findeBegegnungInGruppenRunden(Begegnung.BegegnungId begegnungId, List<Runde> rudenDerWettkmapfgruppe) {
