@@ -8,7 +8,7 @@ RUN apk update &&  \
 # Build small JRE image
 RUN $JAVA_HOME/bin/jlink \
          --verbose \
-         --add-modules java.base,java.desktop,java.sql,java.logging,java.xml,java.management,java.naming,java.security.jgss,java.instrument,jdk.crypto.ec,jdk.httpserver,jdk.security.auth,jdk.security.jgss,jdk.crypto.cryptoki \
+         --add-modules java.base,java.compiler,java.desktop,java.sql,java.logging,java.xml,java.management,java.naming,java.security.jgss,java.instrument,jdk.crypto.ec,jdk.httpserver,jdk.security.auth,jdk.security.jgss,jdk.crypto.cryptoki \
          --strip-debug \
          --no-man-pages \
          --no-header-files \
